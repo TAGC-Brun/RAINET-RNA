@@ -1,7 +1,5 @@
 
 The files required for a complete data insertion must be described in a properties file looking like:
-
-
 ----- File Start ------
 [PROTEINS]
 PROTEIN_UNIPROT_DEFINITION = /big-vol/Rainet2toad/data/human/human_uniprot_protein_list.txt
