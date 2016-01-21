@@ -1,0 +1,33 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol}{}\section{src.\+fr.\+tagc.\+rainet.\+core.\+data.\+Synonym\+Gene\+Symbol.\+Synonym\+Gene\+Symbol Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol}\index{src.\+fr.\+tagc.\+rainet.\+core.\+data.\+Synonym\+Gene\+Symbol.\+Synonym\+Gene\+Symbol@{src.\+fr.\+tagc.\+rainet.\+core.\+data.\+Synonym\+Gene\+Symbol.\+Synonym\+Gene\+Symbol}}
+
+
+This class describe a gene symbol that is a synonym of a main gene symbol of a protein this class has a many-\/to-\/one relationship with the class Protein.  
+
+
+Inheritance diagram for src.\+fr.\+tagc.\+rainet.\+core.\+data.\+Synonym\+Gene\+Symbol.\+Synonym\+Gene\+Symbol\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol}
+\end{center}
+\end{figure}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a64069383ae398b9a29700ebfa0716d13}{}tuple {\bfseries id} = Column(Integer, autoincrement=True, primary\+\_\+key=True)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a64069383ae398b9a29700ebfa0716d13}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a60b0caa4ff16ab1c362f6dffdfdf2f14}{}tuple {\bfseries protein\+\_\+id} = Column(Integer, Foreign\+Key(\textquotesingle{}Protein.\+uniprot\+A\+C\textquotesingle{}))\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a60b0caa4ff16ab1c362f6dffdfdf2f14}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a8e3ff826f0c90631c48a98fbec986121}{}tuple {\bfseries uniprot\+Gene\+Symbol} = Column( String)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1SynonymGeneSymbol_1_1SynonymGeneSymbol_a8e3ff826f0c90631c48a98fbec986121}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describe a gene symbol that is a synonym of a main gene symbol of a protein this class has a many-\/to-\/one relationship with the class Protein. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Synonym\+Gene\+Symbol.\+py\end{DoxyCompactItemize}

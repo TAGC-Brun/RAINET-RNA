@@ -1,0 +1,17 @@
+Entry	Entry name	Protein names	Gene names  (primary )	Gene names  (synonym )	Organism	Length	Fragment	Cross-reference (Pfam)	Cross-reference (SMART)
+O00299	CLIC1_HUMAN	Chloride intracellular channel protein 1 (Chloride channel ABP) (Nuclear chloride ion channel 27) (NCC27) (Regulatory nuclear chloride ion channel protein) (hRNCC)	CLIC1	G6 NCC27	Homo sapiens (Human)	241		PF13409;	
+P49760	CLK2_HUMAN	Dual specificity protein kinase CLK2 (EC 2.7.12.1) (CDC-like kinase 2)	CLK2		Homo sapiens (Human)	499		PF00069;	SM00220;
+P10645	CMGA_HUMAN	Chromogranin-A (CgA) (Pituitary secretory protein I) (SP-I) [Cleaved into: Vasostatin-1 (Vasostatin I); Vasostatin-2 (Vasostatin II); EA-92; ES-43; Pancreastatin; SS-18; WA-8; WE-14; LF-19; Catestatin (SL21); AL-11; GV-19; GR-44; ER-37; GE-25; Serpinin-RRG; Serpinin; p-Glu serpinin precursor]	CHGA		Homo sapiens (Human)	457		PF01271;	
+P31946	1433B_HUMAN	14-3-3 protein beta/alpha (Protein 1054) (Protein kinase C inhibitor protein 1) (KCIP-1) [Cleaved into: 14-3-3 protein beta/alpha, N-terminally processed]	YWHAB		Homo sapiens (Human)	246		PF00244;	SM00101;
+Q04917	1433F_HUMAN	14-3-3 protein eta (Protein AS1)	YWHAH	YWHA1	Homo sapiens (Human)	246		PF00244;	SM00101;
+P61981	1433G_HUMAN	14-3-3 protein gamma (Protein kinase C inhibitor protein 1) (KCIP-1) [Cleaved into: 14-3-3 protein gamma, N-terminally processed]	YWHAG		Homo sapiens (Human)	247		PF00244;	SM00101;
+P31947	1433S_HUMAN	14-3-3 protein sigma (Epithelial cell marker protein 1) (Stratifin)	SFN	HME1	Homo sapiens (Human)	248		PF00244;	SM00101;
+P62258	1433E_HUMAN	14-3-3 protein epsilon (14-3-3E)	YWHAE		Homo sapiens (Human)	255		PF00244;	SM00101;
+Q9GIY3	2B1E_HUMAN	HLA class II histocompatibility antigen, DRB1-14 beta chain (MHC class II antigen DRB1*14) (DR-14) (DR14)	HLA-DRB1		Homo sapiens (Human)	266		PF07654;PF00969;	SM00407;SM00921;
+P08697	A2AP_HUMAN	Alpha-2-antiplasmin (Alpha-2-AP) (Alpha-2-plasmin inhibitor) (Alpha-2-PI) (Serpin F2)	SERPINF2	AAP PLI	Homo sapiens (Human)	491		PF00079;	SM00093;
+P31941	ABC3A_HUMAN	DNA dC->dU-editing enzyme APOBEC-3A (A3A) (EC 3.5.4.-) (Phorbolin-1)	APOBEC3A		Homo sapiens (Human)	199		PF05240;	
+P27348	1433T_HUMAN	14-3-3 protein theta (14-3-3 protein T-cell) (14-3-3 protein tau) (Protein HS1)	YWHAQ		Homo sapiens (Human)	245		PF00244;	SM00101;
+P63104	1433Z_HUMAN	14-3-3 protein zeta/delta (Protein kinase C inhibitor protein 1) (KCIP-1)	YWHAZ		Homo sapiens (Human)	245		PF00244;	SM00101;
+P30443	1A01_HUMAN	HLA class I histocompatibility antigen, A-1 alpha chain (MHC class I antigen A*1)	HLA-A	HLAA	Homo sapiens (Human)	365		PF07654;PF00129;PF06623;	SM00407;
+P01892	1A02_HUMAN	HLA class I histocompatibility antigen, A-2 alpha chain (MHC class I antigen A*2)	HLA-A	HLAA	Homo sapiens (Human)	365		PF07654;PF00129;PF06623;	SM00407;
+P04439	1A03_HUMAN	HLA class I histocompatibility antigen, A-3 alpha chain (MHC class I antigen A*3)	HLA-A	HLAA	Homo sapiens (Human)	365		PF07654;PF00129;PF06623;	SM00407;

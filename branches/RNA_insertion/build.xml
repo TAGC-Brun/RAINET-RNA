@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!-- build.xml - Build file for TeamProject -->
+<project name="Rainet" default="help" basedir="." xmlns:ac="antlib:net.sf.antcontrib">
+
+	<!-- ****************************************************** -->
+	<!-- Help task                                              -->
+	<!-- ****************************************************** -->
+
+	<target name="help">
+		<echo message="Use one of the following command:" />
+		<echo message="   ant deployCode                          : deploy the Python code" />
+		<echo message="   ant deployData                          : deploy the data and configuration file" />
+		<echo message="   ant deployResources                     : deploy the resources files" />
+	</target>
+
+
+	<!-- ****************************************************** -->
+	<!-- Property definition                                    -->
+	<!-- ****************************************************** -->
+
+	<!-- name of the local folder of python code -->
+	<property name="src.dir" value="src" />
+	<!-- name of the local folder of data -->
+	<property name="data.dir" value="data" />
+	<!-- name of the local folder of resources -->
+	<property name="resources.dir" value="resources" />
+
+	<!-- name of the folder where deploy must be done -->
+	<property name="copy.root.dir" value="/big-vol/Rainet2toad" />
+	<property name="copy.tmp.dir" value="/tmp/Rainet2toad" />
+	
+	<!-- name of the folder where source must be deployed -->
+	<property name="copy.src.dir" value="src" />
+	<!-- name of the folder where data must be deployed -->
+	<property name="copy.data.dir" value="data" />
+	<!-- name of the folder where resources must be deployed -->
+	<property name="copy.resources.dir" value="resources" />
+
+	<!-- Retrieve the date and hour values-->
+	<tstamp>
+		<format property="DSTAMP" pattern="d MMMM yyyy" />
+		<format property="TSTAMP" pattern="hh:mmaa" />
+	</tstamp>
+
+	<!-- ****************************************************** -->
+	<!-- Deploy the code                                        -->
+	<!-- ****************************************************** -->
+
+	<!-- Deploy the code-->
+	<target name="deployCode" depends="cleanRemoteCode">
+		<scp todir="rainet:Rai!1965@192.168.1.15:${copy.root.dir}/${copy.src.dir}" trust="true">
+			<fileset dir="${src.dir}">
+		    	<include name="**/*.py"/>
+				<include name="**/*.sh"/>
+				<include name="**/*.pl"/>
+		    </fileset>
+		</scp>
+		<echo message="At ${DSTAMP} ${TSTAMP} : ${src.dir} has been deployed to ${copy.root.dir}/${copy.src.dir}" />
+	</target>
+			
+	<!-- Remove the code on remote location-->
+	<target name="cleanRemoteCode">
+		<!-- Remove the remote source folder -->
+		<sshexec host="192.168.1.15" username="rainet" password="Rai!1965" trust="true"
+		  command="rm -rf ${copy.root.dir}/${copy.src.dir}"/>
+		<!-- Build the remote source folder -->
+		<sshexec host="192.168.1.15" username="rainet" password="Rai!1965" trust="true"
+		  command="mkdir -p ${copy.root.dir}/${copy.src.dir}"/>
+		<echo message="At ${DSTAMP} ${TSTAMP} : ${copy.root.dir}/${copy.src.dir} has been cleaned" />
+	</target>
+			
+	<!-- ****************************************************** -->
+	<!-- Deploy the data										-->
+	<!-- ****************************************************** -->
+	
+	<!-- Deploy the data-->
+	<target name="deployData" depends="cleanRemoteData">
+		<!-- copy the data files -->
+		<scp todir="rainet:Rai!1965@192.168.1.15:${copy.root.dir}/${copy.data.dir}" trust="true">
+			<fileset dir="${data.dir}">
+		    	<include name="**/*.*"/>
+		    </fileset>
+		</scp>
+		<!-- copy the ini files -->
+		<scp todir="rainet:Rai!1965@192.168.1.15:${copy.root.dir}" trust="true">
+			<fileset dir="${resources.dir}">
+		    	<include name="**/*.ini"/>
+		    </fileset>
+		</scp>
+		<!-- uncompress the data files -->
+		<sshexec host="192.168.1.15" username="rainet" password="Rai!1965" trust="true"
+		  command="cd ${copy.root.dir}/${copy.data.dir}/human;gunzip *.gz"/>
+		<echo message="At ${DSTAMP} ${TSTAMP} : ${resource.dir} has been deployed to ${copy.root.dir}" />
+	</target>
+	
+	<!-- Remove the data on remote location-->
+	<target name="cleanRemoteData">
+		<!-- Remove the data folder -->
+		<sshexec host="192.168.1.15" username="rainet" password="Rai!1965" trust="true"
+		  command="rm -rf ${copy.root.dir}/${copy.data.dir}"/>
+		<!-- Create the data folder -->
+		<sshexec host="192.168.1.15" username="rainet" password="Rai!1965" trust="true"
+		  command="mkdir -p ${copy.root.dir}/${copy.data.dir}"/>
+		<echo message="At ${DSTAMP} ${TSTAMP} : ${copy.root.dir}/${copy.data.dir} has been cleaned" />
+	</target>
+
+	<!-- ****************************************************** -->
+	<!-- Deploy the resources										-->
+	<!-- ****************************************************** -->
+	
+	<!-- Deploy the resources-->
+	<target name="deployResources" depends="cleanRemoteResources">
+		<!-- copy the resources files -->
+		<scp todir="rainet:Rai!1965@192.168.1.15:${copy.root.dir}/${copy.resources.dir}" trust="true">
+			<fileset dir="${resources.dir}">
+		    	<include name="**/*.*"/>
+		    </fileset>
+		</scp>
+		<echo message="At ${DSTAMP} ${TSTAMP} : ${resource.dir} has been deployed to ${copy.root.dir}" />
+	</target>
+	
+	<!-- Remove the resources on remote location-->
+	<target name="cleanRemoteResources">
+	</target>
+</project>

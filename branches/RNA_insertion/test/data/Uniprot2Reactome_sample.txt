@@ -1,0 +1,1002 @@
+P49760	REACT_264135	http://www.reactome.org/PathwayBrowser/#REACT_264135	Organelle biogenesis and maintenance	TAS	Homo sapiens
+P49760	REACT_268265	http://www.reactome.org/PathwayBrowser/#REACT_268265	Assembly of the primary cilium	TAS	Homo sapiens
+A0AVF1	REACT_264135	http://www.reactome.org/PathwayBrowser/#REACT_264135	Organelle biogenesis and maintenance	TAS	Homo sapiens
+A0AVF1	REACT_268265	http://www.reactome.org/PathwayBrowser/#REACT_268265	Assembly of the primary cilium	TAS	Homo sapiens
+A0AVF1	REACT_268024	http://www.reactome.org/PathwayBrowser/#REACT_268024	Intraflagellar transport	TAS	Homo sapiens
+A0AVT1	REACT_75842	http://www.reactome.org/PathwayBrowser/#REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	TAS	Homo sapiens
+A0AVT1	REACT_75820	http://www.reactome.org/PathwayBrowser/#REACT_75820	Class I MHC mediated antigen processing & presentation	TAS	Homo sapiens
+A0AVT1	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A0AVT1	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A0JLT2	REACT_116145	http://www.reactome.org/PathwayBrowser/#REACT_116145	PPARA activates gene expression	TAS	Homo sapiens
+A0JLT2	REACT_22279	http://www.reactome.org/PathwayBrowser/#REACT_22279	Fatty acid, triacylglycerol, and ketone body metabolism	TAS	Homo sapiens
+A0JLT2	REACT_22258	http://www.reactome.org/PathwayBrowser/#REACT_22258	Metabolism of lipids and lipoproteins	TAS	Homo sapiens
+A0JLT2	REACT_111045	http://www.reactome.org/PathwayBrowser/#REACT_111045	Developmental Biology	TAS	Homo sapiens
+A0JLT2	REACT_27161	http://www.reactome.org/PathwayBrowser/#REACT_27161	Transcriptional regulation of white adipocyte differentiation	TAS	Homo sapiens
+A0JLT2	REACT_19241	http://www.reactome.org/PathwayBrowser/#REACT_19241	Regulation of lipid metabolism by Peroxisome proliferator-activated receptor alpha (PPARalpha)	TAS	Homo sapiens
+A0JLT2	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A0M8Q6	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+A0M8Q6	REACT_8012	http://www.reactome.org/PathwayBrowser/#REACT_8012	Creation of C4 and C2 activators	TAS	Homo sapiens
+A0M8Q6	REACT_163701	http://www.reactome.org/PathwayBrowser/#REACT_163701	FCERI mediated MAPK activation	TAS	Homo sapiens
+A0M8Q6	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A0M8Q6	REACT_163769	http://www.reactome.org/PathwayBrowser/#REACT_163769	Role of LAT2/NTAL/LAB on calcium mobilization	TAS	Homo sapiens
+A0M8Q6	REACT_8024	http://www.reactome.org/PathwayBrowser/#REACT_8024	Initial triggering of complement	TAS	Homo sapiens
+A0M8Q6	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A0M8Q6	REACT_7956	http://www.reactome.org/PathwayBrowser/#REACT_7956	Classical antibody-mediated complement activation	TAS	Homo sapiens
+A0M8Q6	REACT_163994	http://www.reactome.org/PathwayBrowser/#REACT_163994	FCERI mediated NF-kB activation	TAS	Homo sapiens
+A0M8Q6	REACT_160163	http://www.reactome.org/PathwayBrowser/#REACT_160163	Scavenging of heme from plasma	TAS	Homo sapiens
+A0M8Q6	REACT_160300	http://www.reactome.org/PathwayBrowser/#REACT_160300	Binding and Uptake of Ligands by Scavenger Receptors	TAS	Homo sapiens
+A0M8Q6	REACT_6932	http://www.reactome.org/PathwayBrowser/#REACT_6932	Complement cascade	TAS	Homo sapiens
+A0M8Q6	REACT_163936	http://www.reactome.org/PathwayBrowser/#REACT_163936	Fc epsilon receptor (FCERI) signaling	TAS	Homo sapiens
+A0M8Q6	REACT_160158	http://www.reactome.org/PathwayBrowser/#REACT_160158	Role of phospholipids in phagocytosis	TAS	Homo sapiens
+A0M8Q6	REACT_163834	http://www.reactome.org/PathwayBrowser/#REACT_163834	FCERI mediated Ca+2 mobilization	TAS	Homo sapiens
+A0M8Q6	REACT_11152	http://www.reactome.org/PathwayBrowser/#REACT_11152	Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell	TAS	Homo sapiens
+A0M8Q6	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+A0M8Q6	REACT_160274	http://www.reactome.org/PathwayBrowser/#REACT_160274	FCGR activation	TAS	Homo sapiens
+A0M8Q6	REACT_118700	http://www.reactome.org/PathwayBrowser/#REACT_118700	Antigen activates B Cell Receptor (BCR) leading to generation of second messengers	TAS	Homo sapiens
+A0M8Q6	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+A0M8Q6	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A0M8Q6	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A0MZ66	REACT_18266	http://www.reactome.org/PathwayBrowser/#REACT_18266	Axon guidance	TAS	Homo sapiens
+A0MZ66	REACT_111045	http://www.reactome.org/PathwayBrowser/#REACT_111045	Developmental Biology	TAS	Homo sapiens
+A0MZ66	REACT_22205	http://www.reactome.org/PathwayBrowser/#REACT_22205	L1CAM interactions	TAS	Homo sapiens
+A0MZ66	REACT_22365	http://www.reactome.org/PathwayBrowser/#REACT_22365	Recycling pathway of L1	TAS	Homo sapiens
+A0PJZ3	REACT_121314	http://www.reactome.org/PathwayBrowser/#REACT_121314	Heparan sulfate/heparin (HS-GAG) metabolism	TAS	Homo sapiens
+A0PJZ3	REACT_121206	http://www.reactome.org/PathwayBrowser/#REACT_121206	Chondroitin sulfate/dermatan sulfate metabolism	TAS	Homo sapiens
+A0PJZ3	REACT_121315	http://www.reactome.org/PathwayBrowser/#REACT_121315	Glycosaminoglycan metabolism	TAS	Homo sapiens
+A0PJZ3	REACT_121408	http://www.reactome.org/PathwayBrowser/#REACT_121408	A tetrasaccharide linker sequence is required for GAG synthesis	TAS	Homo sapiens
+A0PJZ3	REACT_474	http://www.reactome.org/PathwayBrowser/#REACT_474	Metabolism of carbohydrates	TAS	Homo sapiens
+A0PJZ3	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A1A4S6	REACT_11051	http://www.reactome.org/PathwayBrowser/#REACT_11051	Rho GTPase cycle	TAS	Homo sapiens
+A1A4S6	REACT_13528	http://www.reactome.org/PathwayBrowser/#REACT_13528	Regulation of PAK-2p34 activity by PS-GAP/RHG10	IEA	Homo sapiens
+A1A4S6	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+A1A4S6	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+A1A4S6	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+A1A4S6	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A1A4S6	REACT_13648	http://www.reactome.org/PathwayBrowser/#REACT_13648	Regulation of Apoptosis	TAS	Homo sapiens
+A1A5B4	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+A1A5B4	REACT_160189	http://www.reactome.org/PathwayBrowser/#REACT_160189	Stimuli-sensing channels	TAS	Homo sapiens
+A1A5B4	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+A1E959	REACT_75925	http://www.reactome.org/PathwayBrowser/#REACT_75925	Amyloids	TAS	Homo sapiens
+A1E959	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+A1IMB0	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+A1L3X0	REACT_1319	http://www.reactome.org/PathwayBrowser/#REACT_1319	Fatty Acyl-CoA Biosynthesis	TAS	Homo sapiens
+A1L3X0	REACT_22279	http://www.reactome.org/PathwayBrowser/#REACT_22279	Fatty acid, triacylglycerol, and ketone body metabolism	TAS	Homo sapiens
+A1L3X0	REACT_22258	http://www.reactome.org/PathwayBrowser/#REACT_22258	Metabolism of lipids and lipoproteins	TAS	Homo sapiens
+A1L3X0	REACT_1190	http://www.reactome.org/PathwayBrowser/#REACT_1190	Triglyceride Biosynthesis	TAS	Homo sapiens
+A1L3X0	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A1L3X0	REACT_380	http://www.reactome.org/PathwayBrowser/#REACT_380	Synthesis of very long-chain fatty acyl-CoAs	TAS	Homo sapiens
+A2BIN8	REACT_348295	http://www.reactome.org/PathwayBrowser/#REACT_348295	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Danio rerio
+A2KUC3	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+A2KUC3	REACT_8012	http://www.reactome.org/PathwayBrowser/#REACT_8012	Creation of C4 and C2 activators	TAS	Homo sapiens
+A2KUC3	REACT_163701	http://www.reactome.org/PathwayBrowser/#REACT_163701	FCERI mediated MAPK activation	TAS	Homo sapiens
+A2KUC3	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A2KUC3	REACT_163769	http://www.reactome.org/PathwayBrowser/#REACT_163769	Role of LAT2/NTAL/LAB on calcium mobilization	TAS	Homo sapiens
+A2KUC3	REACT_8024	http://www.reactome.org/PathwayBrowser/#REACT_8024	Initial triggering of complement	TAS	Homo sapiens
+A2KUC3	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A2KUC3	REACT_7956	http://www.reactome.org/PathwayBrowser/#REACT_7956	Classical antibody-mediated complement activation	TAS	Homo sapiens
+A2KUC3	REACT_163994	http://www.reactome.org/PathwayBrowser/#REACT_163994	FCERI mediated NF-kB activation	TAS	Homo sapiens
+A2KUC3	REACT_160163	http://www.reactome.org/PathwayBrowser/#REACT_160163	Scavenging of heme from plasma	TAS	Homo sapiens
+A2KUC3	REACT_160300	http://www.reactome.org/PathwayBrowser/#REACT_160300	Binding and Uptake of Ligands by Scavenger Receptors	TAS	Homo sapiens
+A2KUC3	REACT_6932	http://www.reactome.org/PathwayBrowser/#REACT_6932	Complement cascade	TAS	Homo sapiens
+A2KUC3	REACT_163936	http://www.reactome.org/PathwayBrowser/#REACT_163936	Fc epsilon receptor (FCERI) signaling	TAS	Homo sapiens
+A2KUC3	REACT_160158	http://www.reactome.org/PathwayBrowser/#REACT_160158	Role of phospholipids in phagocytosis	TAS	Homo sapiens
+A2KUC3	REACT_163834	http://www.reactome.org/PathwayBrowser/#REACT_163834	FCERI mediated Ca+2 mobilization	TAS	Homo sapiens
+A2KUC3	REACT_11152	http://www.reactome.org/PathwayBrowser/#REACT_11152	Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell	TAS	Homo sapiens
+A2KUC3	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+A2KUC3	REACT_160274	http://www.reactome.org/PathwayBrowser/#REACT_160274	FCGR activation	TAS	Homo sapiens
+A2KUC3	REACT_118700	http://www.reactome.org/PathwayBrowser/#REACT_118700	Antigen activates B Cell Receptor (BCR) leading to generation of second messengers	TAS	Homo sapiens
+A2KUC3	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+A2KUC3	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A2KUC3	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A2NJV5	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+A2NJV5	REACT_8012	http://www.reactome.org/PathwayBrowser/#REACT_8012	Creation of C4 and C2 activators	TAS	Homo sapiens
+A2NJV5	REACT_163701	http://www.reactome.org/PathwayBrowser/#REACT_163701	FCERI mediated MAPK activation	TAS	Homo sapiens
+A2NJV5	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A2NJV5	REACT_163769	http://www.reactome.org/PathwayBrowser/#REACT_163769	Role of LAT2/NTAL/LAB on calcium mobilization	TAS	Homo sapiens
+A2NJV5	REACT_8024	http://www.reactome.org/PathwayBrowser/#REACT_8024	Initial triggering of complement	TAS	Homo sapiens
+A2NJV5	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A2NJV5	REACT_7956	http://www.reactome.org/PathwayBrowser/#REACT_7956	Classical antibody-mediated complement activation	TAS	Homo sapiens
+A2NJV5	REACT_163994	http://www.reactome.org/PathwayBrowser/#REACT_163994	FCERI mediated NF-kB activation	TAS	Homo sapiens
+A2NJV5	REACT_160163	http://www.reactome.org/PathwayBrowser/#REACT_160163	Scavenging of heme from plasma	TAS	Homo sapiens
+A2NJV5	REACT_160300	http://www.reactome.org/PathwayBrowser/#REACT_160300	Binding and Uptake of Ligands by Scavenger Receptors	TAS	Homo sapiens
+A2NJV5	REACT_6932	http://www.reactome.org/PathwayBrowser/#REACT_6932	Complement cascade	TAS	Homo sapiens
+A2NJV5	REACT_163936	http://www.reactome.org/PathwayBrowser/#REACT_163936	Fc epsilon receptor (FCERI) signaling	TAS	Homo sapiens
+A2NJV5	REACT_160158	http://www.reactome.org/PathwayBrowser/#REACT_160158	Role of phospholipids in phagocytosis	TAS	Homo sapiens
+A2NJV5	REACT_163834	http://www.reactome.org/PathwayBrowser/#REACT_163834	FCERI mediated Ca+2 mobilization	TAS	Homo sapiens
+A2NJV5	REACT_11152	http://www.reactome.org/PathwayBrowser/#REACT_11152	Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell	TAS	Homo sapiens
+A2NJV5	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+A2NJV5	REACT_160274	http://www.reactome.org/PathwayBrowser/#REACT_160274	FCGR activation	TAS	Homo sapiens
+A2NJV5	REACT_118700	http://www.reactome.org/PathwayBrowser/#REACT_118700	Antigen activates B Cell Receptor (BCR) leading to generation of second messengers	TAS	Homo sapiens
+A2NJV5	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+A2NJV5	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A2NJV5	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A2NXD2	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+A2NXD2	REACT_8012	http://www.reactome.org/PathwayBrowser/#REACT_8012	Creation of C4 and C2 activators	TAS	Homo sapiens
+A2NXD2	REACT_163701	http://www.reactome.org/PathwayBrowser/#REACT_163701	FCERI mediated MAPK activation	TAS	Homo sapiens
+A2NXD2	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A2NXD2	REACT_163769	http://www.reactome.org/PathwayBrowser/#REACT_163769	Role of LAT2/NTAL/LAB on calcium mobilization	TAS	Homo sapiens
+A2NXD2	REACT_8024	http://www.reactome.org/PathwayBrowser/#REACT_8024	Initial triggering of complement	TAS	Homo sapiens
+A2NXD2	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A2NXD2	REACT_7956	http://www.reactome.org/PathwayBrowser/#REACT_7956	Classical antibody-mediated complement activation	TAS	Homo sapiens
+A2NXD2	REACT_163994	http://www.reactome.org/PathwayBrowser/#REACT_163994	FCERI mediated NF-kB activation	TAS	Homo sapiens
+A2NXD2	REACT_160163	http://www.reactome.org/PathwayBrowser/#REACT_160163	Scavenging of heme from plasma	TAS	Homo sapiens
+A2NXD2	REACT_160300	http://www.reactome.org/PathwayBrowser/#REACT_160300	Binding and Uptake of Ligands by Scavenger Receptors	TAS	Homo sapiens
+A2NXD2	REACT_6932	http://www.reactome.org/PathwayBrowser/#REACT_6932	Complement cascade	TAS	Homo sapiens
+A2NXD2	REACT_163936	http://www.reactome.org/PathwayBrowser/#REACT_163936	Fc epsilon receptor (FCERI) signaling	TAS	Homo sapiens
+A2NXD2	REACT_160158	http://www.reactome.org/PathwayBrowser/#REACT_160158	Role of phospholipids in phagocytosis	TAS	Homo sapiens
+A2NXD2	REACT_163834	http://www.reactome.org/PathwayBrowser/#REACT_163834	FCERI mediated Ca+2 mobilization	TAS	Homo sapiens
+A2NXD2	REACT_11152	http://www.reactome.org/PathwayBrowser/#REACT_11152	Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell	TAS	Homo sapiens
+A2NXD2	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+A2NXD2	REACT_160274	http://www.reactome.org/PathwayBrowser/#REACT_160274	FCGR activation	TAS	Homo sapiens
+A2NXD2	REACT_118700	http://www.reactome.org/PathwayBrowser/#REACT_118700	Antigen activates B Cell Receptor (BCR) leading to generation of second messengers	TAS	Homo sapiens
+A2NXD2	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+A2NXD2	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A2NXD2	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A2RRD8	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A2RRD8	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A2VEC9	REACT_22161	http://www.reactome.org/PathwayBrowser/#REACT_22161	Post-translational protein modification	TAS	Homo sapiens
+A2VEC9	REACT_17015	http://www.reactome.org/PathwayBrowser/#REACT_17015	Metabolism of proteins	TAS	Homo sapiens
+A2VEC9	REACT_264269	http://www.reactome.org/PathwayBrowser/#REACT_264269	O-glycosylation of TSR domain-containing proteins	TAS	Homo sapiens
+A2VEC9	REACT_263902	http://www.reactome.org/PathwayBrowser/#REACT_263902	O-linked glycosylation	TAS	Homo sapiens
+A3KFT3	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A3KFT3	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A3KFT3	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A3KFT3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A4D1E1	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A4D1E1	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A4D2G3	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A4D2G3	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A4D2G3	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A4D2G3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A5D8V6	REACT_6818	http://www.reactome.org/PathwayBrowser/#REACT_6818	Assembly Of The HIV Virion	TAS	Homo sapiens
+A5D8V6	REACT_115860	http://www.reactome.org/PathwayBrowser/#REACT_115860	Synthesis And Processing Of GAG, GAGPOL Polyproteins	TAS	Homo sapiens
+A5D8V6	REACT_6256	http://www.reactome.org/PathwayBrowser/#REACT_6256	HIV Life Cycle	TAS	Homo sapiens
+A5D8V6	REACT_6359	http://www.reactome.org/PathwayBrowser/#REACT_6359	Budding and maturation of HIV virion	TAS	Homo sapiens
+A5D8V6	REACT_6185	http://www.reactome.org/PathwayBrowser/#REACT_6185	HIV Infection	TAS	Homo sapiens
+A5D8V6	REACT_27258	http://www.reactome.org/PathwayBrowser/#REACT_27258	Endosomal Sorting Complex Required For Transport (ESCRT)	TAS	Homo sapiens
+A5D8V6	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+A5D8V6	REACT_115893	http://www.reactome.org/PathwayBrowser/#REACT_115893	Membrane binding and targetting of GAG proteins	TAS	Homo sapiens
+A5D8V6	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A5D8V6	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+A5D8V6	REACT_355497	http://www.reactome.org/PathwayBrowser/#REACT_355497	Infectious disease	TAS	Homo sapiens
+A5D8V6	REACT_6361	http://www.reactome.org/PathwayBrowser/#REACT_6361	Late Phase of HIV Life Cycle	TAS	Homo sapiens
+A5LHX3	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+A5LHX3	REACT_9453	http://www.reactome.org/PathwayBrowser/#REACT_9453	Vif-mediated degradation of APOBEC3G	TAS	Homo sapiens
+A5LHX3	REACT_1614	http://www.reactome.org/PathwayBrowser/#REACT_1614	Ubiquitin Mediated Degradation of Phosphorylated Cdc25A	TAS	Homo sapiens
+A5LHX3	REACT_268323	http://www.reactome.org/PathwayBrowser/#REACT_268323	Hedgehog 'off' state	TAS	Homo sapiens
+A5LHX3	REACT_85	http://www.reactome.org/PathwayBrowser/#REACT_85	p53-Dependent G1/S DNA damage checkpoint	TAS	Homo sapiens
+A5LHX3	REACT_11045	http://www.reactome.org/PathwayBrowser/#REACT_11045	Signaling by Wnt	TAS	Homo sapiens
+A5LHX3	REACT_6871	http://www.reactome.org/PathwayBrowser/#REACT_6871	APC/C:Cdc20 mediated degradation of Securin	TAS	Homo sapiens
+A5LHX3	REACT_25325	http://www.reactome.org/PathwayBrowser/#REACT_25325	AUF1 (hnRNP D0) destabilizes mRNA	TAS	Homo sapiens
+A5LHX3	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+A5LHX3	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A5LHX3	REACT_118638	http://www.reactome.org/PathwayBrowser/#REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	TAS	Homo sapiens
+A5LHX3	REACT_11063	http://www.reactome.org/PathwayBrowser/#REACT_11063	Degradation of beta-catenin by the destruction complex	TAS	Homo sapiens
+A5LHX3	REACT_309	http://www.reactome.org/PathwayBrowser/#REACT_309	Stabilization of p53	TAS	Homo sapiens
+A5LHX3	REACT_207	http://www.reactome.org/PathwayBrowser/#REACT_207	Removal of licensing factors from origins	TAS	Homo sapiens
+A5LHX3	REACT_2148	http://www.reactome.org/PathwayBrowser/#REACT_2148	Switching of origins to a post-replicative state	TAS	Homo sapiens
+A5LHX3	REACT_355405	http://www.reactome.org/PathwayBrowser/#REACT_355405	C-type lectin receptors (CLRs)	TAS	Homo sapiens
+A5LHX3	REACT_355457	http://www.reactome.org/PathwayBrowser/#REACT_355457	Diseases of signal transduction	TAS	Homo sapiens
+A5LHX3	REACT_24994	http://www.reactome.org/PathwayBrowser/#REACT_24994	Regulation of mRNA stability by proteins that bind AU-rich elements	TAS	Homo sapiens
+A5LHX3	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+A5LHX3	REACT_264623	http://www.reactome.org/PathwayBrowser/#REACT_264623	Hh mutants abrogate ligand secretion	TAS	Homo sapiens
+A5LHX3	REACT_13464	http://www.reactome.org/PathwayBrowser/#REACT_13464	Regulation of activated PAK-2p34 by proteasome mediated degradation	TAS	Homo sapiens
+A5LHX3	REACT_734	http://www.reactome.org/PathwayBrowser/#REACT_734	DNA Replication Pre-Initiation	TAS	Homo sapiens
+A5LHX3	REACT_6288	http://www.reactome.org/PathwayBrowser/#REACT_6288	Host Interactions of HIV factors	TAS	Homo sapiens
+A5LHX3	REACT_6781	http://www.reactome.org/PathwayBrowser/#REACT_6781	APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+A5LHX3	REACT_6837	http://www.reactome.org/PathwayBrowser/#REACT_6837	Regulation of APC/C activators between G1/S and early anaphase	TAS	Homo sapiens
+A5LHX3	REACT_899	http://www.reactome.org/PathwayBrowser/#REACT_899	S Phase	TAS	Homo sapiens
+A5LHX3	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A5LHX3	REACT_383	http://www.reactome.org/PathwayBrowser/#REACT_383	DNA Replication	TAS	Homo sapiens
+A5LHX3	REACT_6828	http://www.reactome.org/PathwayBrowser/#REACT_6828	APC/C-mediated degradation of cell cycle proteins	TAS	Homo sapiens
+A5LHX3	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+A5LHX3	REACT_20549	http://www.reactome.org/PathwayBrowser/#REACT_20549	Autodegradation of the E3 ubiquitin ligase COP1	TAS	Homo sapiens
+A5LHX3	REACT_6954	http://www.reactome.org/PathwayBrowser/#REACT_6954	Activation of APC/C and APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+A5LHX3	REACT_267701	http://www.reactome.org/PathwayBrowser/#REACT_267701	APC:Cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint	TAS	Homo sapiens
+A5LHX3	REACT_264199	http://www.reactome.org/PathwayBrowser/#REACT_264199	PCP/CE pathway	TAS	Homo sapiens
+A5LHX3	REACT_150314	http://www.reactome.org/PathwayBrowser/#REACT_150314	Mitotic Metaphase and Anaphase	TAS	Homo sapiens
+A5LHX3	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A5LHX3	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A5LHX3	REACT_13565	http://www.reactome.org/PathwayBrowser/#REACT_13565	Regulation of ornithine decarboxylase (ODC)	TAS	Homo sapiens
+A5LHX3	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+A5LHX3	REACT_264605	http://www.reactome.org/PathwayBrowser/#REACT_264605	Hedgehog ligand biogenesis	TAS	Homo sapiens
+A5LHX3	REACT_6761	http://www.reactome.org/PathwayBrowser/#REACT_6761	APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1	TAS	Homo sapiens
+A5LHX3	REACT_75842	http://www.reactome.org/PathwayBrowser/#REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	TAS	Homo sapiens
+A5LHX3	REACT_150471	http://www.reactome.org/PathwayBrowser/#REACT_150471	Separation of Sister Chromatids	TAS	Homo sapiens
+A5LHX3	REACT_6185	http://www.reactome.org/PathwayBrowser/#REACT_6185	HIV Infection	TAS	Homo sapiens
+A5LHX3	REACT_938	http://www.reactome.org/PathwayBrowser/#REACT_938	Ubiquitin-dependent degradation of Cyclin D	TAS	Homo sapiens
+A5LHX3	REACT_1275	http://www.reactome.org/PathwayBrowser/#REACT_1275	Mitotic Anaphase	TAS	Homo sapiens
+A5LHX3	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+A5LHX3	REACT_910	http://www.reactome.org/PathwayBrowser/#REACT_910	M Phase	TAS	Homo sapiens
+A5LHX3	REACT_13	http://www.reactome.org/PathwayBrowser/#REACT_13	Metabolism of amino acids and derivatives	TAS	Homo sapiens
+A5LHX3	REACT_2243	http://www.reactome.org/PathwayBrowser/#REACT_2243	Assembly of the pre-replicative complex	TAS	Homo sapiens
+A5LHX3	REACT_1625	http://www.reactome.org/PathwayBrowser/#REACT_1625	p53-Dependent G1 DNA Damage Response	TAS	Homo sapiens
+A5LHX3	REACT_268718	http://www.reactome.org/PathwayBrowser/#REACT_268718	Hedgehog 'on' state	TAS	Homo sapiens
+A5LHX3	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+A5LHX3	REACT_188330	http://www.reactome.org/PathwayBrowser/#REACT_188330	Dectin-1 mediated noncanonical NF-kB signaling	TAS	Homo sapiens
+A5LHX3	REACT_2160	http://www.reactome.org/PathwayBrowser/#REACT_2160	p53-Independent DNA Damage Response	TAS	Homo sapiens
+A5LHX3	REACT_75820	http://www.reactome.org/PathwayBrowser/#REACT_75820	Class I MHC mediated antigen processing & presentation	TAS	Homo sapiens
+A5LHX3	REACT_1208	http://www.reactome.org/PathwayBrowser/#REACT_1208	p53-Independent G1/S DNA damage checkpoint	TAS	Homo sapiens
+A5LHX3	REACT_355497	http://www.reactome.org/PathwayBrowser/#REACT_355497	Infectious disease	TAS	Homo sapiens
+A5LHX3	REACT_6850	http://www.reactome.org/PathwayBrowser/#REACT_6850	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	TAS	Homo sapiens
+A5LHX3	REACT_2254	http://www.reactome.org/PathwayBrowser/#REACT_2254	G1/S DNA Damage Checkpoints	TAS	Homo sapiens
+A5LHX3	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A5LHX3	REACT_9031	http://www.reactome.org/PathwayBrowser/#REACT_9031	Vpu mediated degradation of CD4	TAS	Homo sapiens
+A5LHX3	REACT_2014	http://www.reactome.org/PathwayBrowser/#REACT_2014	Synthesis of DNA	TAS	Homo sapiens
+A5LHX3	REACT_188323	http://www.reactome.org/PathwayBrowser/#REACT_188323	CLEC7A (Dectin-1) signaling	TAS	Homo sapiens
+A5LHX3	REACT_1725	http://www.reactome.org/PathwayBrowser/#REACT_1725	M/G1 Transition	TAS	Homo sapiens
+A5LHX3	REACT_829	http://www.reactome.org/PathwayBrowser/#REACT_829	Regulation of DNA replication	TAS	Homo sapiens
+A5LHX3	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+A5LHX3	REACT_263883	http://www.reactome.org/PathwayBrowser/#REACT_263883	Hh mutants that don't undergo autocatalytic processing are degraded by ERAD	TAS	Homo sapiens
+A5LHX3	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+A5LHX3	REACT_264224	http://www.reactome.org/PathwayBrowser/#REACT_264224	beta-catenin independent WNT signaling	TAS	Homo sapiens
+A5LHX3	REACT_4	http://www.reactome.org/PathwayBrowser/#REACT_4	Ubiquitin-dependent degradation of Cyclin D1	TAS	Homo sapiens
+A5LHX3	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+A5LHX3	REACT_264596	http://www.reactome.org/PathwayBrowser/#REACT_264596	TCF dependent signaling in response to WNT	TAS	Homo sapiens
+A5LHX3	REACT_118656	http://www.reactome.org/PathwayBrowser/#REACT_118656	Activation of NF-kappaB in B cells	TAS	Homo sapiens
+A5LHX3	REACT_6821	http://www.reactome.org/PathwayBrowser/#REACT_6821	SCF-beta-TrCP mediated degradation of Emi1	TAS	Homo sapiens
+A5LHX3	REACT_264478	http://www.reactome.org/PathwayBrowser/#REACT_264478	Asymmetric localization of PCP proteins	TAS	Homo sapiens
+A5LHX3	REACT_263873	http://www.reactome.org/PathwayBrowser/#REACT_263873	degradation of AXIN	TAS	Homo sapiens
+A5LHX3	REACT_21279	http://www.reactome.org/PathwayBrowser/#REACT_21279	Regulation of mitotic cell cycle	TAS	Homo sapiens
+A5LHX3	REACT_264508	http://www.reactome.org/PathwayBrowser/#REACT_264508	Signaling by Hedgehog	TAS	Homo sapiens
+A5LHX3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A5LHX3	REACT_111056	http://www.reactome.org/PathwayBrowser/#REACT_111056	Cross-presentation of soluble exogenous antigens (endosomes)	TAS	Homo sapiens
+A5LHX3	REACT_268156	http://www.reactome.org/PathwayBrowser/#REACT_268156	Degradation of GLI1 by the proteasome	TAS	Homo sapiens
+A5LHX3	REACT_264438	http://www.reactome.org/PathwayBrowser/#REACT_264438	degradation of DVL	TAS	Homo sapiens
+A5LHX3	REACT_1538	http://www.reactome.org/PathwayBrowser/#REACT_1538	Cell Cycle Checkpoints	TAS	Homo sapiens
+A5LHX3	REACT_1949	http://www.reactome.org/PathwayBrowser/#REACT_1949	CDT1 association with the CDC6:ORC:origin complex	TAS	Homo sapiens
+A5LHX3	REACT_111119	http://www.reactome.org/PathwayBrowser/#REACT_111119	Antigen processing-Cross presentation	TAS	Homo sapiens
+A5LHX3	REACT_268366	http://www.reactome.org/PathwayBrowser/#REACT_268366	GLI3 is processed to GLI3R by the proteasome	TAS	Homo sapiens
+A5LHX3	REACT_111178	http://www.reactome.org/PathwayBrowser/#REACT_111178	ER-Phagosome pathway	TAS	Homo sapiens
+A5LHX3	REACT_13648	http://www.reactome.org/PathwayBrowser/#REACT_13648	Regulation of Apoptosis	TAS	Homo sapiens
+A5LHX3	REACT_267700	http://www.reactome.org/PathwayBrowser/#REACT_267700	Degradation of GLI2 by the proteasome	TAS	Homo sapiens
+A5PL33	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A5PL33	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A5X5Y0	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+A5X5Y0	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+A5X5Y0	REACT_25387	http://www.reactome.org/PathwayBrowser/#REACT_25387	Ligand-gated ion channel transport	TAS	Homo sapiens
+A5YKK6	REACT_20514	http://www.reactome.org/PathwayBrowser/#REACT_20514	Deadenylation of mRNA	TAS	Homo sapiens
+A5YKK6	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A5YKK6	REACT_20639	http://www.reactome.org/PathwayBrowser/#REACT_20639	Deadenylation-dependent mRNA decay	TAS	Homo sapiens
+A6H8Y1	REACT_1371	http://www.reactome.org/PathwayBrowser/#REACT_1371	RNA Polymerase III Transcription	TAS	Homo sapiens
+A6H8Y1	REACT_281	http://www.reactome.org/PathwayBrowser/#REACT_281	RNA Polymerase III Transcription Initiation	TAS	Homo sapiens
+A6H8Y1	REACT_571	http://www.reactome.org/PathwayBrowser/#REACT_571	RNA Polymerase III Transcription Initiation From Type 3 Promoter	TAS	Homo sapiens
+A6H8Y1	REACT_347	http://www.reactome.org/PathwayBrowser/#REACT_347	RNA Polymerase III Transcription Initiation From Type 1 Promoter	TAS	Homo sapiens
+A6H8Y1	REACT_21352	http://www.reactome.org/PathwayBrowser/#REACT_21352	RNA Polymerase I, RNA Polymerase III, and Mitochondrial Transcription	TAS	Homo sapiens
+A6H8Y1	REACT_22339	http://www.reactome.org/PathwayBrowser/#REACT_22339	RNA Polymerase III Abortive And Retractive Initiation	TAS	Homo sapiens
+A6H8Y1	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6H8Y1	REACT_1036	http://www.reactome.org/PathwayBrowser/#REACT_1036	RNA Polymerase III Transcription Initiation From Type 2 Promoter	TAS	Homo sapiens
+A6NCV1	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NCV1	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NCV1	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NCV1	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6ND48	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6ND48	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6ND48	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6ND48	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NDH6	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NDH6	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NDH6	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NDH6	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NDL8	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NDL8	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NDL8	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NDL8	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NDX5	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NDX5	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6NET4	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NET4	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NET4	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NET4	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NF89	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NF89	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NF89	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NF89	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NFC9	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NFC9	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NFC9	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NFC9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NFH5	REACT_22258	http://www.reactome.org/PathwayBrowser/#REACT_22258	Metabolism of lipids and lipoproteins	TAS	Homo sapiens
+A6NFH5	REACT_494	http://www.reactome.org/PathwayBrowser/#REACT_494	Hormone-sensitive lipase (HSL)-mediated triacylglycerol hydrolysis	TAS	Homo sapiens
+A6NFH5	REACT_602	http://www.reactome.org/PathwayBrowser/#REACT_602	Lipid digestion, mobilization, and transport	TAS	Homo sapiens
+A6NFH5	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A6NGB9	REACT_355474	http://www.reactome.org/PathwayBrowser/#REACT_355474	RHO GTPase Effectors	TAS	Homo sapiens
+A6NGB9	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+A6NGB9	REACT_355372	http://www.reactome.org/PathwayBrowser/#REACT_355372	RHO GTPases Activate WASPs and WAVEs	TAS	Homo sapiens
+A6NGB9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NGB9	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+A6NGB9	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A6NGB9	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+A6NGB9	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A6NGU5	REACT_6959	http://www.reactome.org/PathwayBrowser/#REACT_6959	Phase II conjugation	TAS	Homo sapiens
+A6NGU5	REACT_264461	http://www.reactome.org/PathwayBrowser/#REACT_264461	Aflatoxin activation and detoxification	TAS	Homo sapiens
+A6NGU5	REACT_6960	http://www.reactome.org/PathwayBrowser/#REACT_6960	Glutathione synthesis and recycling	TAS	Homo sapiens
+A6NGU5	REACT_13433	http://www.reactome.org/PathwayBrowser/#REACT_13433	Biological oxidations	TAS	Homo sapiens
+A6NGU5	REACT_6926	http://www.reactome.org/PathwayBrowser/#REACT_6926	Glutathione conjugation	TAS	Homo sapiens
+A6NGU5	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+A6NGY5	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NGY5	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NGY5	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NGY5	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NH00	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NH00	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NH00	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NH00	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NHA9	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NHA9	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NHA9	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NHA9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NHG9	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NHG9	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NHG9	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NHG9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NHJ4	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NHJ4	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6NIH7	REACT_267624	http://www.reactome.org/PathwayBrowser/#REACT_267624	Cargo trafficking to the periciliary membrane	TAS	Homo sapiens
+A6NIH7	REACT_264135	http://www.reactome.org/PathwayBrowser/#REACT_264135	Organelle biogenesis and maintenance	TAS	Homo sapiens
+A6NIH7	REACT_268425	http://www.reactome.org/PathwayBrowser/#REACT_268425	Trafficking of myristoylated proteins to the cilium	TAS	Homo sapiens
+A6NIH7	REACT_268265	http://www.reactome.org/PathwayBrowser/#REACT_268265	Assembly of the primary cilium	TAS	Homo sapiens
+A6NIJ9	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NIJ9	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NIJ9	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NIJ9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NJZ3	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NJZ3	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NJZ3	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NJZ3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NK53	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NK53	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6NK59	REACT_75842	http://www.reactome.org/PathwayBrowser/#REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	TAS	Homo sapiens
+A6NK59	REACT_75820	http://www.reactome.org/PathwayBrowser/#REACT_75820	Class I MHC mediated antigen processing & presentation	TAS	Homo sapiens
+A6NK59	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A6NK59	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+A6NKK0	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NKK0	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NKK0	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NKK0	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NL08	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NL08	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NL08	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NL08	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NL26	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NL26	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NL26	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NL26	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NM03	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NM03	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NM03	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NM03	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NM76	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NM76	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NM76	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NM76	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NMB1	REACT_147694	http://www.reactome.org/PathwayBrowser/#REACT_147694	DAP12 interactions	TAS	Homo sapiens
+A6NMB1	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A6NMB1	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A6NMS3	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NMS3	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NMS3	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NMS3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NMU1	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NMU1	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NMU1	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NMU1	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NMZ5	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NMZ5	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NMZ5	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NMZ5	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NMZ7	REACT_16888	http://www.reactome.org/PathwayBrowser/#REACT_16888	Signaling by PDGF	TAS	Homo sapiens
+A6NMZ7	REACT_18312	http://www.reactome.org/PathwayBrowser/#REACT_18312	NCAM1 interactions	TAS	Homo sapiens
+A6NMZ7	REACT_120729	http://www.reactome.org/PathwayBrowser/#REACT_120729	Collagen formation	TAS	Homo sapiens
+A6NMZ7	REACT_18266	http://www.reactome.org/PathwayBrowser/#REACT_18266	Axon guidance	TAS	Homo sapiens
+A6NMZ7	REACT_150401	http://www.reactome.org/PathwayBrowser/#REACT_150401	Collagen degradation	TAS	Homo sapiens
+A6NMZ7	REACT_111045	http://www.reactome.org/PathwayBrowser/#REACT_111045	Developmental Biology	TAS	Homo sapiens
+A6NMZ7	REACT_118779	http://www.reactome.org/PathwayBrowser/#REACT_118779	Extracellular matrix organization	TAS	Homo sapiens
+A6NMZ7	REACT_118572	http://www.reactome.org/PathwayBrowser/#REACT_118572	Degradation of the extracellular matrix	TAS	Homo sapiens
+A6NMZ7	REACT_150180	http://www.reactome.org/PathwayBrowser/#REACT_150180	Assembly of collagen fibrils and other multimeric structures	TAS	Homo sapiens
+A6NMZ7	REACT_163906	http://www.reactome.org/PathwayBrowser/#REACT_163906	ECM proteoglycans	TAS	Homo sapiens
+A6NMZ7	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NMZ7	REACT_13552	http://www.reactome.org/PathwayBrowser/#REACT_13552	Integrin cell surface interactions	TAS	Homo sapiens
+A6NMZ7	REACT_121139	http://www.reactome.org/PathwayBrowser/#REACT_121139	Collagen biosynthesis and modifying enzymes	TAS	Homo sapiens
+A6NMZ7	REACT_18334	http://www.reactome.org/PathwayBrowser/#REACT_18334	NCAM signaling for neurite out-growth	TAS	Homo sapiens
+A6NN14	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NN14	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6NND4	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A6NND4	REACT_15488	http://www.reactome.org/PathwayBrowser/#REACT_15488	Olfactory Signaling Pathway	TAS	Homo sapiens
+A6NND4	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A6NND4	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A6NNF4	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NNF4	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A6NP11	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A6NP11	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A7E2Y1	REACT_147867	http://www.reactome.org/PathwayBrowser/#REACT_147867	Translocation of GLUT4 to the plasma membrane	TAS	Homo sapiens
+A7E2Y1	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+A7E2Y1	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+A7KAX9	REACT_11051	http://www.reactome.org/PathwayBrowser/#REACT_11051	Rho GTPase cycle	TAS	Homo sapiens
+A7KAX9	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+A7KAX9	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A7MBM2	REACT_264256	http://www.reactome.org/PathwayBrowser/#REACT_264256	Release of Hh-Np from the secreting cell	TAS	Homo sapiens
+A7MBM2	REACT_264605	http://www.reactome.org/PathwayBrowser/#REACT_264605	Hedgehog ligand biogenesis	TAS	Homo sapiens
+A7MBM2	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A7MBM2	REACT_264508	http://www.reactome.org/PathwayBrowser/#REACT_264508	Signaling by Hedgehog	TAS	Homo sapiens
+A8K0R7	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8K0R7	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8K4G0	REACT_147694	http://www.reactome.org/PathwayBrowser/#REACT_147694	DAP12 interactions	TAS	Homo sapiens
+A8K4G0	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A8K4G0	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+A8K7I4	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+A8K7I4	REACT_160189	http://www.reactome.org/PathwayBrowser/#REACT_160189	Stimuli-sensing channels	TAS	Homo sapiens
+A8K7I4	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+A8K855	REACT_268718	http://www.reactome.org/PathwayBrowser/#REACT_268718	Hedgehog 'on' state	TAS	Homo sapiens
+A8K855	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A8K855	REACT_264508	http://www.reactome.org/PathwayBrowser/#REACT_264508	Signaling by Hedgehog	TAS	Homo sapiens
+A8K855	REACT_267753	http://www.reactome.org/PathwayBrowser/#REACT_267753	Activation of SMO	TAS	Homo sapiens
+A8K8P3	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+A8K8P3	REACT_264135	http://www.reactome.org/PathwayBrowser/#REACT_264135	Organelle biogenesis and maintenance	TAS	Homo sapiens
+A8K8P3	REACT_15451	http://www.reactome.org/PathwayBrowser/#REACT_15451	Loss of proteins required for interphase microtubule organization from the centrosome	TAS	Homo sapiens
+A8K8P3	REACT_15364	http://www.reactome.org/PathwayBrowser/#REACT_15364	Loss of Nlp from mitotic centrosomes	TAS	Homo sapiens
+A8K8P3	REACT_2203	http://www.reactome.org/PathwayBrowser/#REACT_2203	G2/M Transition	TAS	Homo sapiens
+A8K8P3	REACT_268265	http://www.reactome.org/PathwayBrowser/#REACT_268265	Assembly of the primary cilium	TAS	Homo sapiens
+A8K8P3	REACT_15479	http://www.reactome.org/PathwayBrowser/#REACT_15479	Centrosome maturation	TAS	Homo sapiens
+A8K8P3	REACT_160315	http://www.reactome.org/PathwayBrowser/#REACT_160315	Regulation of PLK1 Activity at G2/M Transition	TAS	Homo sapiens
+A8K8P3	REACT_21391	http://www.reactome.org/PathwayBrowser/#REACT_21391	Mitotic G2-G2/M phases	TAS	Homo sapiens
+A8K8P3	REACT_267965	http://www.reactome.org/PathwayBrowser/#REACT_267965	Anchoring of the basal body to the plasma membrane	TAS	Homo sapiens
+A8K8P3	REACT_15296	http://www.reactome.org/PathwayBrowser/#REACT_15296	Recruitment of mitotic centrosome proteins and complexes	TAS	Homo sapiens
+A8K8P3	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+A8K8V0	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8K8V0	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MPY1	REACT_25199	http://www.reactome.org/PathwayBrowser/#REACT_25199	GABA receptor activation	TAS	Homo sapiens
+A8MPY1	REACT_25168	http://www.reactome.org/PathwayBrowser/#REACT_25168	GABA A (rho) receptor activation	TAS	Homo sapiens
+A8MPY1	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+A8MPY1	REACT_13685	http://www.reactome.org/PathwayBrowser/#REACT_13685	Neuronal System	TAS	Homo sapiens
+A8MPY1	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+A8MPY1	REACT_15370	http://www.reactome.org/PathwayBrowser/#REACT_15370	Neurotransmitter Receptor Binding And Downstream Transmission In The  Postsynaptic Cell	TAS	Homo sapiens
+A8MPY1	REACT_25387	http://www.reactome.org/PathwayBrowser/#REACT_25387	Ligand-gated ion channel transport	TAS	Homo sapiens
+A8MPY1	REACT_13477	http://www.reactome.org/PathwayBrowser/#REACT_13477	Transmission across Chemical Synapses	TAS	Homo sapiens
+A8MQ27	REACT_355457	http://www.reactome.org/PathwayBrowser/#REACT_355457	Diseases of signal transduction	TAS	Homo sapiens
+A8MQ27	REACT_160133	http://www.reactome.org/PathwayBrowser/#REACT_160133	Signaling by NOTCH1 HD Domain Mutants in Cancer	TAS	Homo sapiens
+A8MQ27	REACT_160089	http://www.reactome.org/PathwayBrowser/#REACT_160089	Constitutive Signaling by NOTCH1 HD Domain Mutants	TAS	Homo sapiens
+A8MQ27	REACT_160248	http://www.reactome.org/PathwayBrowser/#REACT_160248	Signaling by NOTCH1 HD+PEST Domain Mutants in Cancer	TAS	Homo sapiens
+A8MQ27	REACT_299	http://www.reactome.org/PathwayBrowser/#REACT_299	Signaling by NOTCH	TAS	Homo sapiens
+A8MQ27	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+A8MQ27	REACT_160205	http://www.reactome.org/PathwayBrowser/#REACT_160205	NOTCH2 Activation and Transmission of Signal to the Nucleus	TAS	Homo sapiens
+A8MQ27	REACT_118614	http://www.reactome.org/PathwayBrowser/#REACT_118614	Activated NOTCH1 Transmits Signal to the Nucleus	TAS	Homo sapiens
+A8MQ27	REACT_118721	http://www.reactome.org/PathwayBrowser/#REACT_118721	Signaling by NOTCH2	TAS	Homo sapiens
+A8MQ27	REACT_118859	http://www.reactome.org/PathwayBrowser/#REACT_118859	Signaling by NOTCH1	TAS	Homo sapiens
+A8MQ27	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A8MQ27	REACT_160301	http://www.reactome.org/PathwayBrowser/#REACT_160301	Signaling by NOTCH1 PEST Domain Mutants in Cancer	TAS	Homo sapiens
+A8MQ27	REACT_160214	http://www.reactome.org/PathwayBrowser/#REACT_160214	Signaling by NOTCH1 in Cancer	TAS	Homo sapiens
+A8MQ27	REACT_160254	http://www.reactome.org/PathwayBrowser/#REACT_160254	Constitutive Signaling by NOTCH1 HD+PEST Domain Mutants	TAS	Homo sapiens
+A8MQ27	REACT_160243	http://www.reactome.org/PathwayBrowser/#REACT_160243	Constitutive Signaling by NOTCH1 PEST Domain Mutants	TAS	Homo sapiens
+A8MT69	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+A8MT69	REACT_22172	http://www.reactome.org/PathwayBrowser/#REACT_22172	Chromosome Maintenance	TAS	Homo sapiens
+A8MT69	REACT_22344	http://www.reactome.org/PathwayBrowser/#REACT_22344	Nucleosome assembly	TAS	Homo sapiens
+A8MT69	REACT_22186	http://www.reactome.org/PathwayBrowser/#REACT_22186	Deposition of new CENPA-containing nucleosomes at the centromere	TAS	Homo sapiens
+A8MTJ3	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+A8MTJ3	REACT_19327	http://www.reactome.org/PathwayBrowser/#REACT_19327	G alpha (s) signalling events	TAS	Homo sapiens
+A8MTJ3	REACT_25330	http://www.reactome.org/PathwayBrowser/#REACT_25330	Activation of GABAB receptors	TAS	Homo sapiens
+A8MTJ3	REACT_604	http://www.reactome.org/PathwayBrowser/#REACT_604	Hemostasis	TAS	Homo sapiens
+A8MTJ3	REACT_20524	http://www.reactome.org/PathwayBrowser/#REACT_20524	Signal amplification	TAS	Homo sapiens
+A8MTJ3	REACT_160078	http://www.reactome.org/PathwayBrowser/#REACT_160078	Peptide hormone metabolism	TAS	Homo sapiens
+A8MTJ3	REACT_19333	http://www.reactome.org/PathwayBrowser/#REACT_19333	G alpha (z) signalling events	TAS	Homo sapiens
+A8MTJ3	REACT_13685	http://www.reactome.org/PathwayBrowser/#REACT_13685	Neuronal System	TAS	Homo sapiens
+A8MTJ3	REACT_19231	http://www.reactome.org/PathwayBrowser/#REACT_19231	G alpha (i) signalling events	TAS	Homo sapiens
+A8MTJ3	REACT_15370	http://www.reactome.org/PathwayBrowser/#REACT_15370	Neurotransmitter Receptor Binding And Downstream Transmission In The  Postsynaptic Cell	TAS	Homo sapiens
+A8MTJ3	REACT_20653	http://www.reactome.org/PathwayBrowser/#REACT_20653	ADP signalling through P2Y purinoceptor 12	TAS	Homo sapiens
+A8MTJ3	REACT_23974	http://www.reactome.org/PathwayBrowser/#REACT_23974	Incretin synthesis, secretion, and inactivation	TAS	Homo sapiens
+A8MTJ3	REACT_25031	http://www.reactome.org/PathwayBrowser/#REACT_25031	GABA B receptor activation	TAS	Homo sapiens
+A8MTJ3	REACT_15333	http://www.reactome.org/PathwayBrowser/#REACT_15333	Adenylate cyclase inhibitory pathway	TAS	Homo sapiens
+A8MTJ3	REACT_25199	http://www.reactome.org/PathwayBrowser/#REACT_25199	GABA receptor activation	TAS	Homo sapiens
+A8MTJ3	REACT_15426	http://www.reactome.org/PathwayBrowser/#REACT_15426	PLC beta mediated events	TAS	Homo sapiens
+A8MTJ3	REACT_15295	http://www.reactome.org/PathwayBrowser/#REACT_15295	Opioid Signalling	TAS	Homo sapiens
+A8MTJ3	REACT_17015	http://www.reactome.org/PathwayBrowser/#REACT_17015	Metabolism of proteins	TAS	Homo sapiens
+A8MTJ3	REACT_15526	http://www.reactome.org/PathwayBrowser/#REACT_15526	G-protein mediated events	TAS	Homo sapiens
+A8MTJ3	REACT_25282	http://www.reactome.org/PathwayBrowser/#REACT_25282	Inhibition of adenylate cyclase pathway	TAS	Homo sapiens
+A8MTJ3	REACT_15333	http://www.reactome.org/PathwayBrowser/#REACT_15333	Adenylate cyclase inhibitory pathway	TAS	Homo sapiens
+A8MTJ3	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+A8MTJ3	REACT_15457	http://www.reactome.org/PathwayBrowser/#REACT_15457	G-protein activation	TAS	Homo sapiens
+A8MTJ3	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A8MTJ3	REACT_798	http://www.reactome.org/PathwayBrowser/#REACT_798	Platelet activation, signaling and aggregation	TAS	Homo sapiens
+A8MTJ3	REACT_24019	http://www.reactome.org/PathwayBrowser/#REACT_24019	Synthesis, secretion, and inactivation of Glucagon-like Peptide-1 (GLP-1)	TAS	Homo sapiens
+A8MTJ3	REACT_13477	http://www.reactome.org/PathwayBrowser/#REACT_13477	Transmission across Chemical Synapses	TAS	Homo sapiens
+A8MTY0	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MTY0	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MTZ0	REACT_267624	http://www.reactome.org/PathwayBrowser/#REACT_267624	Cargo trafficking to the periciliary membrane	TAS	Homo sapiens
+A8MTZ0	REACT_264135	http://www.reactome.org/PathwayBrowser/#REACT_264135	Organelle biogenesis and maintenance	TAS	Homo sapiens
+A8MTZ0	REACT_268265	http://www.reactome.org/PathwayBrowser/#REACT_268265	Assembly of the primary cilium	TAS	Homo sapiens
+A8MTZ0	REACT_267948	http://www.reactome.org/PathwayBrowser/#REACT_267948	BBSome-mediated cargo-targeting to cilium	TAS	Homo sapiens
+A8MUV8	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MUV8	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MUZ8	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MUZ8	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MVS1	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MVS1	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MWA4	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MWA4	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MXY4	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+A8MXY4	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+A8MYU2	REACT_163848	http://www.reactome.org/PathwayBrowser/#REACT_163848	Reproduction	TAS	Homo sapiens
+A8MYU2	REACT_163875	http://www.reactome.org/PathwayBrowser/#REACT_163875	Sperm Motility And Taxes	TAS	Homo sapiens
+A8MYU2	REACT_163914	http://www.reactome.org/PathwayBrowser/#REACT_163914	Fertilization	TAS	Homo sapiens
+A8TX70	REACT_16888	http://www.reactome.org/PathwayBrowser/#REACT_16888	Signaling by PDGF	TAS	Homo sapiens
+A8TX70	REACT_18312	http://www.reactome.org/PathwayBrowser/#REACT_18312	NCAM1 interactions	TAS	Homo sapiens
+A8TX70	REACT_120729	http://www.reactome.org/PathwayBrowser/#REACT_120729	Collagen formation	TAS	Homo sapiens
+A8TX70	REACT_18266	http://www.reactome.org/PathwayBrowser/#REACT_18266	Axon guidance	TAS	Homo sapiens
+A8TX70	REACT_150401	http://www.reactome.org/PathwayBrowser/#REACT_150401	Collagen degradation	TAS	Homo sapiens
+A8TX70	REACT_111045	http://www.reactome.org/PathwayBrowser/#REACT_111045	Developmental Biology	TAS	Homo sapiens
+A8TX70	REACT_118779	http://www.reactome.org/PathwayBrowser/#REACT_118779	Extracellular matrix organization	TAS	Homo sapiens
+A8TX70	REACT_118572	http://www.reactome.org/PathwayBrowser/#REACT_118572	Degradation of the extracellular matrix	TAS	Homo sapiens
+A8TX70	REACT_150180	http://www.reactome.org/PathwayBrowser/#REACT_150180	Assembly of collagen fibrils and other multimeric structures	TAS	Homo sapiens
+A8TX70	REACT_163906	http://www.reactome.org/PathwayBrowser/#REACT_163906	ECM proteoglycans	TAS	Homo sapiens
+A8TX70	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+A8TX70	REACT_13552	http://www.reactome.org/PathwayBrowser/#REACT_13552	Integrin cell surface interactions	TAS	Homo sapiens
+A8TX70	REACT_121139	http://www.reactome.org/PathwayBrowser/#REACT_121139	Collagen biosynthesis and modifying enzymes	TAS	Homo sapiens
+A8TX70	REACT_18334	http://www.reactome.org/PathwayBrowser/#REACT_18334	NCAM signaling for neurite out-growth	TAS	Homo sapiens
+A9QM74	REACT_115831	http://www.reactome.org/PathwayBrowser/#REACT_115831	ISG15 antiviral mechanism	TAS	Homo sapiens
+A9QM74	REACT_25229	http://www.reactome.org/PathwayBrowser/#REACT_25229	Interferon Signaling	TAS	Homo sapiens
+A9QM74	REACT_75790	http://www.reactome.org/PathwayBrowser/#REACT_75790	Cytokine Signaling in Immune system	TAS	Homo sapiens
+A9QM74	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+A9QM74	REACT_115676	http://www.reactome.org/PathwayBrowser/#REACT_115676	Antiviral mechanism by IFN-stimulated genes	TAS	Homo sapiens
+B0YJ81	REACT_1319	http://www.reactome.org/PathwayBrowser/#REACT_1319	Fatty Acyl-CoA Biosynthesis	TAS	Homo sapiens
+B0YJ81	REACT_22279	http://www.reactome.org/PathwayBrowser/#REACT_22279	Fatty acid, triacylglycerol, and ketone body metabolism	TAS	Homo sapiens
+B0YJ81	REACT_22258	http://www.reactome.org/PathwayBrowser/#REACT_22258	Metabolism of lipids and lipoproteins	TAS	Homo sapiens
+B0YJ81	REACT_1190	http://www.reactome.org/PathwayBrowser/#REACT_1190	Triglyceride Biosynthesis	TAS	Homo sapiens
+B0YJ81	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+B0YJ81	REACT_380	http://www.reactome.org/PathwayBrowser/#REACT_380	Synthesis of very long-chain fatty acyl-CoAs	TAS	Homo sapiens
+B2KKJ6	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+B2RTY4	REACT_11051	http://www.reactome.org/PathwayBrowser/#REACT_11051	Rho GTPase cycle	TAS	Homo sapiens
+B2RTY4	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+B2RTY4	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+B4DX44	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+B4DX44	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+B4DXR9	REACT_12627	http://www.reactome.org/PathwayBrowser/#REACT_12627	Generic Transcription Pathway	TAS	Homo sapiens
+B4DXR9	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+B4YYD8	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+B4YYD9	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+B9FN26	REACT_305435	http://www.reactome.org/PathwayBrowser/#REACT_305435	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Oryza sativa
+C3VQ55	REACT_329406	http://www.reactome.org/PathwayBrowser/#REACT_329406	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Gallus gallus
+D2XQ50	REACT_329406	http://www.reactome.org/PathwayBrowser/#REACT_329406	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Gallus gallus
+D3ZEM9	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+D3ZEW7	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+D9J2L2	REACT_331408	http://www.reactome.org/PathwayBrowser/#REACT_331408	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Bos taurus
+E1BKI3	REACT_331408	http://www.reactome.org/PathwayBrowser/#REACT_331408	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Bos taurus
+E1C799	REACT_329406	http://www.reactome.org/PathwayBrowser/#REACT_329406	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Gallus gallus
+E2G789	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+E2G790	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+E2RHA7	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1LQC7	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+F1LQL1	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+F1LSH9	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+F1LSN8	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+F1MJ63	REACT_331408	http://www.reactome.org/PathwayBrowser/#REACT_331408	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Bos taurus
+F1MY54	REACT_331408	http://www.reactome.org/PathwayBrowser/#REACT_331408	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Bos taurus
+F1MYR5	REACT_331408	http://www.reactome.org/PathwayBrowser/#REACT_331408	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Bos taurus
+F1NWX3	REACT_329406	http://www.reactome.org/PathwayBrowser/#REACT_329406	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Gallus gallus
+F1P8S9	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1P9P2	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1PUQ2	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1PV05	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1PV06	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+F1QML0	REACT_348295	http://www.reactome.org/PathwayBrowser/#REACT_348295	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Danio rerio
+F1QVQ6	REACT_348295	http://www.reactome.org/PathwayBrowser/#REACT_348295	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Danio rerio
+F1QVR0	REACT_348295	http://www.reactome.org/PathwayBrowser/#REACT_348295	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Danio rerio
+F1RJ31	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+F1RKF2	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+F1SSJ3	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+F6VMJ0	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+F6W1L2	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+F7BDV9	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+F7E7W6	REACT_337892	http://www.reactome.org/PathwayBrowser/#REACT_337892	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Xenopus tropicalis
+G4VXM3	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+H0Z4L7	REACT_340174	http://www.reactome.org/PathwayBrowser/#REACT_340174	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Taeniopygia guttata
+H0ZEC8	REACT_340174	http://www.reactome.org/PathwayBrowser/#REACT_340174	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Taeniopygia guttata
+H0ZJG3	REACT_340174	http://www.reactome.org/PathwayBrowser/#REACT_340174	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Taeniopygia guttata
+I3L8L4	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+I3L8V7	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+I3LMP9	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+I3LPW7	REACT_350494	http://www.reactome.org/PathwayBrowser/#REACT_350494	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Sus scrofa
+J9NSD7	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+J9NVC2	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+J9P395	REACT_306257	http://www.reactome.org/PathwayBrowser/#REACT_306257	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Canis familiaris
+M0R8I7	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+M0RDG2	REACT_310201	http://www.reactome.org/PathwayBrowser/#REACT_310201	Latent infection of Homo sapiens with Mycobacterium tuberculosis	IEA	Rattus norvegicus
+O00115	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00115	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00115	REACT_11235	http://www.reactome.org/PathwayBrowser/#REACT_11235	trans-Golgi Network Vesicle Budding	TAS	Homo sapiens
+O00115	REACT_19187	http://www.reactome.org/PathwayBrowser/#REACT_19187	Clathrin derived vesicle budding	TAS	Homo sapiens
+O00115	REACT_19287	http://www.reactome.org/PathwayBrowser/#REACT_19287	Lysosome Vesicle Biogenesis	TAS	Homo sapiens
+O00116	REACT_1407	http://www.reactome.org/PathwayBrowser/#REACT_1407	Plasmalogen biosynthesis	TAS	Homo sapiens
+O00116	REACT_22258	http://www.reactome.org/PathwayBrowser/#REACT_22258	Metabolism of lipids and lipoproteins	TAS	Homo sapiens
+O00116	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00116	REACT_16957	http://www.reactome.org/PathwayBrowser/#REACT_16957	Peroxisomal lipid metabolism	TAS	Homo sapiens
+O00139	REACT_682	http://www.reactome.org/PathwayBrowser/#REACT_682	Mitotic Prometaphase	TAS	Homo sapiens
+O00139	REACT_150471	http://www.reactome.org/PathwayBrowser/#REACT_150471	Separation of Sister Chromatids	TAS	Homo sapiens
+O00139	REACT_355474	http://www.reactome.org/PathwayBrowser/#REACT_355474	RHO GTPase Effectors	TAS	Homo sapiens
+O00139	REACT_604	http://www.reactome.org/PathwayBrowser/#REACT_604	Hemostasis	TAS	Homo sapiens
+O00139	REACT_25201	http://www.reactome.org/PathwayBrowser/#REACT_25201	Kinesins	TAS	Homo sapiens
+O00139	REACT_1275	http://www.reactome.org/PathwayBrowser/#REACT_1275	Mitotic Anaphase	TAS	Homo sapiens
+O00139	REACT_24970	http://www.reactome.org/PathwayBrowser/#REACT_24970	Factors involved in megakaryocyte development and platelet production	TAS	Homo sapiens
+O00139	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00139	REACT_910	http://www.reactome.org/PathwayBrowser/#REACT_910	M Phase	TAS	Homo sapiens
+O00139	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+O00139	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+O00139	REACT_150425	http://www.reactome.org/PathwayBrowser/#REACT_150425	Resolution of Sister Chromatid Cohesion	TAS	Homo sapiens
+O00139	REACT_355252	http://www.reactome.org/PathwayBrowser/#REACT_355252	RHO GTPases Activate Formins	TAS	Homo sapiens
+O00139	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+O00139	REACT_121399	http://www.reactome.org/PathwayBrowser/#REACT_121399	MHC class II antigen presentation	TAS	Homo sapiens
+O00139	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00139	REACT_150314	http://www.reactome.org/PathwayBrowser/#REACT_150314	Mitotic Metaphase and Anaphase	TAS	Homo sapiens
+O00139	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+O00141	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+O00141	REACT_160189	http://www.reactome.org/PathwayBrowser/#REACT_160189	Stimuli-sensing channels	TAS	Homo sapiens
+O00141	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+O00142	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+O00142	REACT_471	http://www.reactome.org/PathwayBrowser/#REACT_471	E2F mediated regulation of DNA replication	TAS	Homo sapiens
+O00142	REACT_655	http://www.reactome.org/PathwayBrowser/#REACT_655	Pyrimidine salvage reactions	TAS	Homo sapiens
+O00142	REACT_1783	http://www.reactome.org/PathwayBrowser/#REACT_1783	G1/S Transition	TAS	Homo sapiens
+O00142	REACT_683	http://www.reactome.org/PathwayBrowser/#REACT_683	G1/S-Specific Transcription	TAS	Homo sapiens
+O00142	REACT_957	http://www.reactome.org/PathwayBrowser/#REACT_957	Pyrimidine metabolism	TAS	Homo sapiens
+O00142	REACT_1698	http://www.reactome.org/PathwayBrowser/#REACT_1698	Metabolism of nucleotides	TAS	Homo sapiens
+O00142	REACT_21267	http://www.reactome.org/PathwayBrowser/#REACT_21267	Mitotic G1-G1/S phases	TAS	Homo sapiens
+O00142	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+O00142	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00144	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+O00144	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00144	REACT_21340	http://www.reactome.org/PathwayBrowser/#REACT_21340	GPCR ligand binding	TAS	Homo sapiens
+O00144	REACT_18372	http://www.reactome.org/PathwayBrowser/#REACT_18372	Class B/2 (Secretin family receptors)	TAS	Homo sapiens
+O00159	REACT_147867	http://www.reactome.org/PathwayBrowser/#REACT_147867	Translocation of GLUT4 to the plasma membrane	TAS	Homo sapiens
+O00159	REACT_160123	http://www.reactome.org/PathwayBrowser/#REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	TAS	Homo sapiens
+O00159	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00159	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00159	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00159	REACT_160086	http://www.reactome.org/PathwayBrowser/#REACT_160086	Regulation of actin dynamics for phagocytic cup formation	TAS	Homo sapiens
+O00159	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00161	REACT_147867	http://www.reactome.org/PathwayBrowser/#REACT_147867	Translocation of GLUT4 to the plasma membrane	TAS	Homo sapiens
+O00161	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00161	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00161	REACT_11235	http://www.reactome.org/PathwayBrowser/#REACT_11235	trans-Golgi Network Vesicle Budding	TAS	Homo sapiens
+O00161	REACT_19187	http://www.reactome.org/PathwayBrowser/#REACT_19187	Clathrin derived vesicle budding	TAS	Homo sapiens
+O00168	REACT_25149	http://www.reactome.org/PathwayBrowser/#REACT_25149	Ion transport by P-type ATPases	TAS	Homo sapiens
+O00168	REACT_25300	http://www.reactome.org/PathwayBrowser/#REACT_25300	Ion channel transport	TAS	Homo sapiens
+O00168	REACT_15518	http://www.reactome.org/PathwayBrowser/#REACT_15518	Transmembrane transport of small molecules	TAS	Homo sapiens
+O00180	REACT_75897	http://www.reactome.org/PathwayBrowser/#REACT_75897	Tandem pore domain potassium channels	TAS	Homo sapiens
+O00180	REACT_75779	http://www.reactome.org/PathwayBrowser/#REACT_75779	Tandem of pore domain in a weak inwardly rectifying K+ channels (TWIK)	TAS	Homo sapiens
+O00180	REACT_13685	http://www.reactome.org/PathwayBrowser/#REACT_13685	Neuronal System	TAS	Homo sapiens
+O00180	REACT_75908	http://www.reactome.org/PathwayBrowser/#REACT_75908	Potassium Channels	TAS	Homo sapiens
+O00182	REACT_22232	http://www.reactome.org/PathwayBrowser/#REACT_22232	Signaling by Interleukins	TAS	Homo sapiens
+O00182	REACT_75790	http://www.reactome.org/PathwayBrowser/#REACT_75790	Cytokine Signaling in Immune system	TAS	Homo sapiens
+O00182	REACT_27283	http://www.reactome.org/PathwayBrowser/#REACT_27283	Interleukin-2 signaling	TAS	Homo sapiens
+O00182	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00186	REACT_604	http://www.reactome.org/PathwayBrowser/#REACT_604	Hemostasis	TAS	Homo sapiens
+O00186	REACT_1280	http://www.reactome.org/PathwayBrowser/#REACT_1280	Response to elevated platelet cytosolic Ca2+	TAS	Homo sapiens
+O00186	REACT_147867	http://www.reactome.org/PathwayBrowser/#REACT_147867	Translocation of GLUT4 to the plasma membrane	TAS	Homo sapiens
+O00186	REACT_1178	http://www.reactome.org/PathwayBrowser/#REACT_1178	Disinhibition of SNARE formation	TAS	Homo sapiens
+O00186	REACT_798	http://www.reactome.org/PathwayBrowser/#REACT_798	Platelet activation, signaling and aggregation	TAS	Homo sapiens
+O00186	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00186	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00187-1	REACT_8012	http://www.reactome.org/PathwayBrowser/#REACT_8012	Creation of C4 and C2 activators	TAS	Homo sapiens
+O00187-1	REACT_6932	http://www.reactome.org/PathwayBrowser/#REACT_6932	Complement cascade	TAS	Homo sapiens
+O00187-1	REACT_163810	http://www.reactome.org/PathwayBrowser/#REACT_163810	Ficolins bind to repetitive carbohydrate structures on the target cell surface	TAS	Homo sapiens
+O00187-1	REACT_8024	http://www.reactome.org/PathwayBrowser/#REACT_8024	Initial triggering of complement	TAS	Homo sapiens
+O00187-1	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00187-1	REACT_7964	http://www.reactome.org/PathwayBrowser/#REACT_7964	Lectin pathway of complement activation	TAS	Homo sapiens
+O00187-1	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00189	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00189	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00189	REACT_11235	http://www.reactome.org/PathwayBrowser/#REACT_11235	trans-Golgi Network Vesicle Budding	TAS	Homo sapiens
+O00189	REACT_19187	http://www.reactome.org/PathwayBrowser/#REACT_19187	Clathrin derived vesicle budding	TAS	Homo sapiens
+O00189	REACT_19287	http://www.reactome.org/PathwayBrowser/#REACT_19287	Lysosome Vesicle Biogenesis	TAS	Homo sapiens
+O00203	REACT_19400	http://www.reactome.org/PathwayBrowser/#REACT_19400	Golgi Associated Vesicle Biogenesis	TAS	Homo sapiens
+O00203	REACT_355604	http://www.reactome.org/PathwayBrowser/#REACT_355604	Vesicle-mediated transport	TAS	Homo sapiens
+O00203	REACT_11123	http://www.reactome.org/PathwayBrowser/#REACT_11123	Membrane Trafficking	TAS	Homo sapiens
+O00203	REACT_11235	http://www.reactome.org/PathwayBrowser/#REACT_11235	trans-Golgi Network Vesicle Budding	TAS	Homo sapiens
+O00203	REACT_19187	http://www.reactome.org/PathwayBrowser/#REACT_19187	Clathrin derived vesicle budding	TAS	Homo sapiens
+O00204-1	REACT_6959	http://www.reactome.org/PathwayBrowser/#REACT_6959	Phase II conjugation	TAS	Homo sapiens
+O00204-1	REACT_6913	http://www.reactome.org/PathwayBrowser/#REACT_6913	Cytosolic sulfonation of small molecules	TAS	Homo sapiens
+O00204-1	REACT_13433	http://www.reactome.org/PathwayBrowser/#REACT_13433	Biological oxidations	TAS	Homo sapiens
+O00204-1	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00204-2	REACT_6959	http://www.reactome.org/PathwayBrowser/#REACT_6959	Phase II conjugation	TAS	Homo sapiens
+O00204-2	REACT_6913	http://www.reactome.org/PathwayBrowser/#REACT_6913	Cytosolic sulfonation of small molecules	TAS	Homo sapiens
+O00204-2	REACT_13433	http://www.reactome.org/PathwayBrowser/#REACT_13433	Biological oxidations	TAS	Homo sapiens
+O00204-2	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00206	REACT_355336	http://www.reactome.org/PathwayBrowser/#REACT_355336	Caspase activation via extrinsic apoptotic signalig pathway	TAS	Homo sapiens
+O00206	REACT_25351	http://www.reactome.org/PathwayBrowser/#REACT_25351	TRAF6 mediated induction of TAK1 complex	TAS	Homo sapiens
+O00206	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+O00206	REACT_25374	http://www.reactome.org/PathwayBrowser/#REACT_25374	IKK complex recruitment mediated by RIP1	TAS	Homo sapiens
+O00206	REACT_1503	http://www.reactome.org/PathwayBrowser/#REACT_1503	Ligand-dependent caspase activation	TAS	Homo sapiens
+O00206	REACT_25281	http://www.reactome.org/PathwayBrowser/#REACT_25281	TRIF-mediated TLR3/TLR4 signaling 	TAS	Homo sapiens
+O00206	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+O00206	REACT_6809	http://www.reactome.org/PathwayBrowser/#REACT_6809	MyD88-independent TLR3/TLR4 cascade 	TAS	Homo sapiens
+O00206	REACT_8006	http://www.reactome.org/PathwayBrowser/#REACT_8006	Toll Like Receptor TLR6:TLR2 Cascade	TAS	Homo sapiens
+O00206	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00206	REACT_355047	http://www.reactome.org/PathwayBrowser/#REACT_355047	Diseases of Immune System	TAS	Homo sapiens
+O00206	REACT_25148	http://www.reactome.org/PathwayBrowser/#REACT_25148	Activation of IRF3/IRF7 mediated by TBK1/IKK epsilon	TAS	Homo sapiens
+O00206	REACT_7980	http://www.reactome.org/PathwayBrowser/#REACT_7980	Toll Like Receptor 2 (TLR2) Cascade	TAS	Homo sapiens
+O00206	REACT_8005	http://www.reactome.org/PathwayBrowser/#REACT_8005	Toll Like Receptor TLR1:TLR2 Cascade	TAS	Homo sapiens
+O00206	REACT_6890	http://www.reactome.org/PathwayBrowser/#REACT_6890	Activated TLR4 signalling	TAS	Homo sapiens
+O00206	REACT_6966	http://www.reactome.org/PathwayBrowser/#REACT_6966	Toll-Like Receptors Cascades	TAS	Homo sapiens
+O00206	REACT_355462	http://www.reactome.org/PathwayBrowser/#REACT_355462	IRAK4 deficiency (TLR2/4)	TAS	Homo sapiens
+O00206	REACT_355585	http://www.reactome.org/PathwayBrowser/#REACT_355585	Diseases associated with the TLR signaling cascade	TAS	Homo sapiens
+O00206	REACT_6894	http://www.reactome.org/PathwayBrowser/#REACT_6894	Toll Like Receptor 4 (TLR4) Cascade	TAS	Homo sapiens
+O00206	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+O00206	REACT_6788	http://www.reactome.org/PathwayBrowser/#REACT_6788	MyD88:Mal cascade initiated on plasma membrane	TAS	Homo sapiens
+O00206	REACT_150361	http://www.reactome.org/PathwayBrowser/#REACT_150361	TRIF-mediated programmed cell death	TAS	Homo sapiens
+O00206	REACT_355210	http://www.reactome.org/PathwayBrowser/#REACT_355210	MyD88 deficiency (TLR2/4)	TAS	Homo sapiens
+O00206	REACT_6783	http://www.reactome.org/PathwayBrowser/#REACT_6783	Toll Like Receptor 3 (TLR3) Cascade	TAS	Homo sapiens
+O00206	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00212	REACT_11051	http://www.reactome.org/PathwayBrowser/#REACT_11051	Rho GTPase cycle	TAS	Homo sapiens
+O00212	REACT_355474	http://www.reactome.org/PathwayBrowser/#REACT_355474	RHO GTPase Effectors	TAS	Homo sapiens
+O00212	REACT_355252	http://www.reactome.org/PathwayBrowser/#REACT_355252	RHO GTPases Activate Formins	TAS	Homo sapiens
+O00212	REACT_11044	http://www.reactome.org/PathwayBrowser/#REACT_11044	Signaling by Rho GTPases	TAS	Homo sapiens
+O00212	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00217	REACT_6305	http://www.reactome.org/PathwayBrowser/#REACT_6305	Respiratory electron transport, ATP synthesis by chemiosmotic coupling, and heat production by uncoupling proteins.	TAS	Homo sapiens
+O00217	REACT_22393	http://www.reactome.org/PathwayBrowser/#REACT_22393	Respiratory electron transport	TAS	Homo sapiens
+O00217	REACT_111083	http://www.reactome.org/PathwayBrowser/#REACT_111083	The citric acid (TCA) cycle and respiratory electron transport	TAS	Homo sapiens
+O00217	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00219	REACT_121315	http://www.reactome.org/PathwayBrowser/#REACT_121315	Glycosaminoglycan metabolism	TAS	Homo sapiens
+O00219	REACT_121083	http://www.reactome.org/PathwayBrowser/#REACT_121083	Hyaluronan metabolism	TAS	Homo sapiens
+O00219	REACT_474	http://www.reactome.org/PathwayBrowser/#REACT_474	Metabolism of carbohydrates	TAS	Homo sapiens
+O00219	REACT_121301	http://www.reactome.org/PathwayBrowser/#REACT_121301	Hyaluronan biosynthesis and export	TAS	Homo sapiens
+O00219	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00220	REACT_164011	http://www.reactome.org/PathwayBrowser/#REACT_164011	Regulation by c-FLIP	TAS	Homo sapiens
+O00220	REACT_355336	http://www.reactome.org/PathwayBrowser/#REACT_355336	Caspase activation via extrinsic apoptotic signalig pathway	TAS	Homo sapiens
+O00220	REACT_355361	http://www.reactome.org/PathwayBrowser/#REACT_355361	Regulation of necroptotic cell death	TAS	Homo sapiens
+O00220	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+O00220	REACT_1503	http://www.reactome.org/PathwayBrowser/#REACT_1503	Ligand-dependent caspase activation	TAS	Homo sapiens
+O00220	REACT_832	http://www.reactome.org/PathwayBrowser/#REACT_832	Dimerization of procaspase-8	TAS	Homo sapiens
+O00220	REACT_1619	http://www.reactome.org/PathwayBrowser/#REACT_1619	Death Receptor Signalling	TAS	Homo sapiens
+O00220	REACT_402	http://www.reactome.org/PathwayBrowser/#REACT_402	TRAIL  signaling	TAS	Homo sapiens
+O00220	REACT_355027	http://www.reactome.org/PathwayBrowser/#REACT_355027	Regulated Necrosis	TAS	Homo sapiens
+O00220	REACT_355409	http://www.reactome.org/PathwayBrowser/#REACT_355409	RIPK1-mediated regulated necrosis	TAS	Homo sapiens
+O00220	REACT_355311	http://www.reactome.org/PathwayBrowser/#REACT_355311	CASP8 activity is inhibited	TAS	Homo sapiens
+O00220	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+O00220	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00221	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+O00221	REACT_118638	http://www.reactome.org/PathwayBrowser/#REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	TAS	Homo sapiens
+O00221	REACT_118656	http://www.reactome.org/PathwayBrowser/#REACT_118656	Activation of NF-kappaB in B cells	TAS	Homo sapiens
+O00221	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00221	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+O00222	REACT_14797	http://www.reactome.org/PathwayBrowser/#REACT_14797	Signaling by GPCR	TAS	Homo sapiens
+O00222	REACT_19184	http://www.reactome.org/PathwayBrowser/#REACT_19184	GPCR downstream signaling	TAS	Homo sapiens
+O00222	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00222	REACT_19231	http://www.reactome.org/PathwayBrowser/#REACT_19231	G alpha (i) signalling events	TAS	Homo sapiens
+O00222	REACT_21340	http://www.reactome.org/PathwayBrowser/#REACT_21340	GPCR ligand binding	TAS	Homo sapiens
+O00222	REACT_18319	http://www.reactome.org/PathwayBrowser/#REACT_18319	Class C/3 (Metabotropic glutamate/pheromone receptors)	TAS	Homo sapiens
+O00231	REACT_268323	http://www.reactome.org/PathwayBrowser/#REACT_268323	Hedgehog 'off' state	TAS	Homo sapiens
+O00231	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00231	REACT_118638	http://www.reactome.org/PathwayBrowser/#REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	TAS	Homo sapiens
+O00231	REACT_11063	http://www.reactome.org/PathwayBrowser/#REACT_11063	Degradation of beta-catenin by the destruction complex	TAS	Homo sapiens
+O00231	REACT_309	http://www.reactome.org/PathwayBrowser/#REACT_309	Stabilization of p53	TAS	Homo sapiens
+O00231	REACT_207	http://www.reactome.org/PathwayBrowser/#REACT_207	Removal of licensing factors from origins	TAS	Homo sapiens
+O00231	REACT_2148	http://www.reactome.org/PathwayBrowser/#REACT_2148	Switching of origins to a post-replicative state	TAS	Homo sapiens
+O00231	REACT_21267	http://www.reactome.org/PathwayBrowser/#REACT_21267	Mitotic G1-G1/S phases	TAS	Homo sapiens
+O00231	REACT_355457	http://www.reactome.org/PathwayBrowser/#REACT_355457	Diseases of signal transduction	TAS	Homo sapiens
+O00231	REACT_24994	http://www.reactome.org/PathwayBrowser/#REACT_24994	Regulation of mRNA stability by proteins that bind AU-rich elements	TAS	Homo sapiens
+O00231	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+O00231	REACT_734	http://www.reactome.org/PathwayBrowser/#REACT_734	DNA Replication Pre-Initiation	TAS	Homo sapiens
+O00231	REACT_6781	http://www.reactome.org/PathwayBrowser/#REACT_6781	APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00231	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+O00231	REACT_6837	http://www.reactome.org/PathwayBrowser/#REACT_6837	Regulation of APC/C activators between G1/S and early anaphase	TAS	Homo sapiens
+O00231	REACT_9003	http://www.reactome.org/PathwayBrowser/#REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	TAS	Homo sapiens
+O00231	REACT_20549	http://www.reactome.org/PathwayBrowser/#REACT_20549	Autodegradation of the E3 ubiquitin ligase COP1	TAS	Homo sapiens
+O00231	REACT_6954	http://www.reactome.org/PathwayBrowser/#REACT_6954	Activation of APC/C and APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00231	REACT_267701	http://www.reactome.org/PathwayBrowser/#REACT_267701	APC:Cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint	TAS	Homo sapiens
+O00231	REACT_264199	http://www.reactome.org/PathwayBrowser/#REACT_264199	PCP/CE pathway	TAS	Homo sapiens
+O00231	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+O00231	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+O00231	REACT_264605	http://www.reactome.org/PathwayBrowser/#REACT_264605	Hedgehog ligand biogenesis	TAS	Homo sapiens
+O00231	REACT_6761	http://www.reactome.org/PathwayBrowser/#REACT_6761	APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1	TAS	Homo sapiens
+O00231	REACT_150471	http://www.reactome.org/PathwayBrowser/#REACT_150471	Separation of Sister Chromatids	TAS	Homo sapiens
+O00231	REACT_938	http://www.reactome.org/PathwayBrowser/#REACT_938	Ubiquitin-dependent degradation of Cyclin D	TAS	Homo sapiens
+O00231	REACT_6185	http://www.reactome.org/PathwayBrowser/#REACT_6185	HIV Infection	TAS	Homo sapiens
+O00231	REACT_2243	http://www.reactome.org/PathwayBrowser/#REACT_2243	Assembly of the pre-replicative complex	TAS	Homo sapiens
+O00231	REACT_6785	http://www.reactome.org/PathwayBrowser/#REACT_6785	Autodegradation of Cdh1 by Cdh1:APC/C	TAS	Homo sapiens
+O00231	REACT_1625	http://www.reactome.org/PathwayBrowser/#REACT_1625	p53-Dependent G1 DNA Damage Response	TAS	Homo sapiens
+O00231	REACT_2160	http://www.reactome.org/PathwayBrowser/#REACT_2160	p53-Independent DNA Damage Response	TAS	Homo sapiens
+O00231	REACT_1208	http://www.reactome.org/PathwayBrowser/#REACT_1208	p53-Independent G1/S DNA damage checkpoint	TAS	Homo sapiens
+O00231	REACT_6850	http://www.reactome.org/PathwayBrowser/#REACT_6850	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	TAS	Homo sapiens
+O00231	REACT_2254	http://www.reactome.org/PathwayBrowser/#REACT_2254	G1/S DNA Damage Checkpoints	TAS	Homo sapiens
+O00231	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00231	REACT_9031	http://www.reactome.org/PathwayBrowser/#REACT_9031	Vpu mediated degradation of CD4	TAS	Homo sapiens
+O00231	REACT_2014	http://www.reactome.org/PathwayBrowser/#REACT_2014	Synthesis of DNA	TAS	Homo sapiens
+O00231	REACT_1725	http://www.reactome.org/PathwayBrowser/#REACT_1725	M/G1 Transition	TAS	Homo sapiens
+O00231	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+O00231	REACT_263883	http://www.reactome.org/PathwayBrowser/#REACT_263883	Hh mutants that don't undergo autocatalytic processing are degraded by ERAD	TAS	Homo sapiens
+O00231	REACT_4	http://www.reactome.org/PathwayBrowser/#REACT_4	Ubiquitin-dependent degradation of Cyclin D1	TAS	Homo sapiens
+O00231	REACT_264596	http://www.reactome.org/PathwayBrowser/#REACT_264596	TCF dependent signaling in response to WNT	TAS	Homo sapiens
+O00231	REACT_6821	http://www.reactome.org/PathwayBrowser/#REACT_6821	SCF-beta-TrCP mediated degradation of Emi1	TAS	Homo sapiens
+O00231	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00231	REACT_264508	http://www.reactome.org/PathwayBrowser/#REACT_264508	Signaling by Hedgehog	TAS	Homo sapiens
+O00231	REACT_21279	http://www.reactome.org/PathwayBrowser/#REACT_21279	Regulation of mitotic cell cycle	TAS	Homo sapiens
+O00231	REACT_263873	http://www.reactome.org/PathwayBrowser/#REACT_263873	degradation of AXIN	TAS	Homo sapiens
+O00231	REACT_1538	http://www.reactome.org/PathwayBrowser/#REACT_1538	Cell Cycle Checkpoints	TAS	Homo sapiens
+O00231	REACT_264438	http://www.reactome.org/PathwayBrowser/#REACT_264438	degradation of DVL	TAS	Homo sapiens
+O00231	REACT_268156	http://www.reactome.org/PathwayBrowser/#REACT_268156	Degradation of GLI1 by the proteasome	TAS	Homo sapiens
+O00231	REACT_268366	http://www.reactome.org/PathwayBrowser/#REACT_268366	GLI3 is processed to GLI3R by the proteasome	TAS	Homo sapiens
+O00231	REACT_13648	http://www.reactome.org/PathwayBrowser/#REACT_13648	Regulation of Apoptosis	TAS	Homo sapiens
+O00231	REACT_267700	http://www.reactome.org/PathwayBrowser/#REACT_267700	Degradation of GLI2 by the proteasome	TAS	Homo sapiens
+O00231	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+O00231	REACT_9453	http://www.reactome.org/PathwayBrowser/#REACT_9453	Vif-mediated degradation of APOBEC3G	TAS	Homo sapiens
+O00231	REACT_1614	http://www.reactome.org/PathwayBrowser/#REACT_1614	Ubiquitin Mediated Degradation of Phosphorylated Cdc25A	TAS	Homo sapiens
+O00231	REACT_85	http://www.reactome.org/PathwayBrowser/#REACT_85	p53-Dependent G1/S DNA damage checkpoint	TAS	Homo sapiens
+O00231	REACT_11045	http://www.reactome.org/PathwayBrowser/#REACT_11045	Signaling by Wnt	TAS	Homo sapiens
+O00231	REACT_1574	http://www.reactome.org/PathwayBrowser/#REACT_1574	Cyclin E associated events during G1/S transition 	TAS	Homo sapiens
+O00231	REACT_25325	http://www.reactome.org/PathwayBrowser/#REACT_25325	AUF1 (hnRNP D0) destabilizes mRNA	TAS	Homo sapiens
+O00231	REACT_6871	http://www.reactome.org/PathwayBrowser/#REACT_6871	APC/C:Cdc20 mediated degradation of Securin	TAS	Homo sapiens
+O00231	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+O00231	REACT_1783	http://www.reactome.org/PathwayBrowser/#REACT_1783	G1/S Transition	TAS	Homo sapiens
+O00231	REACT_355405	http://www.reactome.org/PathwayBrowser/#REACT_355405	C-type lectin receptors (CLRs)	TAS	Homo sapiens
+O00231	REACT_264623	http://www.reactome.org/PathwayBrowser/#REACT_264623	Hh mutants abrogate ligand secretion	TAS	Homo sapiens
+O00231	REACT_6288	http://www.reactome.org/PathwayBrowser/#REACT_6288	Host Interactions of HIV factors	TAS	Homo sapiens
+O00231	REACT_13464	http://www.reactome.org/PathwayBrowser/#REACT_13464	Regulation of activated PAK-2p34 by proteasome mediated degradation	TAS	Homo sapiens
+O00231	REACT_899	http://www.reactome.org/PathwayBrowser/#REACT_899	S Phase	TAS	Homo sapiens
+O00231	REACT_383	http://www.reactome.org/PathwayBrowser/#REACT_383	DNA Replication	TAS	Homo sapiens
+O00231	REACT_6828	http://www.reactome.org/PathwayBrowser/#REACT_6828	APC/C-mediated degradation of cell cycle proteins	TAS	Homo sapiens
+O00231	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+O00231	REACT_9029	http://www.reactome.org/PathwayBrowser/#REACT_9029	Cyclin A:Cdk2-associated events at S phase entry	TAS	Homo sapiens
+O00231	REACT_9003	http://www.reactome.org/PathwayBrowser/#REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	TAS	Homo sapiens
+O00231	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00231	REACT_150314	http://www.reactome.org/PathwayBrowser/#REACT_150314	Mitotic Metaphase and Anaphase	TAS	Homo sapiens
+O00231	REACT_13565	http://www.reactome.org/PathwayBrowser/#REACT_13565	Regulation of ornithine decarboxylase (ODC)	TAS	Homo sapiens
+O00231	REACT_75842	http://www.reactome.org/PathwayBrowser/#REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	TAS	Homo sapiens
+O00231	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+O00231	REACT_1275	http://www.reactome.org/PathwayBrowser/#REACT_1275	Mitotic Anaphase	TAS	Homo sapiens
+O00231	REACT_13	http://www.reactome.org/PathwayBrowser/#REACT_13	Metabolism of amino acids and derivatives	TAS	Homo sapiens
+O00231	REACT_910	http://www.reactome.org/PathwayBrowser/#REACT_910	M Phase	TAS	Homo sapiens
+O00231	REACT_268718	http://www.reactome.org/PathwayBrowser/#REACT_268718	Hedgehog 'on' state	TAS	Homo sapiens
+O00231	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+O00231	REACT_188330	http://www.reactome.org/PathwayBrowser/#REACT_188330	Dectin-1 mediated noncanonical NF-kB signaling	TAS	Homo sapiens
+O00231	REACT_75820	http://www.reactome.org/PathwayBrowser/#REACT_75820	Class I MHC mediated antigen processing & presentation	TAS	Homo sapiens
+O00231	REACT_355497	http://www.reactome.org/PathwayBrowser/#REACT_355497	Infectious disease	TAS	Homo sapiens
+O00231	REACT_188323	http://www.reactome.org/PathwayBrowser/#REACT_188323	CLEC7A (Dectin-1) signaling	TAS	Homo sapiens
+O00231	REACT_829	http://www.reactome.org/PathwayBrowser/#REACT_829	Regulation of DNA replication	TAS	Homo sapiens
+O00231	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+O00231	REACT_264224	http://www.reactome.org/PathwayBrowser/#REACT_264224	beta-catenin independent WNT signaling	TAS	Homo sapiens
+O00231	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+O00231	REACT_118656	http://www.reactome.org/PathwayBrowser/#REACT_118656	Activation of NF-kappaB in B cells	TAS	Homo sapiens
+O00231	REACT_264478	http://www.reactome.org/PathwayBrowser/#REACT_264478	Asymmetric localization of PCP proteins	TAS	Homo sapiens
+O00231	REACT_111056	http://www.reactome.org/PathwayBrowser/#REACT_111056	Cross-presentation of soluble exogenous antigens (endosomes)	TAS	Homo sapiens
+O00231	REACT_111119	http://www.reactome.org/PathwayBrowser/#REACT_111119	Antigen processing-Cross presentation	TAS	Homo sapiens
+O00231	REACT_1949	http://www.reactome.org/PathwayBrowser/#REACT_1949	CDT1 association with the CDC6:ORC:origin complex	TAS	Homo sapiens
+O00231	REACT_111178	http://www.reactome.org/PathwayBrowser/#REACT_111178	ER-Phagosome pathway	TAS	Homo sapiens
+O00232	REACT_268323	http://www.reactome.org/PathwayBrowser/#REACT_268323	Hedgehog 'off' state	TAS	Homo sapiens
+O00232	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00232	REACT_118638	http://www.reactome.org/PathwayBrowser/#REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	TAS	Homo sapiens
+O00232	REACT_11063	http://www.reactome.org/PathwayBrowser/#REACT_11063	Degradation of beta-catenin by the destruction complex	TAS	Homo sapiens
+O00232	REACT_309	http://www.reactome.org/PathwayBrowser/#REACT_309	Stabilization of p53	TAS	Homo sapiens
+O00232	REACT_207	http://www.reactome.org/PathwayBrowser/#REACT_207	Removal of licensing factors from origins	TAS	Homo sapiens
+O00232	REACT_2148	http://www.reactome.org/PathwayBrowser/#REACT_2148	Switching of origins to a post-replicative state	TAS	Homo sapiens
+O00232	REACT_21267	http://www.reactome.org/PathwayBrowser/#REACT_21267	Mitotic G1-G1/S phases	TAS	Homo sapiens
+O00232	REACT_355457	http://www.reactome.org/PathwayBrowser/#REACT_355457	Diseases of signal transduction	TAS	Homo sapiens
+O00232	REACT_24994	http://www.reactome.org/PathwayBrowser/#REACT_24994	Regulation of mRNA stability by proteins that bind AU-rich elements	TAS	Homo sapiens
+O00232	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+O00232	REACT_734	http://www.reactome.org/PathwayBrowser/#REACT_734	DNA Replication Pre-Initiation	TAS	Homo sapiens
+O00232	REACT_6781	http://www.reactome.org/PathwayBrowser/#REACT_6781	APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00232	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+O00232	REACT_6837	http://www.reactome.org/PathwayBrowser/#REACT_6837	Regulation of APC/C activators between G1/S and early anaphase	TAS	Homo sapiens
+O00232	REACT_9003	http://www.reactome.org/PathwayBrowser/#REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	TAS	Homo sapiens
+O00232	REACT_20549	http://www.reactome.org/PathwayBrowser/#REACT_20549	Autodegradation of the E3 ubiquitin ligase COP1	TAS	Homo sapiens
+O00232	REACT_6954	http://www.reactome.org/PathwayBrowser/#REACT_6954	Activation of APC/C and APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00232	REACT_267701	http://www.reactome.org/PathwayBrowser/#REACT_267701	APC:Cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint	TAS	Homo sapiens
+O00232	REACT_264199	http://www.reactome.org/PathwayBrowser/#REACT_264199	PCP/CE pathway	TAS	Homo sapiens
+O00232	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+O00232	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+O00232	REACT_264605	http://www.reactome.org/PathwayBrowser/#REACT_264605	Hedgehog ligand biogenesis	TAS	Homo sapiens
+O00232	REACT_6761	http://www.reactome.org/PathwayBrowser/#REACT_6761	APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1	TAS	Homo sapiens
+O00232	REACT_150471	http://www.reactome.org/PathwayBrowser/#REACT_150471	Separation of Sister Chromatids	TAS	Homo sapiens
+O00232	REACT_938	http://www.reactome.org/PathwayBrowser/#REACT_938	Ubiquitin-dependent degradation of Cyclin D	TAS	Homo sapiens
+O00232	REACT_6185	http://www.reactome.org/PathwayBrowser/#REACT_6185	HIV Infection	TAS	Homo sapiens
+O00232	REACT_2243	http://www.reactome.org/PathwayBrowser/#REACT_2243	Assembly of the pre-replicative complex	TAS	Homo sapiens
+O00232	REACT_6785	http://www.reactome.org/PathwayBrowser/#REACT_6785	Autodegradation of Cdh1 by Cdh1:APC/C	TAS	Homo sapiens
+O00232	REACT_1625	http://www.reactome.org/PathwayBrowser/#REACT_1625	p53-Dependent G1 DNA Damage Response	TAS	Homo sapiens
+O00232	REACT_2160	http://www.reactome.org/PathwayBrowser/#REACT_2160	p53-Independent DNA Damage Response	TAS	Homo sapiens
+O00232	REACT_1208	http://www.reactome.org/PathwayBrowser/#REACT_1208	p53-Independent G1/S DNA damage checkpoint	TAS	Homo sapiens
+O00232	REACT_6850	http://www.reactome.org/PathwayBrowser/#REACT_6850	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	TAS	Homo sapiens
+O00232	REACT_2254	http://www.reactome.org/PathwayBrowser/#REACT_2254	G1/S DNA Damage Checkpoints	TAS	Homo sapiens
+O00232	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00232	REACT_9031	http://www.reactome.org/PathwayBrowser/#REACT_9031	Vpu mediated degradation of CD4	TAS	Homo sapiens
+O00232	REACT_2014	http://www.reactome.org/PathwayBrowser/#REACT_2014	Synthesis of DNA	TAS	Homo sapiens
+O00232	REACT_1725	http://www.reactome.org/PathwayBrowser/#REACT_1725	M/G1 Transition	TAS	Homo sapiens
+O00232	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+O00232	REACT_263883	http://www.reactome.org/PathwayBrowser/#REACT_263883	Hh mutants that don't undergo autocatalytic processing are degraded by ERAD	TAS	Homo sapiens
+O00232	REACT_4	http://www.reactome.org/PathwayBrowser/#REACT_4	Ubiquitin-dependent degradation of Cyclin D1	TAS	Homo sapiens
+O00232	REACT_264596	http://www.reactome.org/PathwayBrowser/#REACT_264596	TCF dependent signaling in response to WNT	TAS	Homo sapiens
+O00232	REACT_6821	http://www.reactome.org/PathwayBrowser/#REACT_6821	SCF-beta-TrCP mediated degradation of Emi1	TAS	Homo sapiens
+O00232	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
+O00232	REACT_264508	http://www.reactome.org/PathwayBrowser/#REACT_264508	Signaling by Hedgehog	TAS	Homo sapiens
+O00232	REACT_21279	http://www.reactome.org/PathwayBrowser/#REACT_21279	Regulation of mitotic cell cycle	TAS	Homo sapiens
+O00232	REACT_263873	http://www.reactome.org/PathwayBrowser/#REACT_263873	degradation of AXIN	TAS	Homo sapiens
+O00232	REACT_1538	http://www.reactome.org/PathwayBrowser/#REACT_1538	Cell Cycle Checkpoints	TAS	Homo sapiens
+O00232	REACT_264438	http://www.reactome.org/PathwayBrowser/#REACT_264438	degradation of DVL	TAS	Homo sapiens
+O00232	REACT_268156	http://www.reactome.org/PathwayBrowser/#REACT_268156	Degradation of GLI1 by the proteasome	TAS	Homo sapiens
+O00232	REACT_268366	http://www.reactome.org/PathwayBrowser/#REACT_268366	GLI3 is processed to GLI3R by the proteasome	TAS	Homo sapiens
+O00232	REACT_13648	http://www.reactome.org/PathwayBrowser/#REACT_13648	Regulation of Apoptosis	TAS	Homo sapiens
+O00232	REACT_267700	http://www.reactome.org/PathwayBrowser/#REACT_267700	Degradation of GLI2 by the proteasome	TAS	Homo sapiens
+O00232	REACT_118773	http://www.reactome.org/PathwayBrowser/#REACT_118773	Signaling by the B Cell Receptor (BCR)	TAS	Homo sapiens
+O00232	REACT_9453	http://www.reactome.org/PathwayBrowser/#REACT_9453	Vif-mediated degradation of APOBEC3G	TAS	Homo sapiens
+O00232	REACT_1614	http://www.reactome.org/PathwayBrowser/#REACT_1614	Ubiquitin Mediated Degradation of Phosphorylated Cdc25A	TAS	Homo sapiens
+O00232	REACT_85	http://www.reactome.org/PathwayBrowser/#REACT_85	p53-Dependent G1/S DNA damage checkpoint	TAS	Homo sapiens
+O00232	REACT_11045	http://www.reactome.org/PathwayBrowser/#REACT_11045	Signaling by Wnt	TAS	Homo sapiens
+O00232	REACT_1574	http://www.reactome.org/PathwayBrowser/#REACT_1574	Cyclin E associated events during G1/S transition 	TAS	Homo sapiens
+O00232	REACT_25325	http://www.reactome.org/PathwayBrowser/#REACT_25325	AUF1 (hnRNP D0) destabilizes mRNA	TAS	Homo sapiens
+O00232	REACT_6871	http://www.reactome.org/PathwayBrowser/#REACT_6871	APC/C:Cdc20 mediated degradation of Securin	TAS	Homo sapiens
+O00232	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+O00232	REACT_1783	http://www.reactome.org/PathwayBrowser/#REACT_1783	G1/S Transition	TAS	Homo sapiens
+O00232	REACT_355405	http://www.reactome.org/PathwayBrowser/#REACT_355405	C-type lectin receptors (CLRs)	TAS	Homo sapiens
+O00232	REACT_264623	http://www.reactome.org/PathwayBrowser/#REACT_264623	Hh mutants abrogate ligand secretion	TAS	Homo sapiens
+O00232	REACT_6288	http://www.reactome.org/PathwayBrowser/#REACT_6288	Host Interactions of HIV factors	TAS	Homo sapiens
+O00232	REACT_13464	http://www.reactome.org/PathwayBrowser/#REACT_13464	Regulation of activated PAK-2p34 by proteasome mediated degradation	TAS	Homo sapiens
+O00232	REACT_899	http://www.reactome.org/PathwayBrowser/#REACT_899	S Phase	TAS	Homo sapiens
+O00232	REACT_383	http://www.reactome.org/PathwayBrowser/#REACT_383	DNA Replication	TAS	Homo sapiens
+O00232	REACT_6828	http://www.reactome.org/PathwayBrowser/#REACT_6828	APC/C-mediated degradation of cell cycle proteins	TAS	Homo sapiens
+O00232	REACT_115566	http://www.reactome.org/PathwayBrowser/#REACT_115566	Cell Cycle	TAS	Homo sapiens
+O00232	REACT_9029	http://www.reactome.org/PathwayBrowser/#REACT_9029	Cyclin A:Cdk2-associated events at S phase entry	TAS	Homo sapiens
+O00232	REACT_9003	http://www.reactome.org/PathwayBrowser/#REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	TAS	Homo sapiens
+O00232	REACT_111217	http://www.reactome.org/PathwayBrowser/#REACT_111217	Metabolism	TAS	Homo sapiens
+O00232	REACT_150314	http://www.reactome.org/PathwayBrowser/#REACT_150314	Mitotic Metaphase and Anaphase	TAS	Homo sapiens
+O00232	REACT_13565	http://www.reactome.org/PathwayBrowser/#REACT_13565	Regulation of ornithine decarboxylase (ODC)	TAS	Homo sapiens
+O00232	REACT_75842	http://www.reactome.org/PathwayBrowser/#REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	TAS	Homo sapiens
+O00232	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+O00232	REACT_1275	http://www.reactome.org/PathwayBrowser/#REACT_1275	Mitotic Anaphase	TAS	Homo sapiens
+O00232	REACT_13	http://www.reactome.org/PathwayBrowser/#REACT_13	Metabolism of amino acids and derivatives	TAS	Homo sapiens
+O00232	REACT_910	http://www.reactome.org/PathwayBrowser/#REACT_910	M Phase	TAS	Homo sapiens
+O00232	REACT_268718	http://www.reactome.org/PathwayBrowser/#REACT_268718	Hedgehog 'on' state	TAS	Homo sapiens
+O00232	REACT_268456	http://www.reactome.org/PathwayBrowser/#REACT_268456	Programmed Cell Death	TAS	Homo sapiens
+O00232	REACT_188330	http://www.reactome.org/PathwayBrowser/#REACT_188330	Dectin-1 mediated noncanonical NF-kB signaling	TAS	Homo sapiens
+O00232	REACT_75820	http://www.reactome.org/PathwayBrowser/#REACT_75820	Class I MHC mediated antigen processing & presentation	TAS	Homo sapiens
+O00232	REACT_355497	http://www.reactome.org/PathwayBrowser/#REACT_355497	Infectious disease	TAS	Homo sapiens
+O00232	REACT_188323	http://www.reactome.org/PathwayBrowser/#REACT_188323	CLEC7A (Dectin-1) signaling	TAS	Homo sapiens
+O00232	REACT_829	http://www.reactome.org/PathwayBrowser/#REACT_829	Regulation of DNA replication	TAS	Homo sapiens
+O00232	REACT_152	http://www.reactome.org/PathwayBrowser/#REACT_152	Cell Cycle, Mitotic	TAS	Homo sapiens
+O00232	REACT_264224	http://www.reactome.org/PathwayBrowser/#REACT_264224	beta-catenin independent WNT signaling	TAS	Homo sapiens
+O00232	REACT_1156	http://www.reactome.org/PathwayBrowser/#REACT_1156	Orc1 removal from chromatin	TAS	Homo sapiens
+O00232	REACT_118656	http://www.reactome.org/PathwayBrowser/#REACT_118656	Activation of NF-kappaB in B cells	TAS	Homo sapiens
+O00232	REACT_264478	http://www.reactome.org/PathwayBrowser/#REACT_264478	Asymmetric localization of PCP proteins	TAS	Homo sapiens
+O00232	REACT_111056	http://www.reactome.org/PathwayBrowser/#REACT_111056	Cross-presentation of soluble exogenous antigens (endosomes)	TAS	Homo sapiens
+O00232	REACT_111119	http://www.reactome.org/PathwayBrowser/#REACT_111119	Antigen processing-Cross presentation	TAS	Homo sapiens
+O00232	REACT_1949	http://www.reactome.org/PathwayBrowser/#REACT_1949	CDT1 association with the CDC6:ORC:origin complex	TAS	Homo sapiens
+O00232	REACT_111178	http://www.reactome.org/PathwayBrowser/#REACT_111178	ER-Phagosome pathway	TAS	Homo sapiens
+O00233	REACT_268323	http://www.reactome.org/PathwayBrowser/#REACT_268323	Hedgehog 'off' state	TAS	Homo sapiens
+O00233	REACT_6900	http://www.reactome.org/PathwayBrowser/#REACT_6900	Immune System	TAS	Homo sapiens
+O00233	REACT_118638	http://www.reactome.org/PathwayBrowser/#REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	TAS	Homo sapiens
+O00233	REACT_11063	http://www.reactome.org/PathwayBrowser/#REACT_11063	Degradation of beta-catenin by the destruction complex	TAS	Homo sapiens
+O00233	REACT_309	http://www.reactome.org/PathwayBrowser/#REACT_309	Stabilization of p53	TAS	Homo sapiens
+O00233	REACT_207	http://www.reactome.org/PathwayBrowser/#REACT_207	Removal of licensing factors from origins	TAS	Homo sapiens
+O00233	REACT_2148	http://www.reactome.org/PathwayBrowser/#REACT_2148	Switching of origins to a post-replicative state	TAS	Homo sapiens
+O00233	REACT_21267	http://www.reactome.org/PathwayBrowser/#REACT_21267	Mitotic G1-G1/S phases	TAS	Homo sapiens
+O00233	REACT_355457	http://www.reactome.org/PathwayBrowser/#REACT_355457	Diseases of signal transduction	TAS	Homo sapiens
+O00233	REACT_24994	http://www.reactome.org/PathwayBrowser/#REACT_24994	Regulation of mRNA stability by proteins that bind AU-rich elements	TAS	Homo sapiens
+O00233	REACT_578	http://www.reactome.org/PathwayBrowser/#REACT_578	Apoptosis	TAS	Homo sapiens
+O00233	REACT_734	http://www.reactome.org/PathwayBrowser/#REACT_734	DNA Replication Pre-Initiation	TAS	Homo sapiens
+O00233	REACT_6781	http://www.reactome.org/PathwayBrowser/#REACT_6781	APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00233	REACT_71	http://www.reactome.org/PathwayBrowser/#REACT_71	Gene Expression	TAS	Homo sapiens
+O00233	REACT_6837	http://www.reactome.org/PathwayBrowser/#REACT_6837	Regulation of APC/C activators between G1/S and early anaphase	TAS	Homo sapiens
+O00233	REACT_9003	http://www.reactome.org/PathwayBrowser/#REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	TAS	Homo sapiens
+O00233	REACT_20549	http://www.reactome.org/PathwayBrowser/#REACT_20549	Autodegradation of the E3 ubiquitin ligase COP1	TAS	Homo sapiens
+O00233	REACT_6954	http://www.reactome.org/PathwayBrowser/#REACT_6954	Activation of APC/C and APC/C:Cdc20 mediated degradation of mitotic proteins	TAS	Homo sapiens
+O00233	REACT_267701	http://www.reactome.org/PathwayBrowser/#REACT_267701	APC:Cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint	TAS	Homo sapiens
+O00233	REACT_264199	http://www.reactome.org/PathwayBrowser/#REACT_264199	PCP/CE pathway	TAS	Homo sapiens
+O00233	REACT_75774	http://www.reactome.org/PathwayBrowser/#REACT_75774	Adaptive Immune System	TAS	Homo sapiens
+O00233	REACT_1221	http://www.reactome.org/PathwayBrowser/#REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	TAS	Homo sapiens
+O00233	REACT_264605	http://www.reactome.org/PathwayBrowser/#REACT_264605	Hedgehog ligand biogenesis	TAS	Homo sapiens
+O00233	REACT_6761	http://www.reactome.org/PathwayBrowser/#REACT_6761	APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1	TAS	Homo sapiens
+O00233	REACT_150471	http://www.reactome.org/PathwayBrowser/#REACT_150471	Separation of Sister Chromatids	TAS	Homo sapiens
+O00233	REACT_938	http://www.reactome.org/PathwayBrowser/#REACT_938	Ubiquitin-dependent degradation of Cyclin D	TAS	Homo sapiens
+O00233	REACT_6185	http://www.reactome.org/PathwayBrowser/#REACT_6185	HIV Infection	TAS	Homo sapiens
+O00233	REACT_2243	http://www.reactome.org/PathwayBrowser/#REACT_2243	Assembly of the pre-replicative complex	TAS	Homo sapiens
+O00233	REACT_6785	http://www.reactome.org/PathwayBrowser/#REACT_6785	Autodegradation of Cdh1 by Cdh1:APC/C	TAS	Homo sapiens
+O00233	REACT_1625	http://www.reactome.org/PathwayBrowser/#REACT_1625	p53-Dependent G1 DNA Damage Response	TAS	Homo sapiens
+O00233	REACT_2160	http://www.reactome.org/PathwayBrowser/#REACT_2160	p53-Independent DNA Damage Response	TAS	Homo sapiens
+O00233	REACT_1208	http://www.reactome.org/PathwayBrowser/#REACT_1208	p53-Independent G1/S DNA damage checkpoint	TAS	Homo sapiens
+O00233	REACT_6850	http://www.reactome.org/PathwayBrowser/#REACT_6850	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	TAS	Homo sapiens
+O00233	REACT_2254	http://www.reactome.org/PathwayBrowser/#REACT_2254	G1/S DNA Damage Checkpoints	TAS	Homo sapiens
+O00233	REACT_6802	http://www.reactome.org/PathwayBrowser/#REACT_6802	Innate Immune System	TAS	Homo sapiens
+O00233	REACT_9031	http://www.reactome.org/PathwayBrowser/#REACT_9031	Vpu mediated degradation of CD4	TAS	Homo sapiens
+O00233	REACT_2014	http://www.reactome.org/PathwayBrowser/#REACT_2014	Synthesis of DNA	TAS	Homo sapiens
+O00233	REACT_1725	http://www.reactome.org/PathwayBrowser/#REACT_1725	M/G1 Transition	TAS	Homo sapiens
+O00233	REACT_116125	http://www.reactome.org/PathwayBrowser/#REACT_116125	Disease	TAS	Homo sapiens
+O00233	REACT_263883	http://www.reactome.org/PathwayBrowser/#REACT_263883	Hh mutants that don't undergo autocatalytic processing are degraded by ERAD	TAS	Homo sapiens
+O00233	REACT_4	http://www.reactome.org/PathwayBrowser/#REACT_4	Ubiquitin-dependent degradation of Cyclin D1	TAS	Homo sapiens
+O00233	REACT_264596	http://www.reactome.org/PathwayBrowser/#REACT_264596	TCF dependent signaling in response to WNT	TAS	Homo sapiens
+O00233	REACT_6821	http://www.reactome.org/PathwayBrowser/#REACT_6821	SCF-beta-TrCP mediated degradation of Emi1	TAS	Homo sapiens
+O00233	REACT_111102	http://www.reactome.org/PathwayBrowser/#REACT_111102	Signal Transduction	TAS	Homo sapiens
