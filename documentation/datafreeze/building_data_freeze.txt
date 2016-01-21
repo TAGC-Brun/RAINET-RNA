@@ -1,0 +1,136 @@
+
+The files required for a complete data insertion must be described in a properties file looking like:
+
+
+----- File Start ------
+[PROTEINS]
+PROTEIN_UNIPROT_DEFINITION = /big-vol/Rainet2toad/data/human/human_uniprot_protein_list.txt
+PROTEIN_CROSSREFERENCES = /big-vol/Rainet2toad/data/human/human_protein_crossreferences.txt
+PROTEIN_ISOFORMS = /big-vol/Rainet2toad/data/human/all_protein_isoforms.fasta
+PROTEIN_DOMAIN_SMART = /big-vol/Rainet2toad/data/human/all_protein_domains_smart.txt
+PROTEIN_DOMAIN_PFAM = /big-vol/Rainet2toad/data/human/all_protein_domains_pfam.txt
+
+[GENE_ONTONLOGY]
+GENE_ONTOLOGY_DEFINITION = /big-vol/Rainet2toad/data/human/go-basic.obo
+GENE_ONTOLOGY_ANNOTATION = /big-vol/Rainet2toad/data/human/human_go_annotations.txt
+
+[KEGG_PATHWAY]
+KEGG_PATHWAY_DEFINITION = /big-vol/Rainet2toad/data/human/human_kegg_pathway_definitions.txt
+KEGG_PATHWAY_ANNOTATION = /big-vol/Rainet2toad/data/human/human_kegg_pathway_annotations.txt
+
+[REACTOME PATHWAY]
+REACTOME_PATHWAY_DEFINITION = /big-vol/Rainet2toad/data/human/all_reactome_pathway_definitions.txt
+REACTOME_PATHWAY_ANNOTATION = /big-vol/Rainet2toad/data/human/all_reactome_pathway_annotations.txt
+
+[INTERACTOME]
+INTERACTOME_DEFINITION = /big-vol/Rainet2toad/data/human/human.pairmap
+INTERACTOME_NETWORK_DEFINITION = /big-vol/Rainet2toad/data/human/human.nr0.95.gr
+INTERACTOME_NETWORK_PARTITION_DEFINITION = /big-vol/Rainet2toad/data/human/human.nr0.95.clas
+INTERACTOME_NETWORK_PARTITION_ANNOTATION =  /big-vol/Rainet2toad/data/human/human.nr0.95.fm
+INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /big-vol/Rainet2toad/data2016/human/human_0.95.blastmap
+
+------- File End -------
+
+Automatics download and treatment of the required files for each species can be done using the shells script in
+/tagc-rainet/src/fr/tagc/rainet/core/util/datafreeze/building_data_freeze.sh
+
+Below is described for each of these files how to get it. More information can be found on:
+https://sourcesup.renater.fr/wiki/tagc-rainet/rainet-dataset-construction
+
+[PROTEINS]
+
+PROTEIN_UNIPROT_DEFINITION
+This is the file containing the list of proteins from UNIPROT database.
+It must be obtain by a query on the UNIPROT DB.
+http://www.uniprot.org/uniprot/?query=organism:"Homo sapiens (Human) [9606]"+AND+proteome:up000005640&columns=id,entry name,protein names,genes(PREFERRED),genes(ALTERNATIVE),organism,length,fragment,database(Pfam),database(SMART)&format=tab
+
+PROTEIN_CROSSREFERENCES
+This is the file containing the different mapping of protein names from various DB to UniprotAC.
+It must be downloaded from the Uniprot FTP file.
+ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz
+
+PROTEIN_ISOFORMS
+This is the file containing all the isoform sequences of all proteins.
+It must be downloaded from UNIPROT FTP site
+ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Eukaryota/UP000005640_9606.fasta.gz
+
+PROTEIN_DOMAIN_SMART
+This is the list of definition of protein domain from SMART DB.
+It must be donwloaded from SMART site. This file is the same for all species.
+http://smart.embl.de/smart/descriptions.pl
+
+PROTEIN_DOMAIN_PFAM
+This is the list of definition of domains from the Pfam db
+It must be downloaded from the EBI FTP site.
+ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.clans.tsv.gz
+
+
+[GENE_ONTONLOGY]
+
+GENE_ONTOLOGY_DEFINITION
+This file contains the definition of the Gene Ontology.
+It must be downloaded from the berkeley University site. This file is the same for all species. 
+http://www.berkeleybop.org/ontologies/go/go-basic.obo
+
+GENE_ONTOLOGY_ANNOTATION
+This file contains the annotations of the genes on the GO.
+It must be downloaded from the GeneOntology site.
+http://geneontology.org/gene-associations/gene_association.goa_human.gz 
+
+
+[KEGG_PATHWAY]
+
+KEGG_PATHWAY_DEFINITION
+This file contains the definition of the KEGG pathways.
+It must be downloaded from the KEGG website.
+http://rest.kegg.jp/list/pathway/hsa
+
+KEGG_PATHWAY_ANNOTATION
+This file contains the Association KEGG Pathways to proteins (ID of KEGG).
+It must be downloaded from the KEGG website.
+http://rest.kegg.jp/link/pathway/hsa
+
+
+[REACTOME PATHWAY]
+
+REACTOME_PATHWAY_DEFINITION
+This file contains the definition of the reactome pathways.
+It must be downloaded from the Reactome website. This file is the same for all species.
+http://www.reactome.org/download/current/ReactomePathways.txt
+
+REACTOME_PATHWAY_ANNOTATION = /big-vol/Rainet2toad/data/human/all_reactome_pathway_annotations.txt
+This file contains the association protein to reactome pathways.
+It must be downloaded from the Reactome website. This file is the same for all species.
+http://www.reactome.org/download/current/UniProt2Reactome.txt
+
+
+[INTERACTOME]
+
+INTERACTOME_DEFINITION = /big-vol/Rainet2toad/data/human/human.pairmap
+This file contains the list of Protein-Protein interaction retrieved from several databases.
+It is produced during the execution of the psicquic_wrapper.pl script  of the MoonGo tool (see tagc-moongo project on sourcesup)
+and is named $SPECIES.pairmap (See 'building_data_freeze.sh' for details).
+psicquic_wrapper.pl -FdBv --binary --net-file $SPECIES.gr --flat-file $SPECIES.flat -p $SPECIES.psi --psi2id $SPECIES.psi2id -s $SPECIES -y 0.95
+
+INTERACTOME_NETWORK_DEFINITION
+This file contains the PPI network definition (list of protein-protein interactions).
+It is produced the execution of the psicquic_wrapper.pl script of the MoonGo tool (see tagc-moongo project on sourcesup) 
+and is named $SPECIES.gr (See 'building_data_freeze.sh' for details).
+Note that if the -y option is used, a Non-Redundant network is also produced with name $SPECIES.nr<nrscore>.gr where <nrscore> is the redundancy
+score provided by the -y option.
+psicquic_wrapper.pl -FdBv --binary --net-file $SPECIES.gr --flat-file $SPECIES.flat -p $SPECIES.psi --psi2id $SPECIES.psi2id -s $SPECIES -y 0.95
+
+INTERACTOME_NETWORK_PARTITION_DEFINITION = /big-vol/Rainet2toad/data/human/human.nr0.95.clas
+This file contains definition of the classes of the partition of the PPI Network.
+It is produced by a partitioning software like OCG  (see tagc-ocg project on sourcesup).
+Note: this program must be run on connex graph. It is necessary to verify the graph produced by the previous
+step is connex.
+ocg human.nr0.95.gr > human.nr0.95.clas
+
+INTERACTOME_NETWORK_PARTITION_ANNOTATION = /big-vol/Rainet2toad/data/human/human.nr0.95.fm
+This file contains the GO annotation of the PPI Network partition.
+It is produced by the annotation python code developped by Benoit (see tagc-ocg project on sourcesup)
+
+INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /big-vol/Rainet2toad/data/human/human_0.95.blastmap
+This file contains the mapping between the protein that were identified as redundant (at 95% similarity).
+It is produced by the MoonGO scripts psicquic_wrapper.pl used above.

@@ -1,0 +1,2263 @@
+REACT_13685	Neuronal System	Homo sapiens
+REACT_16881	Transmission across Electrical Synapses 	Homo sapiens
+REACT_16970	Electric Transmission Across Gap Junctions	Homo sapiens
+REACT_13477	Transmission across Chemical Synapses	Homo sapiens
+REACT_13606	Depolarization of the Presynaptic Terminal Triggers the Opening of Calcium Channels	Homo sapiens
+REACT_13594	Neurotransmitter uptake and Metabolism In Glial Cells	Homo sapiens
+REACT_13639	Astrocytic Glutamate-Glutamine Uptake And Metabolism	Homo sapiens
+REACT_13723	Neurotransmitter Release Cycle	Homo sapiens
+REACT_15425	Serotonin Neurotransmitter Release Cycle	Homo sapiens
+REACT_15293	Dopamine Neurotransmitter Release Cycle	Homo sapiens
+REACT_12591	Glutamate Neurotransmitter Release Cycle	Homo sapiens
+REACT_15418	Norepinephrine Neurotransmitter Release Cycle	Homo sapiens
+REACT_23947	GABA synthesis, release, reuptake and degradation	Homo sapiens
+REACT_23964	Degradation of GABA	Homo sapiens
+REACT_23910	Reuptake of GABA	Homo sapiens
+REACT_24020	GABA synthesis	Homo sapiens
+REACT_15309	Acetylcholine Neurotransmitter Release Cycle	Homo sapiens
+REACT_13583	Neurotransmitter Clearance In The Synaptic Cleft	Homo sapiens
+REACT_15391	Serotonin clearance from the synaptic cleft	Homo sapiens
+REACT_15532	Metabolism of serotonin	Homo sapiens
+REACT_15514	Dopamine clearance from the synaptic cleft	Homo sapiens
+REACT_15548	Enzymatic degradation of dopamine by COMT	Homo sapiens
+REACT_15511	Enzymatic degradation of Dopamine by monoamine oxidase	Homo sapiens
+REACT_15370	Neurotransmitter Receptor Binding And Downstream Transmission In The  Postsynaptic Cell	Homo sapiens
+REACT_20563	Activation of NMDA receptor upon glutamate binding and postsynaptic events	Homo sapiens
+REACT_20593	Post NMDA receptor activation events	Homo sapiens
+REACT_20661	CREB phosphorylation through the activation of CaMKK	Homo sapiens
+REACT_20652	Activation of CaMK IV	Homo sapiens
+REACT_20625	CREB phosphorylation through the activation of Adenylate Cyclase	Homo sapiens
+REACT_20642	CREB phosphorylation through the activation of CaMKII	Homo sapiens
+REACT_20568	CREB phosphorylation through the activation of Ras	Homo sapiens
+REACT_20546	Ras activation uopn Ca2+ infux through NMDA receptor	Homo sapiens
+REACT_20510	RSK activation	Homo sapiens
+REACT_20594	Unblocking of NMDA receptor, glutamate binding and activation	Homo sapiens
+REACT_15461	Acetylcholine Binding And Downstream Events	Homo sapiens
+REACT_22126	Activation of Nicotinic Acetylcholine Receptors	Homo sapiens
+REACT_22336	Presynaptic nicotinic acetylcholine receptors	Homo sapiens
+REACT_22352	Highly calcium permeable nicotinic acetylcholine receptors	Homo sapiens
+REACT_22223	Highly sodium permeable acetylcholine nicotinic receptors	Homo sapiens
+REACT_22149	Postsynaptic nicotinic acetylcholine receptors	Homo sapiens
+REACT_22223	Highly sodium permeable acetylcholine nicotinic receptors	Homo sapiens
+REACT_22303	Highly calcium permeable postsynaptic nicotinic acetylcholine receptors	Homo sapiens
+REACT_18347	Glutamate Binding, Activation of AMPA Receptors and Synaptic Plasticity	Homo sapiens
+REACT_18338	Activation of AMPA receptors	Homo sapiens
+REACT_18307	Trafficking of AMPA receptors	Homo sapiens
+REACT_18422	Trafficking of GluR2-containing AMPA receptors	Homo sapiens
+REACT_25199	GABA receptor activation	Homo sapiens
+REACT_25168	GABA A (rho) receptor activation	Homo sapiens
+REACT_24987	GABA A receptor activation	Homo sapiens
+REACT_25031	GABA B receptor activation	Homo sapiens
+REACT_25330	Activation of GABAB receptors	Homo sapiens
+REACT_25004	Inhibition  of voltage gated Ca2+ channels via Gbeta/gamma subunits	Homo sapiens
+REACT_25282	Inhibition of adenylate cyclase pathway	Homo sapiens
+REACT_15333	Adenylate cyclase inhibitory pathway	Homo sapiens
+REACT_21312	Activation of Kainate Receptors upon glutamate binding	Homo sapiens
+REACT_21254	Presynaptic function of Kainate receptors	Homo sapiens
+REACT_21322	Ionotropic activity of Kainate Receptors	Homo sapiens
+REACT_21346	Activation of Ca-permeable Kainate Receptor	Homo sapiens
+REACT_21343	Activation of Na-permeable Kainate Receptors	Homo sapiens
+REACT_75908	Potassium Channels	Homo sapiens
+REACT_75897	Tandem pore domain potassium channels	Homo sapiens
+REACT_75850	TWIK-related alkaline pH activated K+ channel (TALK)	Homo sapiens
+REACT_75779	Tandem of pore domain in a weak inwardly rectifying K+ channels (TWIK)	Homo sapiens
+REACT_75819	TWIK related potassium channel (TREK)	Homo sapiens
+REACT_75880	Tandem pore domain halothane-inhibited K+ channel (THIK)	Homo sapiens
+REACT_75801	TWIK-related spinal cord K+ channel (TRESK)	Homo sapiens
+REACT_75899	TWIK-releated acid-sensitive K+ channel (TASK)	Homo sapiens
+REACT_75896	Ca2+ activated K+ channels	Homo sapiens
+REACT_75918	Inwardly rectifying K+ channels	Homo sapiens
+REACT_75815	Potassium transport channels	Homo sapiens
+REACT_75870	Classical Kir channels	Homo sapiens
+REACT_75775	ATP sensitive Potassium channels	Homo sapiens
+REACT_75780	G protein gated Potassium channels	Homo sapiens
+REACT_75831	Activation of G protein gated Potassium channels	Homo sapiens
+REACT_75862	HCN channels	Homo sapiens
+REACT_75770	Voltage gated Potassium channels	Homo sapiens
+REACT_71	Gene Expression	Homo sapiens
+REACT_1757	mRNA Editing	Homo sapiens
+REACT_18	mRNA Editing: A to I Conversion	Homo sapiens
+REACT_1231	C6 deamination of adenosine	Homo sapiens
+REACT_1966	Formation of editosomes by ADAR proteins	Homo sapiens
+REACT_167	mRNA Editing: C to U Conversion	Homo sapiens
+REACT_1390	Formation of the Editosome	Homo sapiens
+REACT_1768	Processing of Capped Intronless Pre-mRNA	Homo sapiens
+REACT_1364	SLBP Dependent Processing of Replication-Dependent Histone Pre-mRNAs	Homo sapiens
+REACT_185	SLBP independent Processing of Histone Pre-mRNAs	Homo sapiens
+REACT_1096	Processing of Intronless Pre-mRNAs	Homo sapiens
+REACT_22166	Insulin-like Growth Factor-2 mRNA Binding Proteins (IGF2BPs/IMPs/VICKZs) bind RNA	Homo sapiens
+REACT_11052	Metabolism of non-coding RNA	Homo sapiens
+REACT_11066	snRNP Assembly	Homo sapiens
+REACT_1366	RNA Polymerase II Transcription	Homo sapiens
+REACT_833	RNA Polymerase II Transcription Elongation	Homo sapiens
+REACT_1845	Formation of RNA Pol II elongation complex 	Homo sapiens
+REACT_846	Formation of the Early Elongation Complex	Homo sapiens
+REACT_834	RNA Polymerase II Transcription Initiation And Promoter Clearance	Homo sapiens
+REACT_2089	RNA Polymerase II Promoter Escape	Homo sapiens
+REACT_1851	RNA Polymerase II Transcription Initiation	Homo sapiens
+REACT_975	RNA Pol II CTD phosphorylation and interaction with CE	Homo sapiens
+REACT_1655	RNA Polymerase II Transcription Pre-Initiation And Promoter Opening	Homo sapiens
+REACT_894	RNA Polymerase II Transcription Termination	Homo sapiens
+REACT_387	Cleavage of Growing Transcript in the Termination Region 	Homo sapiens
+REACT_22107	RNA Polymerase II Pre-transcription Events	Homo sapiens
+REACT_264098	Epigenetic regulation of gene expression	Homo sapiens
+REACT_268237	DNA methylation	Homo sapiens
+REACT_263919	TET1,2,3 and TDG demethylate DNA	Homo sapiens
+REACT_264352	PRC2 methylates histones and DNA	Homo sapiens
+REACT_264000	Negative epigenetic regulation of rRNA expression	Homo sapiens
+REACT_263965	NoRC negatively regulates rRNA expression	Homo sapiens
+REACT_264541	SIRT1 negatively regulates rRNA Expression	Homo sapiens
+REACT_21352	RNA Polymerase I, RNA Polymerase III, and Mitochondrial Transcription	Homo sapiens
+REACT_1309	RNA Polymerase I Transcription	Homo sapiens
+REACT_2204	RNA Polymerase I Chain Elongation	Homo sapiens
+REACT_1974	RNA Polymerase I Promoter Clearance	Homo sapiens
+REACT_953	RNA Polymerase I Transcription Initiation	Homo sapiens
+REACT_1913	RNA Polymerase I Promoter Escape	Homo sapiens
+REACT_2232	RNA Polymerase I Promoter Opening	Homo sapiens
+REACT_1074	RNA Polymerase I Transcription Termination	Homo sapiens
+REACT_1484	Transcription from mitochondrial promoters	Homo sapiens
+REACT_367	Mitochondrial transcription initiation	Homo sapiens
+REACT_610	Mitochondrial transcription termination	Homo sapiens
+REACT_1371	RNA Polymerase III Transcription	Homo sapiens
+REACT_756	RNA Polymerase III Chain Elongation	Homo sapiens
+REACT_63	RNA Polymerase III Transcription Termination	Homo sapiens
+REACT_22339	RNA Polymerase III Abortive And Retractive Initiation	Homo sapiens
+REACT_281	RNA Polymerase III Transcription Initiation	Homo sapiens
+REACT_571	RNA Polymerase III Transcription Initiation From Type 3 Promoter	Homo sapiens
+REACT_1036	RNA Polymerase III Transcription Initiation From Type 2 Promoter	Homo sapiens
+REACT_347	RNA Polymerase III Transcription Initiation From Type 1 Promoter	Homo sapiens
+REACT_24994	Regulation of mRNA stability by proteins that bind AU-rich elements	Homo sapiens
+REACT_25218	HuR stabilizes mRNA	Homo sapiens
+REACT_25325	AUF1 (hnRNP D0) destabilizes mRNA	Homo sapiens
+REACT_25064	Tristetraprolin (TTP) destabilizes mRNA	Homo sapiens
+REACT_25042	KSRP destabilizes mRNA	Homo sapiens
+REACT_24915	Butyrate Response Factor 1 (BRF1) destabilizes mRNA	Homo sapiens
+REACT_125	Processing of Capped Intron-Containing Pre-mRNA	Homo sapiens
+REACT_1281	Transport of Mature Transcript to Cytoplasm	Homo sapiens
+REACT_338	Transport of Mature mRNAs Derived from Intronless Transcripts	Homo sapiens
+REACT_1835	Transport of Mature mRNA Derived from an Intronless Transcript	Homo sapiens
+REACT_405	Transport of the SLBP Dependant Mature mRNA	Homo sapiens
+REACT_424	Transport of the SLBP independent Mature mRNA	Homo sapiens
+REACT_1597	Transport of Mature mRNA derived from an Intron-Containing Transcript	Homo sapiens
+REACT_1849	mRNA 3'-end processing	Homo sapiens
+REACT_1735	mRNA Splicing	Homo sapiens
+REACT_467	mRNA Splicing - Major Pathway	Homo sapiens
+REACT_1753	mRNA Splicing - Minor Pathway	Homo sapiens
+REACT_1470	mRNA Capping	Homo sapiens
+REACT_12472	Regulatory RNA pathways	Homo sapiens
+REACT_118560	Small interfering RNA (siRNA) biogenesis	Homo sapiens
+REACT_268530	Transcriptional regulation by small RNAs	Homo sapiens
+REACT_118699	Post-transcriptional silencing by small RNAs	Homo sapiens
+REACT_267790	PIWI-interacting RNA (piRNA) biogenesis	Homo sapiens
+REACT_12417	MicroRNA (miRNA) biogenesis	Homo sapiens
+REACT_20639	Deadenylation-dependent mRNA decay	Homo sapiens
+REACT_20518	mRNA decay by 5' to 3' exoribonuclease	Homo sapiens
+REACT_20514	Deadenylation of mRNA	Homo sapiens
+REACT_20619	mRNA decay by 3' to 5' exoribonuclease	Homo sapiens
+REACT_1014	Translation	Homo sapiens
+REACT_1986	Eukaryotic Translation Termination	Homo sapiens
+REACT_115902	SRP-dependent cotranslational protein targeting to membrane	Homo sapiens
+REACT_2159	Eukaryotic Translation Initiation	Homo sapiens
+REACT_79	L13a-mediated translational silencing of Ceruloplasmin expression	Homo sapiens
+REACT_2099	Cap-dependent Translation Initiation	Homo sapiens
+REACT_1815	Recycling of eIF2:GDP	Homo sapiens
+REACT_1079	Formation of the ternary complex, and subsequently, the 43S complex	Homo sapiens
+REACT_2085	GTP hydrolysis and joining of the 60S ribosomal subunit	Homo sapiens
+REACT_931	Ribosomal scanning and start codon recognition	Homo sapiens
+REACT_1797	Formation of a pool of free 40S subunits	Homo sapiens
+REACT_1258	Activation of the mRNA upon binding of the cap-binding complex and eIFs, and subsequent binding to 43S	Homo sapiens
+REACT_1979	Translation initiation complex formation	Homo sapiens
+REACT_1477	Eukaryotic Translation Elongation	Homo sapiens
+REACT_1404	Peptide chain elongation	Homo sapiens
+REACT_15482	tRNA Aminoacylation	Homo sapiens
+REACT_15306	Cytosolic tRNA aminoacylation	Homo sapiens
+REACT_15302	Mitochondrial tRNA aminoacylation	Homo sapiens
+REACT_12627	Generic Transcription Pathway	Homo sapiens
+REACT_121061	Transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer	Homo sapiens
+REACT_121111	Downregulation of SMAD2/3:SMAD4 transcriptional activity	Homo sapiens
+REACT_120734	SMAD2/SMAD3:SMAD4 heterotrimer regulates transcription	Homo sapiens
+REACT_355048	Transcriptional Regulation by TP53	Homo sapiens
+REACT_355377	TP53 Regulates Metabolic Genes	Homo sapiens
+REACT_118713	YAP1- and WWTR1 (TAZ)-stimulated gene expression	Homo sapiens
+REACT_14835	Notch-HLH transcription pathway	Homo sapiens
+REACT_15525	Nuclear Receptor transcription pathway	Homo sapiens
+REACT_75886	Nonsense-Mediated Decay (NMD)	Homo sapiens
+REACT_75822	Nonsense Mediated Decay (NMD) enhanced by the Exon Junction Complex (EJC)	Homo sapiens
+REACT_75768	Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)	Homo sapiens
+REACT_268456	Programmed Cell Death	Homo sapiens
+REACT_578	Apoptosis	Homo sapiens
+REACT_13648	Regulation of Apoptosis	Homo sapiens
+REACT_13528	Regulation of PAK-2p34 activity by PS-GAP/RHG10	Homo sapiens
+REACT_13464	Regulation of activated PAK-2p34 by proteasome mediated degradation	Homo sapiens
+REACT_964	Intrinsic Pathway for Apoptosis	Homo sapiens
+REACT_963	Apoptotic factor-mediated response	Homo sapiens
+REACT_666	SMAC-mediated apoptotic response	Homo sapiens
+REACT_1767	SMAC-mediated dissociation of IAP:caspase complexes 	Homo sapiens
+REACT_2190	SMAC binds to IAPs 	Homo sapiens
+REACT_831	Cytochrome c-mediated apoptotic response	Homo sapiens
+REACT_89	Formation of apoptosome	Homo sapiens
+REACT_607	Activation of caspases through apoptosome-mediated cleavage	Homo sapiens
+REACT_584	Activation, translocation and oligomerization of BAX	Homo sapiens
+REACT_330	BH3-only proteins associate with and inactivate anti-apoptotic BCL-2 members	Homo sapiens
+REACT_701	Activation, myristolyation of BID and translocation to mitochondria	Homo sapiens
+REACT_697	Activation of BH3-only proteins	Homo sapiens
+REACT_1650	Activation of BIM and translocation to mitochondria 	Homo sapiens
+REACT_1194	Activation of NOXA and translocation to mitochondria	Homo sapiens
+REACT_121	Activation of PUMA and translocation to mitochondria	Homo sapiens
+REACT_2100	Activation of BMF and translocation to mitochondria	Homo sapiens
+REACT_549	Activation of BAD and translocation to mitochondria 	Homo sapiens
+REACT_1322	Release of apoptotic factors from the mitochondria	Homo sapiens
+REACT_707	Activation and oligomerization of BAK protein	Homo sapiens
+REACT_995	Apoptotic execution  phase	Homo sapiens
+REACT_1213	Apoptosis induced DNA fragmentation	Homo sapiens
+REACT_13462	Activation of DNA fragmentation factor	Homo sapiens
+REACT_107	Apoptotic cleavage of cellular proteins	Homo sapiens
+REACT_13541	Caspase-mediated cleavage of cytoskeletal proteins	Homo sapiens
+REACT_13472	Breakdown of the nuclear lamina	Homo sapiens
+REACT_13579	Apoptotic cleavage of cell adhesion  proteins	Homo sapiens
+REACT_13532	Stimulation of the cell death response by PAK-2p34	Homo sapiens
+REACT_355336	Caspase activation via extrinsic apoptotic signalig pathway	Homo sapiens
+REACT_22128	Ligand-independent caspase activation via DCC	Homo sapiens
+REACT_1503	Ligand-dependent caspase activation	Homo sapiens
+REACT_832	Dimerization of procaspase-8	Homo sapiens
+REACT_164011	Regulation by c-FLIP	Homo sapiens
+REACT_355027	Regulated Necrosis	Homo sapiens
+REACT_355409	RIPK1-mediated regulated necrosis	Homo sapiens
+REACT_355361	Regulation of necroptotic cell death	Homo sapiens
+REACT_355311	CASP8 activity is inhibited	Homo sapiens
+REACT_264155	Chromatin organization	Homo sapiens
+REACT_264165	Chromatin modifying enzymes	Homo sapiens
+REACT_268728	PKMTs methylate histone lysines	Homo sapiens
+REACT_263961	HDMs demethylate histones	Homo sapiens
+REACT_264545	RMTs methylate histone arginines	Homo sapiens
+REACT_263923	HDACs deacetylate histones	Homo sapiens
+REACT_264245	HATs acetylate histones	Homo sapiens
+REACT_355604	Vesicle-mediated transport	Homo sapiens
+REACT_160300	Binding and Uptake of Ligands by Scavenger Receptors	Homo sapiens
+REACT_163813	Scavenging by Class F Receptors	Homo sapiens
+REACT_160163	Scavenging of heme from plasma	Homo sapiens
+REACT_164002	Scavenging by Class H Receptors	Homo sapiens
+REACT_163699	Scavenging by Class A Receptors	Homo sapiens
+REACT_163679	Scavenging by Class B Receptors	Homo sapiens
+REACT_11123	Membrane Trafficking	Homo sapiens
+REACT_11208	Golgi to ER Retrograde Transport	Homo sapiens
+REACT_11096	COPI Mediated Transport	Homo sapiens
+REACT_11235	trans-Golgi Network Vesicle Budding	Homo sapiens
+REACT_19187	Clathrin derived vesicle budding	Homo sapiens
+REACT_19287	Lysosome Vesicle Biogenesis	Homo sapiens
+REACT_19400	Golgi Associated Vesicle Biogenesis	Homo sapiens
+REACT_9480	Gap junction trafficking and regulation	Homo sapiens
+REACT_9411	Gap junction trafficking	Homo sapiens
+REACT_11035	Gap junction degradation	Homo sapiens
+REACT_11049	Formation of annular gap junctions	Homo sapiens
+REACT_9509	Gap junction assembly	Homo sapiens
+REACT_9392	Transport of connexins along the secretory pathway	Homo sapiens
+REACT_11050	Transport of connexons to the plasma membrane	Homo sapiens
+REACT_11039	Microtubule-dependent trafficking of connexons from Golgi to the plasma membrane	Homo sapiens
+REACT_9398	Oligomerization of connexins into connexons	Homo sapiens
+REACT_11034	Regulation of gap junction activity	Homo sapiens
+REACT_11043	c-src mediated regulation of Cx43 function and closure of gap junctions	Homo sapiens
+REACT_147867	Translocation of GLUT4 to the plasma membrane	Homo sapiens
+REACT_27258	Endosomal Sorting Complex Required For Transport (ESCRT)	Homo sapiens
+REACT_11203	ER to Golgi Transport	Homo sapiens
+REACT_12507	COPII (Coat Protein 2) Mediated Vesicle Transport	Homo sapiens
+REACT_111217	Metabolism	Homo sapiens
+REACT_150353	Mitochondrial iron-sulfur cluster biogenesis	Homo sapiens
+REACT_150128	Electron transport from NADPH to Ferredoxin	Homo sapiens
+REACT_121189	Abacavir transport and metabolism	Homo sapiens
+REACT_121388	Abacavir metabolism	Homo sapiens
+REACT_120801	Abacavir transmembrane transport	Homo sapiens
+REACT_1698	Metabolism of nucleotides	Homo sapiens
+REACT_150237	Phosphate bond hydrolysis by NUDT proteins	Homo sapiens
+REACT_957	Pyrimidine metabolism	Homo sapiens
+REACT_21376	Pyrimidine biosynthesis	Homo sapiens
+REACT_655	Pyrimidine salvage reactions	Homo sapiens
+REACT_1023	Pyrimidine catabolism	Homo sapiens
+REACT_21330	Synthesis and interconversion of nucleotide di- and triphosphates	Homo sapiens
+REACT_522	Purine metabolism	Homo sapiens
+REACT_1923	Purine salvage	Homo sapiens
+REACT_1776	Purine ribonucleoside monophosphate biosynthesis	Homo sapiens
+REACT_2086	Purine catabolism	Homo sapiens
+REACT_1505	Integration of energy metabolism	Homo sapiens
+REACT_1525	PKA-mediated phosphorylation of key metabolic factors	Homo sapiens
+REACT_939	Insulin effects increased synthesis of Xylulose-5-Phosphate	Homo sapiens
+REACT_1665	Glucagon signaling in metabolic regulation	Homo sapiens
+REACT_1946	PKA activation in glucagon signalling	Homo sapiens
+REACT_18325	Regulation of insulin secretion	Homo sapiens
+REACT_19375	Free fatty acids regulate insulin secretion	Homo sapiens
+REACT_19193	Fatty Acids bound to GPR40 (FFAR1) regulate insulin secretion	Homo sapiens
+REACT_18274	Glucagon-like Peptide-1 (GLP1) regulates insulin secretion	Homo sapiens
+REACT_18405	Acetylcholine regulates insulin secretion	Homo sapiens
+REACT_18339	Adrenaline,noradrenaline inhibits insulin secretion	Homo sapiens
+REACT_2122	ChREBP activates metabolic gene expression	Homo sapiens
+REACT_705	PP2A-mediated dephosphorylation of key metabolic factors	Homo sapiens
+REACT_1988	AMPK inhibits chREBP transcriptional activation activity	Homo sapiens
+REACT_11193	Metabolism of vitamins and cofactors	Homo sapiens
+REACT_11238	Metabolism of water-soluble vitamins and cofactors	Homo sapiens
+REACT_11202	Vitamin C (ascorbate) metabolism	Homo sapiens
+REACT_163862	Cobalamin (Cbl, vitamin B12) transport and metabolism	Homo sapiens
+REACT_11167	Metabolism of folate and pterines	Homo sapiens
+REACT_11117	Vitamin B1 (thiamin) metabolism	Homo sapiens
+REACT_25012	Vitamins B6 activation to pyridoxal phosphate	Homo sapiens
+REACT_11070	Vitamin B2 (riboflavin) metabolism	Homo sapiens
+REACT_25073	Molybdenum cofactor biosynthesis	Homo sapiens
+REACT_11153	Biotin transport and metabolism	Homo sapiens
+REACT_11172	Vitamin B5 (pantothenate) metabolism	Homo sapiens
+REACT_11218	Coenzyme A biosynthesis	Homo sapiens
+REACT_11088	Nicotinate metabolism	Homo sapiens
+REACT_11213	Nicotinamide salvaging	Homo sapiens
+REACT_13	Metabolism of amino acids and derivatives	Homo sapiens
+REACT_355245	Melanin biosynthesis	Homo sapiens
+REACT_916	Tryptophan catabolism	Homo sapiens
+REACT_16925	Glyoxylate metabolism	Homo sapiens
+REACT_1786	Phenylalanine and tyrosine catabolism	Homo sapiens
+REACT_1298	Lysine catabolism	Homo sapiens
+REACT_15513	Amine-derived hormones	Homo sapiens
+REACT_15551	Catecholamine biosynthesis	Homo sapiens
+REACT_15292	Thyroxine biosynthesis	Homo sapiens
+REACT_15297	Regulation of thyroid hormone activity	Homo sapiens
+REACT_15439	Serotonin and melatonin biosynthesis	Homo sapiens
+REACT_847	Urea cycle	Homo sapiens
+REACT_2125	Carnitine synthesis	Homo sapiens
+REACT_238	Amino acid synthesis and interconversion (transamination)	Homo sapiens
+REACT_115789	Serine biosynthesis	Homo sapiens
+REACT_115639	Sulfur amino acid metabolism	Homo sapiens
+REACT_115589	Cysteine formation from homocysteine	Homo sapiens
+REACT_75881	Methionine salvage pathway	Homo sapiens
+REACT_115654	Degradation of cysteine and homocysteine	Homo sapiens
+REACT_116010	Sulfide oxidation to sulfate	Homo sapiens
+REACT_1002	Proline catabolism	Homo sapiens
+REACT_197	Branched-chain amino acid catabolism	Homo sapiens
+REACT_1249	Histidine catabolism	Homo sapiens
+REACT_14820	Metabolism of polyamines	Homo sapiens
+REACT_14805	Interconversion of polyamines	Homo sapiens
+REACT_14800	Agmatine biosynthesis	Homo sapiens
+REACT_75881	Methionine salvage pathway	Homo sapiens
+REACT_13565	Regulation of ornithine decarboxylase (ODC)	Homo sapiens
+REACT_813	Creatine metabolism	Homo sapiens
+REACT_121123	Reversible hydration of carbon dioxide	Homo sapiens
+REACT_160176	Cytosolic iron-sulfur cluster assembly	Homo sapiens
+REACT_12508	Metabolism of nitric oxide	Homo sapiens
+REACT_12389	eNOS activation and regulation	Homo sapiens
+REACT_12510	NOSIP mediated eNOS trafficking	Homo sapiens
+REACT_12541	NOSTRIN mediated eNOS trafficking	Homo sapiens
+REACT_12477	eNOS activation	Homo sapiens
+REACT_111176	Tetrahydrobiopterin (BH4) synthesis, recycling, salvage and regulation	Homo sapiens
+REACT_150154	Inositol phosphate metabolism	Homo sapiens
+REACT_150458	IPs transport between nucleus and cytosol	Homo sapiens
+REACT_150169	IP6 and IP7 transport between cytosol and nucleus	Homo sapiens
+REACT_150275	Synthesis of IPs in the nucleus	Homo sapiens
+REACT_150204	IPs transport between cytosol and ER lumen	Homo sapiens
+REACT_150352	Synthesis of IP2, IP, and Ins in the cytosol	Homo sapiens
+REACT_150265	IPs transport between nucleus and ER lumen	Homo sapiens
+REACT_150405	IPs transport between ER lumen and cytosol	Homo sapiens
+REACT_150188	Synthesis of pyrophosphates in the cytosol	Homo sapiens
+REACT_150354	IP3 and IP4 transport between cytosol and nucleus	Homo sapiens
+REACT_150164	IPs transport between ER lumen and nucleus	Homo sapiens
+REACT_150253	Synthesis of IPs in the ER lumen	Homo sapiens
+REACT_150312	Synthesis of IP3 and IP4 in the cytosol	Homo sapiens
+REACT_111083	The citric acid (TCA) cycle and respiratory electron transport	Homo sapiens
+REACT_1046	Pyruvate metabolism and Citric Acid (TCA) cycle	Homo sapiens
+REACT_1785	Citric acid cycle (TCA cycle)	Homo sapiens
+REACT_25367	Interconversion of 2-oxoglutarate and 2-hydroxyglutarate	Homo sapiens
+REACT_2071	Pyruvate metabolism	Homo sapiens
+REACT_12528	Regulation of pyruvate dehydrogenase (PDH) complex	Homo sapiens
+REACT_6305	Respiratory electron transport, ATP synthesis by chemiosmotic coupling, and heat production by uncoupling proteins.	Homo sapiens
+REACT_6759	Formation of ATP by chemiosmotic coupling	Homo sapiens
+REACT_22393	Respiratory electron transport	Homo sapiens
+REACT_6341	Mitochondrial Uncoupling Proteins	Homo sapiens
+REACT_6258	The fatty acid cycling model	Homo sapiens
+REACT_6196	The proton buffering model	Homo sapiens
+REACT_120969	O2/CO2 exchange in erythrocytes	Homo sapiens
+REACT_121329	Erythrocytes take up carbon dioxide and release oxygen	Homo sapiens
+REACT_121380	Erythrocytes take up oxygen and release carbon dioxide	Homo sapiens
+REACT_9431	Metabolism of porphyrins	Homo sapiens
+REACT_22297	Heme degradation	Homo sapiens
+REACT_9465	Heme biosynthesis	Homo sapiens
+REACT_474	Metabolism of carbohydrates	Homo sapiens
+REACT_9441	Hexose transport	Homo sapiens
+REACT_212	Glucose transport	Homo sapiens
+REACT_6804	Regulation of Glucokinase by Glucokinase Regulatory Protein	Homo sapiens
+REACT_355390	Fructose metabolism	Homo sapiens
+REACT_355154	Fructose biosynthesis	Homo sapiens
+REACT_1571	Fructose catabolism	Homo sapiens
+REACT_532	Galactose catabolism	Homo sapiens
+REACT_121315	Glycosaminoglycan metabolism	Homo sapiens
+REACT_121314	Heparan sulfate/heparin (HS-GAG) metabolism	Homo sapiens
+REACT_121408	A tetrasaccharide linker sequence is required for GAG synthesis	Homo sapiens
+REACT_121248	HS-GAG biosynthesis	Homo sapiens
+REACT_120752	HS-GAG degradation	Homo sapiens
+REACT_6840	Transport and synthesis of PAPS	Homo sapiens
+REACT_121288	Keratan sulfate/keratin metabolism	Homo sapiens
+REACT_121313	Keratan sulfate degradation	Homo sapiens
+REACT_121120	Keratan sulfate biosynthesis	Homo sapiens
+REACT_121083	Hyaluronan metabolism	Homo sapiens
+REACT_121301	Hyaluronan biosynthesis and export	Homo sapiens
+REACT_120996	Hyaluronan uptake and degradation	Homo sapiens
+REACT_121206	Chondroitin sulfate/dermatan sulfate metabolism	Homo sapiens
+REACT_120800	Dermatan sulfate biosynthesis	Homo sapiens
+REACT_121408	A tetrasaccharide linker sequence is required for GAG synthesis	Homo sapiens
+REACT_120888	CS/DS degradation	Homo sapiens
+REACT_120989	Chondroitin sulfate biosynthesis	Homo sapiens
+REACT_355374	Lactose synthesis	Homo sapiens
+REACT_723	Glucose metabolism	Homo sapiens
+REACT_1008	Glycogen breakdown (glycogenolysis)	Homo sapiens
+REACT_355557	Lysosomal glycogen catabolism	Homo sapiens
+REACT_169208	Glycogen synthesis	Homo sapiens
+REACT_1520	Gluconeogenesis	Homo sapiens
+REACT_1383	Glycolysis	Homo sapiens
+REACT_1859	Pentose phosphate pathway (hexose monophosphate shunt)	Homo sapiens
+REACT_9472	Digestion of dietary carbohydrate	Homo sapiens
+REACT_850	5-Phosphoribose 1-diphosphate biosynthesis	Homo sapiens
+REACT_22258	Metabolism of lipids and lipoproteins	Homo sapiens
+REACT_147797	Regulation of cholesterol biosynthesis by SREBP (SREBF)	Homo sapiens
+REACT_147904	Activation of gene expression by SREBF (SREBP)	Homo sapiens
+REACT_11040	Bile acid and bile salt metabolism	Homo sapiens
+REACT_11042	Recycling of bile acids and salts	Homo sapiens
+REACT_11054	Synthesis of bile acids and bile salts	Homo sapiens
+REACT_11041	Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol	Homo sapiens
+REACT_11048	Synthesis of bile acids and bile salts via 27-hydroxycholesterol	Homo sapiens
+REACT_11053	Synthesis of bile acids and bile salts via 24-hydroxycholesterol	Homo sapiens
+REACT_19323	Sphingolipid metabolism	Homo sapiens
+REACT_115810	Sphingolipid de novo biosynthesis	Homo sapiens
+REACT_116105	Glycosphingolipid metabolism	Homo sapiens
+REACT_16957	Peroxisomal lipid metabolism	Homo sapiens
+REACT_16904	NADPH regeneration	Homo sapiens
+REACT_17003	Alpha-oxidation of phytanate	Homo sapiens
+REACT_1407	Plasmalogen biosynthesis	Homo sapiens
+REACT_17017	Beta-oxidation of pristanoyl-CoA	Homo sapiens
+REACT_17062	Beta-oxidation of very long chain fatty acids	Homo sapiens
+REACT_602	Lipid digestion, mobilization, and transport	Homo sapiens
+REACT_6823	Lipoprotein metabolism	Homo sapiens
+REACT_13621	HDL-mediated lipid transport	Homo sapiens
+REACT_6841	Chylomicron-mediated lipid transport	Homo sapiens
+REACT_6934	LDL-mediated lipid transport	Homo sapiens
+REACT_13781	Trafficking of dietary sterols	Homo sapiens
+REACT_494	Hormone-sensitive lipase (HSL)-mediated triacylglycerol hydrolysis	Homo sapiens
+REACT_9518	Digestion of dietary lipid	Homo sapiens
+REACT_11057	Metabolism of steroid hormones and vitamin D	Homo sapiens
+REACT_11036	Glucocorticoid biosynthesis	Homo sapiens
+REACT_11047	Mineralocorticoid biosynthesis	Homo sapiens
+REACT_13523	Vitamin D (calciferol) metabolism	Homo sapiens
+REACT_11059	Androgen biosynthesis	Homo sapiens
+REACT_11037	Estrogen biosynthesis	Homo sapiens
+REACT_11038	Pregnenolone biosynthesis	Homo sapiens
+REACT_121284	alpha-linolenic (omega3) and linoleic (omega6) acid metabolism	Homo sapiens
+REACT_121100	Linoleic acid (LA) metabolism	Homo sapiens
+REACT_121147	alpha-linolenic acid (ALA) metabolism	Homo sapiens
+REACT_9405	Cholesterol biosynthesis	Homo sapiens
+REACT_147851	Arachidonic acid metabolism	Homo sapiens
+REACT_150417	Synthesis of epoxy (EET) and dihydroxyeicosatrienoic acids (DHET)	Homo sapiens
+REACT_150420	Synthesis of Leukotrienes (LT) and Eoxins (EX)	Homo sapiens
+REACT_150149	Synthesis of Prostaglandins (PG) and Thromboxanes (TX)	Homo sapiens
+REACT_150320	Synthesis of Lipoxins (LX)	Homo sapiens
+REACT_150201	Synthesis of 12-eicosatetraenoic acid derivatives	Homo sapiens
+REACT_150134	Synthesis of (16-20)-hydroxyeicosatetraenoic acids (HETE)	Homo sapiens
+REACT_150422	Synthesis of 15-eicosatetraenoic acid derivatives	Homo sapiens
+REACT_150292	Synthesis of Hepoxilins (HX) and Trioxilins (TrX)	Homo sapiens
+REACT_150209	Synthesis of 5-eicosatetraenoic acids	Homo sapiens
+REACT_22279	Fatty acid, triacylglycerol, and ketone body metabolism	Homo sapiens
+REACT_1473	Mitochondrial Fatty Acid Beta-Oxidation	Homo sapiens
+REACT_160	mitochondrial fatty acid beta-oxidation of unsaturated fatty acids	Homo sapiens
+REACT_1541	mitochondrial fatty acid beta-oxidation of saturated fatty acids	Homo sapiens
+REACT_1887	Beta oxidation of hexanoyl-CoA to butanoyl-CoA	Homo sapiens
+REACT_1697	Beta oxidation of octanoyl-CoA to hexanoyl-CoA	Homo sapiens
+REACT_2025	Beta oxidation of palmitoyl-CoA to myristoyl-CoA	Homo sapiens
+REACT_2108	Beta oxidation of myristoyl-CoA to lauroyl-CoA	Homo sapiens
+REACT_419	Beta oxidation of butanoyl-CoA to acetyl-CoA	Homo sapiens
+REACT_735	Beta oxidation of lauroyl-CoA to decanoyl-CoA-CoA	Homo sapiens
+REACT_1708	Beta oxidation of decanoyl-CoA to octanoyl-CoA-CoA	Homo sapiens
+REACT_993	Propionyl-CoA catabolism	Homo sapiens
+REACT_1861	Ketone body metabolism	Homo sapiens
+REACT_59	Utilization of Ketone Bodies	Homo sapiens
+REACT_1464	Synthesis of Ketone Bodies	Homo sapiens
+REACT_11082	Import of palmitoyl-CoA into the mitochondrial matrix	Homo sapiens
+REACT_19241	Regulation of lipid metabolism by Peroxisome proliferator-activated receptor alpha (PPARalpha)	Homo sapiens
+REACT_116145	PPARA activates gene expression	Homo sapiens
+REACT_1190	Triglyceride Biosynthesis	Homo sapiens
+REACT_1319	Fatty Acyl-CoA Biosynthesis	Homo sapiens
+REACT_380	Synthesis of very long-chain fatty acyl-CoAs	Homo sapiens
+REACT_160111	Ubiquinol biosynthesis	Homo sapiens
+REACT_120870	Phospholipid metabolism	Homo sapiens
+REACT_121401	Glycerophospholipid biosynthesis	Homo sapiens
+REACT_120920	Synthesis of CL	Homo sapiens
+REACT_120785	Hydrolysis of LPE	Homo sapiens
+REACT_121079	PI and PC transport between ER and Golgi membranes	Homo sapiens
+REACT_121369	Acyl chain remodelling of PE	Homo sapiens
+REACT_121039	Synthesis of BMP	Homo sapiens
+REACT_120906	Synthesis of PA	Homo sapiens
+REACT_121006	Acyl chain remodeling of CL	Homo sapiens
+REACT_120722	Acyl chain remodelling of PI	Homo sapiens
+REACT_121324	Acyl chain remodelling of PG	Homo sapiens
+REACT_120823	Synthesis of PS	Homo sapiens
+REACT_121122	Acyl chain remodeling of DAG and TAG	Homo sapiens
+REACT_121238	Synthesis of PC	Homo sapiens
+REACT_121000	Synthesis of PI	Homo sapiens
+REACT_121280	Synthesis of PG	Homo sapiens
+REACT_121384	Acyl chain remodelling of PS	Homo sapiens
+REACT_120829	Acyl chain remodelling of PC	Homo sapiens
+REACT_120977	Hydrolysis of LPC	Homo sapiens
+REACT_120919	Synthesis of PE	Homo sapiens
+REACT_121175	PI Metabolism	Homo sapiens
+REACT_120874	PIPs transport between late endosome and Golgi membranes	Homo sapiens
+REACT_121208	PIPs transport between early endosome and Golgi membranes	Homo sapiens
+REACT_120756	Synthesis of PIPs at the early endosome membrane	Homo sapiens
+REACT_121025	Synthesis of PIPs at the plasma membrane	Homo sapiens
+REACT_120836	Synthesis of PIPs at the Golgi membrane	Homo sapiens
+REACT_121209	PIPs transport between early and late endosome membranes	Homo sapiens
+REACT_121168	Synthesis of PIPs at the ER membrane	Homo sapiens
+REACT_120914	PIPs transport between Golgi and plasma membranes	Homo sapiens
+REACT_120918	Synthesis of PIPs at the late endosome membrane	Homo sapiens
+REACT_121079	PI and PC transport between ER and Golgi membranes	Homo sapiens
+REACT_121164	PIPs transport between plasma and early endosome membranes	Homo sapiens
+REACT_13433	Biological oxidations	Homo sapiens
+REACT_264461	Aflatoxin activation and detoxification	Homo sapiens
+REACT_6959	Phase II conjugation	Homo sapiens
+REACT_6946	Methylation	Homo sapiens
+REACT_6732	Acetylation	Homo sapiens
+REACT_6926	Glutathione conjugation	Homo sapiens
+REACT_6960	Glutathione synthesis and recycling	Homo sapiens
+REACT_6784	Glucuronidation	Homo sapiens
+REACT_6737	Formation of the active cofactor, UDP-glucuronate	Homo sapiens
+REACT_6913	Cytosolic sulfonation of small molecules	Homo sapiens
+REACT_6840	Transport and synthesis of PAPS	Homo sapiens
+REACT_6971	Amino Acid conjugation	Homo sapiens
+REACT_6889	Conjugation of carboxylic acids	Homo sapiens
+REACT_6800	Conjugation of phenylacetate with glutamine	Homo sapiens
+REACT_6933	Conjugation of benzoate with glycine	Homo sapiens
+REACT_6812	Conjugation of salicylate with glycine	Homo sapiens
+REACT_13705	Phase 1 - Functionalization of compounds	Homo sapiens
+REACT_1875	Amine Oxidase reactions	Homo sapiens
+REACT_505	PAOs oxidise polyamines to amines	Homo sapiens
+REACT_416	Biogenic amines are oxidatively deaminated to aldehydes by MAOA and MAOB	Homo sapiens
+REACT_13567	Cytochrome P450 - arranged by substrate type	Homo sapiens
+REACT_13812	Endogenous sterols	Homo sapiens
+REACT_13438	Sterols are 12-hydroxylated by CYP8B1	Homo sapiens
+REACT_13425	Miscellaneous substrates	Homo sapiens
+REACT_13645	Eicosanoids	Homo sapiens
+REACT_13814	Fatty acids	Homo sapiens
+REACT_13543	Xenobiotics	Homo sapiens
+REACT_13797	CYP2E1 reactions	Homo sapiens
+REACT_13721	Aromatic amines can be N-hydroxylated or N-dealkylated by CYP1A2	Homo sapiens
+REACT_13450	Vitamins	Homo sapiens
+REACT_34	Ethanol oxidation	Homo sapiens
+REACT_13653	FMO oxidises nucleophiles	Homo sapiens
+REACT_1396	COX reactions	Homo sapiens
+REACT_17015	Metabolism of proteins	Homo sapiens
+REACT_118595	Mitochondrial protein import	Homo sapiens
+REACT_1014	Translation	Homo sapiens
+REACT_1477	Eukaryotic Translation Elongation	Homo sapiens
+REACT_1404	Peptide chain elongation	Homo sapiens
+REACT_2159	Eukaryotic Translation Initiation	Homo sapiens
+REACT_2099	Cap-dependent Translation Initiation	Homo sapiens
+REACT_1797	Formation of a pool of free 40S subunits	Homo sapiens
+REACT_931	Ribosomal scanning and start codon recognition	Homo sapiens
+REACT_1815	Recycling of eIF2:GDP	Homo sapiens
+REACT_1258	Activation of the mRNA upon binding of the cap-binding complex and eIFs, and subsequent binding to 43S	Homo sapiens
+REACT_1979	Translation initiation complex formation	Homo sapiens
+REACT_2085	GTP hydrolysis and joining of the 60S ribosomal subunit	Homo sapiens
+REACT_1079	Formation of the ternary complex, and subsequently, the 43S complex	Homo sapiens
+REACT_79	L13a-mediated translational silencing of Ceruloplasmin expression	Homo sapiens
+REACT_1986	Eukaryotic Translation Termination	Homo sapiens
+REACT_115902	SRP-dependent cotranslational protein targeting to membrane	Homo sapiens
+REACT_16952	Protein folding	Homo sapiens
+REACT_16967	Post-chaperonin tubulin folding pathway	Homo sapiens
+REACT_17004	Chaperonin-mediated protein folding	Homo sapiens
+REACT_17029	Cooperation of Prefoldin and TriC/CCT  in actin and tubulin folding	Homo sapiens
+REACT_16936	Prefoldin mediated transfer of substrate  to CCT/TriC	Homo sapiens
+REACT_16956	Formation of tubulin folding intermediates by CCT/TriC	Homo sapiens
+REACT_17050	Folding of actin by CCT/TriC	Homo sapiens
+REACT_16907	Association of TriC/CCT with target proteins during biosynthesis	Homo sapiens
+REACT_160078	Peptide hormone metabolism	Homo sapiens
+REACT_147707	Metabolism of Angiotensinogen to Angiotensins	Homo sapiens
+REACT_23974	Incretin synthesis, secretion, and inactivation	Homo sapiens
+REACT_23824	Synthesis, secretion, and inactivation of Glucose-dependent Insulinotropic Polypeptide (GIP)	Homo sapiens
+REACT_24019	Synthesis, secretion, and inactivation of Glucagon-like Peptide-1 (GLP-1)	Homo sapiens
+REACT_15550	Insulin processing	Homo sapiens
+REACT_19189	Synthesis, secretion, and deacylation of Ghrelin	Homo sapiens
+REACT_15452	Peptide hormone biosynthesis	Homo sapiens
+REACT_15398	Glycoprotein hormones	Homo sapiens
+REACT_15428	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)	Homo sapiens
+REACT_18356	Unfolded Protein Response (UPR)	Homo sapiens
+REACT_18348	ATF6-alpha activates chaperones	Homo sapiens
+REACT_18423	ATF6-alpha activates chaperone genes	Homo sapiens
+REACT_18368	IRE1alpha activates chaperones	Homo sapiens
+REACT_18273	XBP1(S) activates chaperone genes	Homo sapiens
+REACT_18277	PERK regulates gene expression	Homo sapiens
+REACT_18355	ATF4 activates genes	Homo sapiens
+REACT_22161	Post-translational protein modification	Homo sapiens
+REACT_22426	Asparagine N-linked glycosylation	Homo sapiens
+REACT_23878	N-glycan trimming in the ER and Calnexin/Calreticulin cycle	Homo sapiens
+REACT_23810	Calnexin/calreticulin cycle	Homo sapiens
+REACT_25091	ER Quality Control Compartment (ERQC)	Homo sapiens
+REACT_22433	Biosynthesis of the N-glycan precursor (dolichol lipid-linked oligosaccharide, LLO) and transfer to a nascent protein	Homo sapiens
+REACT_22387	Synthesis of substrates in N-glycan biosythesis	Homo sapiens
+REACT_22423	Synthesis of GDP-mannose	Homo sapiens
+REACT_2032	Synthesis of dolichyl-phosphate mannose	Homo sapiens
+REACT_22394	Synthesis of UDP-N-acetyl-glucosamine	Homo sapiens
+REACT_22230	Synthesis of Dolichyl-phosphate	Homo sapiens
+REACT_22346	Synthesis of dolichyl-phosphate-glucose	Homo sapiens
+REACT_264366	Sialic acid metabolism	Homo sapiens
+REACT_25046	Transport to the Golgi and subsequent modification	Homo sapiens
+REACT_11203	ER to Golgi Transport	Homo sapiens
+REACT_12507	COPII (Coat Protein 2) Mediated Vesicle Transport	Homo sapiens
+REACT_25208	N-glycan antennae elongation in the medial/trans-Golgi	Homo sapiens
+REACT_25085	N-Glycan antennae elongation	Homo sapiens
+REACT_25266	Reactions specific to the hybrid N-glycan synthesis pathway	Homo sapiens
+REACT_25302	Reactions specific to the complex N-glycan synthesis pathway	Homo sapiens
+REACT_25210	N-glycan trimming and elongation in the cis-Golgi	Homo sapiens
+REACT_25396	Progressive trimming of alpha-1,2-linked mannose residues from Man9/8/7GlcNAc2 to produce Man5GlcNAc2	Homo sapiens
+REACT_1069	Gamma carboxylation, hypusine formation and arylsulfatase activation	Homo sapiens
+REACT_268628	Synthesis of diphthamide-EEF2	Homo sapiens
+REACT_1132	Gamma-carboxylation, transport, and amino-terminal cleavage of proteins	Homo sapiens
+REACT_733	Removal of aminoterminal propeptides from gamma-carboxylated proteins	Homo sapiens
+REACT_1050	Gamma-carboxylation of protein precursors	Homo sapiens
+REACT_1906	Transport of gamma-carboxylated protein precursors from the endoplasmic reticulum to the Golgi apparatus	Homo sapiens
+REACT_121036	The activation of arylsulfatases	Homo sapiens
+REACT_12469	Hypusine synthesis from eIF5A-lysine	Homo sapiens
+REACT_163823	SUMOylation	Homo sapiens
+REACT_163793	Processing and activation of SUMO	Homo sapiens
+REACT_163812	SUMO is conjugated to E1 (UBA2:SAE1)	Homo sapiens
+REACT_163725	SUMO is proteolytically processed	Homo sapiens
+REACT_163646	SUMO is transferred from E1 to E2 (UBE2I, UBC9)	Homo sapiens
+REACT_355247	SUMO E3 ligases SUMOylate target proteins	Homo sapiens
+REACT_355174	SUMOylation of DNA damage response and repair proteins	Homo sapiens
+REACT_1853	Post-translational modification: synthesis of GPI-anchored proteins	Homo sapiens
+REACT_1830	Attachment of GPI anchor to uPAR	Homo sapiens
+REACT_2032	Synthesis of dolichyl-phosphate mannose	Homo sapiens
+REACT_952	Synthesis of glycosylphosphatidylinositol (GPI)	Homo sapiens
+REACT_263902	O-linked glycosylation	Homo sapiens
+REACT_115606	O-linked glycosylation of mucins	Homo sapiens
+REACT_115835	Termination of O-glycan biosynthesis	Homo sapiens
+REACT_264269	O-glycosylation of TSR domain-containing proteins	Homo sapiens
+REACT_216	DNA Repair	Homo sapiens
+REACT_1104	Base Excision Repair	Homo sapiens
+REACT_804	Base-Excision Repair, AP Site Formation	Homo sapiens
+REACT_1405	Depyrimidination	Homo sapiens
+REACT_702	Recognition and association of DNA glycosylase with site containing an affected pyrimidine	Homo sapiens
+REACT_2156	Cleavage of the damaged pyrimidine 	Homo sapiens
+REACT_626	Depurination	Homo sapiens
+REACT_2176	Recognition and association of DNA glycosylase with site containing an affected purine	Homo sapiens
+REACT_1729	Cleavage of the damaged purine	Homo sapiens
+REACT_1893	Resolution of Abasic Sites (AP sites)	Homo sapiens
+REACT_355367	APEX1-Independent Resolution of AP Sites via the Single Nucleotide Replacement Pathway	Homo sapiens
+REACT_1064	Displacement of DNA glycosylase by APEX1	Homo sapiens
+REACT_1128	Resolution of AP sites via the multiple-nucleotide patch replacement pathway	Homo sapiens
+REACT_2192	POLB-Dependent Long Patch Base Excision Repair	Homo sapiens
+REACT_355510	PCNA-Dependent Long Patch Base Excision Repair	Homo sapiens
+REACT_933	Resolution of AP sites via the single-nucleotide replacement pathway	Homo sapiens
+REACT_1357	Abasic sugar-phosphate removal via the single-nucleotide replacement pathway	Homo sapiens
+REACT_1826	Nucleotide Excision Repair	Homo sapiens
+REACT_2253	Global Genomic NER (GG-NER)	Homo sapiens
+REACT_476	DNA Damage Recognition in GG-NER	Homo sapiens
+REACT_257	Formation of incision complex in GG-NER	Homo sapiens
+REACT_311	Dual incision reaction in GG-NER	Homo sapiens
+REACT_1998	Gap-filling DNA repair synthesis and ligation in GG-NER	Homo sapiens
+REACT_378	Repair synthesis of patch ~27-30 bases long  by DNA polymerase	Homo sapiens
+REACT_1628	Transcription-coupled NER (TC-NER)	Homo sapiens
+REACT_2222	Dual incision reaction in TC-NER	Homo sapiens
+REACT_1941	Formation of transcription-coupled NER (TC-NER) repair complex	Homo sapiens
+REACT_74	Gap-filling DNA repair synthesis and ligation in TC-NER	Homo sapiens
+REACT_1993	Repair synthesis for gap-filling by DNA polymerase in TC-NER	Homo sapiens
+REACT_127	DNA Damage Reversal	Homo sapiens
+REACT_2020	Reversal of alkylation damage by DNA dioxygenases	Homo sapiens
+REACT_526	ALKBH2 mediated reversal of alkylation damage	Homo sapiens
+REACT_1662	ALKBH3 mediated reversal of alkylation damage	Homo sapiens
+REACT_355286	MGMT-mediated DNA damage reversal	Homo sapiens
+REACT_2174	DNA Damage Bypass	Homo sapiens
+REACT_355480	Recognition of DNA damage by PCNA-containing replication complex	Homo sapiens
+REACT_2198	Translesion synthesis by Y family DNA polymerases bypasses lesions on DNA template	Homo sapiens
+REACT_8	Translesion synthesis by REV1	Homo sapiens
+REACT_355324	Translesion synthesis by POLI	Homo sapiens
+REACT_1287	Translesion Synthesis by POLH	Homo sapiens
+REACT_355158	Translesion synthesis by POLK	Homo sapiens
+REACT_355250	Termination of translesion DNA synthesis	Homo sapiens
+REACT_18410	Fanconi Anemia pathway	Homo sapiens
+REACT_18265	Regulation of the Fanconi anemia pathway	Homo sapiens
+REACT_264442	Mismatch Repair	Homo sapiens
+REACT_264347	Mismatch repair (MMR) directed by MSH2:MSH3 (MutSbeta)	Homo sapiens
+REACT_264501	Mismatch repair (MMR) directed by MSH2:MSH6 (MutSalpha)	Homo sapiens
+REACT_2054	Double-Strand Break Repair	Homo sapiens
+REACT_1022	Nonhomologous End-joining (NHEJ)	Homo sapiens
+REACT_1201	Processing of DNA ends prior to end rejoining	Homo sapiens
+REACT_1874	Homologous Recombination Repair	Homo sapiens
+REACT_1587	Homologous recombination repair of replication-independent double-strand breaks	Homo sapiens
+REACT_97	Recruitment of repair and signaling proteins to double-strand breaks	Homo sapiens
+REACT_1884	MRN complex relocalizes to nuclear foci	Homo sapiens
+REACT_486	Assembly of the RAD50-MRE11-NBS1 complex at DNA double-strand breaks	Homo sapiens
+REACT_2229	Resolution of D-loop structures	Homo sapiens
+REACT_977	Resolution of D-loop structures through Holliday junction intermediates	Homo sapiens
+REACT_684	Resolution of D-loop structures through synthesis-dependent strand-annealing	Homo sapiens
+REACT_204	ATM mediated response to DNA double-strand break	Homo sapiens
+REACT_1924	ATM mediated phosphorylation of repair proteins	Homo sapiens
+REACT_2055	Processing of DNA double-strand break ends	Homo sapiens
+REACT_1763	Homologous DNA pairing and strand exchange	Homo sapiens
+REACT_408	Presynaptic phase of homologous DNA pairing and strand exchange	Homo sapiens
+REACT_2141	Assembly of the RAD51-ssDNA nucleoprotein complex	Homo sapiens
+REACT_116125	Disease	Homo sapiens
+REACT_268324	Diseases of glycosylation	Homo sapiens
+REACT_267875	Diseases associated with N-glycosylation of proteins	Homo sapiens
+REACT_267773	Defective ALG12 causes ALG12-CDG (CDG-1g)	Homo sapiens
+REACT_268132	Defective ALG11 causes ALG11-CDG (CDG-1p)	Homo sapiens
+REACT_267905	Defective MOGS causes MOGS-CDG (CDG-2b)	Homo sapiens
+REACT_268459	Defective ALG8 causes ALG8-CDG (CDG-1h)	Homo sapiens
+REACT_267765	Defective ALG6 causes ALG6-CDG (CDG-1c)	Homo sapiens
+REACT_268438	Defective B4GALT1 causes B4GALT1-CDG (CDG-2d)	Homo sapiens
+REACT_268645	Defective ALG14 causes congenital myasthenic syndrome (ALG14-CMS)	Homo sapiens
+REACT_268619	Defective MPDU1 causes MPDU1-CDG (CDG-1f)	Homo sapiens
+REACT_268144	Defective ALG1 causes ALG1-CDG (CDG-1k)	Homo sapiens
+REACT_268833	Defective ALG2 causes ALG2-CDG (CDG-1i)	Homo sapiens
+REACT_268015	Defective ALG9 causes ALG9-CDG (CDG-1l)	Homo sapiens
+REACT_268813	Defective MAN1B1 causes MRT15	Homo sapiens
+REACT_268849	Defective DPAGT1 causes DPAGT1-CDG (CDG-1j) and CMSTA2	Homo sapiens
+REACT_268458	Defective RFT1 causes RFT1-CDG (CDG-1n)	Homo sapiens
+REACT_268600	Defective MGAT2 causes MGAT2-CDG (CDG-2a)	Homo sapiens
+REACT_268185	Defective ALG3 causes ALG3-CDG (CDG-1d)	Homo sapiens
+REACT_268624	Diseases associated with glycosaminoglycan metabolism	Homo sapiens
+REACT_268059	Defective SLC26A2 causes chondrodysplasias	Homo sapiens
+REACT_268749	Defective B4GALT7 causes EDS, progeroid type	Homo sapiens
+REACT_267741	Defective EXT2 causes exostoses 2	Homo sapiens
+REACT_268678	Defective B3GAT3 causes JDSSDHD	Homo sapiens
+REACT_268843	Defective PAPSS2 causes SEMD-PA	Homo sapiens
+REACT_267942	Defective EXT1 causes exostoses 1, TRPS2 and CHDS	Homo sapiens
+REACT_267648	Defective CHST3 causes SEDCJD	Homo sapiens
+REACT_268786	Defective CHST6 causes MCDC1	Homo sapiens
+REACT_268113	Defective CHSY1 causes TPBS	Homo sapiens
+REACT_267917	Defective CHST14 causes EDS, musculocontractural type	Homo sapiens
+REACT_268431	Defective B4GALT1 causes B4GALT1-CDG (CDG-2d)	Homo sapiens
+REACT_355208	Diseases of metabolism	Homo sapiens
+REACT_169385	Defects in vitamin and cofactor metabolism	Homo sapiens
+REACT_169429	Defects in cobalamin (B12) metabolism	Homo sapiens
+REACT_169149	Defective MTR causes methylmalonic aciduria and homocystinuria type cblG	Homo sapiens
+REACT_169169	Defective MMACHC causes methylmalonic aciduria and homocystinuria type cblC	Homo sapiens
+REACT_169316	Defective MMAA causes methylmalonic aciduria type cblA	Homo sapiens
+REACT_169256	Defective MMADHC causes methylmalonic aciduria and homocystinuria type cblD	Homo sapiens
+REACT_169280	Defective AMN causes hereditary megaloblastic anemia 1	Homo sapiens
+REACT_169178	Defective CD320 causes methylmalonic aciduria	Homo sapiens
+REACT_169132	Defective CUBN causes hereditary megaloblastic anemia 1	Homo sapiens
+REACT_169363	Defective LMBRD1 causes methylmalonic aciduria and homocystinuria type cblF	Homo sapiens
+REACT_169415	Defective GIF causes intrinsic factor deficiency	Homo sapiens
+REACT_169313	Defective MUT causes methylmalonic aciduria mut type	Homo sapiens
+REACT_169120	Defective TCN2 causes hereditary megaloblastic anemia	Homo sapiens
+REACT_169439	Defective MTRR causes methylmalonic aciduria and homocystinuria type cblE	Homo sapiens
+REACT_169318	Defective MMAB causes methylmalonic aciduria type cblB	Homo sapiens
+REACT_169238	Defects in biotin (Btn) metabolism	Homo sapiens
+REACT_169403	Defective BTD causes biotidinase deficiency	Homo sapiens
+REACT_169312	Defective HLCS causes multiple carboxylase deficiency	Homo sapiens
+REACT_160183	Abnormal conversion of 2-oxoglutarate to 2-hydroxyglutarate	Homo sapiens
+REACT_355504	Diseases of carbohydrate metabolism	Homo sapiens
+REACT_355030	Hereditary fructose intolerance	Homo sapiens
+REACT_355465	Intestinal saccharidase deficiencies	Homo sapiens
+REACT_264090	Glycogen storage diseases	Homo sapiens
+REACT_264430	Myoclonic epilepsy of Lafora	Homo sapiens
+REACT_355033	Glycogen storage disease type II (GAA)	Homo sapiens
+REACT_355167	Essential fructosuria	Homo sapiens
+REACT_147853	Mucopolysaccharidoses	Homo sapiens
+REACT_147739	MPS IX - Natowicz syndrome	Homo sapiens
+REACT_147798	MPS IV - Morquio syndrome B	Homo sapiens
+REACT_147857	MPS I - Hurler syndrome	Homo sapiens
+REACT_147759	MPS VII - Sly syndrome	Homo sapiens
+REACT_147734	MPS II - Hunter syndrome	Homo sapiens
+REACT_147825	MPS IV - Morquio syndrome A	Homo sapiens
+REACT_147749	MPS IIID - Sanfilippo syndrome D	Homo sapiens
+REACT_147753	MPS IIIA - Sanfilippo syndrome A	Homo sapiens
+REACT_147788	MPS IIIB - Sanfilippo syndrome B	Homo sapiens
+REACT_147719	MPS VI - Maroteaux-Lamy syndrome	Homo sapiens
+REACT_147860	MPS IIIC - Sanfilippo syndrome C	Homo sapiens
+REACT_121117	Phenylketonuria	Homo sapiens
+REACT_267615	Metabolic disorders of biological oxidation enzymes	Homo sapiens
+REACT_268129	Defective GGT1 causes Glutathionuria (GLUTH)	Homo sapiens
+REACT_267874	Defective ACTH causes Obesity and Pro-opiomelanocortinin deficiency (POMCD)	Homo sapiens
+REACT_268587	Defective AHCY causes Hypermethioninemia with S-adenosylhomocysteine hydrolase deficiency (HMAHCHD)	Homo sapiens
+REACT_268027	Defective TPMT causes Thiopurine S-methyltransferase deficiency (TPMT deficiency)	Homo sapiens
+REACT_267818	Defective SLC35D1 causes Schneckenbecken dysplasia (SCHBCKD)	Homo sapiens
+REACT_268633	Defective CYP27B1 causes Rickets vitamin D-dependent 1A (VDDR1A)	Homo sapiens
+REACT_267709	Defective CYP7B1 causes Spastic paraplegia 5A, autosomal recessive (SPG5A) and Congenital bile acid synthesis defect 3 (CBAS3)	Homo sapiens
+REACT_268803	Defective CYP24A1 causes Hypercalcemia, infantile (HCAI)	Homo sapiens
+REACT_268058	Defective UGT1A1 causes hyperbilirubinemia	Homo sapiens
+REACT_268478	Defective CYP19A1 causes Aromatase excess syndrome (AEXS)	Homo sapiens
+REACT_267887	Defective GSS causes Glutathione synthetase deficiency (GSS deficiency)	Homo sapiens
+REACT_268321	Defective GCLC causes Hemolytic anemia due to gamma-glutamylcysteine synthetase deficiency (HAGGSD)	Homo sapiens
+REACT_268528	Defective TBXAS1 causes Ghosal hematodiaphyseal dysplasia (GHDD)	Homo sapiens
+REACT_268063	Defective MAT1A causes Methionine adenosyltransferase deficiency (MATD)	Homo sapiens
+REACT_268413	Defective CYP27A1 causes Cerebrotendinous xanthomatosis (CTX)	Homo sapiens
+REACT_267893	Defective CYP21A2 causes Adrenal hyperplasia 3 (AH3)	Homo sapiens
+REACT_268326	Defective CYP2U1 causes Spastic paraplegia 56, autosomal recessive (SPG56)	Homo sapiens
+REACT_268767	Defective CYP11A1 causes Adrenal insufficiency, congenital, with 46,XY sex reversal (AICSR)	Homo sapiens
+REACT_268601	Defective CYP11B1 causes Adrenal hyperplasia 4 (AH4)	Homo sapiens
+REACT_267633	Defective ACY1 causes encephalopathy	Homo sapiens
+REACT_268087	Defective CYP1B1 causes Glaucoma	Homo sapiens
+REACT_268108	Defective CYP26B1 causes Radiohumeral fusions with other skeletal and craniofacial anomalies (RHFCA)	Homo sapiens
+REACT_267734	Defective CYP26C1 causes Focal facial dermal dysplasia 4 (FFDD4)	Homo sapiens
+REACT_268217	Defective CYP17A1 causes Adrenal hyperplasia 5 (AH5)	Homo sapiens
+REACT_268618	Defective UGT1A4 causes hyperbilirubinemia	Homo sapiens
+REACT_268441	Defective CYP4F22 causes Ichthyosis, congenital, autosomal recessive 5 (ARCI5)	Homo sapiens
+REACT_268761	Defective CYP11B2 causes Corticosterone methyloxidase 1 deficiency (CMO-1 deficiency)	Homo sapiens
+REACT_268486	Defective FMO3 causes Trimethylaminuria (TMAU)	Homo sapiens
+REACT_268256	Defective OPLAH causes 5-oxoprolinase deficiency (OPLAHD)	Homo sapiens
+REACT_267863	Defective MAOA causes Brunner syndrome (BRUNS)	Homo sapiens
+REACT_268491	Defective CYP2R1 causes Rickets vitamin D-dependent 1B (VDDR1B)	Homo sapiens
+REACT_355457	Diseases of signal transduction	Homo sapiens
+REACT_264125	Signaling by WNT in cancer	Homo sapiens
+REACT_264356	XAV939 inhibits tankyrase, stabilizing AXIN	Homo sapiens
+REACT_264594	misspliced LRP5 mutants have enhanced beta-catenin-dependent signaling	Homo sapiens
+REACT_264511	AMER1 mutants destabilize the destruction complex	Homo sapiens
+REACT_263893	truncations of AMER1 destabilize the destruction complex	Homo sapiens
+REACT_263937	deletions in the AMER1 gene destabilize the destruction complex	Homo sapiens
+REACT_264092	misspliced GSK3beta mutants stabilize beta-catenin	Homo sapiens
+REACT_264496	AXIN mutants destabilize the destruction complex, activating WNT signaling	Homo sapiens
+REACT_264286	deletions in the AXIN genes in hepatocellular carcinoma result in elevated WNT signaling	Homo sapiens
+REACT_264030	AXIN missense mutants destabilize the destruction complex	Homo sapiens
+REACT_263933	WNT ligand secretion is abrogated by the PORCN inhibitor LGK974	Homo sapiens
+REACT_263863	phosphorylation site mutants of CTNNB1 are not targeted to the proteasome by the destruction complex	Homo sapiens
+REACT_264636	S37 mutants of beta-catenin aren't phosphorylated	Homo sapiens
+REACT_264581	S33 mutants of beta-catenin aren't phosphorylated	Homo sapiens
+REACT_264295	S45 mutants of beta-catenin aren't phosphorylated	Homo sapiens
+REACT_264127	T41 mutants of beta-catenin aren't phosphorylated	Homo sapiens
+REACT_264378	RNF mutants show enhanced WNT signaling and proliferation	Homo sapiens
+REACT_264621	truncated APC mutants destabilize the destruction complex	Homo sapiens
+REACT_263859	APC truncation mutants are not K63 polyubiquitinated	Homo sapiens
+REACT_263992	APC truncation mutants have impaired AXIN binding	Homo sapiens
+REACT_264499	TCF7L2 mutants don't bind CTBP	Homo sapiens
+REACT_147723	PI3K/AKT Signaling in Cancer	Homo sapiens
+REACT_355467	PTEN Loss of Function in Cancer	Homo sapiens
+REACT_147727	Constitutive Signaling by Aberrant PI3K in Cancer	Homo sapiens
+REACT_355468	Constitutive Signaling by AKT1 E17K in Cancer	Homo sapiens
+REACT_160214	Signaling by NOTCH1 in Cancer	Homo sapiens
+REACT_160301	Signaling by NOTCH1 PEST Domain Mutants in Cancer	Homo sapiens
+REACT_160243	Constitutive Signaling by NOTCH1 PEST Domain Mutants	Homo sapiens
+REACT_160133	Signaling by NOTCH1 HD Domain Mutants in Cancer	Homo sapiens
+REACT_160089	Constitutive Signaling by NOTCH1 HD Domain Mutants	Homo sapiens
+REACT_160248	Signaling by NOTCH1 HD+PEST Domain Mutants in Cancer	Homo sapiens
+REACT_160254	Constitutive Signaling by NOTCH1 HD+PEST Domain Mutants	Homo sapiens
+REACT_160099	FBXW7 Mutants and NOTCH1 in Cancer	Homo sapiens
+REACT_160305	Loss of Function of FBXW7 in Cancer and NOTCH1 Signaling	Homo sapiens
+REACT_160082	Signaling by NOTCH1 t(7;9)(NOTCH1:M1580_K2555) Translocation Mutant	Homo sapiens
+REACT_160106	Constitutive Signaling by NOTCH1 t(7;9)(NOTCH1:M1580_K2555) Translocation Mutant	Homo sapiens
+REACT_160102	Diseases associated with visual transduction	Homo sapiens
+REACT_160130	Retinoid cycle disease events	Homo sapiens
+REACT_160194	Biosynthesis of A2E, implicated in retinal degradation	Homo sapiens
+REACT_264623	Hh mutants abrogate ligand secretion	Homo sapiens
+REACT_263883	Hh mutants that don't undergo autocatalytic processing are degraded by ERAD	Homo sapiens
+REACT_120736	Signaling by FGFR in disease	Homo sapiens
+REACT_355059	Signaling by FGFR1 in disease	Homo sapiens
+REACT_355221	Signaling by FGFR1 mutants	Homo sapiens
+REACT_120999	FGFR1 mutant receptor activation	Homo sapiens
+REACT_121141	Signaling by FGFR1 fusion mutants	Homo sapiens
+REACT_120827	Signaling by FGFR1 amplification mutants	Homo sapiens
+REACT_121153	Signaling by activated point mutants of FGFR1	Homo sapiens
+REACT_355283	Signaling by FGFR4 in disease	Homo sapiens
+REACT_355202	Signaling by FGFR4 mutants	Homo sapiens
+REACT_121286	FGFR4 mutant receptor activation	Homo sapiens
+REACT_355310	Signaling by FGFR3 in disease	Homo sapiens
+REACT_355313	Signaling by FGFR3 mutants	Homo sapiens
+REACT_121249	FGFR3 mutant receptor activation	Homo sapiens
+REACT_121011	t(4;14) translocations of FGFR3	Homo sapiens
+REACT_121337	Signaling by activated point mutants of FGFR3	Homo sapiens
+REACT_355533	Signaling by FGFR2 in disease	Homo sapiens
+REACT_355511	Signaling by FGFR2 mutants	Homo sapiens
+REACT_121155	FGFR2 mutant receptor activation	Homo sapiens
+REACT_121255	Signaling by FGFR2 amplification mutants	Homo sapiens
+REACT_120863	Activated point mutants of FGFR2	Homo sapiens
+REACT_169122	Signaling by TGF-beta Receptor Complex in Cancer	Homo sapiens
+REACT_169398	Loss of Function of SMAD2/3 in Cancer	Homo sapiens
+REACT_169165	SMAD2/3 MH2 Domain Mutants in Cancer	Homo sapiens
+REACT_169103	SMAD2/3 Phosphorylation Motif Mutants in Cancer	Homo sapiens
+REACT_169219	Loss of Function of SMAD4 in Cancer	Homo sapiens
+REACT_169107	SMAD4 MH2 Domain Mutants in Cancer	Homo sapiens
+REACT_169435	Loss of Function of TGFBR2 in Cancer	Homo sapiens
+REACT_169192	TGFBR2 MSI Frameshift Mutants in Cancer	Homo sapiens
+REACT_169440	TGFBR2 Kinase Domain Mutants in Cancer	Homo sapiens
+REACT_169311	Loss of Function of TGFBR1 in Cancer	Homo sapiens
+REACT_169263	TGFBR1 KD Mutants in Cancer	Homo sapiens
+REACT_169445	TGFBR1 LBD Mutants in Cancer	Homo sapiens
+REACT_115871	Signaling by EGFR in Cancer	Homo sapiens
+REACT_268269	Signaling by EGFRvIII in Cancer	Homo sapiens
+REACT_267817	Constitutive Signaling by EGFRvIII	Homo sapiens
+REACT_268546	Signaling by Overexpressed Wild-Type EGFR in Cancer	Homo sapiens
+REACT_268595	Inhibition of Signaling by Overexpressed EGFR	Homo sapiens
+REACT_268006	Signaling by Ligand-Responsive EGFR Variants in Cancer	Homo sapiens
+REACT_115852	Constitutive Signaling by Ligand-Responsive EGFR Cancer Variants	Homo sapiens
+REACT_355497	Infectious disease	Homo sapiens
+REACT_6167	Influenza Infection	Homo sapiens
+REACT_6145	Influenza Life Cycle	Homo sapiens
+REACT_6296	Export of Viral Ribonucleoproteins from Nucleus	Homo sapiens
+REACT_6198	Viral RNP Complexes in the Host Cell Nucleus	Homo sapiens
+REACT_6179	NEP/NS2 Interacts with the Cellular Export Machinery	Homo sapiens
+REACT_6152	Influenza Viral RNA Transcription and Replication	Homo sapiens
+REACT_9434	vRNP Assembly	Homo sapiens
+REACT_9491	Viral mRNA Translation	Homo sapiens
+REACT_9497	vRNA Synthesis	Homo sapiens
+REACT_9527	cRNA Synthesis	Homo sapiens
+REACT_6354	Viral Messenger RNA Synthesis	Homo sapiens
+REACT_6248	Transport of Ribonucleoproteins into the Host Nucleus	Homo sapiens
+REACT_6270	Virus Assembly and Release	Homo sapiens
+REACT_6326	Release	Homo sapiens
+REACT_6277	Assembly of Viral Components at the Budding Site	Homo sapiens
+REACT_6215	Transport of HA trimer, NA tetramer and M2 tetramer from the endoplasmic reticulum to the Golgi Apparatus	Homo sapiens
+REACT_6235	Packaging of Eight RNA Segments	Homo sapiens
+REACT_6212	Budding	Homo sapiens
+REACT_6147	Entry of Influenza Virion into Host Cell via Endocytosis	Homo sapiens
+REACT_6282	Fusion and Uncoating of the Influenza Virion	Homo sapiens
+REACT_6351	Fusion of the Influenza Virion to the Host Cell Endosome	Homo sapiens
+REACT_6321	Uncoating of the Influenza Virion	Homo sapiens
+REACT_6323	Host Interactions with Influenza Factors	Homo sapiens
+REACT_6222	 NS1 Mediated Effects on Host Pathways	Homo sapiens
+REACT_6173	Inhibition of Host mRNA Processing and RNA Silencing	Homo sapiens
+REACT_6301	Inhibition of Interferon Synthesis	Homo sapiens
+REACT_6320	Inhibition of IFN-beta	Homo sapiens
+REACT_6350	Inhibition of PKR	Homo sapiens
+REACT_6213	Influenza Virus Induced Apoptosis	Homo sapiens
+REACT_6185	HIV Infection	Homo sapiens
+REACT_6288	Host Interactions of HIV factors	Homo sapiens
+REACT_9031	Vpu mediated degradation of CD4	Homo sapiens
+REACT_6835	The role of Nef in HIV-1 replication and disease pathogenesis	Homo sapiens
+REACT_11149	Nef-mediates down modulation of cell surface receptors by recruiting them to clathrin adapters	Homo sapiens
+REACT_11139	Nef mediated downregulation of CD28 cell surface expression	Homo sapiens
+REACT_11200	Nef Mediated CD8 Down-regulation	Homo sapiens
+REACT_11103	Nef mediated downregulation of MHC class I complex cell surface expression	Homo sapiens
+REACT_11166	Nef Mediated CD4 Down-regulation	Homo sapiens
+REACT_11068	Nef and signal transduction	Homo sapiens
+REACT_6757	Interactions of Vpr with host cellular proteins	Homo sapiens
+REACT_8016	Vpr-mediated induction of apoptosis by mitochondrial outer membrane permeabilization	Homo sapiens
+REACT_7991	Vpr-mediated nuclear import of PICs	Homo sapiens
+REACT_9453	Vif-mediated degradation of APOBEC3G	Homo sapiens
+REACT_6916	Interactions of Rev with host cellular proteins	Homo sapiens
+REACT_9395	Nuclear import of Rev protein	Homo sapiens
+REACT_6190	Rev-mediated nuclear export of HIV RNA	Homo sapiens
+REACT_9406	APOBEC3G mediated resistance to HIV-1 infection	Homo sapiens
+REACT_6905	Interactions of Tat with host cellular proteins	Homo sapiens
+REACT_6256	HIV Life Cycle	Homo sapiens
+REACT_6361	Late Phase of HIV Life Cycle	Homo sapiens
+REACT_6233	Transcription of the HIV genome	Homo sapiens
+REACT_6241	HIV Transcription Termination	Homo sapiens
+REACT_6253	RNA Polymerase II HIV Promoter Escape	Homo sapiens
+REACT_6274	HIV Transcription Elongation	Homo sapiens
+REACT_6261	Abortive elongation of HIV-1 transcript in the absence of Tat	Homo sapiens
+REACT_6319	Formation of the HIV-1 Early Elongation Complex	Homo sapiens
+REACT_6162	Tat-mediated elongation of the HIV-1 transcript	Homo sapiens
+REACT_6346	Formation of HIV-1 elongation complex containing HIV-1 Tat	Homo sapiens
+REACT_6259	HIV elongation arrest and recovery	Homo sapiens
+REACT_6237	RNA Pol II CTD phosphorylation and interaction with CE	Homo sapiens
+REACT_6244	Pausing and recovery of HIV elongation	Homo sapiens
+REACT_6332	HIV Transcription Initiation	Homo sapiens
+REACT_6143	Pausing and recovery of Tat-mediated HIV elongation	Homo sapiens
+REACT_22201	Formation of HIV elongation complex in the absence of HIV Tat	Homo sapiens
+REACT_6344	Tat-mediated HIV elongation arrest and recovery	Homo sapiens
+REACT_6359	Budding and maturation of HIV virion	Homo sapiens
+REACT_6190	Rev-mediated nuclear export of HIV RNA	Homo sapiens
+REACT_6818	Assembly Of The HIV Virion	Homo sapiens
+REACT_163660	Synthesis and processing of ENV and VPU	Homo sapiens
+REACT_115860	Synthesis And Processing Of GAG, GAGPOL Polyproteins	Homo sapiens
+REACT_115893	Membrane binding and targetting of GAG proteins	Homo sapiens
+REACT_6266	Early Phase of HIV Life Cycle	Homo sapiens
+REACT_6903	Binding and entry of HIV virion	Homo sapiens
+REACT_6880	Reverse Transcription of HIV RNA	Homo sapiens
+REACT_9037	Plus-strand DNA synthesis	Homo sapiens
+REACT_9055	Minus-strand DNA synthesis	Homo sapiens
+REACT_6965	Uncoating of the HIV Virion	Homo sapiens
+REACT_6918	Integration of provirus	Homo sapiens
+REACT_9058	2-LTR circle formation	Homo sapiens
+REACT_6866	Autointegration results in viral DNA circles	Homo sapiens
+REACT_8990	Integration of viral DNA into host genomic DNA	Homo sapiens
+REACT_264041	Uptake and actions of bacterial toxins	Homo sapiens
+REACT_11184	Neurotoxicity of clostridium toxins	Homo sapiens
+REACT_264537	Toxicity of botulinum toxin type A (BoNT/A)	Homo sapiens
+REACT_264271	Toxicity of botulinum toxin type G (BoNT/G)	Homo sapiens
+REACT_263969	Toxicity of botulinum toxin type C (BoNT/C)	Homo sapiens
+REACT_264609	Toxicity of botulinum toxin type B (BoNT/B)	Homo sapiens
+REACT_263857	Toxicity of botulinum toxin type F (BoNT/F)	Homo sapiens
+REACT_268602	Toxicity of tetanus toxin (TeNT)	Homo sapiens
+REACT_264227	Toxicity of botulinum toxin type E (BoNT/E)	Homo sapiens
+REACT_263924	Toxicity of botulinum toxin type D (BoNT/D)	Homo sapiens
+REACT_264618	Uptake and function of anthrax toxins	Homo sapiens
+REACT_268571	Uptake and function of diphtheria toxin	Homo sapiens
+REACT_121237	Latent infection of Homo sapiens with Mycobacterium tuberculosis	Homo sapiens
+REACT_121042	Response of Mtb to phagocytosis	Homo sapiens
+REACT_121118	Mtb iron assimilation by chelation	Homo sapiens
+REACT_120983	Tolerance by Mtb to nitric oxide produced by macrophages	Homo sapiens
+REACT_121394	Cell redox homeostasis	Homo sapiens
+REACT_121009	Tolerance of reactive oxygen produced by macrophages	Homo sapiens
+REACT_121256	Phagosomal maturation (early endosomal stage)	Homo sapiens
+REACT_75925	Amyloids	Homo sapiens
+REACT_355047	Diseases of Immune System	Homo sapiens
+REACT_355585	Diseases associated with the TLR signaling cascade	Homo sapiens
+REACT_355196	IKBKG deficiency causes anhidrotic ectodermal dysplasia with immunodeficiency (EDA-ID) (via TLR)	Homo sapiens
+REACT_355281	TICAM1 deficiency - HSE	Homo sapiens
+REACT_355226	IkBA variant leads to EDA-ID	Homo sapiens
+REACT_355217	TRAF3 deficiency - HSE	Homo sapiens
+REACT_355210	MyD88 deficiency (TLR2/4)	Homo sapiens
+REACT_355056	UNC93B1 deficiency - HSE	Homo sapiens
+REACT_355183	IKBKB deficiency causes SCID	Homo sapiens
+REACT_355462	IRAK4 deficiency (TLR2/4)	Homo sapiens
+REACT_355363	MyD88 deficiency (TLR5)	Homo sapiens
+REACT_355387	IRAK4 deficiency (TLR5)	Homo sapiens
+REACT_355549	TLR3 deficiency - HSE	Homo sapiens
+REACT_17044	Muscle contraction	Homo sapiens
+REACT_20558	Smooth Muscle Contraction	Homo sapiens
+REACT_16969	Striated Muscle Contraction	Homo sapiens
+REACT_15518	Transmembrane transport of small molecules	Homo sapiens
+REACT_25300	Ion channel transport	Homo sapiens
+REACT_25149	Ion transport by P-type ATPases	Homo sapiens
+REACT_160189	Stimuli-sensing channels	Homo sapiens
+REACT_169333	TRP channels	Homo sapiens
+REACT_25387	Ligand-gated ion channel transport	Homo sapiens
+REACT_268444	Miscellaneous transport and binding events	Homo sapiens
+REACT_15480	ABC-family proteins mediated transport	Homo sapiens
+REACT_111108	Mitochondrial ABC transporters	Homo sapiens
+REACT_111158	ABCA transporters in lipid homeostasis	Homo sapiens
+REACT_25060	Iron uptake and transport	Homo sapiens
+REACT_25283	Transferrin endocytosis and recycling	Homo sapiens
+REACT_23887	Aquaporin-mediated transport	Homo sapiens
+REACT_24023	Vasopressin regulates renal water homeostasis via Aquaporins	Homo sapiens
+REACT_23809	Transport of glycerol from adipocytes to the liver by Aquaporins	Homo sapiens
+REACT_23826	Passive transport by Aquaporins	Homo sapiens
+REACT_19118	SLC-mediated transmembrane transport	Homo sapiens
+REACT_9441	Hexose transport	Homo sapiens
+REACT_212	Glucose transport	Homo sapiens
+REACT_6804	Regulation of Glucokinase by Glucokinase Regulatory Protein	Homo sapiens
+REACT_22285	Transport of vitamins, nucleosides, and related molecules	Homo sapiens
+REACT_1206	Transport of nucleosides and free purine and pyrimidine bases across the plasma membrane	Homo sapiens
+REACT_22151	Transport of nucleotide sugars	Homo sapiens
+REACT_23892	Transport of fatty acids	Homo sapiens
+REACT_23988	Transport of organic anions	Homo sapiens
+REACT_19305	Transport of glucose and other sugars, bile salts and organic acids, metal ions and amine compounds	Homo sapiens
+REACT_20515	Proton-coupled monocarboxylate transport	Homo sapiens
+REACT_20506	Na+/Cl- dependent neurotransmitter transporters	Homo sapiens
+REACT_19343	Facilitative Na+-independent glucose transporters	Homo sapiens
+REACT_19281	Class II GLUTs	Homo sapiens
+REACT_20508	Rhesus glycoproteins mediate ammonium transport.	Homo sapiens
+REACT_20547	Metal ion SLC transporters	Homo sapiens
+REACT_20530	Zinc transporters	Homo sapiens
+REACT_20582	Zinc efflux and compartmentalization by the SLC30 family	Homo sapiens
+REACT_20603	Zinc influx into cells by the SLC39 gene family	Homo sapiens
+REACT_19188	Inositol transporters	Homo sapiens
+REACT_22345	Organic cation/anion/zwitterion transport	Homo sapiens
+REACT_22310	Organic anion transport	Homo sapiens
+REACT_22357	Organic cation transport	Homo sapiens
+REACT_20646	Sodium-coupled sulphate, di- and tri-carboxylate transporters	Homo sapiens
+REACT_19165	Na+-dependent glucose transporters	Homo sapiens
+REACT_19397	Transport of inorganic cations/anions and amino acids/oligopeptides	Homo sapiens
+REACT_19298	Bicarbonate transporters	Homo sapiens
+REACT_19314	Sodium/Proton exchangers	Homo sapiens
+REACT_19328	Proton/oligonucleotide cotransporters	Homo sapiens
+REACT_19357	Multifunctional anion exchangers	Homo sapiens
+REACT_19372	Organic anion transporters	Homo sapiens
+REACT_19348	Proton-coupled neutral amino acid transporters	Homo sapiens
+REACT_13796	Amino acid transport across the plasma membrane	Homo sapiens
+REACT_19320	Sodium/Calcium exchangers	Homo sapiens
+REACT_19275	Sodium-coupled phosphate cotransporters	Homo sapiens
+REACT_19411	Type II Na+/Pi cotransporters	Homo sapiens
+REACT_19315	Cation-coupled Chloride cotransporters	Homo sapiens
+REACT_111045	Developmental Biology	Homo sapiens
+REACT_263856	Transcriptional regulation of pluripotent stem cells	Homo sapiens
+REACT_264321	POU5F1 (OCT4), SOX2, NANOG repress genes related to differentiation	Homo sapiens
+REACT_264617	POU5F1 (OCT4), SOX2, NANOG activate genes related to proliferation	Homo sapiens
+REACT_111057	Signaling by NODAL	Homo sapiens
+REACT_111059	Regulation of signaling by NODAL	Homo sapiens
+REACT_21303	Myogenesis	Homo sapiens
+REACT_21402	CDO in myogenesis	Homo sapiens
+REACT_27161	Transcriptional regulation of white adipocyte differentiation	Homo sapiens
+REACT_13698	Regulation of beta-cell development	Homo sapiens
+REACT_13673	Regulation of gene expression in late stage (branching morphogenesis) pancreatic bud precursor cells	Homo sapiens
+REACT_13650	Regulation of gene expression in endocrine-committed (NEUROG3+) progenitor cells	Homo sapiens
+REACT_13778	Regulation of gene expression in early pancreatic precursor cells	Homo sapiens
+REACT_13819	Regulation of gene expression in beta cells	Homo sapiens
+REACT_13655	AKT-mediated inactivation of FOXO1A	Homo sapiens
+REACT_18266	Axon guidance	Homo sapiens
+REACT_22237	Netrin-1 signaling	Homo sapiens
+REACT_22228	Role of second messengers in netrin-1 signaling	Homo sapiens
+REACT_22351	DCC mediated attractive signaling	Homo sapiens
+REACT_22384	Netrin mediated repulsion signals	Homo sapiens
+REACT_19271	Semaphorin interactions	Homo sapiens
+REACT_19279	SEMA3A-Plexin repulsion signaling by inhibiting Integrin adhesion	Homo sapiens
+REACT_19236	Sema3A PAK dependent Axon repulsion	Homo sapiens
+REACT_19199	CRMPs in Sema3A signaling	Homo sapiens
+REACT_19200	Other semaphorin interactions	Homo sapiens
+REACT_19259	Sema4D in semaphorin signaling	Homo sapiens
+REACT_19277	Sema4D induced cell migration and growth-cone collapse	Homo sapiens
+REACT_19266	Sema4D mediated inhibition of cell attachment and migration	Homo sapiens
+REACT_19351	Signaling by Robo receptor	Homo sapiens
+REACT_19342	Inactivation of Cdc42 and Rac	Homo sapiens
+REACT_19376	Regulation of Commissural axon pathfinding by Slit and Robo	Homo sapiens
+REACT_19226	Activation of Rac	Homo sapiens
+REACT_19230	Role of Abl in Robo-Slit signaling	Homo sapiens
+REACT_22205	L1CAM interactions	Homo sapiens
+REACT_22312	Neurofascin interactions	Homo sapiens
+REACT_22292	CHL1 interactions	Homo sapiens
+REACT_22365	Recycling pathway of L1	Homo sapiens
+REACT_22329	NrCAM interactions	Homo sapiens
+REACT_22272	Signal transduction by L1	Homo sapiens
+REACT_22266	Interaction between L1 and Ankyrins	Homo sapiens
+REACT_18334	NCAM signaling for neurite out-growth	Homo sapiens
+REACT_18312	NCAM1 interactions	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_264068	EPH-Ephrin signaling	Homo sapiens
+REACT_264198	EPH-ephrin mediated repulsion of cells	Homo sapiens
+REACT_264548	EPHA-mediated growth cone collapse	Homo sapiens
+REACT_264047	Ephrin signaling	Homo sapiens
+REACT_263952	EPHB-mediated forward signaling	Homo sapiens
+REACT_120956	Cellular responses to stress	Homo sapiens
+REACT_121311	Cellular response to hypoxia	Homo sapiens
+REACT_120815	Regulation of Hypoxia-inducible Factor (HIF) by oxygen	Homo sapiens
+REACT_120916	Oxygen-dependent proline hydroxylation of Hypoxia-inducible Factor Alpha	Homo sapiens
+REACT_121226	Oxygen-dependent asparagine hydroxylation of Hypoxia-inducible Factor Alpha	Homo sapiens
+REACT_121092	Regulation of gene expression by Hypoxia-inducible Factor	Homo sapiens
+REACT_169274	Cellular Senescence	Homo sapiens
+REACT_169436	Oxidative Stress Induced Senescence	Homo sapiens
+REACT_169325	Oncogene Induced Senescence	Homo sapiens
+REACT_169168	Senescence-Associated Secretory Phenotype (SASP)	Homo sapiens
+REACT_169185	DNA Damage/Telomere Stress Induced Senescence	Homo sapiens
+REACT_169121	Formation of Senescence-Associated Heterochromatin Foci (SAHF)	Homo sapiens
+REACT_264249	Detoxification of Reactive Oxygen Species	Homo sapiens
+REACT_263897	Cellular response to heat stress	Homo sapiens
+REACT_264487	Regulation of HSF1-mediated heat shock response	Homo sapiens
+REACT_264071	HSF1 activation	Homo sapiens
+REACT_264164	HSF1-dependent transactivation	Homo sapiens
+REACT_264075	Attenuation phase	Homo sapiens
+REACT_163848	Reproduction	Homo sapiens
+REACT_163914	Fertilization	Homo sapiens
+REACT_163796	Interaction With Cumulus Cells	Homo sapiens
+REACT_163875	Sperm Motility And Taxes	Homo sapiens
+REACT_164006	Sperm:Oocyte Membrane Binding	Homo sapiens
+REACT_163938	Acrosome Reaction	Homo sapiens
+REACT_163933	Interaction With The Zona Pellucida	Homo sapiens
+REACT_24941	Circadian Clock	Homo sapiens
+REACT_118789	NR1D1 (REV-ERBA) represses gene expression	Homo sapiens
+REACT_111118	BMAL1:CLOCK,NPAS2 activates circadian gene expression	Homo sapiens
+REACT_118659	RORA activates gene expression	Homo sapiens
+REACT_604	Hemostasis	Homo sapiens
+REACT_23876	Platelet homeostasis	Homo sapiens
+REACT_23946	Prostacyclin signalling through prostacyclin receptor	Homo sapiens
+REACT_23862	Nitric oxide stimulates guanylate cyclase	Homo sapiens
+REACT_23767	cGMP effects	Homo sapiens
+REACT_23879	Platelet sensitization by LDL	Homo sapiens
+REACT_23905	Platelet calcium homeostasis	Homo sapiens
+REACT_23765	Reduction of cytosolic Ca++ levels	Homo sapiens
+REACT_162	Elevation of cytosolic Ca2+ levels	Homo sapiens
+REACT_1230	Platelet Adhesion to exposed collagen	Homo sapiens
+REACT_24970	Factors involved in megakaryocyte development and platelet production	Homo sapiens
+REACT_25201	Kinesins	Homo sapiens
+REACT_798	Platelet activation, signaling and aggregation	Homo sapiens
+REACT_2202	Effects of PIP2 hydrolysis	Homo sapiens
+REACT_19308	Arachidonate production from DAG	Homo sapiens
+REACT_1695	GPVI-mediated activation cascade	Homo sapiens
+REACT_20524	Signal amplification	Homo sapiens
+REACT_20653	ADP signalling through P2Y purinoceptor 12	Homo sapiens
+REACT_20647	Thromboxane signalling through TP receptor	Homo sapiens
+REACT_19140	ADP signalling through P2Y purinoceptor 1	Homo sapiens
+REACT_21384	Thrombin signalling through proteinase activated receptors (PARs)	Homo sapiens
+REACT_23847	GP1b-IX-V activation signalling	Homo sapiens
+REACT_278	Platelet Aggregation (Plug Formation)	Homo sapiens
+REACT_15523	Integrin alphaIIb beta3 signaling	Homo sapiens
+REACT_15443	GRB2:SOS provides linkage to MAPK signaling for Integrins 	Homo sapiens
+REACT_15381	p130Cas linkage to MAPK signaling for integrins	Homo sapiens
+REACT_19180	Adrenaline signalling through Alpha-2 adrenergic receptor	Homo sapiens
+REACT_1280	Response to elevated platelet cytosolic Ca2+	Homo sapiens
+REACT_1178	Disinhibition of SNARE formation	Homo sapiens
+REACT_318	Platelet degranulation 	Homo sapiens
+REACT_641	Dissolution of Fibrin Clot	Homo sapiens
+REACT_12051	Cell surface interactions at the vascular wall	Homo sapiens
+REACT_12621	Tie2 Signaling	Homo sapiens
+REACT_12560	Basigin interactions	Homo sapiens
+REACT_12519	PECAM1 interactions	Homo sapiens
+REACT_2051	Formation of Fibrin Clot (Clotting Cascade)	Homo sapiens
+REACT_1573	Extrinsic Pathway of Fibrin Clot Formation	Homo sapiens
+REACT_326	Intrinsic Pathway of Fibrin Clot Formation	Homo sapiens
+REACT_1439	Common Pathway of Fibrin Clot Formation	Homo sapiens
+REACT_111102	Signal Transduction	Homo sapiens
+REACT_169118	Signaling by Leptin	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_111040	Signaling by SCF-KIT	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_111225	Regulation of KIT signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_498	Signaling by Insulin receptor	Homo sapiens
+REACT_1109	Insulin receptor recycling	Homo sapiens
+REACT_1195	Insulin receptor signalling cascade	Homo sapiens
+REACT_508	Signal attenuation	Homo sapiens
+REACT_762	IRS-related events	Homo sapiens
+REACT_332	IRS-mediated signalling	Homo sapiens
+REACT_524	SOS-mediated signalling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_976	PI3K Cascade	Homo sapiens
+REACT_790	Activation of PKB	Homo sapiens
+REACT_456	PKB-mediated events	Homo sapiens
+REACT_1451	PDE3B signalling	Homo sapiens
+REACT_6838	mTOR signalling	Homo sapiens
+REACT_21387	Energy dependent regulation of mTOR by LKB1-AMPK	Homo sapiens
+REACT_21285	Regulation of AMPK activity via LKB1	Homo sapiens
+REACT_21393	Regulation of Rheb GTPase activity by AMPK	Homo sapiens
+REACT_6743	Inhibition of TSC complex formation by PKB	Homo sapiens
+REACT_6964	mTORC1-mediated signalling	Homo sapiens
+REACT_6754	S6K1-mediated signalling	Homo sapiens
+REACT_6772	S6K1 signalling	Homo sapiens
+REACT_6836	Release of eIF4E	Homo sapiens
+REACT_570	IRS activation	Homo sapiens
+REACT_999	SHC-related events	Homo sapiens
+REACT_1661	SHC activation	Homo sapiens
+REACT_661	SHC-mediated signalling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_12034	Signaling by BMP	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15523	Integrin alphaIIb beta3 signaling	Homo sapiens
+REACT_15443	GRB2:SOS provides linkage to MAPK signaling for Integrins 	Homo sapiens
+REACT_15381	p130Cas linkage to MAPK signaling for integrins	Homo sapiens
+REACT_9417	Signaling by EGFR	Homo sapiens
+REACT_12478	EGFR interacts with phospholipase C-gamma	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_12579	SHC1 events in EGFR signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_12606	GRB2 events in EGFR signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_12484	EGFR downregulation	Homo sapiens
+REACT_12578	GAB1 signalosome	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_160125	Visual phototransduction	Homo sapiens
+REACT_160083	The retinoid cycle in cones (daylight vision)	Homo sapiens
+REACT_160156	The canonical retinoid cycle in rods (twilight vision)	Homo sapiens
+REACT_160194	Biosynthesis of A2E, implicated in retinal degradation	Homo sapiens
+REACT_24968	Retinoid metabolism and transport	Homo sapiens
+REACT_163722	The phototransduction cascade	Homo sapiens
+REACT_163932	Activation of the phototransduction cascade	Homo sapiens
+REACT_163919	Inactivation, recovery and regulation of the phototransduction cascade	Homo sapiens
+REACT_264508	Signaling by Hedgehog	Homo sapiens
+REACT_268323	Hedgehog 'off' state	Homo sapiens
+REACT_268366	GLI3 is processed to GLI3R by the proteasome	Homo sapiens
+REACT_268156	Degradation of GLI1 by the proteasome	Homo sapiens
+REACT_267700	Degradation of GLI2 by the proteasome	Homo sapiens
+REACT_268718	Hedgehog 'on' state	Homo sapiens
+REACT_268272	GLI proteins bind promoters of Hh responsive genes to promote transcription	Homo sapiens
+REACT_268573	Ligand-receptor interactions	Homo sapiens
+REACT_267753	Activation of SMO	Homo sapiens
+REACT_264605	Hedgehog ligand biogenesis	Homo sapiens
+REACT_264256	Release of Hh-Np from the secreting cell	Homo sapiens
+REACT_12529	Signaling by VEGF	Homo sapiens
+REACT_12380	VEGF ligand-receptor interactions	Homo sapiens
+REACT_12583	VEGF binds to VEGFR leading to receptor dimerization	Homo sapiens
+REACT_264464	VEGFA-VEGFR2 Pathway	Homo sapiens
+REACT_263991	VEGFR2 mediated vascular permeability	Homo sapiens
+REACT_264273	VEGFR2 mediated cell proliferation	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_12473	Neurophilin interactions with VEGF and VEGFR	Homo sapiens
+REACT_11044	Signaling by Rho GTPases	Homo sapiens
+REACT_11051	Rho GTPase cycle	Homo sapiens
+REACT_355474	RHO GTPase Effectors	Homo sapiens
+REACT_355303	RHO GTPases activate CIT	Homo sapiens
+REACT_355542	RHO GTPases activate PKNs	Homo sapiens
+REACT_355391	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3	Homo sapiens
+REACT_355469	RHO GTPases activate IQGAPs	Homo sapiens
+REACT_355192	RHO GTPases Activate ROCKs	Homo sapiens
+REACT_355252	RHO GTPases Activate Formins	Homo sapiens
+REACT_355141	RHO GTPases Activate NADPH Oxidases	Homo sapiens
+REACT_355321	RHO GTPases activate KTN1	Homo sapiens
+REACT_355021	RHO GTPases Activate Rhotekin and Rhophilins	Homo sapiens
+REACT_355372	RHO GTPases Activate WASPs and WAVEs	Homo sapiens
+REACT_355347	RHO GTPases activate PAKs	Homo sapiens
+REACT_355278	RHO GTPases regulate CFTR trafficking	Homo sapiens
+REACT_115755	Signaling by ERBB2	Homo sapiens
+REACT_115662	Downregulation of ERBB2:ERBB3 signaling	Homo sapiens
+REACT_116008	PI3K events in ERBB2 signaling	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_115720	PLCG1 events in ERBB2 signaling	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_115993	SHC1 events in ERBB2 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_115854	GRB2 events in ERBB2 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_115896	GRB7 events in ERBB2 signaling	Homo sapiens
+REACT_6844	Signaling by TGF-beta Receptor Complex	Homo sapiens
+REACT_120850	TGF-beta receptor signaling activates SMADs	Homo sapiens
+REACT_120727	Downregulation of TGF-beta receptor signaling	Homo sapiens
+REACT_120726	TGF-beta receptor signaling in EMT (epithelial to mesenchymal transition)	Homo sapiens
+REACT_121061	Transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer	Homo sapiens
+REACT_120734	SMAD2/SMAD3:SMAD4 heterotrimer regulates transcription	Homo sapiens
+REACT_121111	Downregulation of SMAD2/3:SMAD4 transcriptional activity	Homo sapiens
+REACT_115596	Signaling by ERBB4	Homo sapiens
+REACT_116022	Nuclear signaling by ERBB4	Homo sapiens
+REACT_115697	Prolactin receptor signaling	Homo sapiens
+REACT_116005	SHC1 events in ERBB4 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_115961	PI3K events in ERBB4 signaling	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_115828	Downregulation of ERBB4 signaling	Homo sapiens
+REACT_14797	Signaling by GPCR	Homo sapiens
+REACT_120966	Gastrin-CREB signalling pathway via PKC and MAPK	Homo sapiens
+REACT_18283	G alpha (q) signalling events	Homo sapiens
+REACT_2202	Effects of PIP2 hydrolysis	Homo sapiens
+REACT_19308	Arachidonate production from DAG	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_121096	EGFR Transactivation by Gastrin	Homo sapiens
+REACT_19184	GPCR downstream signaling	Homo sapiens
+REACT_15488	Olfactory Signaling Pathway	Homo sapiens
+REACT_19231	G alpha (i) signalling events	Homo sapiens
+REACT_18407	G alpha (12/13) signalling events	Homo sapiens
+REACT_19333	G alpha (z) signalling events	Homo sapiens
+REACT_19327	G alpha (s) signalling events	Homo sapiens
+REACT_19388	G-protein beta:gamma signalling	Homo sapiens
+REACT_19290	G beta:gamma signalling through PI3Kgamma	Homo sapiens
+REACT_19145	G beta:gamma signalling through PLC beta	Homo sapiens
+REACT_18283	G alpha (q) signalling events	Homo sapiens
+REACT_2202	Effects of PIP2 hydrolysis	Homo sapiens
+REACT_19308	Arachidonate production from DAG	Homo sapiens
+REACT_21340	GPCR ligand binding	Homo sapiens
+REACT_18372	Class B/2 (Secretin family receptors)	Homo sapiens
+REACT_18377	Glucagon-type ligand receptors	Homo sapiens
+REACT_18290	Calcitonin-like ligand receptors	Homo sapiens
+REACT_14828	Class A/1 (Rhodopsin-like receptors)	Homo sapiens
+REACT_18352	Eicosanoid ligand-binding receptors	Homo sapiens
+REACT_18425	Prostanoid ligand receptors	Homo sapiens
+REACT_18302	Leukotriene receptors	Homo sapiens
+REACT_18342	Nucleotide-like (purinergic) receptors	Homo sapiens
+REACT_18289	P2Y receptors	Homo sapiens
+REACT_18288	Adenosine P1 receptors	Homo sapiens
+REACT_14819	Peptide ligand-binding receptors	Homo sapiens
+REACT_21314	Relaxin receptors	Homo sapiens
+REACT_15344	Chemokine receptors bind chemokines	Homo sapiens
+REACT_21264	Formyl peptide receptors bind formyl peptides and many other ligands	Homo sapiens
+REACT_16973	Orexin and neuropeptides FF and QRFP bind to their respective receptors	Homo sapiens
+REACT_17041	Vasopressin-like receptors	Homo sapiens
+REACT_16963	Tachykinin receptors bind tachykinins	Homo sapiens
+REACT_16983	Amine ligand-binding receptors	Homo sapiens
+REACT_16927	Adrenoceptors	Homo sapiens
+REACT_17064	Serotonin receptors	Homo sapiens
+REACT_16903	Histamine receptors	Homo sapiens
+REACT_16968	Dopamine receptors	Homo sapiens
+REACT_16943	Muscarinic acetylcholine receptors	Homo sapiens
+REACT_18426	Opsins	Homo sapiens
+REACT_21268	Free fatty acid receptors	Homo sapiens
+REACT_163785	Hydroxycarboxylic acid-binding receptors	Homo sapiens
+REACT_16942	Hormone ligand-binding receptors	Homo sapiens
+REACT_18365	Lysosphingolipid and LPA receptors	Homo sapiens
+REACT_18319	Class C/3 (Metabotropic glutamate/pheromone receptors)	Homo sapiens
+REACT_15295	Opioid Signalling	Homo sapiens
+REACT_15457	G-protein activation	Homo sapiens
+REACT_15334	DARPP-32 events	Homo sapiens
+REACT_15526	G-protein mediated events	Homo sapiens
+REACT_15426	PLC beta mediated events	Homo sapiens
+REACT_15307	Ca-dependent events	Homo sapiens
+REACT_15466	phospho-PLA2 pathway	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15312	Adenylate cyclase activating pathway	Homo sapiens
+REACT_15333	Adenylate cyclase inhibitory pathway	Homo sapiens
+REACT_267785	Signaling by Retinoic Acid	Homo sapiens
+REACT_268561	RA biosynthesis pathway	Homo sapiens
+REACT_1619	Death Receptor Signalling	Homo sapiens
+REACT_1432	TNF signaling	Homo sapiens
+REACT_355072	TNFR1-mediated proapoptotic signaling	Homo sapiens
+REACT_402	TRAIL  signaling	Homo sapiens
+REACT_900	FasL/ CD95L signaling	Homo sapiens
+REACT_150359	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)	Homo sapiens
+REACT_150210	IGF1R signaling cascade	Homo sapiens
+REACT_150139	SHC-related events triggered by IGF1R	Homo sapiens
+REACT_661	SHC-mediated signalling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_150203	IRS-related events triggered by IGF1R	Homo sapiens
+REACT_332	IRS-mediated signalling	Homo sapiens
+REACT_976	PI3K Cascade	Homo sapiens
+REACT_456	PKB-mediated events	Homo sapiens
+REACT_6838	mTOR signalling	Homo sapiens
+REACT_6964	mTORC1-mediated signalling	Homo sapiens
+REACT_6836	Release of eIF4E	Homo sapiens
+REACT_6754	S6K1-mediated signalling	Homo sapiens
+REACT_6772	S6K1 signalling	Homo sapiens
+REACT_21387	Energy dependent regulation of mTOR by LKB1-AMPK	Homo sapiens
+REACT_21393	Regulation of Rheb GTPase activity by AMPK	Homo sapiens
+REACT_21285	Regulation of AMPK activity via LKB1	Homo sapiens
+REACT_6743	Inhibition of TSC complex formation by PKB	Homo sapiens
+REACT_1451	PDE3B signalling	Homo sapiens
+REACT_790	Activation of PKB	Homo sapiens
+REACT_524	SOS-mediated signalling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_150238	Signaling by Activin	Homo sapiens
+REACT_150276	Antagonism of Activin by Follistatin	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_11045	Signaling by Wnt	Homo sapiens
+REACT_11063	Degradation of beta-catenin by the destruction complex	Homo sapiens
+REACT_264567	repression of WNT target genes	Homo sapiens
+REACT_11065	Beta-catenin phosphorylation cascade	Homo sapiens
+REACT_264224	beta-catenin independent WNT signaling	Homo sapiens
+REACT_263982	Ca2+ pathway	Homo sapiens
+REACT_264199	PCP/CE pathway	Homo sapiens
+REACT_263890	WNT5A-dependent internalization of FZD4	Homo sapiens
+REACT_264478	Asymmetric localization of PCP proteins	Homo sapiens
+REACT_264533	WNT5A-dependent internalization of FZD2, FZD5 and ROR2	Homo sapiens
+REACT_264596	TCF dependent signaling in response to WNT	Homo sapiens
+REACT_264580	regulation of FZD by ubiquitination	Homo sapiens
+REACT_264242	formation of the beta-catenin:TCF transactivating complex	Homo sapiens
+REACT_264532	binding of TCF/LEF:CTNNB1 to target gene promoters	Homo sapiens
+REACT_264178	deactivation of the beta-catenin transactivating complex	Homo sapiens
+REACT_264383	negative regulation of TCF-dependent signaling by WNT ligand antagonists	Homo sapiens
+REACT_264276	negative regulation of TCF-dependent signaling by DVL-interacting proteins	Homo sapiens
+REACT_264438	degradation of DVL	Homo sapiens
+REACT_264034	disassembly of the destruction complex and recruitment of AXIN to the membrane	Homo sapiens
+REACT_263873	degradation of AXIN	Homo sapiens
+REACT_264384	WNT mediated activation of DVL	Homo sapiens
+REACT_163710	WNT ligand biogenesis and trafficking	Homo sapiens
+REACT_9470	Signaling by FGFR	Homo sapiens
+REACT_355200	Signaling by FGFR2	Homo sapiens
+REACT_355227	Negative regulation of FGFR2 signaling	Homo sapiens
+REACT_111080	Spry regulation of FGF signaling	Homo sapiens
+REACT_355265	Downstream signaling of activated FGFR2	Homo sapiens
+REACT_355225	SHC-mediated cascade:FGFR2	Homo sapiens
+REACT_355146	Phospholipase C-mediated cascade; FGFR2	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_355069	FRS-mediated FGFR2 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_355450	PI-3K cascade:FGFR2	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_9390	FGFR2 ligand binding and activation	Homo sapiens
+REACT_9413	FGFR2c ligand binding and activation	Homo sapiens
+REACT_9416	FGFR2b ligand binding and activation	Homo sapiens
+REACT_252852	Signaling by FGFR3	Homo sapiens
+REACT_97307	Downstream signaling of activated FGFR3	Homo sapiens
+REACT_355160	PI-3K cascade:FGFR3	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_355212	FRS-mediated FGFR3 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_355197	SHC-mediated cascade:FGFR3	Homo sapiens
+REACT_355514	Phospholipase C-mediated cascade; FGFR3	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_9439	FGFR3 ligand binding and activation	Homo sapiens
+REACT_9510	FGFR3c ligand binding and activation	Homo sapiens
+REACT_9508	FGFR3b ligand binding and activation	Homo sapiens
+REACT_355144	Negative regulation of FGFR3 signaling	Homo sapiens
+REACT_111080	Spry regulation of FGF signaling	Homo sapiens
+REACT_355289	Signaling by FGFR1	Homo sapiens
+REACT_355218	Negative regulation of FGFR1 signaling	Homo sapiens
+REACT_111080	Spry regulation of FGF signaling	Homo sapiens
+REACT_9483	FGFR1 ligand binding and activation	Homo sapiens
+REACT_9515	FGFR1c ligand binding and activation	Homo sapiens
+REACT_9400	FGFR1b ligand binding and activation	Homo sapiens
+REACT_9484	FGFR1c and Klotho ligand binding and activation	Homo sapiens
+REACT_355063	Downstream signaling of activated FGFR1	Homo sapiens
+REACT_355552	PI-3K cascade:FGFR1	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_355584	FRS-mediated FGFR1 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_110235	Phospholipase C-mediated cascade: FGFR1	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_355194	SHC-mediated cascade:FGFR1	Homo sapiens
+REACT_355408	Signaling by FGFR4	Homo sapiens
+REACT_252869	Downstream signaling of activated FGFR4	Homo sapiens
+REACT_355304	PI-3K cascade:FGFR4	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_355159	SHC-mediated cascade:FGFR4	Homo sapiens
+REACT_355216	Phospholipase C-mediated cascade; FGFR4	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_355580	FRS2-mediated FGFR4 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_9452	FGFR4 ligand binding and activation	Homo sapiens
+REACT_111046	betaKlotho-mediated ligand binding	Homo sapiens
+REACT_355588	Negative regulation of FGFR4 signaling	Homo sapiens
+REACT_111080	Spry regulation of FGF signaling	Homo sapiens
+REACT_16888	Signaling by PDGF	Homo sapiens
+REACT_17025	Downstream signal transduction	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_299	Signaling by NOTCH	Homo sapiens
+REACT_118744	Pre-NOTCH Expression and Processing	Homo sapiens
+REACT_118568	Pre-NOTCH Transcription and Translation	Homo sapiens
+REACT_118722	Pre-NOTCH Processing in the Endoplasmic Reticulum	Homo sapiens
+REACT_118798	Pre-NOTCH Processing in Golgi	Homo sapiens
+REACT_118859	Signaling by NOTCH1	Homo sapiens
+REACT_118614	Activated NOTCH1 Transmits Signal to the Nucleus	Homo sapiens
+REACT_118780	NOTCH1 Intracellular Domain Regulates Transcription	Homo sapiens
+REACT_118862	Signaling by NOTCH3	Homo sapiens
+REACT_118721	Signaling by NOTCH2	Homo sapiens
+REACT_163910	NOTCH2 intracellular domain regulates transcription	Homo sapiens
+REACT_160205	NOTCH2 Activation and Transmission of Signal to the Nucleus	Homo sapiens
+REACT_118636	Signaling by NOTCH4	Homo sapiens
+REACT_118607	Signaling by Hippo	Homo sapiens
+REACT_11061	Signalling by NGF	Homo sapiens
+REACT_12056	NGF signalling via TRKA from the plasma membrane	Homo sapiens
+REACT_11064	Activation of TRKA receptors	Homo sapiens
+REACT_11060	TRKA activation by NGF	Homo sapiens
+REACT_11046	NGF-independant TRKA activation	Homo sapiens
+REACT_12464	PI3K/AKT activation	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12020	Signalling to ERK5	Homo sapiens
+REACT_12435	Retrograde neurotrophin signalling	Homo sapiens
+REACT_12433	Nuclear Events (kinase and transcription factor activation)	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_12049	Signalling to STAT3	Homo sapiens
+REACT_12079	PLC-gamma1 signalling	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_12058	Signalling to ERKs	Homo sapiens
+REACT_12005	Prolonged ERK activation events	Homo sapiens
+REACT_12002	ARMS-mediated activation	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_12076	Frs2-mediated activation	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_12033	Signalling to RAS	Homo sapiens
+REACT_12065	p38MAPK events	Homo sapiens
+REACT_22434	Feedback control in the MAPK signaling module	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_12077	Signalling to p38 via RIT and RIN	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_13776	p75 NTR receptor-mediated signalling	Homo sapiens
+REACT_13806	Ceramide signalling	Homo sapiens
+REACT_13695	p75NTR negatively regulates cell cycle via SC1	Homo sapiens
+REACT_13620	p75NTR regulates axonogenesis	Homo sapiens
+REACT_13779	Axonal growth stimulation	Homo sapiens
+REACT_13815	Axonal growth inhibition (RHOA activation)	Homo sapiens
+REACT_13720	Cell death signalling via NRAGE, NRIF and NADE	Homo sapiens
+REACT_13526	NADE modulates death signalling	Homo sapiens
+REACT_13638	NRAGE signals death through JNK	Homo sapiens
+REACT_13643	NRIF signals cell death from the nucleus	Homo sapiens
+REACT_13724	NFG and proNGF binds to p75NTR	Homo sapiens
+REACT_13537	p75NTR signals via NF-kB	Homo sapiens
+REACT_13415	p75NTR recruits signalling complexes	Homo sapiens
+REACT_13696	NF-kB is activated and signals survival	Homo sapiens
+REACT_13443	Regulated proteolysis of p75NTR	Homo sapiens
+REACT_11062	NGF processing	Homo sapiens
+REACT_383	DNA Replication	Homo sapiens
+REACT_1725	M/G1 Transition	Homo sapiens
+REACT_734	DNA Replication Pre-Initiation	Homo sapiens
+REACT_1095	Activation of the pre-replicative complex	Homo sapiens
+REACT_2243	Assembly of the pre-replicative complex	Homo sapiens
+REACT_567	Assembly of the ORC complex at the origin of replication	Homo sapiens
+REACT_1707	CDC6 association with the ORC:origin complex	Homo sapiens
+REACT_1949	CDT1 association with the CDC6:ORC:origin complex	Homo sapiens
+REACT_829	Regulation of DNA replication	Homo sapiens
+REACT_207	Removal of licensing factors from origins	Homo sapiens
+REACT_1156	Orc1 removal from chromatin	Homo sapiens
+REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	Homo sapiens
+REACT_1181	Association of licensing factors with the pre-replicative complex	Homo sapiens
+REACT_2014	Synthesis of DNA	Homo sapiens
+REACT_932	DNA strand elongation	Homo sapiens
+REACT_312	Lagging Strand Synthesis	Homo sapiens
+REACT_1385	Processive synthesis on the lagging strand	Homo sapiens
+REACT_70	Removal of the Flap Intermediate	Homo sapiens
+REACT_1792	Polymerase switching	Homo sapiens
+REACT_1838	Leading Strand Synthesis	Homo sapiens
+REACT_1792	Polymerase switching	Homo sapiens
+REACT_6776	Unwinding of DNA	Homo sapiens
+REACT_2244	DNA replication initiation	Homo sapiens
+REACT_2148	Switching of origins to a post-replicative state	Homo sapiens
+REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	Homo sapiens
+REACT_1156	Orc1 removal from chromatin	Homo sapiens
+REACT_115566	Cell Cycle	Homo sapiens
+REACT_152	Cell Cycle, Mitotic	Homo sapiens
+REACT_829	Regulation of DNA replication	Homo sapiens
+REACT_207	Removal of licensing factors from origins	Homo sapiens
+REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	Homo sapiens
+REACT_1156	Orc1 removal from chromatin	Homo sapiens
+REACT_1181	Association of licensing factors with the pre-replicative complex	Homo sapiens
+REACT_21279	Regulation of mitotic cell cycle	Homo sapiens
+REACT_6828	APC/C-mediated degradation of cell cycle proteins	Homo sapiens
+REACT_6785	Autodegradation of Cdh1 by Cdh1:APC/C	Homo sapiens
+REACT_6761	APC/C:Cdh1 mediated degradation of Cdc20 and other APC/C:Cdh1 targeted proteins in late mitosis/early G1	Homo sapiens
+REACT_6867	Conversion from APC/C:Cdc20 to APC/C:Cdh1 in late anaphase	Homo sapiens
+REACT_6954	Activation of APC/C and APC/C:Cdc20 mediated degradation of mitotic proteins	Homo sapiens
+REACT_6781	APC/C:Cdc20 mediated degradation of mitotic proteins	Homo sapiens
+REACT_6871	APC/C:Cdc20 mediated degradation of Securin	Homo sapiens
+REACT_6820	APC/C:Cdc20 mediated degradation of Cyclin B	Homo sapiens
+REACT_267701	APC:Cdc20 mediated degradation of cell cycle proteins prior to satisfation of the cell cycle checkpoint	Homo sapiens
+REACT_8017	APC-Cdc20 mediated degradation of Nek2A	Homo sapiens
+REACT_6850	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	Homo sapiens
+REACT_6904	Phosphorylation of the APC/C	Homo sapiens
+REACT_6837	Regulation of APC/C activators between G1/S and early anaphase	Homo sapiens
+REACT_6875	Phosphorylation of Emi1	Homo sapiens
+REACT_1041	Inhibition of the proteolytic activity of APC/C required for the onset of anaphase by mitotic spindle checkpoint components	Homo sapiens
+REACT_1072	Inactivation of APC/C via direct inhibition of the APC/C complex	Homo sapiens
+REACT_6821	SCF-beta-TrCP mediated degradation of Emi1	Homo sapiens
+REACT_21267	Mitotic G1-G1/S phases	Homo sapiens
+REACT_1590	G1 Phase	Homo sapiens
+REACT_821	Cyclin D associated events in G1	Homo sapiens
+REACT_1783	G1/S Transition	Homo sapiens
+REACT_683	G1/S-Specific Transcription	Homo sapiens
+REACT_1574	Cyclin E associated events during G1/S transition 	Homo sapiens
+REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	Homo sapiens
+REACT_308	Phosphorylation of proteins involved in G1/S transition by active Cyclin E:Cdk2 complexes	Homo sapiens
+REACT_1095	Activation of the pre-replicative complex	Homo sapiens
+REACT_471	E2F mediated regulation of DNA replication	Homo sapiens
+REACT_1321	E2F-enabled inhibition of pre-replication complex formation	Homo sapiens
+REACT_329	Inhibition of replication initiation of damaged DNA by RB1/E2F1	Homo sapiens
+REACT_111214	G0 and Early G1	Homo sapiens
+REACT_910	M Phase	Homo sapiens
+REACT_1932	Mitotic Telophase/Cytokinesis	Homo sapiens
+REACT_150421	Cohesin Loading onto Chromatin	Homo sapiens
+REACT_765	Mitotic Prophase	Homo sapiens
+REACT_264303	Condensation of Prophase Chromosomes	Homo sapiens
+REACT_150182	MASTL Facilitates Mitotic Progression	Homo sapiens
+REACT_1100	Golgi Cisternae Pericentriolar Stack Reorganization	Homo sapiens
+REACT_160255	Nuclear Envelope Breakdown	Homo sapiens
+REACT_160122	Activation of NIMA Kinases NEK9, NEK6, NEK7	Homo sapiens
+REACT_263908	Depolymerisation of the Nuclear Lamina	Homo sapiens
+REACT_160251	Clearance of Nuclear Envelope Membranes from Chromatin	Homo sapiens
+REACT_163931	Nuclear Pore Complex (NPC) Disassembly	Homo sapiens
+REACT_150314	Mitotic Metaphase and Anaphase	Homo sapiens
+REACT_1275	Mitotic Anaphase	Homo sapiens
+REACT_150471	Separation of Sister Chromatids	Homo sapiens
+REACT_160113	Nuclear Envelope Reassembly	Homo sapiens
+REACT_160242	Initiation of Nuclear Envelope Reformation	Homo sapiens
+REACT_1016	Mitotic Metaphase/Anaphase Transition	Homo sapiens
+REACT_682	Mitotic Prometaphase	Homo sapiens
+REACT_150260	Condensation of Prometaphase Chromosomes	Homo sapiens
+REACT_150425	Resolution of Sister Chromatid Cohesion	Homo sapiens
+REACT_21391	Mitotic G2-G2/M phases	Homo sapiens
+REACT_1915	G2 Phase	Homo sapiens
+REACT_2203	G2/M Transition	Homo sapiens
+REACT_1006	Polo-like kinase mediated events	Homo sapiens
+REACT_1857	Cyclin A/B1 associated events during G2/M transition	Homo sapiens
+REACT_6362	Phosphorylation of proteins involved in the G2/M transition by Cyclin A:Cdc2 complexes	Homo sapiens
+REACT_15479	Centrosome maturation	Homo sapiens
+REACT_15451	Loss of proteins required for interphase microtubule organization from the centrosome	Homo sapiens
+REACT_15364	Loss of Nlp from mitotic centrosomes	Homo sapiens
+REACT_15296	Recruitment of mitotic centrosome proteins and complexes	Homo sapiens
+REACT_15510	Recruitment of NuMA to mitotic centrosomes	Homo sapiens
+REACT_2101	Cyclin B2 mediated events	Homo sapiens
+REACT_160315	Regulation of PLK1 Activity at G2/M Transition	Homo sapiens
+REACT_1725	M/G1 Transition	Homo sapiens
+REACT_734	DNA Replication Pre-Initiation	Homo sapiens
+REACT_1095	Activation of the pre-replicative complex	Homo sapiens
+REACT_2243	Assembly of the pre-replicative complex	Homo sapiens
+REACT_1949	CDT1 association with the CDC6:ORC:origin complex	Homo sapiens
+REACT_1707	CDC6 association with the ORC:origin complex	Homo sapiens
+REACT_567	Assembly of the ORC complex at the origin of replication	Homo sapiens
+REACT_899	S Phase	Homo sapiens
+REACT_9029	Cyclin A:Cdk2-associated events at S phase entry	Homo sapiens
+REACT_9003	SCF(Skp2)-mediated degradation of p27/p21	Homo sapiens
+REACT_2014	Synthesis of DNA	Homo sapiens
+REACT_932	DNA strand elongation	Homo sapiens
+REACT_312	Lagging Strand Synthesis	Homo sapiens
+REACT_1385	Processive synthesis on the lagging strand	Homo sapiens
+REACT_70	Removal of the Flap Intermediate	Homo sapiens
+REACT_1792	Polymerase switching	Homo sapiens
+REACT_6776	Unwinding of DNA	Homo sapiens
+REACT_1838	Leading Strand Synthesis	Homo sapiens
+REACT_1792	Polymerase switching	Homo sapiens
+REACT_2244	DNA replication initiation	Homo sapiens
+REACT_2148	Switching of origins to a post-replicative state	Homo sapiens
+REACT_1156	Orc1 removal from chromatin	Homo sapiens
+REACT_1221	CDK-mediated phosphorylation and removal of Cdc6	Homo sapiens
+REACT_938	Ubiquitin-dependent degradation of Cyclin D	Homo sapiens
+REACT_4	Ubiquitin-dependent degradation of Cyclin D1	Homo sapiens
+REACT_150266	Establishment of Sister Chromatid Cohesion	Homo sapiens
+REACT_1538	Cell Cycle Checkpoints	Homo sapiens
+REACT_2137	Mitotic Spindle Checkpoint	Homo sapiens
+REACT_1041	Inhibition of the proteolytic activity of APC/C required for the onset of anaphase by mitotic spindle checkpoint components	Homo sapiens
+REACT_1072	Inactivation of APC/C via direct inhibition of the APC/C complex	Homo sapiens
+REACT_795	Amplification of signal from the kinetochores	Homo sapiens
+REACT_491	Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal	Homo sapiens
+REACT_2254	G1/S DNA Damage Checkpoints	Homo sapiens
+REACT_1208	p53-Independent G1/S DNA damage checkpoint	Homo sapiens
+REACT_2160	p53-Independent DNA Damage Response	Homo sapiens
+REACT_1614	Ubiquitin Mediated Degradation of Phosphorylated Cdc25A	Homo sapiens
+REACT_85	p53-Dependent G1/S DNA damage checkpoint	Homo sapiens
+REACT_1625	p53-Dependent G1 DNA Damage Response	Homo sapiens
+REACT_309	Stabilization of p53	Homo sapiens
+REACT_20549	Autodegradation of the E3 ubiquitin ligase COP1	Homo sapiens
+REACT_202	Transcriptional activation of p53 responsive genes  	Homo sapiens
+REACT_346	Transcriptional  activation of  cell cycle inhibitor p21 	Homo sapiens
+REACT_828	G2/M Checkpoints	Homo sapiens
+REACT_897	G2/M DNA damage checkpoint	Homo sapiens
+REACT_407	Chk1/Chk2(Cds1) mediated inactivation of Cyclin B:Cdk1 complex	Homo sapiens
+REACT_6769	Activation of ATR in response to replication stress	Homo sapiens
+REACT_1846	G2/M DNA replication checkpoint	Homo sapiens
+REACT_111183	Meiosis	Homo sapiens
+REACT_75792	Meiotic synapsis	Homo sapiens
+REACT_27271	Meiotic recombination	Homo sapiens
+REACT_22172	Chromosome Maintenance	Homo sapiens
+REACT_22344	Nucleosome assembly	Homo sapiens
+REACT_22186	Deposition of new CENPA-containing nucleosomes at the centromere	Homo sapiens
+REACT_7970	Telomere Maintenance	Homo sapiens
+REACT_7963	Packaging Of Telomere Ends	Homo sapiens
+REACT_8030	Extension of Telomeres	Homo sapiens
+REACT_7974	Telomere Extension By Telomerase	Homo sapiens
+REACT_7961	Telomere C-strand (Lagging Strand) Synthesis	Homo sapiens
+REACT_8027	Processive synthesis on the C-strand of the telomere	Homo sapiens
+REACT_7999	Removal of the Flap Intermediate from the C-strand	Homo sapiens
+REACT_7987	Polymerase switching on the C-strand of the telomere	Homo sapiens
+REACT_7993	Telomere C-strand synthesis initiation	Homo sapiens
+REACT_111155	Cell-Cell communication	Homo sapiens
+REACT_23916	Signal regulatory protein (SIRP) family interactions	Homo sapiens
+REACT_25299	DSCAM interactions	Homo sapiens
+REACT_23832	Nephrin interactions	Homo sapiens
+REACT_20676	Cell junction organization	Homo sapiens
+REACT_19331	Cell-cell junction organization	Homo sapiens
+REACT_19195	Adherens junctions interactions	Homo sapiens
+REACT_19268	Nectin/Necl  trans heterodimerization	Homo sapiens
+REACT_19373	Tight junction interactions	Homo sapiens
+REACT_20537	Type I hemidesmosome assembly	Homo sapiens
+REACT_20649	Cell-extracellular matrix interactions	Homo sapiens
+REACT_20617	Localization of the PINCH-ILK-PARVIN complex to focal adhesions	Homo sapiens
+REACT_20580	Regulation of cytoskeletal remodeling and cell spreading by IPP complex components	Homo sapiens
+REACT_118779	Extracellular matrix organization	Homo sapiens
+REACT_150366	Elastic fibre formation	Homo sapiens
+REACT_150331	Molecules associated with elastic fibres	Homo sapiens
+REACT_13552	Integrin cell surface interactions	Homo sapiens
+REACT_163874	Non-integrin membrane-ECM interactions	Homo sapiens
+REACT_163942	Syndecan interactions	Homo sapiens
+REACT_163906	ECM proteoglycans	Homo sapiens
+REACT_169262	Laminin interactions	Homo sapiens
+REACT_160131	Fibronectin matrix formation	Homo sapiens
+REACT_118572	Degradation of the extracellular matrix	Homo sapiens
+REACT_150401	Collagen degradation	Homo sapiens
+REACT_118682	Activation of Matrix Metalloproteinases	Homo sapiens
+REACT_120729	Collagen formation	Homo sapiens
+REACT_150180	Assembly of collagen fibrils and other multimeric structures	Homo sapiens
+REACT_150206	Crosslinking of collagen fibrils	Homo sapiens
+REACT_150268	Anchoring fibril formation	Homo sapiens
+REACT_121139	Collagen biosynthesis and modifying enzymes	Homo sapiens
+REACT_6900	Immune System	Homo sapiens
+REACT_75790	Cytokine Signaling in Immune system	Homo sapiens
+REACT_111133	Growth hormone receptor signaling	Homo sapiens
+REACT_115697	Prolactin receptor signaling	Homo sapiens
+REACT_25229	Interferon Signaling	Homo sapiens
+REACT_25078	Interferon gamma signaling	Homo sapiens
+REACT_24980	Regulation of IFNG signaling	Homo sapiens
+REACT_25162	Interferon alpha/beta signaling	Homo sapiens
+REACT_25216	Regulation of IFNA signaling	Homo sapiens
+REACT_115676	Antiviral mechanism by IFN-stimulated genes	Homo sapiens
+REACT_115831	ISG15 antiviral mechanism	Homo sapiens
+REACT_22232	Signaling by Interleukins	Homo sapiens
+REACT_27283	Interleukin-2 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_23891	Interleukin receptor SHC signaling	Homo sapiens
+REACT_23950	Interleukin-1 processing	Homo sapiens
+REACT_27307	Interleukin-6 signaling	Homo sapiens
+REACT_22442	Interleukin-1 signaling	Homo sapiens
+REACT_115529	Interleukin-7 signaling	Homo sapiens
+REACT_23837	Interleukin-3, 5 and GM-CSF signaling	Homo sapiens
+REACT_23891	Interleukin receptor SHC signaling	Homo sapiens
+REACT_23787	Regulation of signaling by CBL	Homo sapiens
+REACT_75774	Adaptive Immune System	Homo sapiens
+REACT_19344	Costimulation by the CD28 family	Homo sapiens
+REACT_19183	CD28 co-stimulation	Homo sapiens
+REACT_19358	CD28 dependent PI3K/Akt signaling	Homo sapiens
+REACT_19238	CD28 dependent Vav1 pathway	Homo sapiens
+REACT_19405	CTLA4 inhibitory signaling	Homo sapiens
+REACT_19324	PD-1 signaling	Homo sapiens
+REACT_11152	Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell	Homo sapiens
+REACT_121399	MHC class II antigen presentation	Homo sapiens
+REACT_23898	Rap1 signalling	Homo sapiens
+REACT_12526	TCR signaling	Homo sapiens
+REACT_12555	Downstream TCR signaling	Homo sapiens
+REACT_12623	Generation of second messenger molecules	Homo sapiens
+REACT_12582	Phosphorylation of CD3 and TCR zeta chains	Homo sapiens
+REACT_12596	Translocation of ZAP-70 to Immunological synapse	Homo sapiens
+REACT_75820	Class I MHC mediated antigen processing & presentation	Homo sapiens
+REACT_111119	Antigen processing-Cross presentation	Homo sapiens
+REACT_111056	Cross-presentation of soluble exogenous antigens (endosomes)	Homo sapiens
+REACT_111168	Endosomal/Vacuolar pathway	Homo sapiens
+REACT_111178	ER-Phagosome pathway	Homo sapiens
+REACT_111174	Cross-presentation of particulate exogenous antigens (phagosomes)	Homo sapiens
+REACT_75795	Antigen Presentation: Folding, assembly and peptide loading of class I MHC	Homo sapiens
+REACT_75842	Antigen processing: Ubiquitination & Proteasome degradation	Homo sapiens
+REACT_118773	Signaling by the B Cell Receptor (BCR)	Homo sapiens
+REACT_118700	Antigen activates B Cell Receptor (BCR) leading to generation of second messengers	Homo sapiens
+REACT_118638	Downstream signaling events of B Cell Receptor (BCR)	Homo sapiens
+REACT_118656	Activation of NF-kappaB in B cells	Homo sapiens
+REACT_118778	Activation of RAS in B cells	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_6802	Innate Immune System	Homo sapiens
+REACT_75913	Nucleotide-binding domain, leucine rich repeat containing receptor (NLR) signaling pathways	Homo sapiens
+REACT_75776	NOD1/2 Signaling Pathway	Homo sapiens
+REACT_75900	Inflammasomes	Homo sapiens
+REACT_75892	The IPAF inflammasome	Homo sapiens
+REACT_75777	The AIM2 inflammasome	Homo sapiens
+REACT_75927	The NLRP1 inflammasome	Homo sapiens
+REACT_75808	The NLRP3 inflammasome	Homo sapiens
+REACT_115846	Defensins	Homo sapiens
+REACT_115574	Alpha-defensins	Homo sapiens
+REACT_115897	Beta defensins	Homo sapiens
+REACT_25359	RIG-I/MDA5 mediated induction of IFN-alpha/beta pathways	Homo sapiens
+REACT_24969	TRAF6 mediated NF-kB activation	Homo sapiens
+REACT_25271	Negative regulators of RIG-I/MDA5 signaling	Homo sapiens
+REACT_25039	NF-kB activation through FADD/RIP-1 pathway mediated by caspase-8 and -10	Homo sapiens
+REACT_24938	TRAF6 mediated IRF7 activation	Homo sapiens
+REACT_25026	TRAF3-dependent IRF activation pathway	Homo sapiens
+REACT_147694	DAP12 interactions	Homo sapiens
+REACT_147814	DAP12 signaling	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_111064	DAG and IP3 signaling	Homo sapiens
+REACT_9053	CaM pathway	Homo sapiens
+REACT_9000	Calmodulin induced events	Homo sapiens
+REACT_15497	PKA-mediated phosphorylation of CREB	Homo sapiens
+REACT_15530	PKA activation	Homo sapiens
+REACT_15502	CaMK IV-mediated phosphorylation of CREB	Homo sapiens
+REACT_15408	Cam-PDE 1 activation	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_118823	Cytosolic sensors of pathogen-associated DNA 	Homo sapiens
+REACT_163743	LRR FLII-interacting protein 1 (LRRFIP1) activates type I IFN production	Homo sapiens
+REACT_147841	STING mediated induction of host immune responses	Homo sapiens
+REACT_163734	STAT6-mediated induction of chemokines	Homo sapiens
+REACT_163993	IRF3-mediated induction of type I IFN	Homo sapiens
+REACT_163773	DEx/H-box helicases activate type I IFN and inflammatory cytokines production 	Homo sapiens
+REACT_163977	Regulation of innate immune responses to cytosolic DNA	Homo sapiens
+REACT_163652	Regulation by TREX1	Homo sapiens
+REACT_118764	ZBP1(DAI) mediated induction of type I IFNs	Homo sapiens
+REACT_118811	IRF3 mediated activation of type 1 IFN	Homo sapiens
+REACT_118563	RIP-mediated NFkB activation via ZBP1	Homo sapiens
+REACT_355405	C-type lectin receptors (CLRs)	Homo sapiens
+REACT_355503	CD209 (DC-SIGN) signaling	Homo sapiens
+REACT_188323	CLEC7A (Dectin-1) signaling	Homo sapiens
+REACT_188329	CLEC7A (Dectin-1) induces NFAT activation	Homo sapiens
+REACT_355550	CLEC7A/inflammasome pathway	Homo sapiens
+REACT_188330	Dectin-1 mediated noncanonical NF-kB signaling	Homo sapiens
+REACT_355442	Dectin-2 family	Homo sapiens
+REACT_160123	Fcgamma receptor (FCGR) dependent phagocytosis	Homo sapiens
+REACT_160158	Role of phospholipids in phagocytosis	Homo sapiens
+REACT_160086	Regulation of actin dynamics for phagocytic cup formation	Homo sapiens
+REACT_160274	FCGR activation	Homo sapiens
+REACT_25195	Advanced glycosylation endproduct receptor signaling	Homo sapiens
+REACT_6932	Complement cascade	Homo sapiens
+REACT_7972	Activation of C3 and C5	Homo sapiens
+REACT_118707	Regulation of Complement cascade	Homo sapiens
+REACT_8028	Terminal pathway of complement	Homo sapiens
+REACT_8024	Initial triggering of complement	Homo sapiens
+REACT_8001	Alternative complement activation	Homo sapiens
+REACT_8012	Creation of C4 and C2 activators	Homo sapiens
+REACT_7956	Classical antibody-mediated complement activation	Homo sapiens
+REACT_7964	Lectin pathway of complement activation	Homo sapiens
+REACT_163810	Ficolins bind to repetitive carbohydrate structures on the target cell surface	Homo sapiens
+REACT_163936	Fc epsilon receptor (FCERI) signaling	Homo sapiens
+REACT_163834	FCERI mediated Ca+2 mobilization	Homo sapiens
+REACT_163994	FCERI mediated NF-kB activation	Homo sapiens
+REACT_163769	Role of LAT2/NTAL/LAB on calcium mobilization	Homo sapiens
+REACT_75829	PIP3 activates AKT signaling	Homo sapiens
+REACT_12442	AKT phosphorylates targets in the nucleus	Homo sapiens
+REACT_12564	AKT phosphorylates targets in the cytosol	Homo sapiens
+REACT_12447	Negative regulation of the PI3K/AKT network	Homo sapiens
+REACT_163701	FCERI mediated MAPK activation	Homo sapiens
+REACT_634	RAF/MAP kinase cascade	Homo sapiens
+REACT_2077	RAF activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_962	MEK activation	Homo sapiens
+REACT_614	RAF phosphorylates MEK	Homo sapiens
+REACT_6966	Toll-Like Receptors Cascades	Homo sapiens
+REACT_118632	Trafficking and processing of endosomal TLR	Homo sapiens
+REACT_9027	Toll Like Receptor 10 (TLR10) Cascade	Homo sapiens
+REACT_27215	MyD88 cascade initiated on plasma membrane	Homo sapiens
+REACT_25380	IRAK2 mediated activation of TAK1 complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_24918	IRAK1 recruits IKK complex	Homo sapiens
+REACT_9020	Toll Like Receptor 7/8 (TLR7/8) Cascade	Homo sapiens
+REACT_25222	MyD88 dependent cascade initiated on endosome	Homo sapiens
+REACT_25024	TRAF6 mediated induction of NFkB and MAP kinases upon TLR7/8 or 9 activation	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_25018	IRAK2 mediated activation of TAK1 complex upon TLR7/8 or 9 stimulation	Homo sapiens
+REACT_25354	IRAK1 recruits IKK complex upon TLR7/8 or 9 stimulation	Homo sapiens
+REACT_25120	TRAF6 mediated IRF7 activation in TLR7/8 or 9 signaling	Homo sapiens
+REACT_6783	Toll Like Receptor 3 (TLR3) Cascade	Homo sapiens
+REACT_6809	MyD88-independent TLR3/TLR4 cascade 	Homo sapiens
+REACT_25281	TRIF-mediated TLR3/TLR4 signaling 	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_25374	IKK complex recruitment mediated by RIP1	Homo sapiens
+REACT_25148	Activation of IRF3/IRF7 mediated by TBK1/IKK epsilon	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_25351	TRAF6 mediated induction of TAK1 complex	Homo sapiens
+REACT_150361	TRIF-mediated programmed cell death	Homo sapiens
+REACT_7980	Toll Like Receptor 2 (TLR2) Cascade	Homo sapiens
+REACT_8006	Toll Like Receptor TLR6:TLR2 Cascade	Homo sapiens
+REACT_6788	MyD88:Mal cascade initiated on plasma membrane	Homo sapiens
+REACT_25380	IRAK2 mediated activation of TAK1 complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_24918	IRAK1 recruits IKK complex	Homo sapiens
+REACT_8005	Toll Like Receptor TLR1:TLR2 Cascade	Homo sapiens
+REACT_6788	MyD88:Mal cascade initiated on plasma membrane	Homo sapiens
+REACT_25380	IRAK2 mediated activation of TAK1 complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_24918	IRAK1 recruits IKK complex	Homo sapiens
+REACT_6894	Toll Like Receptor 4 (TLR4) Cascade	Homo sapiens
+REACT_6890	Activated TLR4 signalling	Homo sapiens
+REACT_6788	MyD88:Mal cascade initiated on plasma membrane	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_25380	IRAK2 mediated activation of TAK1 complex	Homo sapiens
+REACT_24918	IRAK1 recruits IKK complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_6809	MyD88-independent TLR3/TLR4 cascade 	Homo sapiens
+REACT_25281	TRIF-mediated TLR3/TLR4 signaling 	Homo sapiens
+REACT_25148	Activation of IRF3/IRF7 mediated by TBK1/IKK epsilon	Homo sapiens
+REACT_25351	TRAF6 mediated induction of TAK1 complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_150361	TRIF-mediated programmed cell death	Homo sapiens
+REACT_25374	IKK complex recruitment mediated by RIP1	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_6822	Transfer of LPS from LBP carrier to CD14	Homo sapiens
+REACT_9061	Toll Like Receptor 5 (TLR5) Cascade	Homo sapiens
+REACT_27215	MyD88 cascade initiated on plasma membrane	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_24918	IRAK1 recruits IKK complex	Homo sapiens
+REACT_25380	IRAK2 mediated activation of TAK1 complex	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_9047	Toll Like Receptor 9 (TLR9) Cascade	Homo sapiens
+REACT_25222	MyD88 dependent cascade initiated on endosome	Homo sapiens
+REACT_25024	TRAF6 mediated induction of NFkB and MAP kinases upon TLR7/8 or 9 activation	Homo sapiens
+REACT_25018	IRAK2 mediated activation of TAK1 complex upon TLR7/8 or 9 stimulation	Homo sapiens
+REACT_21281	TAK1 activates NFkB by phosphorylation and activation of IKKs complex	Homo sapiens
+REACT_21308	MAP kinase activation in TLR cascade	Homo sapiens
+REACT_21368	JNK (c-Jun kinases) phosphorylation and  activation mediated by activated human TAK1	Homo sapiens
+REACT_21328	MAPK targets/ Nuclear events mediated by MAP kinases	Homo sapiens
+REACT_12524	CREB phosphorylation	Homo sapiens
+REACT_12599	ERK/MAPK targets	Homo sapiens
+REACT_12436	ERKs are inactivated	Homo sapiens
+REACT_21326	Activation of the AP-1 family of transcription factors	Homo sapiens
+REACT_21399	activated TAK1 mediates p38 MAPK activation	Homo sapiens
+REACT_1482	ERK activation	Homo sapiens
+REACT_1391	ERK1 activation	Homo sapiens
+REACT_1183	ERK2 activation	Homo sapiens
+REACT_25354	IRAK1 recruits IKK complex upon TLR7/8 or 9 stimulation	Homo sapiens
+REACT_25120	TRAF6 mediated IRF7 activation in TLR7/8 or 9 signaling	Homo sapiens
+REACT_264135	Organelle biogenesis and maintenance	Homo sapiens
+REACT_268551	Mitochondrial translation	Homo sapiens
+REACT_267634	Mitochondrial translation initiation	Homo sapiens
+REACT_268261	Mitochondrial translation termination	Homo sapiens
+REACT_268133	Mitochondrial translation elongation	Homo sapiens
+REACT_264351	Mitochondrial biogenesis	Homo sapiens
+REACT_264544	Activation of PPARGC1A (PGC-1alpha) by phosphorylation	Homo sapiens
+REACT_264212	Transcriptional activation of mitochondrial biogenesis	Homo sapiens
+REACT_268265	Assembly of the primary cilium	Homo sapiens
+REACT_267965	Anchoring of the basal body to the plasma membrane	Homo sapiens
+REACT_267624	Cargo trafficking to the periciliary membrane	Homo sapiens
+REACT_268299	VxPx cargo-targeting to cilium	Homo sapiens
+REACT_268425	Trafficking of myristoylated proteins to the cilium	Homo sapiens
+REACT_267948	BBSome-mediated cargo-targeting to cilium	Homo sapiens
+REACT_268148	ARL13B-mediated ciliary trafficking of INPP5E	Homo sapiens
+REACT_268024	Intraflagellar transport	Homo sapiens

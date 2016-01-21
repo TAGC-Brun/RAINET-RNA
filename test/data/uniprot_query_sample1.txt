@@ -1,0 +1,10 @@
+Entry	Entry name	Protein names	Gene names  (primary )	Gene names  (synonym )	Organism	Length	Fragment	Cross-reference (Pfam)	Cross-reference (SMART)
+P62258	1433E_HUMAN	14-3-3 protein epsilon (14-3-3E)	YWHAE		Homo sapiens (Human)	255		PF00244;	SM00101;
+Q9GIY3	2B1E_HUMAN	HLA class II histocompatibility antigen, DRB1-14 beta chain (MHC class II antigen DRB1*14) (DR-14) (DR14)	HLA-DRB1		Homo sapiens (Human)	266		PF07654;PF00969;	SM00407;SM00921;
+P08697	A2AP_HUMAN	Alpha-2-antiplasmin (Alpha-2-AP) (Alpha-2-plasmin inhibitor) (Alpha-2-PI) (Serpin F2)	SERPINF2	AAP PLI	Homo sapiens (Human)	491		PF00079;	SM00093;
+P31941	ABC3A_HUMAN	DNA dC->dU-editing enzyme APOBEC-3A (A3A) (EC 3.5.4.-) (Phorbolin-1)	APOBEC3A		Homo sapiens (Human)	199		PF05240;	
+Q8NE71	ABCF1_HUMAN	ATP-binding cassette sub-family F member 1 (ATP-binding cassette 50) (TNF-alpha-stimulated ABC protein)	ABCF1	ABC50	Homo sapiens (Human)	845		PF00005;	SM00382;
+Q13085	ACACA_HUMAN	Acetyl-CoA carboxylase 1 (ACC1) (EC 6.4.1.2) (ACC-alpha) [Includes: Biotin carboxylase (EC 6.3.4.14)]	ACACA	ACAC ACC1 ACCA	Homo sapiens (Human)	2346		PF08326;PF02785;PF00364;PF01039;PF00289;PF02786;	SM00878;
+P55008	AIF1_HUMAN	Allograft inflammatory factor 1 (AIF-1) (Ionized calcium-binding adapter molecule 1) (Protein G1)	AIF1	G1 IBA1	Homo sapiens (Human)	147			
+Q9Y243	AKT3_HUMAN	RAC-gamma serine/threonine-protein kinase (EC 2.7.11.1) (Protein kinase Akt-3) (Protein kinase B gamma) (PKB gamma) (RAC-PK-gamma) (STK-2)	AKT3	PKBG	Homo sapiens (Human)	479		PF00169;PF00069;PF00433;	SM00233;SM00133;SM00220;
+P09525	ANXA4_HUMAN	Annexin A4 (35-beta calcimedin) (Annexin IV) (Annexin-4) (Carbohydrate-binding protein p33/p41) (Chromobindin-4) (Endonexin I) (Lipocortin IV) (P32.5) (PP4-X) (Placental anticoagulant protein II) (PAP-II) (Protein II)	ANXA4	ANX4	Homo sapiens (Human)	319		PF00191;	SM00335;

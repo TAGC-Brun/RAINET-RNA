@@ -1,0 +1,101 @@
+!GOC Validation Date: 05/27/2015 $
+!Submission Date: 5/27/2015
+!
+! The above "Submission Date" is when the annotation project provided
+! this file to the Gene Ontology Consortium (GOC).  The "GOC Validation
+! Date" indicates when this file was last changed as a result of a GOC
+! validation and filtering process.  
+!
+! Note: The contents of this file may differ from that submitted to the
+! GOC. The identifiers and syntax of the file have been checked, rows of
+! data not meeting the standards set by the GOC have been removed. This
+! file may also have annotations removed because the annotations for the
+! listed Taxonomy identifier are only allowed in a file provided by
+! another annotation project.  The original submitted file is available from:
+!  http://www.geneontology.org/gene-associations/submission/
+!
+! For information on which taxon are allowed in which files please see:
+!  http://www.geneontology.org/GO.annotation.shtml#script
+!
+!gaf-version: 2.0
+!Project_name: UniProt GO Annotation program (UniProt-GOA)
+!URL: http://www.ebi.ac.uk/GOA
+!Contact Email: goa@ebi.ac.uk
+!
+!The set of protein accessions included in this file is based on UniProt complete proteomes, which may provide more than one protein per gene.
+!They include all Swiss-Prot entries for the species plus any TrEMBL entries that have an Ensembl DR line. The TrEMBL entries are likely to overlap with the Swiss-Prot entries or their isoforms.
+!If a particular protein accession is not annotated with GO, then it will not appear in this file.
+!
+!Note that the annotation set in this file is filtered in order to reduce redundancy; the full, unfiltered set can be found in
+!ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/UNIPROT/gene_association.goa_uniprot.gz
+!
+!Generated: 2015-05-26 09:20
+!GO-version: http://purl.obolibrary.org/obo/go/releases/2015-05-25/go.owl
+!
+UniProtKB	P49760	PDCD6		GO:0000024	GO_REF:0000033	IBA	PANTHER:PTN000021568	F	HCG1985580, isoform CRA_c	A0A024QZ42_HUMAN|PDCD6|hCG_1985580	protein	taxon:9606	20140313	GO_Central
+UniProtKB	A0A024QZ42	PDCD6		GO:0004198	GO_REF:0000033	IBA	PANTHER:PTN000021568	F	HCG1985580, isoform CRA_c	A0A024QZ42_HUMAN|PDCD6|hCG_1985580	protein	taxon:9606	20140313	GO_Central		
+UniProtKB	A0A024QZ42	PDCD6		GO:0005509	GO_REF:0000002	IEA	InterPro:IPR002048	F	HCG1985580, isoform CRA_c	A0A024QZ42_HUMAN|PDCD6|hCG_1985580	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024QZ42	PDCD6		GO:0006508	GO_REF:0000033	IBA	PANTHER:PTN000021568	P	HCG1985580, isoform CRA_c	A0A024QZ42_HUMAN|PDCD6|hCG_1985580	protein	taxon:9606	20140313	GO_Central		
+UniProtKB	A0A024QZP7	CDC2		GO:0004672	GO_REF:0000002	IEA	InterPro:IPR000719|InterPro:IPR002290|InterPro:IPR008271	F	Cell division cycle 2, G1 to S and G2 to M, isoform CRA_a	A0A024QZP7_HUMAN|CDC2|CDK1|hCG_40242	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024QZP7	CDC2		GO:0005524	GO_REF:0000038	IEA	UniProtKB-KW:KW-0067	F	Cell division cycle 2, G1 to S and G2 to M, isoform CRA_a	A0A024QZP7_HUMAN|CDC2|CDK1|hCG_40242	protein	taxon:9606	20150523	UniProt		
+UniProtKB	A0A024QZP7	CDC2		GO:0006468	GO_REF:0000002	IEA	InterPro:IPR000719|InterPro:IPR002290|InterPro:IPR008271	P	Cell division cycle 2, G1 to S and G2 to M, isoform CRA_a	A0A024QZP7_HUMAN|CDC2|CDK1|hCG_40242	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024QZP7	CDC2		GO:0051301	GO_REF:0000038	IEA	UniProtKB-KW:KW-0132	P	Cell division cycle 2, G1 to S and G2 to M, isoform CRA_a	A0A024QZP7_HUMAN|CDC2|CDK1|hCG_40242	protein	taxon:9606	20150523	UniProt		
+UniProtKB	A0A024QZX5	SERPINB6		GO:0005615	GO_REF:0000033	IBA	PANTHER:PTN000156122	C	Serpin B6	A0A024QZX5_HUMAN|SERPINB6|hCG_22875	protein	taxon:9606	20141205	GO_Central		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0001932	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0003677	GO_REF:0000002	IEA	InterPro:IPR009057	F	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0003682	GO_REF:0000002	IEA	InterPro:IPR001005	F	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0005671	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	C	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0006357	GO_REF:0000002	IEA	InterPro:IPR016827	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0007067	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0008270	GO_REF:0000002	IEA	InterPro:IPR000433	F	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0016573	GO_REF:0000002	IEA	InterPro:IPR016827	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0031063	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0031647	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0072686	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	C	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R0Y4	TADA2L		GO:0090043	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000018795	P	Transcriptional adaptor 2 (ADA2 homolog, yeast)-like, isoform CRA_a	A0A024R0Y4_HUMAN|TADA2L|TADA2A|hCG_28187	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R214	CPEB1		GO:0000166	GO_REF:0000002	IEA	InterPro:IPR012677	F	Cytoplasmic polyadenylation element-binding protein 1	A0A024R214_HUMAN|CPEB1|hCG_26948	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R214	CPEB1		GO:0003676	GO_REF:0000002	IEA	InterPro:IPR000504	F	Cytoplasmic polyadenylation element-binding protein 1	A0A024R214_HUMAN|CPEB1|hCG_26948	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R2X5	PARP3		GO:0003950	GO_REF:0000002	IEA	InterPro:IPR004102|InterPro:IPR012317	F	Poly [ADP-ribose] polymerase 3	A0A024R2X5_HUMAN|PARP3|hCG_42577	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R2X5	PARP3		GO:0006471	GO_REF:0000002	IEA	InterPro:IPR004102	P	Poly [ADP-ribose] polymerase 3	A0A024R2X5_HUMAN|PARP3|hCG_42577	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R341	NIF3L1BP1		GO:0000445	GO_REF:0000002	IEA	InterPro:IPR008501	C	THO complex subunit 7 homolog	A0A024R341_HUMAN|NIF3L1BP1|THOC7|hCG_23514	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R341	NIF3L1BP1		GO:0006397	GO_REF:0000002	IEA	InterPro:IPR008501	P	THO complex subunit 7 homolog	A0A024R341_HUMAN|NIF3L1BP1|THOC7|hCG_23514	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3B9	CRYAB		GO:0005212	GO_REF:0000002	IEA	InterPro:IPR012273	F	Alpha-crystallin B chain	A0A024R3B9_HUMAN|CRYAB|hCG_1730741	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0001525	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0005021	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	F	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0007411	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0016020	GO_REF:0000002	IEA	InterPro:IPR000998	C	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0017154	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	F	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0038084	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R3W6	NRP2		GO:0046872	GO_REF:0000038	IEA	UniProtKB-KW:KW-0479	F	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	UniProt		
+UniProtKB	A0A024R3W6	NRP2		GO:0071526	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin 2, isoform CRA_h	A0A024R3W6_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	GOC		
+UniProtKB	A0A024R412	NRP2		GO:0001525	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0005021	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	F	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0007411	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0016020	GO_REF:0000002	IEA	InterPro:IPR000998	C	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0017154	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	F	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0038084	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R412	NRP2		GO:0046872	GO_REF:0000038	IEA	UniProtKB-KW:KW-0479	F	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	UniProt		
+UniProtKB	A0A024R412	NRP2		GO:0071526	GO_REF:0000002	IEA	InterPro:IPR014648|InterPro:IPR027143	P	Neuropilin-2	A0A024R412_HUMAN|NRP2|hCG_15204	protein	taxon:9606	20150523	GOC		
+UniProtKB	A0A024R4E5	HDLBP		GO:0003723	GO_REF:0000002	IEA	InterPro:IPR004088	F	High density lipoprotein binding protein (Vigilin), isoform CRA_a	A0A024R4E5_HUMAN|HDLBP|hCG_33048	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R4K9	TMPIT		GO:0016021	GO_REF:0000038	IEA	UniProtKB-KW:KW-0812	C	Transmembrane protein induced by tumor necrosis factor alpha, isoform CRA_a	A0A024R4K9_HUMAN|TMPIT|TMEM120A|hCG_41362	protein	taxon:9606	20150523	UniProt		
+UniProtKB	A0A024R571	EHD1		GO:0005509	GO_REF:0000002	IEA	InterPro:IPR002048	F	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R571	EHD1		GO:0005525	GO_REF:0000002	IEA	InterPro:IPR030381	F	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R571	EHD1		GO:0005769	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0005811	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0005886	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0006897	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0010008	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000051714	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0010886	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0030139	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0031095	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0031175	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000051714	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0032456	GO_REF:0000002	IEA	InterPro:IPR029947	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150523	InterPro		
+UniProtKB	A0A024R571	EHD1		GO:0034383	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0042632	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:0048471	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	C	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:1901741	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:1990090	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000051714	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R571	EHD1		GO:2001137	GO_REF:0000019	IEA	Ensembl:ENSMUSP00000025684	P	EH domain-containing protein 1	A0A024R571_HUMAN|EHD1|hCG_23386	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R5I4	SLCO2B1		GO:0001889	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000024281	P	Solute carrier organic anion transporter family member 2B1	A0A024R5I4_HUMAN|SLCO2B1|hCG_27402	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R5I4	SLCO2B1		GO:0015125	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000024281	F	Solute carrier organic anion transporter family member 2B1	A0A024R5I4_HUMAN|SLCO2B1|hCG_27402	protein	taxon:9606	20150516	Ensembl		
+UniProtKB	A0A024R5I4	SLCO2B1		GO:0015347	GO_REF:0000019	IEA	Ensembl:ENSRNOP00000024281	F	Solute carrier organic anion transporter family member 2B1	A0A024R5I4_HUMAN|SLCO2B1|hCG_27402	protein	taxon:9606	20150516	Ensembl		

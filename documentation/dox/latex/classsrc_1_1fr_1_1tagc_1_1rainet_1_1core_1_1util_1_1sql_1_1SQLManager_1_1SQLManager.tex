@@ -1,0 +1,62 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager}{}\section{src.\+fr.\+tagc.\+rainet.\+core.\+util.\+sql.\+S\+Q\+L\+Manager.\+S\+Q\+L\+Manager Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager}\index{src.\+fr.\+tagc.\+rainet.\+core.\+util.\+sql.\+S\+Q\+L\+Manager.\+S\+Q\+L\+Manager@{src.\+fr.\+tagc.\+rainet.\+core.\+util.\+sql.\+S\+Q\+L\+Manager.\+S\+Q\+L\+Manager}}
+
+
+This class is a singleton aiming to manage S\+Q\+L connection to the database The singleton is able to manage the creation of a S\+Q\+L\+Alchemy Session to the database it has been initiated with.  
+
+
+Inheritance diagram for src.\+fr.\+tagc.\+rainet.\+core.\+util.\+sql.\+S\+Q\+L\+Manager.\+S\+Q\+L\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a8e883e3a2d50c570379a36e533f435c8}{}def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a8e883e3a2d50c570379a36e533f435c8}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ade8c70005119df93c018383736dad4c5}{}def {\bfseries get\+\_\+session} (self)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ade8c70005119df93c018383736dad4c5}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ae4f79e502aee77fc01175a22e284e322}{}def {\bfseries close\+\_\+session} (self)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ae4f79e502aee77fc01175a22e284e322}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_af1703b4d26840eea064d95763d21a212}{}def {\bfseries commit} (self)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_af1703b4d26840eea064d95763d21a212}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ab7661aa520b18ccd0671e843297d7267}{}def {\bfseries set\+\_\+\+D\+Bpath} (self, path)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ab7661aa520b18ccd0671e843297d7267}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a82ec5e66c5b1115abece68dbc78d377d}{}def {\bfseries clean\+\_\+database} (self, path)\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a82ec5e66c5b1115abece68dbc78d377d}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a0778f7a8aa8e6c2220b21a3ddc61b847}{}def {\bfseries build\+\_\+database}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a0778f7a8aa8e6c2220b21a3ddc61b847}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a349580aec384b88f90908cd73b50beee}{}def {\bfseries get\+\_\+instance} ()\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_a349580aec384b88f90908cd73b50beee}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_af568a3ea5d8f2d3e78caedb78f988730}{}{\bfseries D\+B\+Path}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_af568a3ea5d8f2d3e78caedb78f988730}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ab6927658c071939b1df8c83865237443}{}{\bfseries session}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1sql_1_1SQLManager_1_1SQLManager_ab6927658c071939b1df8c83865237443}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is a singleton aiming to manage S\+Q\+L connection to the database The singleton is able to manage the creation of a S\+Q\+L\+Alchemy Session to the database it has been initiated with. 
+
+The singleton keep the same session open until it is asked to close it. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/util/sql/S\+Q\+L\+Manager.\+py\end{DoxyCompactItemize}
