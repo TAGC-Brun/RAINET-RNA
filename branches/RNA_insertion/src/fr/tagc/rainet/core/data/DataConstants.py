@@ -215,3 +215,22 @@ INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_CLASS = "ProteinCrossReference"
 INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_HEADERS = ["REDUNDANT_AC", "PROTEIN_AC"]
 INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PARAMS = ["PROTEIN_AC","DB_SOURCE","REDUNDANT_AC"]
 INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_COMMENT_CHAR = "#"
+
+
+#===============================================================================
+#===============================================================================
+# RNA DEFINITION, CROSS-REFERENCES, ISOFORMS AND SUBTYPES
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for RNA object
+#===============================================================================
+
+RNA_DEFINITION_PROPERTY = "RNA_DEFINITION"
+
+RNA_CLASS = "RNA"
+
+RNA_HEADERS = ["rna_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+RNA_PARAMS = ["rna_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+RNA_COMMENT_CHAR = "#"
+
