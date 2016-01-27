@@ -21,7 +21,7 @@ class RNACrossReference( Base ):
     __tablename__ = 'RNACrossReference'
 
     # The base RNA
-    transcriptID = Column( Integer, ForeignKey( 'RNA.transcriptID' ) )
+    transcriptID = Column( String , ForeignKey( 'RNA.transcriptID' ) )
     # The database the information was obtained from
     sourceDB = Column( String )
     # The cross reference
