@@ -230,7 +230,18 @@ RNA_DEFINITION_PROPERTY = "RNA_DEFINITION"
 
 RNA_CLASS = "RNA"
 
-RNA_HEADERS = ["rna_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
-RNA_PARAMS = ["rna_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
 RNA_COMMENT_CHAR = "#"
+
+# Headers and Parameters for RNACrossReference
+#===============================================================================
+
+RNA_CROSS_REFERENCE_PROPERTY = "RNA_CROSS_REFERENCE"
+
+RNA_CROSS_REFERENCE_CLASS = "RNACrossReference"
+
+RNA_CROSS_REFERENCE_HEADERS = ["ACC", "DB","X_REFERENCE"]
+RNA_CROSS_REFERENCE_PARAMS = ["ACC","DB","X_REFERENCE"]
+RNA_CROSS_REFERENCE_COMMENT_CHAR = "#"
 
