@@ -15,7 +15,7 @@ class ProteinCrossReference( Base ):
     __tablename__ = 'ProteinCrossReference'
     
     # The base Protein
-    protein_id = Column( Integer, ForeignKey( 'Protein.uniprotAC' ) )
+    protein_id = Column( String, ForeignKey( 'Protein.uniprotAC' ) )
     # The database the information was obtained from
     sourceDB = Column( String )
     # The cross reference
