@@ -23,7 +23,7 @@ class RNA( Base ):
     # The Ensembl Transcript ID
     transcriptID = Column( String, primary_key = True )
     # The parent gene Ensembl Gene ID
-    parentGene = relationship( 'Gene', backref = 'RNA' ) #dr: this will be connected to a gene table, so will be foreign key
+    #parentGene = relationship( 'Gene', backref = 'RNA' ) #dr: this will be connected to a gene table, so will be foreign key
     # The Ensembl Peptide ID, if existing
     peptideID = Column( String )
     # The type/category of the transcript
@@ -48,6 +48,8 @@ class RNA( Base ):
     chromosomeName = Column ( String )
     # The percentage of GC content in transcript
     percentageGCContent = Column ( Float )
+    # The list of RNA cross references
+    crossReferences = relationship( 'RNACrossReference', backref = 'RNA' )
  
 
     # #
@@ -55,6 +57,7 @@ class RNA( Base ):
     # 
     # @param 
     #### dr: NEED TO FILL documentation    
+    # also adding Gene table
     def __init__( self, transcript_ID, parent_gene, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content):
         
         #=======================================================================
@@ -116,6 +119,32 @@ class RNA( Base ):
             self.percentageGCContent = float ( percentage_GC_content )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of GC content percentage end is not a float: " + str( percentage_GC_content ), ve )
+
+        # Add the current RNA to database
+        self.add_to_session()
+        
+#         #=======================================================================
+#         # Build the Gene objects related to the RNA
+#         #=======================================================================
+#         
+    #because each Gene can contain several transcripts, get instance of gene and see if already present, if not, create new Gene entry
+#gene = sql_session.query( Gene).filter( Gene.geneID == gene_name).first()
+#         #sql_session.query( RNA).filter( RNA.geneID == Gene.geneID, Gene.geneID == gene_name).all() #if wanting to query all transcripts of a specific Gene
+#         if gene == None:
+#             gene = Gene( gene_name)
+#         
+#         gene.add_rna( self)
+#         
+#         sql_session.add( gene)
+
+    # #
+    # Add a RNACrossReference to the RNA cross reference list
+    #
+    # @param cross_reference : string - A RNACrossReference instance
+    def add_cross_reference( self, cross_reference ):
+        
+        if cross_reference != None:
+            self.crossReferences.append( cross_reference )
 
     # #
     # Add the object to SQLAlchemy session
