@@ -8,6 +8,7 @@ from fr.tagc.rainet.core.util import Constants
 
 from fr.tagc.rainet.core.execution.InteractiveQueryStrategy import InteractiveQueryStrategy
 from fr.tagc.rainet.core.execution.InsertionStrategy import InsertionStrategy
+from fr.tagc.rainet.core.execution.AnalysisStrategy import AnalysisStrategy
 
 
 ##

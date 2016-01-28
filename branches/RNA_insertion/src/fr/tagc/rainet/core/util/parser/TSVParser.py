@@ -73,6 +73,7 @@ class TSVParser(object):
         # Parse the lines in the files and create one object of the requested type per line
         instance_list = []
         line = input_file.readline()
+        counter = 0
         while line != None and line != '':
             # Ignore the empty and comment lines
             if line != '' and not line.startswith( comment_symbol):
@@ -103,6 +104,12 @@ class TSVParser(object):
             
             # Read a new line
             line = input_file.readline()
+            
+            #dr testing
+            counter += 1
+            if counter % 10000 == 0:
+                Logger.get_instance().info( "TSVParser.parse_file : %s Read %i lines.." % (file_path,counter) )
+
                         
         # Close the input file
         input_file.close()
