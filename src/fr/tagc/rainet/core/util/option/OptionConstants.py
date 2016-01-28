@@ -3,7 +3,7 @@ from fr.tagc.rainet.core.util import Constants
 #===============================================================================
 # The list of available strageties
 #===============================================================================
-STRATEGIES_LIST = [ "Insertion", "InteractiveQuery"]
+STRATEGIES_LIST = [ "Insertion", "InteractiveQuery", "Analysis"]
 
 #===============================================================================
 # The tags used to define the options
@@ -44,5 +44,9 @@ OPTION_LIST = {  "Insertion": [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
                     [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."],
                     [ "-q", "--queryFilePath", "store", "string", OPTION_QUERY_FILE, None, "The path to the file containing the query definition."],                 
+                ],               
+                "Analysis" : [
+                    [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
+                    [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."]
                 ]
                }

@@ -24,6 +24,7 @@ class Gene( Base ):
     # The base RNA
     transcriptList = relationship( 'RNA' , backref="Gene")
 
+
     # #
     # The Gene constructor
     # 

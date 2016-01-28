@@ -19,7 +19,8 @@ from fr.tagc.rainet.core.data.NetworkModule import NetworkModule
 from fr.tagc.rainet.core.data.NetworkModuleAnnotation import NetworkModuleAnnotation
 from fr.tagc.rainet.core.data.PPINetwork import PPINetwork
 from fr.tagc.rainet.core.data.PPINetworkInteraction import PPINetworkInteraction
-
+from fr.tagc.rainet.core.data.RNA import RNA
+from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 
 
 ## This class is a Factory that aims to create objects of various Class from class name
