@@ -1,6 +1,7 @@
 
 import shutil
 import os
+from os.path import basename
 
 from fr.tagc.rainet.core.data import DataConstants
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
@@ -22,9 +23,13 @@ from fr.tagc.rainet.core.util.property.PropertyManager import PropertyManager
 
 from fr.tagc.rainet.core.data.PPINetwork import PPINetwork
 from fr.tagc.rainet.core.data.PPINetworkInteraction import PPINetworkInteraction
+
 from fr.tagc.rainet.core.data.RNA import RNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
-from os.path import basename
+from fr.tagc.rainet.core.data.MRNA import MRNA
+from fr.tagc.rainet.core.data.LncRNA import LncRNA
+from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
+
 
 
 # #
@@ -86,11 +91,11 @@ class InsertionStrategy( ExecutionStrategy ):
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.RNA_HEADERS, DataConstants.RNA_CLASS, DataConstants.RNA_PARAMS, None, DataConstants.RNA_COMMENT_CHAR )
 
-            # Parse the RNA cross references file
-            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
-            self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
-
-            
+#             # Parse the RNA cross references file
+#             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
+#             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
+# 
+#             
 #             #===================================================================
 #             # PROTEIN DEFINITION
 #             #===================================================================
@@ -404,3 +409,10 @@ class InsertionStrategy( ExecutionStrategy ):
             RNA.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), RNACrossReference.__tablename__):
             RNACrossReference.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), MRNA.__tablename__):
+            MRNA.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), LncRNA.__tablename__):
+            LncRNA.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), OtherRNA.__tablename__):
+            OtherRNA.__table__.create(bind = db_engine)
+

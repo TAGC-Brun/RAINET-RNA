@@ -15,18 +15,17 @@ from fr.tagc.rainet.core.util.exception.NotRequiredInstantiationException import
 from sqlalchemy.orm.base import instance_dict
 
 
-
 # #
 # This class describes a RNA models obtained from querying Ensembl BioMart
 #
 class RNA( Base ):
     __tablename__ = 'RNA'
 
-    # The Ensembl Transcript ID
+    # The Transcript ID
     transcriptID = Column( String, primary_key = True )
-#     # The parent gene Ensembl Gene ID
+    # The parent gene Gene ID
     geneID = Column ( String, ForeignKey("Gene.geneID") )
-    # The Ensembl Peptide ID, if existing
+    # The Peptide ID, if existing
     peptideID = Column( String )
     # The type/category of the transcript
     transcriptBiotype = Column( String )
@@ -52,7 +51,10 @@ class RNA( Base ):
     percentageGCContent = Column ( Float )
     # The list of RNA cross references
     crossReferences = relationship( 'RNACrossReference', backref = 'RNA' )
+    # The subtype of RNA (link to subtables)
+    type = Column ( String )
  
+    __mapper_args__ = {'polymorphic_identity':'RNA', 'polymorphic_on':type }
 
     # #
     # The RNA constructor
@@ -61,62 +63,78 @@ class RNA( Base ):
     #### dr: NEED TO FILL documentation    
     # also adding Gene table...
     def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content):
+
+        sql_session = SQLManager.get_instance().get_session()
+        
+        if transcript_biotype != "":
+            #=======================================================================
+            # Fill the biotype subtables
+            #=======================================================================
+            
+            if transcript_biotype in DataConstants.RNA_MRNA_BIOTYPE: #should be constant
+                from fr.tagc.rainet.core.data.MRNA import MRNA
+                myRNA = MRNA()
+            elif transcript_biotype in DataConstants.RNA_LNCRNA_BIOTYPE:
+                from fr.tagc.rainet.core.data.LncRNA import LncRNA
+                myRNA = LncRNA()
+            else:
+                from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
+                myRNA = OtherRNA()
+        else:
+            raise RainetException( "RNA.__init__ : The value of transcript biotype is empty: " + str( transcript_gencode_basic ) )   
         
         #=======================================================================
         # Fill the main protein variables
         #=======================================================================
-
+        
+        myRNA.transcriptBiotype = transcript_biotype
+        
         if transcript_ID != "":
-            self.transcriptID = transcript_ID
+            myRNA.transcriptID = transcript_ID
         else:
             raise RainetException( "RNA.__init__ : The value of transcript ID is empty: " + str( transcript_ID ) )   
         
-        self.peptideID = peptide_ID
-
-        if transcript_biotype != "":
-            self.transcriptBiotype = transcript_biotype
-        else:
-            raise RainetException( "RNA.__init__ : The value of transcript biotype is empty: " + str( transcript_gencode_basic ) )   
+        myRNA.peptideID = peptide_ID
         
         try:
-            self.transcriptLength = int( transcript_length )
+            myRNA.transcriptLength = int( transcript_length )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of transcript length is not an integer: " + str( transcript_length ), ve )
         
-        self.transcriptSource = transcript_source
+        myRNA.transcriptSource = transcript_source
         
-        self.transcriptStatus = transcript_status
+        myRNA.transcriptStatus = transcript_status
         
-        self.transcriptTsl = transcript_tsl
+        myRNA.transcriptTsl = transcript_tsl
         
         if transcript_gencode_basic == "GENCODE basic":
-            self.transcriptGencodeBasic = 1
+            myRNA.transcriptGencodeBasic = 1
         elif transcript_gencode_basic == "":
-            self.transcriptGencodeBasic = 0
+            myRNA.transcriptGencodeBasic = 0
         else:
             raise RainetException( "RNA.__init__ : The value of GENCODE basic is not identified: " + str( transcript_gencode_basic ))   
                  
         try:
-            self.transcriptStart = int( transcript_start )
+            myRNA.transcriptStart = int( transcript_start )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of transcript start is not an integer: " + str( transcript_start ), ve )
         
         try:
-            self.transcriptEnd = int( transcript_end )
+            myRNA.transcriptEnd = int( transcript_end )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of transcript end is not an integer: " + str( transcript_end ), ve )
         
         try:
-            self.transcriptStrand = int( transcript_strand )
+            myRNA.transcriptStrand = int( transcript_strand )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of transcript strand is not an integer: " + str( transcript_strand ), ve )
         
-        self.chromosomeName = chromosome_name
+        myRNA.chromosomeName = chromosome_name
         
-        self.percentageGCContent = percentage_GC_content
+        myRNA.percentageGCContent = percentage_GC_content
         
         try:
-            self.percentageGCContent = float ( percentage_GC_content )
+            myRNA.percentageGCContent = float ( percentage_GC_content )
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of GC content percentage end is not a float: " + str( percentage_GC_content ), ve )
 
@@ -127,20 +145,22 @@ class RNA( Base ):
 
         # each Gene can contain several transcripts. get instance of gene and see if already present, if not, create new Gene entry
 
-        sql_session = SQLManager.get_instance().get_session()
         gene = sql_session.query( Gene ).filter( Gene.geneID == gene_ID).first()
 
-        #sql_session.query( RNA).filter( RNA.geneID == Gene.geneID, Gene.geneID == gene_name).all() #if wanting to query all transcripts of a specific Gene
- 
         if gene == None: #if no Gene with that Gene ID found, create one
             gene = Gene( gene_ID )
  
-        gene.add_rna( self )
+        gene.add_rna( myRNA )
         
         sql_session.add( gene )
-
-        # Add the current RNA to database
-        self.add_to_session()
+        
+        
+        # Add the respective RNA subclass object, note that RNA itself is not instantiated
+              
+        sql_session.add( myRNA )
+      
+        raise NotRequiredInstantiationException( "RNA instance not required" )
+    
 
     # #
     # Add a RNACrossReference to the RNA cross reference list
@@ -151,10 +171,4 @@ class RNA( Base ):
         if cross_reference != None:
             self.crossReferences.append( cross_reference )
 
-    # #
-    # Add the object to SQLAlchemy session
-    def add_to_session( self ):
-    
-        sql_session = SQLManager.get_instance().get_session()
-        sql_session.add( self )
 

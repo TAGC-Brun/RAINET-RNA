@@ -28,8 +28,7 @@ class Gene( Base ):
     # #
     # The Gene constructor
     # 
-    # @param gene_ID : string - The provided Gene ID
-    #### dr: NEED TO FILL documentation    
+    # @param gene_ID : string - The provided Gene ID  
     def __init__( self, gene_ID):
         
         self.geneID = gene_ID
@@ -43,10 +42,3 @@ class Gene( Base ):
         if rna != None:
             self.transcriptList.append( rna )
          
-    # #
-    # Add the object to SQLAlchemy session
-    def add_to_session( self ):
-    
-        sql_session = SQLManager.get_instance().get_session()
-        sql_session.add( self )
-        

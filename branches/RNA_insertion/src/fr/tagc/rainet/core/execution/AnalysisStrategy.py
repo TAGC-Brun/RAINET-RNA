@@ -31,6 +31,9 @@ from fr.tagc.rainet.core.data.ReactomePathway import ReactomePathway
 from fr.tagc.rainet.core.data.SynonymGeneSymbol import SynonymGeneSymbol
 from fr.tagc.rainet.core.data.Gene import Gene
 from fr.tagc.rainet.core.data.RNA import RNA
+from fr.tagc.rainet.core.data.MRNA import MRNA
+from fr.tagc.rainet.core.data.LncRNA import LncRNA
+from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
 
@@ -58,14 +61,26 @@ class AnalysisStrategy(ExecutionStrategy):
 
 
         # dr TESTING
-        gene = sql_session.query( Gene ).filter( Gene.geneID == "ENSG00000004777").first()
         
-        txList = gene.transcriptList
-        
+        # Getting all transcripts of a Gene
+        gene = sql_session.query( Gene ).filter( Gene.geneID == "ENSG00000004777").first()        
+        txList = gene.transcriptList      
         for tx in txList:
             print ("%s\t%s\t%s\t%s" % (gene.geneID, tx.transcriptID,tx.transcriptBiotype,tx.transcriptLength) )
 
-        
+        # Looping over all lncRNAs
+        lncRNAs = sql_session.query( LncRNA ).all()
+        print ("Total number of lncRNAs:\t%i" % len(lncRNAs) )
+        for lncRNA in lncRNAs:
+            print ("LncRNA:\t%s\t%s" % (lncRNA.transcriptID,lncRNA.transcriptBiotype) )
+            
+        # Looping over all mRNAs
+        mRNAs = sql_session.query( MRNA ).all()
+        print ("Total number of mRNAs:\t%i" % len(mRNAs) )
+        for mRNA in mRNAs:
+            print ("mRNA:\t%s" % mRNA.transcriptID)
+
+
 #         self.analysis()
 # 
 # 
