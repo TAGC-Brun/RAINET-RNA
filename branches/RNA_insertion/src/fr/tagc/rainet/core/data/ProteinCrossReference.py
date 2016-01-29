@@ -36,6 +36,11 @@ class ProteinCrossReference( Base ):
         # Get a SQLalchemy session
         sql_session = SQLManager.get_instance().get_session()
         
+        # control if protein ACC contains a isoform code (like for instance P31496-1 instead of P31496)
+        index_dash = protein_acc.index("-")
+        if index_dash > 0:
+            protein_acc = protein_acc[0:index_dash]
+        
         # Retrieve the list of Protein corresponding to the provided accession number
         from fr.tagc.rainet.core.data.Protein import Protein
         protein_list = sql_session.query( Protein).filter( or_( Protein.uniprotAC == protein_acc, Protein.uniprotID == protein_acc)).all()
