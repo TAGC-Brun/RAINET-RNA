@@ -25,7 +25,7 @@ class RNA( Base ):
     transcriptID = Column( String, primary_key = True )
     # The parent gene Gene ID
     geneID = Column ( String, ForeignKey("Gene.geneID") )
-    # The Peptide ID, if existing
+    # The Peptide ID
     peptideID = Column( String )
     # The type/category of the transcript
     transcriptBiotype = Column( String )
@@ -49,25 +49,38 @@ class RNA( Base ):
     chromosomeName = Column ( String )
     # The percentage of GC content in transcript
     percentageGCContent = Column ( Float )
+
     # The list of RNA cross references
     crossReferences = relationship( 'RNACrossReference', backref = 'RNA' )
+    # The list of Protein-RNA interactions
+    pri = relationship("ProteinRNAInteraction")
     # The subtype of RNA (link to subtables)
     type = Column ( String )
  
+    #For mapping to subtypes
     __mapper_args__ = {'polymorphic_identity':'RNA', 'polymorphic_on':type }
 
-    # #
-    # The RNA constructor
-    # 
-    # @param 
-    #### dr: NEED TO FILL documentation    
-    # also adding Gene table...
-    def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content):
 
-        #=======================================================================
-        # Approach: RNA class is not instantiated, instead, RNA subtypes (mRNA, lncRNA, otherRNA) are instantiated. 
-        # Also, Gene table is filled here 
-        #=======================================================================
+    # #
+    # The RNA constructor.
+    # Note: RNA class is not instantiated, instead, RNA subtypes (mRNA, lncRNA, otherRNA) are instantiated. 
+    # Note: Gene table is filled here 
+    #
+    # @param transcript_ID: String - The Transcript ID (MANDATORY)
+    # @param gene_ID: String - The parent gene Gene ID
+    # @param peptide_ID: String - The Peptide ID
+    # @param transcript_biotype: String - The type/category of the transcript (MANDATORY)
+    # @param transcript_length: Integer - The length of the transcript
+    # @param transcript_source: String - The annotation source of the transcript
+    # @param transcript_status: String - The confidence status of the transcript
+    # @param transcript_tsl: String - The Ensembl confidence level of the transcript
+    # @param transcript_gencode_basic: Boolean - Presence or absence of this transcript on GENCODE Basic dataset
+    # @param transcript_start: Integer - The genomic start position coordinate of transcript
+    # @param transcript_end: Integer - The genomic end position coordinate of transcript
+    # @param transcript_strand: Integer - The genomic strandness of transcript
+    # @param chromosome_name: String - The chromosome name of transcript
+    # @param percentage_GC_content: Float - The percentage of GC content in transcript
+    def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content):
 
         sql_session = SQLManager.get_instance().get_session()
 
@@ -76,8 +89,7 @@ class RNA( Base ):
         #=======================================================================
         
         if transcript_biotype != "":
-            
-            if transcript_biotype in DataConstants.RNA_MRNA_BIOTYPE: #should be constant
+            if transcript_biotype in DataConstants.RNA_MRNA_BIOTYPE:
                 from fr.tagc.rainet.core.data.MRNA import MRNA
                 myRNA = MRNA()
             elif transcript_biotype in DataConstants.RNA_LNCRNA_BIOTYPE:
@@ -144,9 +156,6 @@ class RNA( Base ):
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of GC content percentage end is not a float: " + str( percentage_GC_content ), ve )
 
-        # Add the respective RNA subclass object, note that RNA itself is not instantiated
-        sql_session.add( myRNA )
-        raise NotRequiredInstantiationException( "RNA instance not required" )
         
         #=======================================================================
         # Build the Gene objects related to the RNA
@@ -162,6 +171,10 @@ class RNA( Base ):
         
         sql_session.add( gene )
         
+
+        # Add the respective RNA subclass object, note that RNA itself is not instantiated
+        sql_session.add( myRNA )
+        raise NotRequiredInstantiationException( "RNA.__init__: RNA instance is not required." )
 
     # #
     # Add a RNACrossReference to the RNA cross reference list
