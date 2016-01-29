@@ -64,12 +64,18 @@ class RNA( Base ):
     # also adding Gene table...
     def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content):
 
+        #=======================================================================
+        # Approach: RNA class is not instantiated, instead, RNA subtypes (mRNA, lncRNA, otherRNA) are instantiated. 
+        # Also, Gene table is filled here 
+        #=======================================================================
+
         sql_session = SQLManager.get_instance().get_session()
+
+        #=======================================================================
+        # Choose and instantiate the appropriate RNA subtype
+        #=======================================================================
         
         if transcript_biotype != "":
-            #=======================================================================
-            # Fill the biotype subtables
-            #=======================================================================
             
             if transcript_biotype in DataConstants.RNA_MRNA_BIOTYPE: #should be constant
                 from fr.tagc.rainet.core.data.MRNA import MRNA
@@ -84,7 +90,7 @@ class RNA( Base ):
             raise RainetException( "RNA.__init__ : The value of transcript biotype is empty: " + str( transcript_gencode_basic ) )   
         
         #=======================================================================
-        # Fill the main protein variables
+        # Fill the main RNA variables
         #=======================================================================
         
         myRNA.transcriptBiotype = transcript_biotype
@@ -138,12 +144,14 @@ class RNA( Base ):
         except ValueError as ve:
             raise RainetException( "RNA.__init__ : The value of GC content percentage end is not a float: " + str( percentage_GC_content ), ve )
 
+        # Add the respective RNA subclass object, note that RNA itself is not instantiated
+        sql_session.add( myRNA )
+        raise NotRequiredInstantiationException( "RNA instance not required" )
         
         #=======================================================================
         # Build the Gene objects related to the RNA
-        #=======================================================================
-
         # each Gene can contain several transcripts. get instance of gene and see if already present, if not, create new Gene entry
+        #=======================================================================
 
         gene = sql_session.query( Gene ).filter( Gene.geneID == gene_ID).first()
 
@@ -154,13 +162,6 @@ class RNA( Base ):
         
         sql_session.add( gene )
         
-        
-        # Add the respective RNA subclass object, note that RNA itself is not instantiated
-              
-        sql_session.add( myRNA )
-      
-        raise NotRequiredInstantiationException( "RNA instance not required" )
-    
 
     # #
     # Add a RNACrossReference to the RNA cross reference list
