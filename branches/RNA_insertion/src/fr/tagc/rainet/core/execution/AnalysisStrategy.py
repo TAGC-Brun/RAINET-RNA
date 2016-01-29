@@ -84,8 +84,9 @@ class AnalysisStrategy(ExecutionStrategy):
         mRNAs = sql_session.query( MRNA ).count()
         print ("Total number of mRNAs:\t%i" % mRNAs )
 
-        # Getting protein UniprotAC from ENSEMBL ID (ENSP) using Protein CrossReference table
-        query = sql_session.query( ProteinCrossReference ).filter( ProteinCrossReference.sourceDB == "Ensembl" and ProteinCrossReference.crossReferenceID == "ENSP..").all()
+#         # Getting protein UniprotAC from ENSEMBL ID (ENSP) using Protein CrossReference table
+#         query = sql_session.query( ProteinCrossReference ).filter( ProteinCrossReference.sourceDB == "Ensembl_PRO" and ProteinCrossReference.crossReferenceID == ).all()
+
         
         #        protein_list = sql_session.query( Protein).filter( or_( Protein.uniprotAC == protein_acc, Protein.uniprotID == protein_acc)).all()
 
