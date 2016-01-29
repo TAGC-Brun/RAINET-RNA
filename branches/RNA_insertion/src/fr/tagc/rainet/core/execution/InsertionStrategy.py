@@ -29,8 +29,7 @@ from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.MRNA import MRNA
 from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
-
-
+from fr.tagc.rainet.core.data.ProteinRNAInteraction import ProteinRNAInteraction
 
 # #
 # This class define the Strategy executing insertion of the various data in database
@@ -90,11 +89,19 @@ class InsertionStrategy( ExecutionStrategy ):
             # Parse the RNA file
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.RNA_HEADERS, DataConstants.RNA_CLASS, DataConstants.RNA_PARAMS, None, DataConstants.RNA_COMMENT_CHAR )
+ 
+            # Parse the RNA cross references file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
 
-#             # Parse the RNA cross references file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
-# 
+            #===================================================================
+            # PROTEIN RNA INTERACTION
+            #===================================================================
+ 
+#             # Parse the ProteinRNAInteraction file
+#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_DEFINITION_PROPERTY, True)
+#             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_HEADERS, DataConstants.PROTEIN_RNA_INTERACTION_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_PARAMS, None, DataConstants.PROTEIN_RNA_INTERACTION_COMMENT_CHAR )
+
 #             
 #             #===================================================================
 #             # PROTEIN DEFINITION
@@ -415,4 +422,6 @@ class InsertionStrategy( ExecutionStrategy ):
             LncRNA.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), OtherRNA.__tablename__):
             OtherRNA.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), ProteinRNAInteraction.__tablename__):
+            ProteinRNAInteraction.__table__.create(bind = db_engine)
 
