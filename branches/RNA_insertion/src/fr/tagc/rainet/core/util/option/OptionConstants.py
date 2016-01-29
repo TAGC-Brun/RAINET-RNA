@@ -47,6 +47,7 @@ OPTION_LIST = {  "Insertion": [
                 ],               
                 "Analysis" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
-                    [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."]
+                    [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."],
+                    [ "-v", "--verbose", "store", "string", OPTION_VERBOSITY, Constants.MODE_INFO, "The level of verbosity. Must be one of : " + str( Constants.VERBOSITY_LEVELS)]
                 ]
                }
