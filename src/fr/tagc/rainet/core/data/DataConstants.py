@@ -247,3 +247,24 @@ RNA_CROSS_REFERENCE_CLASS = "RNACrossReference"
 RNA_CROSS_REFERENCE_HEADERS = ["ACC", "DB","X_REFERENCE"]
 RNA_CROSS_REFERENCE_PARAMS = ["ACC","DB","X_REFERENCE"]
 RNA_CROSS_REFERENCE_COMMENT_CHAR = "#"
+
+#===============================================================================
+#===============================================================================
+# PROTEIN RNA INTERACTION (PRI) DEFINITION
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for ProteinRNAInteraction
+#===============================================================================
+
+PROTEIN_RNA_INTERACTION_DEFINITION_PROPERTY = "PROTEIN_RNA_INTERACTION_DEFINITION"
+
+PROTEIN_RNA_INTERACTION_CLASS = "ProteinRNAInteraction"
+
+PROTEIN_RNA_INTERACTION_HEADERS = ["incremental", "unknown", "interactors", "interactionScore", "coExpression"]
+PROTEIN_RNA_INTERACTION_PARAMS = ["interactors", "interactionScore"]
+PROTEIN_RNA_INTERACTION_COMMENT_CHAR = "#"
+
+#PROTEIN_RNA_INTERACTION_ID_CROSSREF_REGEX_DICT = {"Ensembl_PRO" : "(^[0-9A-Z]+_[A-Z]+$)"}
+
+
