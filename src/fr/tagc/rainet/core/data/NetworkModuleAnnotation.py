@@ -12,15 +12,19 @@ class NetworkModuleAnnotation ( Base ):
     
     # The module ID
     networkModule_id = Column( String, ForeignKey('NetworkModule.moduleID') )
+    # The annotation GOID
+    annotationID = Column( String )
     # The annotation name
-    annotationName = Column( String )
+    annotationTerm = Column( String )
+
     # Define the Composite PrimaryKey
     __table_args__ = (
-        PrimaryKeyConstraint('networkModule_id', 'annotationName'),
+        PrimaryKeyConstraint('networkModule_id', 'annotationID'),
     )
     
     #
     ## The constructor
-    def __init__(self, annotation):
+    def __init__(self, annotation_term, annotation_id):
         
-        self.annotationName = annotation
+        self.annotationName = annotation_term
+        self.annotationID = annotation_id
