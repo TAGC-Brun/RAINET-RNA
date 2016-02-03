@@ -426,17 +426,20 @@ classify_and_annotate(){
 	echo '##### Partitioning PPI Networks'
 	cd $ROOT_DATA_FOLDER
 
-	echo '##### -- Executing OCG for HUMAN'
+	echo '##### -- Removing self loop in network and Executing OCG for HUMAN'
 	export SPECIES=human
-	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr > $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas
+	Rscript script/protein/remove_self_loop.R $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr
+	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr > $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas
 	
-	echo '##### -- Executing OCG for DROME'
+	echo '##### -- Removing self loop in network and Executing OCG for DROME'
 	export SPECIES=fly
-	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr > $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas
+	Rscript script/protein/remove_self_loop.R $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr
+	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr > $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas
 	
-	echo '##### -- Executing OCG for YEAST'
+	echo '##### -- Removing self loop in network and Executing OCG for YEAST'
 	export SPECIES=yeast
-	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr > $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas
+	Rscript script/protein/remove_self_loop.R $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.gr $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr
+	/home/rainet/Software/ocg/OCG $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.gr > $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas
 
 # INTERACTOME_NETWORK_PARTITION_ANNOTATION
 
@@ -459,15 +462,15 @@ classify_and_annotate(){
 	
 	echo '##### -- Executing ClassAnnotation for HUMAN'
 	export SPECIES=human
-	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas > $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.fm
+	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas > $ROOT_DATA_FOLDER/$HUMAN_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.fm
 	
 	echo '##### -- Executing ClassAnnotation for DROME'
 	export SPECIES=fly
-	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas > $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.fm
+	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas > $ROOT_DATA_FOLDER/$DROSOPHILA_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.fm
 	
 	echo '##### -- Executing ClassAnnotation for YEAST'
 	export SPECIES=yeast
-	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.clas > $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.fm
+	python annotate.py -s $SPECIES $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.clas > $ROOT_DATA_FOLDER/$YEAST_DATA_FOLDER/$SPECIES.binary.nr0.95.connected.noself.fm
 
 }
 #############################################################################################
