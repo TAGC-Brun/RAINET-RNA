@@ -21,7 +21,7 @@ from fr.tagc.rainet.core.data.PPINetwork import PPINetwork
 from fr.tagc.rainet.core.data.PPINetworkInteraction import PPINetworkInteraction
 from fr.tagc.rainet.core.data.RNA import RNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
-
+from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 
 ## This class is a Factory that aims to create objects of various Class from class name
 # and required parameters. The class manage the insertion to database of the newly created
