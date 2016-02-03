@@ -254,17 +254,17 @@ RNA_CROSS_REFERENCE_COMMENT_CHAR = "#"
 #===============================================================================
 #===============================================================================
 
-# Headers and Parameters for ProteinRNAInteraction
+# Headers and Parameters for ProteinRNAInteractionCatRAPID
 #===============================================================================
 
-PROTEIN_RNA_INTERACTION_DEFINITION_PROPERTY = "PROTEIN_RNA_INTERACTION_DEFINITION"
+PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY = "PROTEIN_RNA_INTERACTION_DEFINITION"
 
-PROTEIN_RNA_INTERACTION_CLASS = "ProteinRNAInteraction"
+PROTEIN_RNA_INTERACTION_CATRAPID_CLASS = "ProteinRNAInteractionCatRAPID"
 
-PROTEIN_RNA_INTERACTION_HEADERS = ["incremental", "unknown", "interactors", "interactionScore", "coExpression"]
-PROTEIN_RNA_INTERACTION_PARAMS = ["interactors", "interactionScore"]
-PROTEIN_RNA_INTERACTION_COMMENT_CHAR = "#"
+PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS = ["incremental", "unknown", "interactors", "interactionScore", "coExpression"]
+PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS = ["interactors", "interactionScore"]
+PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
-#PROTEIN_RNA_INTERACTION_ID_CROSSREF_REGEX_DICT = {"Ensembl_PRO" : "(^[0-9A-Z]+_[A-Z]+$)"}
+PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB = "Ensembl_PRO"
 
 
