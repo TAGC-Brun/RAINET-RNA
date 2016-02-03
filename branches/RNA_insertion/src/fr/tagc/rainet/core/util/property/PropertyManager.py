@@ -57,7 +57,7 @@ class PropertyManager( object ) :
             return self.propertiesDict[property_name_lower]
         else:
             if not_none:
-                raise RainetException( "PropertyManager.get_property : No property with name : " + property_name_lower)
+                raise RainetException( "PropertyManager.get_property : No property with name : " + property_name_lower + ". Check your '.ini' file")
             else:
                 return None
 
