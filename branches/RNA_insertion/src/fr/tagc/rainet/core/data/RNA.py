@@ -53,7 +53,7 @@ class RNA( Base ):
     # The list of RNA cross references
     crossReferences = relationship( 'RNACrossReference', backref = 'RNA' )
     # The list of Protein-RNA interactions
-    pri = relationship("ProteinRNAInteraction")
+    pri = relationship("ProteinRNAInteractionCatRAPID")
     # The subtype of RNA (link to subtables)
     type = Column ( String )
  
