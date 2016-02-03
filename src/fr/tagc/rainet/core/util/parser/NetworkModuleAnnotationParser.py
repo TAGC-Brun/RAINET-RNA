@@ -206,13 +206,20 @@ class NetworkModuleAnnotationParser ( object ):
         if token_list == None or len( token_list) != 2:
             raise RainetException( "NetworkModuleParser.associate_annotations : Abnormal annotation line : " + line + " for network module ID = " + network_module.moduleID)
         
-        # Get the annotation list by splitting with spaces
-        annotation_list = token_list[1].split(" ")
+        # Get the annotation list by splitting with "||"
+        annotation_list = token_list[1].split("||")
         
         # Parse the annotations and create the new NetworkModuleAnnotation object
         # adding it to the annotated network module    
+        # The annotation should be composed of "GO_term<>GO_ID" or only "GO_term" in case of unknown process
         for annotation in annotation_list:
-            current_annotation = NetworkModuleAnnotation( annotation)
+            annotation_term_list = annotation.split("<>")
+            if len( annotation_list) == 2:
+                current_annotation = NetworkModuleAnnotation( annotation_term_list[0], annotation_term_list[1])
+            elif len( annotation_list) == 1:
+                current_annotation = NetworkModuleAnnotation( annotation_term_list[0], "")
+            else:
+                raise RainetException("NetworkModuleParser.associate_annotations : Abnormal annotation : " + annotation)
             network_module.add_associated_annotation( current_annotation)
             sql_session.add( current_annotation)
             sql_session.add( network_module)
