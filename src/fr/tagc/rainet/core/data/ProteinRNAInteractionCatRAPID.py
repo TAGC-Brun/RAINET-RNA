@@ -111,10 +111,6 @@ class ProteinRNAInteractionCatRAPID( Base ):
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init: No RNA found, instance will not be created." )
 
 
-        self.add_to_session()
-
-
-
     ##
     # Add the object to SQLAlchemy session if it is linked to a protein and RNA
     def add_to_session(self):
