@@ -65,20 +65,58 @@ class DataManager( object ) :
             data = self.data[keyword]
         else:
             raise RainetException("DataManager.query_to_dict : Data keyword does not exist"+keyword)            
+        
+        try:
+            for entry in data:
+                if col1 > len(entry) or col2 > len(entry):
+                    raise RainetException("DataManager.query_to_dict : requested columns out of boundaries of query result: "+entry)            
+                
+                keyItem = str(entry[col1])
+                valueItem = str(entry[col2])
+    
+                if keyItem not in outDict:
+                    outDict[keyItem] = []
+                outDict[keyItem].append(valueItem)
+        except:
+            raise RainetException("DataManager.query_to_dict : query result is not iterable: "+keyword)            
 
-
-        for entry in data:
-            if col1 > len(entry) or col2 > len(entry):
-                raise RainetException("DataManager.query_to_dict : requested columns out of boundaries of query result: "+entry)            
-            
-            keyItem = str(entry[col1])
-            valueItem = str(entry[col2])
-
-            if keyItem not in outDict:
-                outDict[keyItem] = []
-            outDict[keyItem].append(valueItem)
 
         self.data[keyword] = outDict
+
+
+    # #
+    # Process previously stored results into a key-value dictionary of lists
+    #
+    # @param keyword : String - the data dictionary keyword to access the data
+    # @param col : Int - 0-based column index to be used as key in the set
+    #
+    # @raise RainetException if the keyword is not present or incorrect format
+    def query_to_set(self, keyword, col):
+
+        outSet = set()
+        
+        if keyword in self.data:
+            data = self.data[keyword]
+        else:
+            raise RainetException("DataManager.query_to_set : Data keyword does not exist"+keyword)            
+
+        try:
+            for entry in data:
+                if col > len(entry) or col > len(entry):
+                    raise RainetException("DataManager.query_to_set : requested columns out of boundaries of query result: "+entry)            
+                
+                keyItem = str(entry[col])
+    
+                if keyItem in outSet:
+                    Logger.get_instance().debug("DataManager.query_to_set : duplicate key in set: "+keyItem)
+
+                outSet.add(keyItem)
+
+        except:
+            raise RainetException("DataManager.query_to_set : query result is not iterable: "+keyword)            
+
+        self.data[keyword] = outSet
+
 
     # #
     # Get previously stored results
