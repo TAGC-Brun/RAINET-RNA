@@ -214,9 +214,9 @@ class NetworkModuleAnnotationParser ( object ):
         # The annotation should be composed of "GO_term<>GO_ID" or only "GO_term" in case of unknown process
         for annotation in annotation_list:
             annotation_term_list = annotation.split("<>")
-            if len( annotation_list) == 2:
+            if len( annotation_term_list) == 2:
                 current_annotation = NetworkModuleAnnotation( annotation_term_list[0], annotation_term_list[1])
-            elif len( annotation_list) == 1:
+            elif len( annotation_term_list) == 1:
                 current_annotation = NetworkModuleAnnotation( annotation_term_list[0], "")
             else:
                 raise RainetException("NetworkModuleParser.associate_annotations : Abnormal annotation : " + annotation)

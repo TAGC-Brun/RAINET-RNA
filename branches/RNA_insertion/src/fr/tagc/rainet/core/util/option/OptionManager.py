@@ -20,6 +20,7 @@ class OptionManager( object ) :
         
         self.optionParser = None
         self.args = None
+        self.optionDict = None
         
     # #
     # Initialize the manager with the option parser that contains the option information
@@ -79,6 +80,24 @@ class OptionManager( object ) :
             raise RainetException( "OptionManager.get_option: You must provide the option '" + option_name + "'. See help for more information." )
         
         return None
+
+    # #
+    # Set the value of the given parameter in the option dictionary
+    #
+    # @param option_name : string - The name of the option
+    # @param option_value : string - The value of the option
+    # 
+    def set_option( self, option_name, option_value):
+        
+        if self.optionDict == None:
+            self.optionDict = {}
+            
+        if option_name != None and len( option_name) > 0:
+            if option_value != None and len( option_value) > 0:
+                self.optionDict[ option_name] = option_value
+            else: Logger.get_instance().warning( "OptionManager.set_option: Trying to pass a None or void value on option dictionary for key : " + option_name) 
+        else:
+            Logger.get_instance().warning( "OptionManager.set_option: Trying to pass a None or void key on option dictionary.")
 
     # #
     # Returns the singleton instance
