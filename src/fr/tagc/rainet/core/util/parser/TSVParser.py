@@ -5,6 +5,7 @@ from fr.tagc.rainet.core.util.factory.DataFactory import DataFactory
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util import Constants
+from fr.tagc.rainet.core.util.time.Timer import Timer
 
 ## This class is a parser of tab separated text file.
 # The class contains methods allowing to parse any TSV file by creating a specific type of Object
@@ -104,13 +105,15 @@ class TSVParser(object):
             
             # Read a new line
             line = input_file.readline()
+
             
             #dr testing
             counter += 1
             if counter % 10000 == 0:
                 Logger.get_instance().info( "TSVParser.parse_file : %s Read %i lines.." % (file_path,counter) )
+                Timer.get_instance().time_point()
 
-                        
+
         # Close the input file
         input_file.close()
         
