@@ -22,6 +22,7 @@ from fr.tagc.rainet.core.data.Protein import Protein
 from fr.tagc.rainet.core.util.exception.NotRequiredInstantiationException import NotRequiredInstantiationException
 from sqlalchemy.orm.base import instance_dict
 from fr.tagc.rainet.core.util.time.Timer import Timer
+import sys
 
 
 # #
@@ -46,6 +47,7 @@ class ProteinRNAInteractionCatRAPID( Base ):
 
     # #
     # The ProteinRNAInteractionCatRAPID constructor.
+    #
     # @param interactors: the interacting protein-RNA pair
     # @param interaction_score: the interaction score
     #
@@ -67,7 +69,6 @@ class ProteinRNAInteractionCatRAPID( Base ):
             transcript_id = spl[1]
         else:
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The interactor string could not be parsed: " + str( interactors ))
-
 
         #=======================================================================
         # Fill variables
@@ -102,9 +103,9 @@ class ProteinRNAInteractionCatRAPID( Base ):
         # See if RNA with given transcript_id exists in database
         #=======================================================================
 
-        RNA_list = sql_session.query( RNA ).filter(  RNA.transcriptID == transcript_id ).all()
-   
-        if RNA_list != None and len( RNA_list) == 1 :
+        RNA_list = DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_RXREF)
+ 
+        if transcript_id in RNA_list:
             self.transcriptID = transcript_id
         else:
             Logger.get_instance().debug( "\nRNA ID not found:\t" + str(transcript_id) )
