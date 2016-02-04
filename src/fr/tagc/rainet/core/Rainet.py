@@ -10,7 +10,6 @@ from fr.tagc.rainet.core.execution.InteractiveQueryStrategy import InteractiveQu
 from fr.tagc.rainet.core.execution.InsertionStrategy import InsertionStrategy
 from fr.tagc.rainet.core.execution.AnalysisStrategy import AnalysisStrategy
 
-
 ##
 # This is the main class of the Rainet project. It contains methods used to insert data to the database
 # and make several type of analysis
@@ -31,7 +30,7 @@ class Rainet( object ):
                 raise RainetException( "Rainet.execute : No strategy associated to keyword " + str(strategy_command))    
         else:
             raise RainetException( "Rainet.execute : No strategy was defined: aborting")
-    
+
         try:
             strategy.execute()
         except RainetException as raie:
