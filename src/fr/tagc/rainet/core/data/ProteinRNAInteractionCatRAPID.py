@@ -21,6 +21,7 @@ from fr.tagc.rainet.core.data.Protein import Protein
 
 from fr.tagc.rainet.core.util.exception.NotRequiredInstantiationException import NotRequiredInstantiationException
 from sqlalchemy.orm.base import instance_dict
+from fr.tagc.rainet.core.util.time.Timer import Timer
 
 
 # #
@@ -82,46 +83,40 @@ class ProteinRNAInteractionCatRAPID( Base ):
 
         #=======================================================================
         # Query Protein uniprot_ac using cross references
-        # From Cross ref ID, search primary ID using cross reference table
-        # Note: assuming that if uniprot_ac exists in protein cross reference table, means that uniprot_ac also exists in protein table.
+        # From Cross ref ID, search primary ID using cross reference DataManager item created during insertion
+        # Note: assuming that if uniprot_ac exists in protein cross reference table it will also exist in protein table.
         #=======================================================================
  
-        Logger.get_instance().debug( "\nSearching protein cross reference" )
- 
-        protein_list = sql_session.query( ProteinCrossReference.protein_id ). \
-        filter( and_(ProteinCrossReference.sourceDB == DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB,\
-                      ProteinCrossReference.crossReferenceID == peptide_id ) ).all()
+        from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
-        if protein_list != None and len( protein_list) > 0:
-            if len( protein_list) == 1:
+        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF)
 
-                self.proteinID = str(protein_list[0].protein_id)
-            else:
-                raise RainetException( "ProteinRNAInteractionCatRAPID.init : Abnormal number of Protein found for ID = " + peptide_id + " : " + str( len( protein_list))) 
+        if peptide_id in proteinXrefs:
+            self.proteinID = proteinXrefs[peptide_id][0]
         else:
-            raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init : No Protein found for ID = " + peptide_id)
-        
+            Logger.get_instance().debug( "\nPeptide ID not found:\t" + str(peptide_id) )
+            raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init : No Protein found, instance will not be created.")
  
         #=======================================================================
         # Query RNA object
         # See if RNA with given transcript_id exists in database
         #=======================================================================
 
-        # Retrieve the list of RNAs corresponding to the provided accession number
- 
-        RNA_list = sql_session.query( RNA ).filter(  RNA.transcriptID == transcript_id ).count()
- 
-        if RNA_list != None:# and len( RNA_list) == 1 :
+        RNA_list = sql_session.query( RNA ).filter(  RNA.transcriptID == transcript_id ).all()
+   
+        if RNA_list != None and len( RNA_list) == 1 :
             self.transcriptID = transcript_id
         else:
-            Logger.get_instance().warning( "\nRNA ID not found:\t" + str(transcript_id) )
-            raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID: could not find RNA, therefore interaction entry will not be created." )
+            Logger.get_instance().debug( "\nRNA ID not found:\t" + str(transcript_id) )
+            raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init: No RNA found, instance will not be created." )
+
 
         self.add_to_session()
 
 
+
     ##
-    # Add the object to SQLAlchemy session if it is linked to a protein
+    # Add the object to SQLAlchemy session if it is linked to a protein and RNA
     def add_to_session(self):
     
         sql_session = SQLManager.get_instance().get_session()
