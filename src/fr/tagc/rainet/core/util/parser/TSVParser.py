@@ -109,9 +109,11 @@ class TSVParser(object):
             
             #dr testing
             counter += 1
-            if counter % 10000 == 0:
+            if counter % 100000 == 0:
                 Logger.get_instance().info( "TSVParser.parse_file : %s Read %i lines.." % (file_path,counter) )
                 Timer.get_instance().time_point()
+                SQLManager.get_instance().commit()
+                instance_list = []
 
 
         # Close the input file
