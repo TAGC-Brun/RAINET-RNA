@@ -99,7 +99,7 @@ class NetworkModuleParser ( object ):
                     # If there is a previous defined NetworkModule, insert it in DB
                     if current_module != None:
                         sql_session.add( current_module )
-                        Logger.get_instance().info( "Inserting new NetworkModule : " + current_module.moduleID)
+                        Logger.get_instance().debug( "Inserting new NetworkModule : " + current_module.moduleID)
                     # Start the new NetworkModule
                     # -- Locate the parenthesis after the class ID (if any)
                     parenthesis_index = line.index( "(", 6 )
