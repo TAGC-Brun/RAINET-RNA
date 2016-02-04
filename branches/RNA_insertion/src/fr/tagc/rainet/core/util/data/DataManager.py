@@ -50,6 +50,37 @@ class DataManager( object ) :
         self.data[keyword] = query_result
 
     # #
+    # Process previously stored results into a key-value dictionary of lists
+    #
+    # @param keyword : String - the data dictionary keyword to access the data
+    # @param col1 : Int - 0-based column index to be used as key in the dict
+    # @param col2 : Int - 0-based column index to be used as value in the dict
+    #
+    # @raise RainetException if the keyword is not present
+    def query_to_dict(self, keyword, col1, col2):
+
+        outDict = {}
+        
+        if keyword in self.data:
+            data = self.data[keyword]
+        else:
+            raise RainetException("DataManager.query_to_dict : Data keyword does not exist"+keyword)            
+
+
+        for entry in data:
+            if col1 > len(entry) or col2 > len(entry):
+                raise RainetException("DataManager.query_to_dict : requested columns out of boundaries of query result: "+entry)            
+            
+            keyItem = str(entry[col1])
+            valueItem = str(entry[col2])
+
+            if keyItem not in outDict:
+                outDict[keyItem] = []
+            outDict[keyItem].append(valueItem)
+
+        self.data[keyword] = outDict
+
+    # #
     # Get previously stored results
     #
     # @param keyword: the data dictionary keyword to access the data
@@ -60,10 +91,10 @@ class DataManager( object ) :
         try:
             keyword = str(keyword)
         except:
-            return RainetException("DataManager.get_data : keyword must be a string.")
+            raise RainetException("DataManager.get_data : keyword must be a string.")
         
         if keyword not in self.data:
-            return RainetException("DataManager.get_data : Data keyword does not exist"+keyword)
+            raise RainetException("DataManager.get_data : Data keyword does not exist"+keyword)
             
         return self.data[keyword]
 
@@ -78,12 +109,12 @@ class DataManager( object ) :
         try:
             keyword = str(keyword)
         except:
-            return RainetException("DataManager.delete_data : keyword must be a string.")
+            raise RainetException("DataManager.delete_data : keyword must be a string.")
         
         if keyword in self.data:
             del self.data[keyword]
         else:
-            RainetException("DataManager.delete_data : Data keyword does not exist"+keyword)
+            raise RainetException("DataManager.delete_data : Data keyword does not exist"+keyword)
             
 
     # #
