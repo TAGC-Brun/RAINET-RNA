@@ -3,7 +3,10 @@
 #===============================================================================
 # 01-Fev-2016 Diogo Ribeiro
 # Script to create test files for Rainet project
+#
 # Objective is to be able to run Rainet code under controlled and tested conditions
+# Approach: pick X proteins and X RNAs randomly from initial input files (Protein models / RNA models), 
+# grep/awk data associated to them in all other files
 #===============================================================================
 
 import os
@@ -20,15 +23,21 @@ if sys.version_info.major < 3:
 
 #===============================================================================
 # Constants
+#
 #===============================================================================
 
 # Store all the files that will be copied as they are originally (files that we do not make smaller for testing database)
 REMAINING_FILES = ["all_protein_domains_smart.txt","Pfam-A.clans.tsv","go-basic.obo","human_kegg_pathway_definitions.txt",
                    "human_kegg_pathway_annotations.txt","all_reactome_pathway_definitions.txt","all_reactome_pathway_annotations.txt",
                    "human.binary.gr","human.binary.nr0.95.connected.clas","human.binary.nr0.95.connected.fm","human_0.95.blastmap"]
-OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/" #note that output of this script will be used as input for testing
+
+#note that output of this script will be used as input for testing
+OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/" 
+
 INPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/"
-SAMPLE_NUMBER = 100 #number of proteins and RNAs for testing
+
+#number of proteins and RNAs for testing
+SAMPLE_NUMBER = 100 
 
 #===============================================================================
 
@@ -37,6 +46,7 @@ if not os.path.exists(OUTPUT_FOLDER+"/RNA"): os.mkdir(OUTPUT_FOLDER+"/RNA")
 
 #===============================================================================
 # Copy of file used for full Rainet DB insertion. We want to make smaller file versions for some of these.
+#
 #===============================================================================
 # 
 # [PROTEINS]
@@ -109,8 +119,8 @@ def runProcess(cmd):
   
     stdoutText = run.stdout.read().decode("UTF-8").strip()
 
-    if stdoutText == None or len(stdoutText) == 0:
-        warnings.warn("Output line is empty :"+str(cmd))
+#     if stdoutText == None or len(stdoutText) == 0:
+#         warnings.warn("Output line is empty :"+str(cmd))
 
     return stdoutText
 
@@ -140,8 +150,6 @@ def listGetter(sample_number, in_file, out_folder, out_file):
 
 
 def copyFiles(list_of_files,in_folder, out_folder):
-
-    print (list_of_files)
 
     for file in list_of_files:
         cmd = "cp %s %s" % (in_folder+file,out_folder)
@@ -470,7 +478,7 @@ def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
 
 #===============================================================================
 # Client
-# Approach: pick X proteins and X RNAs randomly from initial input files, grep data for them in all other files
+#
 #===============================================================================
 
 #===============================================================================
@@ -495,4 +503,7 @@ makePRICatRAPID(testingRNAs,testingProteins,proteinXref)
 # Copy remaining (unchanged) files
 copyFiles(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
 
+#===============================================================================
+
 print ("FINISHED!")
+
