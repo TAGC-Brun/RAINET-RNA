@@ -7,63 +7,76 @@
 #===============================================================================
 
 import os
+import sys
 import re
 import subprocess
 import warnings
 
 from fr.tagc.rainet.core.data import DataConstants
-from unittest.main import TestProgram
-from fr.tagc.rainet.core.util.exception.RainetException import RainetException
+
+if sys.version_info.major < 3:
+   warnings.warn("This script uses only Python 3, check your version. Exiting..")
+   sys.exit(1)
 
 #===============================================================================
-PATHS = [] # will store all the file paths for creating a testing .ini file
-OUTPUT_FOLDER = "/home/diogo/workspace/tagc-rainet-RNA/test/unittest/testInput/" #note that output of this script will be used as input for testing
-INPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/"
-SAMPLE_NUMBER = 100
+# Constants
 #===============================================================================
 
+# Store all the files that will be copied as they are originally (files that we do not make smaller for testing database)
+REMAINING_FILES = ["all_protein_domains_smart.txt","Pfam-A.clans.tsv","go-basic.obo","human_kegg_pathway_definitions.txt",
+                   "human_kegg_pathway_annotations.txt","all_reactome_pathway_definitions.txt","all_reactome_pathway_annotations.txt",
+                   "human.binary.gr","human.binary.nr0.95.connected.clas","human.binary.nr0.95.connected.fm","human_0.95.blastmap"]
+OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/" #note that output of this script will be used as input for testing
+INPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/"
+SAMPLE_NUMBER = 100 #number of proteins and RNAs for testing
 
+#===============================================================================
+
+if not os.path.exists(OUTPUT_FOLDER+"/PROTEIN"): os.mkdir(OUTPUT_FOLDER+"/PROTEIN")
+if not os.path.exists(OUTPUT_FOLDER+"/RNA"): os.mkdir(OUTPUT_FOLDER+"/RNA")
+
+#===============================================================================
+# Copy of file used for full Rainet DB insertion. We want to make smaller file versions for some of these.
+#===============================================================================
+# 
 # [PROTEINS]
-# PROTEIN_UNIPROT_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human_uniprot_protein_list.txt
-# PROTEIN_CROSSREFERENCES = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/HUMAN_9606_idmapping.dat
-# PROTEIN_ISOFORMS = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/UP000005640_9606_additional.fasta
-# PROTEIN_DOMAIN_SMART = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/all_protein_domains_smart.txt
-# PROTEIN_DOMAIN_PFAM = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/Pfam-A.clans.tsv
+# PROTEIN_UNIPROT_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_uniprot_protein_list.txt
+# PROTEIN_CROSSREFERENCES = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/HUMAN_9606_idmapping.dat
+# PROTEIN_ISOFORMS = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/UP000005640_9606_additional.fasta
+# PROTEIN_DOMAIN_SMART = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_protein_domains_smart.txt
+# PROTEIN_DOMAIN_PFAM = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/Pfam-A.clans.tsv
 # 
 # [GENE_ONTONLOGY]
-# GENE_ONTOLOGY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/go-basic.obo
-# GENE_ONTOLOGY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/gene_association.goa_human
+# GENE_ONTOLOGY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/go-basic.obo
+# GENE_ONTOLOGY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/gene_association.goa_human
 # 
 # [KEGG_PATHWAY]
-# KEGG_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human_kegg_pathway_definitions.txt
-# KEGG_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human_kegg_pathway_annotations.txt
+# KEGG_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_kegg_pathway_definitions.txt
+# KEGG_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_kegg_pathway_annotations.txt
 # 
 # [REACTOME PATHWAY]
-# REACTOME_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/all_reactome_pathway_definitions.txt
-# REACTOME_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/all_reactome_pathway_annotations.txt
+# REACTOME_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_reactome_pathway_definitions.txt
+# REACTOME_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_reactome_pathway_annotations.txt
 # 
 # [INTERACTOME]
-# INTERACTOME_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human.pairmap
-# INTERACTOME_NETWORK_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human.binary.nr0.95.connected.gr
-# INTERACTOME_NETWORK_PARTITION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human.binary.nr0.95.connected.clas
-# INTERACTOME_NETWORK_PARTITION_ANNOTATION =  /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human.binary.nr0.95.connected.fm
-# INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/human_0.95.blastmap
+# INTERACTOME_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.pairmap
+# INTERACTOME_NETWORK_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.gr
+# INTERACTOME_NETWORK_PARTITION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.clas
+# INTERACTOME_NETWORK_PARTITION_ANNOTATION =  /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.fm
+# INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_0.95.blastmap
 # 
 # [RNA]
-# RNA_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/RNA/RNA_ATTRIBUTES.tsv
-# RNA_CROSS_REFERENCE = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/RNA/RNA_XREF_ATTRIBUTES.tsv
+# RNA_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/RNA_ATTRIBUTES.tsv
+# RNA_CROSS_REFERENCE = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/RNA_XREF_ATTRIBUTES.tsv
 # 
 # [PROTEIN_RNA_INTERACTION]
-# PROTEIN_RNA_INTERACTION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/PRI/outFile_T-T.2825-7004.sorted.txt
-
-
-#===============================================================================
-# Approach, pick 100 proteins and 100 RNAs randomly from initial input files, grep data for them in all other files
+# PROTEIN_RNA_INTERACTION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/outFile_T-T.2825-7004.sorted.txt
 #===============================================================================
 
 #===============================================================================
 # Files that do not need to be newly created:
-# 
+#===============================================================================
+#
 # all_protein_domains_smart.txt
 # Pfam-A.clans.tsv
 # go-basic.obo
@@ -71,8 +84,15 @@ SAMPLE_NUMBER = 100
 # human_kegg_pathway_annotations.txt
 # all_reactome_pathway_definitions.txt
 # all_reactome_pathway_annotations.txt
+# human.binary.gr
+# human.binary.nr0.95.connected.clas
+# human.binary.nr0.95.connected.fm
+# human_0.95.blastmap
 #===============================================================================
 
+
+# #
+# General function to run command using subprocess, return only standard output, but take care of standard error or run failures
 def runProcess(cmd):
     """General function to run external command and return the return code, and standard outputs"""
 
@@ -89,7 +109,43 @@ def runProcess(cmd):
   
     stdoutText = run.stdout.read().decode("UTF-8").strip()
 
+    if stdoutText == None or len(stdoutText) == 0:
+        warnings.warn("Output line is empty :"+str(cmd))
+
     return stdoutText
+
+
+# #
+# Getter for making file with list of proteins and assert correctness
+# By doing this I can rerun without changing the initial set of chosen proteins
+def listGetter(sample_number, in_file, out_folder, out_file):
+
+    listOfItems = []
+    
+    if not os.path.exists(out_folder): os.mkdir(out_folder)
+
+    outHandler = open(out_folder+"/"+out_file,"w")
+
+    with open(in_file,"r") as f:
+        f.readline() #skip header
+        for line in f:
+            prot = line.strip().split("\t")[0]
+            listOfItems.append(prot)
+            outHandler.write(prot+"\n")
+    outHandler.close()
+
+    assert(len(listOfItems) == SAMPLE_NUMBER),"Number of items sampled should be equal to given SAMPLE_NUMBER"
+
+    return listOfItems
+
+
+def copyFiles(list_of_files,in_folder, out_folder):
+
+    print (list_of_files)
+
+    for file in list_of_files:
+        cmd = "cp %s %s" % (in_folder+file,out_folder)
+        runProcess(cmd)
 
 
 def makeProteinUniprotDefinition(sample_number):
@@ -110,8 +166,8 @@ def makeProteinUniprotDefinition(sample_number):
 
     testingProteins = set() # will store the initial sample of proteins
 
-    inFile = INPUT_FOLDER+"human_uniprot_protein_list.txt"
-    outFile = OUTPUT_FOLDER+"human_uniprot_protein_list.txt" #"protein_uniprot.txt"
+    inFile = INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt"
+    outFile = OUTPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt" #"protein_uniprot.txt"
 
     outHandler = open(outFile,"w")
     outHandler.write("\t".join(DataConstants.PROTEIN_HEADERS)+"\n")
@@ -121,8 +177,7 @@ def makeProteinUniprotDefinition(sample_number):
     runProcess(cmd)
 
 
-
-def makeProteinCrossReferences(testingProteins):
+def makeProteinCrossReferences(testing_proteins):
 
     #===============================================================================
     # File: HUMAN_9606_idmapping.dat ; PROTEIN_CROSSREFERENCES
@@ -136,12 +191,12 @@ def makeProteinCrossReferences(testingProteins):
     
     print("makeProteinCrossReferences..")
     
-    inFile = INPUT_FOLDER+"HUMAN_9606_idmapping.dat"
-    outFile = OUTPUT_FOLDER+"HUMAN_9606_idmapping.dat" #"protein_crossreferences.txt"
+    inFile = INPUT_FOLDER+"PROTEIN/HUMAN_9606_idmapping.dat"
+    outFile = OUTPUT_FOLDER+"PROTEIN/HUMAN_9606_idmapping.dat" #"protein_crossreferences.txt"
      
     outHandler = open(outFile,"w")
      
-    for protein in testingProteins:
+    for protein in testing_proteins:
         cmd = "awk '$1==%s' %s" % ('"'+protein+'"',inFile)
 #        cmd = "grep %s %s" % ('"'+protein+'"',inFile) #this is faster but may bring other entries that do not correspond to our chosen proteins
         out = runProcess(cmd)
@@ -156,7 +211,7 @@ def makeProteinCrossReferences(testingProteins):
     return proteinXref
 
 
-def makeProteinIsoforms(testingProteins):
+def makeProteinIsoforms(testing_proteins):
     
     #===============================================================================
     # File: UP000005640_9606_additional.fasta ; PROTEIN_ISOFORMS
@@ -170,17 +225,17 @@ def makeProteinIsoforms(testingProteins):
 
     print("makeProteinIsoforms..")
 
-    inFile = INPUT_FOLDER+"UP000005640_9606_additional.fasta"
-    tmpFile1 = OUTPUT_FOLDER+"makeProteinIsoforms.tmp1"
-    tmpFile2 = OUTPUT_FOLDER+"makeProteinIsoforms.tmp2"
-    outFile = OUTPUT_FOLDER+"UP000005640_9606_additional.fasta" #"protein_isoforms.fasta"
+    inFile = INPUT_FOLDER+"PROTEIN/UP000005640_9606_additional.fasta"
+    tmpFile1 = OUTPUT_FOLDER+"PROTEIN/makeProteinIsoforms.tmp1"
+    tmpFile2 = OUTPUT_FOLDER+"PROTEIN/makeProteinIsoforms.tmp2"
+    outFile = OUTPUT_FOLDER+"PROTEIN/UP000005640_9606_additional.fasta" #"protein_isoforms.fasta"
     
     cmd = "fastaq get_ids %s %s" % (inFile,tmpFile1)
     runProcess(cmd)
 
     tmpHandler = open(tmpFile2,"w")
     
-    for protein in testingProteins:
+    for protein in testing_proteins:
         cmd = "grep %s %s" % (protein,tmpFile1) # grep returns code 1 if not finding anything..
         tmpHandler.write(runProcess(cmd))
 
@@ -193,7 +248,7 @@ def makeProteinIsoforms(testingProteins):
     os.remove(tmpFile2)
    
 
-def makeGeneOntologyAnnotation(testingProteins):
+def makeGeneOntologyAnnotation(testing_proteins):
     
     #===============================================================================
     # File: gene_association.goa_human ; GENE_ONTOLOGY_ANNOTATION
@@ -204,8 +259,8 @@ def makeGeneOntologyAnnotation(testingProteins):
 
     print("makeGeneOntologyAnnotation..")
 
-    inFile = INPUT_FOLDER+"gene_association.goa_human"
-    outFile = OUTPUT_FOLDER+"gene_association.goa_human" #"gene_ontology_annotation.goa_human"
+    inFile = INPUT_FOLDER+"PROTEIN/gene_association.goa_human"
+    outFile = OUTPUT_FOLDER+"PROTEIN/gene_association.goa_human" #"gene_ontology_annotation.goa_human"
 
     inHandler = open(inFile,"r")    
     outHandler = open(outFile,"w")
@@ -216,7 +271,7 @@ def makeGeneOntologyAnnotation(testingProteins):
             outHandler.write(line)
         else:
             spl = line.strip().split("\t")
-            if spl[1] in testingProteins:
+            if spl[1] in testing_proteins:
                 outHandler.write(line)
      
 #     for protein in testingProteins:
@@ -226,7 +281,7 @@ def makeGeneOntologyAnnotation(testingProteins):
     outHandler.close()
 
 
-def makeInteractomeDefinition(testingProteins,testingXref):
+def makeInteractomeDefinition(testing_proteins,protein_xref):
     
     #===============================================================================
     # File: human.pairmap ; INTERACTOME_DEFINITION
@@ -238,8 +293,8 @@ def makeInteractomeDefinition(testingProteins,testingXref):
 
     print ("makeInteractomeDefinition..")
 
-    inFile = INPUT_FOLDER+"human.pairmap"
-    outFile = OUTPUT_FOLDER+"human.pairmap" #"interactome_definition.pairmap"
+    inFile = INPUT_FOLDER+"PROTEIN/human.pairmap"
+    outFile = OUTPUT_FOLDER+"PROTEIN/human.pairmap" #"interactome_definition.pairmap"
 
     inHandler = open(inFile,"r")    
     outHandler = open(outFile,"w")
@@ -253,7 +308,7 @@ def makeInteractomeDefinition(testingProteins,testingXref):
         interactionsDict[tag].append(line)
 
     #because interaction file seems to use all kinds of IDs, I should be using xrefs for getting the maximum protein-protein interactions
-    testingXref = set(testingProteins).union(set(proteinXref.keys()) )
+    testingXref = set(testing_proteins).union(set(protein_xref.keys()) )
 
     for protein1 in testingXref:
         for protein2 in testingXref:
@@ -269,7 +324,7 @@ def makeInteractomeDefinition(testingProteins,testingXref):
     outHandler.close()
 
 
-def makeInteractomeNetworkDefinition(testingProteins,proteinXref):
+def makeInteractomeNetworkDefinition(testing_proteins,protein_xref):
     
     #===============================================================================
     # File: human.binary.nr0.95.connected.gr ; INTERACTOME_NETWORK_DEFINITION
@@ -281,8 +336,8 @@ def makeInteractomeNetworkDefinition(testingProteins,proteinXref):
 
     print ("makeInteractomeNetworkDefinition..")
 
-    inFile = INPUT_FOLDER+"human.binary.nr0.95.connected.gr"
-    outFile = OUTPUT_FOLDER+"human.binary.nr0.95.connected.gr" #"interactome_network_definition.pairmap"
+    inFile = INPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr"
+    outFile = OUTPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr" #"interactome_network_definition.pairmap"
 
     inHandler = open(inFile,"r")    
     outHandler = open(outFile,"w")
@@ -296,7 +351,7 @@ def makeInteractomeNetworkDefinition(testingProteins,proteinXref):
         interactionsDict[tag].append(line)
 
     #because interaction file seems to use all kinds of IDs, I should be using xrefs for getting the maximum protein-protein interactions
-    testingXref = set(testingProteins).union(set(proteinXref.keys()) )
+    testingXref = set(testing_proteins).union(set(protein_xref.keys()) )
 
     for protein1 in testingXref:
         for protein2 in testingXref:
@@ -312,50 +367,132 @@ def makeInteractomeNetworkDefinition(testingProteins,proteinXref):
     outHandler.close()
 
 
+def makeRNADefinition(sample_number):
+
+    #===============================================================================
+    # File: RNA_ATTRIBUTES.tsv ; RNA_DEFINITION
+    #===============================================================================
+    
+    #Example lines
+    #  ensembl_transcript_id   ensembl_gene_id ensembl_peptide_id      transcript_biotype      transcript_length       transcript_source       transcript_status       transcript_tsl  transcript_gencode_basic    transcript_start        transcript_end  strand  chromosome_name percentage_gc_content
+    #  ENST00000000233 ENSG00000004059 ENSP00000000233 protein_coding  1103    ensembl_havana  KNOWN   tsl1 (assigned to previous version 8)   GENCODE basic   127588345       127591705       1       7       56.5
+    
+    # RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+    # RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+
+    print ("makeRNADefinition..")
+
+    testingRNA = set() # will store the initial sample of proteins
+
+    inFile = INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv"
+    outFile = OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv" 
+
+    outHandler = open(outFile,"w")
+    outHandler.write("\t".join(DataConstants.RNA_HEADERS)+"\n")
+    outHandler.close()
+
+    cmd = "shuf -n %s %s >> %s"  % (sample_number,inFile,outFile)
+    runProcess(cmd)
+
+
+def makeRNACrossReferences(testing_RNAs):
+
+    #===============================================================================
+    # File: RNA_XREF_ATTRIBUTES.tsv ; RNA_CROSS_REFERENCE
+    #===============================================================================
+    
+    # Example
+    # ENST00000215906 hgnc_id HGNC:30437
+    # ENST00000000412 hpa     HPA040445
+    
+    print("makeRNACrossReferences..")
+    
+    inFile = INPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
+    outFile = OUTPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
+     
+    outHandler = open(outFile,"w")
+     
+    for RNA in testing_RNAs:
+        cmd = "awk '$1==%s' %s" % ('"'+RNA+'"',inFile)
+        out = runProcess(cmd)
+        if len(out) > 1:
+            outHandler.write(out+"\n")
+     
+    outHandler.close()
+
+
+def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
+
+    #===============================================================================
+    # File: outFile_T-T.2825-7004.sorted.txt ; PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION
+    #===============================================================================
+
+    #NOTE: this file may contain millions of lines. Use of grep to be faster
+    
+    # Example
+    # 1       1       ENSP00000269701_ENST00000456726 -266.23 0.986
+    # 2       0.99999994945998        ENSP00000244230_ENST00000436616 -254.95 0.242
+    
+    print("makePRICatRAPID..")
+    
+    inFile = INPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
+    outFile = OUTPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
+     
+    outHandler = open(outFile,"w")
+      
+    #because interaction file uses ENSP IDs, get all such IDs
+    enspRefs = [xref for xref in protein_xref if xref.startswith("ENSP") ]
+    
+    #Produce file with list of patterns for grep
+    
+    tmpFile = OUTPUT_FOLDER+"RNA/pri_patterns.tmp"
+    tmpHandler = open(tmpFile,"w")
+    
+    for RNA in testing_RNAs:
+        for protein in enspRefs:
+            key = protein+"_"+RNA
+            tmpHandler.write(key+"\n")
+
+    tmpHandler.close()
+
+    #make a single grep for several patterns    
+    cmd = "grep -f %s %s" % (tmpFile,inFile)
+    out = runProcess(cmd)
+    if len(out) > 1:
+        outHandler.write(out+"\n")
+
+
+    outHandler.close()
+
+    os.remove(tmpFile)
+
+
 
 #===============================================================================
 # Client
+# Approach: pick X proteins and X RNAs randomly from initial input files, grep data for them in all other files
 #===============================================================================
 
+#===============================================================================
+# Proteins and PPI
+#===============================================================================
 makeProteinUniprotDefinition(SAMPLE_NUMBER)
-
-#getter
-testingProteins = []
-proteinListHandler = open(OUTPUT_FOLDER+"protein_list/testing_proteins_list.txt","w")
-with open(OUTPUT_FOLDER+"human_uniprot_protein_list.txt","r") as f:
-    f.readline() #skip header
-    for line in f:
-        prot = line.strip().split("\t")[0]
-        testingProteins.append(prot)
-        proteinListHandler.write(prot+"\n")
-proteinListHandler.close()
-assert(len(testingProteins) == SAMPLE_NUMBER),"Number of sampled proteins should be equal to given SAMPLE_NUMBER"
-
+testingProteins = listGetter(SAMPLE_NUMBER,OUTPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt",OUTPUT_FOLDER+"/sampled_item_list","testing_proteins_list.txt")
 proteinXref = makeProteinCrossReferences(testingProteins)
 makeProteinIsoforms(testingProteins)
 makeGeneOntologyAnnotation(testingProteins)
 makeInteractomeDefinition(testingProteins,proteinXref)
 makeInteractomeNetworkDefinition(testingProteins,proteinXref)
+ 
+#===============================================================================
+# RNA and PRI
+#===============================================================================
+makeRNADefinition(SAMPLE_NUMBER)
+testingRNAs = listGetter(SAMPLE_NUMBER,OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv",OUTPUT_FOLDER+"/sampled_item_list","testing_RNA_list.txt")
+makeRNACrossReferences(testingRNAs)
+makePRICatRAPID(testingRNAs,testingProteins,proteinXref)
+
+# Copy remaining (unchanged) files
+copyFiles(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
 
 print ("FINISHED!")
-
-# #02-Fev-2016
-# #"makeTestFiles.py"
-# #I tried to create a smaller version of the database, by making new files, with information only on a small subset of proteins.
-# #This turned out to be quite a major undertaking. I've only make the following files:
-# human_uniprot_protein_list.txt
-# HUMAN_9606_idmapping.dat
-# UP000005640_9606_additional.fasta
-# gene_association.goa_human
-# human.pairmap
-# human.binary.nr0.95.connected.gr
-# #all other input files were copied straight from Lionel
-# 
-# #Insertion of all this data took  9 minutes 51 seconds
-
-
-
-
-
-
-
