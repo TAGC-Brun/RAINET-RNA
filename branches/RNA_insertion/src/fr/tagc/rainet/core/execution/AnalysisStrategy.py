@@ -4,10 +4,12 @@ from sqlalchemy import or_,and_,distinct
 from fr.tagc.rainet.core.execution.ExecutionStrategy import ExecutionStrategy
 from fr.tagc.rainet.core.util.option.OptionManager import OptionManager
 from fr.tagc.rainet.core.util.option import OptionConstants
+from fr.tagc.rainet.core.util import Constants as OptionConstantsConstants
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
+from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
 from fr.tagc.rainet.core.data.DBParameter import DBParameter
 from fr.tagc.rainet.core.data.GeneOntology import GeneOntology
@@ -36,6 +38,8 @@ from fr.tagc.rainet.core.data.MRNA import MRNA
 from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
+from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
+
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
 from fr.tagc.rainet.core.data import DataConstants
 
@@ -50,49 +54,109 @@ class AnalysisStrategy(ExecutionStrategy):
 
         # Getting input arguments        
         self.DBPath = OptionManager.get_instance().get_option(OptionConstants.OPTION_DB_NAME)
-        species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
+        self.species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
+        self.minimumInteractionScore =  OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE)
+        self.transcriptBiotype = OptionManager.get_instance().get_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE)
+        self.lncRNABiotypes = OptionManager.get_instance().get_option(OptionConstants.OPTION_LNCRNA_BIOTYPES)
+
+
+        # Check if minimumInteractionScore is float
+        try:
+            float(self.minimumInteractionScore)
+        except TypeError:
+            raise RainetException( "AnalysisStrategy.execute: Provided minimum interaction score is not a float.")
+
+        # Check if transcript biotype is correct
+        if self.transcriptBiotype not in OptionConstantsConstants.TRANSCRIPT_BIOTYPES:
+            raise RainetException( "AnalysisStrategy.execute: Provided transcript biotype is not allowed: "+str(self.transcriptBiotype))
+
+        # Check if list of lncRNA subtypes is correct
+        self.lncRNABiotypes = self.lncRNABiotypes.split(",")
+        for subtype in self.lncRNABiotypes:
+            if subtype not in OptionConstantsConstants.LNCRNA_BIOTYPES:
+                raise RainetException( "AnalysisStrategy.execute: Provided lncRNA biotype is not allowed: "+str(subtype))              
+
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.DBPath)
-        sql_session = SQLManager.get_instance().get_session()
+        self.sql_session = SQLManager.get_instance().get_session()
+
         
-        # Check if the species in the DB correspond to the species given by the user
-        SQLManager.check_species(sql_session, species, True)
-
-        Logger.get_instance().info("AnalysisStrategy.execute : ...")  # dr: to write here
-
-
-        # dr TESTING
+        ### TO BE CONSTANTS
+        # Filtering datasets
+        self.RNAKeyword = "selectedRNAs"
+        self.ProtKeyword = "selectedProteins"
+        self.PRIKeyword = "selectedInteractions"
+                
+        self.analysis()
         
-        # Getting all transcripts of a Gene
-        gene = sql_session.query( Gene ).filter( Gene.geneID == "ENSG00000004777").first()        
-        txList = gene.transcriptList      
-#         for tx in txList:
-#             print ("%s\t%s\t%s\t%s" % (gene.geneID, tx.transcriptID,tx.transcriptBiotype,tx.transcriptLength) )
+        
+    def analysis(self):
 
-        # Looping over all lncRNAs
-        lncRNAs = sql_session.query( LncRNA ).count()
-        print ("Total number of lncRNAs:\t%i" % lncRNAs )
-        distinctLncRNABiotypes = sql_session.query( LncRNA.transcriptBiotype ).distinct().all()
-        for bioType in distinctLncRNABiotypes:
-            bioType = str(bioType[0])
-            count = sql_session.query( LncRNA ).filter( LncRNA.transcriptBiotype == bioType ).count()        
-            print bioType,count
+        Logger.get_instance().info( "AnalysisStrategy.analysis: Starting..." )
+        
+        print ("ARGUMENTS:",self.DBPath,self.species,self.minimumInteractionScore,self.transcriptBiotype,self.lncRNABiotypes)
 
+        self.filterRNA()
+        
+        self.filterProtein()
+        
+        self.filterPRI()
+
+        self.enrichementAnalysis()
+
+
+    # #
+    # Filter RNA models
+    def filterRNA(self):
+        
+        # Filter transcripts based on biotype
+
+        #if LncRNA, loop over LncRNA table, if MRNA, loop through MRNA table
+        #if antisense, lincRNA, loop through RNA table
+
+        query = "query( "+self.transcriptBiotype+" ).all()"
+        DataManager.get_instance().perform_query(self.RNAKeyword, query) 
+        
+        ## NOT SURE HOW TO DO THIS, PERFORM QUERY/FILTER ALL AT ONCE OR STORE DATA IN VARIABLE FOR SUBSEQUENT FITLERS?
+        
+#         if self.transcriptBiotype == "LncRNA":
+#             #read online that we can query presence of IDs using a python list such as self.lncRNABiotypes
+#             query = eval(query(self.transcriptBiotype).filter(self.transcriptBiotype.transcriptBiotype.in_(self.lncRNABiotypes).all() ) )
             
-        # Looping over all mRNAs
-        mRNAs = sql_session.query( MRNA ).count()
-        print ("Total number of mRNAs:\t%i" % mRNAs )
 
-#         # Getting protein UniprotAC from ENSEMBL ID (ENSP) using Protein CrossReference table
-#         query = sql_session.query( ProteinCrossReference ).filter( ProteinCrossReference.sourceDB == "Ensembl_PRO" and ProteinCrossReference.crossReferenceID == ).all()
+        # Filter transcripts based on gencode basic presence
+        
+        # Select one transcript isoform per gene
+
+        pass
+
+    # #
+    # Filter protein models    
+    def filterProtein(self):
+        pass
+
+    # #
+    # Filter protein-RNA interactions
+    def filterPRI(self):
+       
+        # Filter interactions based on minimumInteractionScore
+        
+        query = "query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.interactionScore >= "+str(self.minimumInteractionScore)+").all()"
+
+        DataManager.get_instance().perform_query(self.PRIKeyword, query) 
 
         
-        #        protein_list = sql_session.query( Protein).filter( or_( Protein.uniprotAC == protein_acc, Protein.uniprotID == protein_acc)).all()
+    def enrichementAnalysis(self):
 
-#         self.analysis()
+        pass
+#         selectedInteractions = DataManager.get_instance().get_data(self.PRIKeyword)
+#         # Get protein IDs and transcript IDs present in filtered interactions
+#         for inter in selectedInteractions:
+#             print (inter.transcriptID,inter.proteinID)
+#             
+#             prot = self.sql_session.query( Protein ).filter( Protein.uniprotAC == inter.proteinID ).all()
 # 
-# 
-#     def analysis(self):
-#         
-#         print ("HERE")
+#             rna = self.sql_session.query( RNA ).filter( RNA.transcriptID == inter.transcriptID ).all()
+
+
