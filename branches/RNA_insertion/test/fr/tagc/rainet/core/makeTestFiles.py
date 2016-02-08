@@ -28,7 +28,7 @@ if sys.version_info.major < 3:
 
 # Store all the files that will be copied as they are originally (files that we do not make smaller for testing database)
 REMAINING_FILES = ["all_protein_domains_smart.txt","Pfam-A.clans.tsv","go-basic.obo","human_kegg_pathway_definitions.txt",
-                   "human_kegg_pathway_annotations.txt","all_reactome_pathway_definitions.txt","all_reactome_pathway_annotations.txt",
+                   "human_kegg_pathway_annotations.txt","all_reactome_pathway_definitions.txt",
                    "human.binary.gr","human.binary.nr0.95.connected.clas","human.binary.nr0.95.connected.fm","human_0.95.blastmap"]
 
 #note that output of this script will be used as input for testing
@@ -37,7 +37,10 @@ OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testin
 INPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/"
 
 #number of proteins and RNAs for testing
-SAMPLE_NUMBER = 100 
+SAMPLE_NUMBER = 200
+
+#Use 1 if wanting to recreate random list of proteins/RNAs
+FORCE_CREATION = 0
 
 #===============================================================================
 
@@ -103,7 +106,7 @@ if not os.path.exists(OUTPUT_FOLDER+"/RNA"): os.mkdir(OUTPUT_FOLDER+"/RNA")
 
 # #
 # General function to run command using subprocess, return only standard output, but take care of standard error or run failures
-def runProcess(cmd):
+def run_process(cmd):
     """General function to run external command and return the return code, and standard outputs"""
 
     run = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -128,35 +131,40 @@ def runProcess(cmd):
 # #
 # Getter for making file with list of proteins and assert correctness
 # By doing this I can rerun without changing the initial set of chosen proteins
-def listGetter(sample_number, in_file, out_folder, out_file):
+def list_getter(sample_number, in_file):
 
-    listOfItems = []
+    listOfItems = set()
     
-    if not os.path.exists(out_folder): os.mkdir(out_folder)
-
-    outHandler = open(out_folder+"/"+out_file,"w")
-
     with open(in_file,"r") as f:
-        f.readline() #skip header
         for line in f:
-            prot = line.strip().split("\t")[0]
-            listOfItems.append(prot)
-            outHandler.write(prot+"\n")
-    outHandler.close()
+            prot = line.strip()
+            listOfItems.add(prot) #.append(prot)
 
     assert(len(listOfItems) == SAMPLE_NUMBER),"Number of items sampled should be equal to given SAMPLE_NUMBER"
 
     return listOfItems
 
 
-def copyFiles(list_of_files,in_folder, out_folder):
+def copy_files(list_of_files,in_folder, out_folder):
 
     for file in list_of_files:
         cmd = "cp %s %s" % (in_folder+file,out_folder)
-        runProcess(cmd)
+        run_process(cmd)
 
 
-def makeProteinUniprotDefinition(sample_number):
+def make_sample(sample_number, inFile, outFolder, outFile):
+
+    #First, run shuffling command to create initial file
+    print ("make_sample_file..")
+
+    if not os.path.exists(outFolder):
+        os.mkdir(outFolder)
+
+    cmd = "shuf -n %s %s | cut -f1 > %s"  % (sample_number,inFile,outFolder+"/"+outFile)
+    run_process(cmd)
+
+
+def make_protein_uniprot_definition(testingProteins):
 
     #===============================================================================
     # File: human_uniprot_protein_list.txt ; PROTEIN_UNIPROT_DEFINITION
@@ -170,22 +178,26 @@ def makeProteinUniprotDefinition(sample_number):
     #PROTEIN_HEADERS = ["Entry", "Entry name", "Protein names", "Gene names  (primary )", "Gene names  (synonym )", "Organism", "Length", "Fragment", "Cross-reference (Pfam)", "Cross-reference (SMART)"]
     #PROTEIN_PARAMS = ["Entry", "Entry name", "Protein names", "Gene names  (primary )", "Gene names  (synonym )", "Organism", "Length", "Fragment", "Cross-reference (Pfam)", "Cross-reference (SMART)"]
 
-    print ("makeProteinUniprotDefinition..")
 
-    testingProteins = set() # will store the initial sample of proteins
+    print ("make_protein_uniprot_definition..")
 
     inFile = INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt"
     outFile = OUTPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt" #"protein_uniprot.txt"
 
+    inHandler = open(inFile,"r")
     outHandler = open(outFile,"w")
-    outHandler.write("\t".join(DataConstants.PROTEIN_HEADERS)+"\n")
+
+    outHandler.write(inHandler.readline()) #write header
+
+    for line in inHandler:
+        prot = line.split("\t")[0]
+        if prot in testingProteins:
+            outHandler.write(line)
+        
     outHandler.close()
 
-    cmd = "shuf -n %s %s >> %s"  % (sample_number,inFile,outFile)
-    runProcess(cmd)
 
-
-def makeProteinCrossReferences(testing_proteins):
+def make_protein_cross_references(testing_proteins):
 
     #===============================================================================
     # File: HUMAN_9606_idmapping.dat ; PROTEIN_CROSSREFERENCES
@@ -197,7 +209,7 @@ def makeProteinCrossReferences(testing_proteins):
     
     proteinXref = {} #key -> xref, val -> main protein id
     
-    print("makeProteinCrossReferences..")
+    print("make_protein_cross_references..")
     
     inFile = INPUT_FOLDER+"PROTEIN/HUMAN_9606_idmapping.dat"
     outFile = OUTPUT_FOLDER+"PROTEIN/HUMAN_9606_idmapping.dat" #"protein_crossreferences.txt"
@@ -207,7 +219,7 @@ def makeProteinCrossReferences(testing_proteins):
     for protein in testing_proteins:
         cmd = "awk '$1==%s' %s" % ('"'+protein+'"',inFile)
 #        cmd = "grep %s %s" % ('"'+protein+'"',inFile) #this is faster but may bring other entries that do not correspond to our chosen proteins
-        out = runProcess(cmd)
+        out = run_process(cmd)
         ids = out.strip().split("\n")
         for items in ids:
             id = items.split("\t")[2]
@@ -219,7 +231,7 @@ def makeProteinCrossReferences(testing_proteins):
     return proteinXref
 
 
-def makeProteinIsoforms(testing_proteins):
+def make_protein_isoforms(testing_proteins):
     
     #===============================================================================
     # File: UP000005640_9606_additional.fasta ; PROTEIN_ISOFORMS
@@ -231,32 +243,32 @@ def makeProteinIsoforms(testing_proteins):
 
     #Dependency: fastaq, from https://github.com/sanger-pathogens/Fastaq
 
-    print("makeProteinIsoforms..")
+    print("make_protein_isoforms..")
 
     inFile = INPUT_FOLDER+"PROTEIN/UP000005640_9606_additional.fasta"
-    tmpFile1 = OUTPUT_FOLDER+"PROTEIN/makeProteinIsoforms.tmp1"
-    tmpFile2 = OUTPUT_FOLDER+"PROTEIN/makeProteinIsoforms.tmp2"
+    tmpFile1 = OUTPUT_FOLDER+"PROTEIN/make_protein_isoforms.tmp1"
+    tmpFile2 = OUTPUT_FOLDER+"PROTEIN/make_protein_isoforms.tmp2"
     outFile = OUTPUT_FOLDER+"PROTEIN/UP000005640_9606_additional.fasta" #"protein_isoforms.fasta"
     
     cmd = "fastaq get_ids %s %s" % (inFile,tmpFile1)
-    runProcess(cmd)
+    run_process(cmd)
 
     tmpHandler = open(tmpFile2,"w")
     
     for protein in testing_proteins:
         cmd = "grep %s %s" % (protein,tmpFile1) # grep returns code 1 if not finding anything..
-        tmpHandler.write(runProcess(cmd))
+        tmpHandler.write(run_process(cmd))
 
     tmpHandler.close()
 
     cmd = "fastaq filter --ids_file %s %s %s" % (tmpFile2,inFile,outFile)
-    runProcess(cmd)
+    run_process(cmd)
 
     os.remove(tmpFile1)
     os.remove(tmpFile2)
    
 
-def makeGeneOntologyAnnotation(testing_proteins):
+def make_gene_ontology_annotation(testing_proteins):
     
     #===============================================================================
     # File: gene_association.goa_human ; GENE_ONTOLOGY_ANNOTATION
@@ -265,7 +277,7 @@ def makeGeneOntologyAnnotation(testing_proteins):
     # Example
     #UniProtKB       A0A024QZ42      PDCD6           GO:0005509      GO_REF:0000002  IEA     InterPro:IPR002048      F       HCG1985580, isoform CRA_c       A0A024QZ42_HUMAN|PDCD6|hCG_1985580      protein taxon:9606      20160102        InterPro      
 
-    print("makeGeneOntologyAnnotation..")
+    print("make_gene_ontology_annotation..")
 
     inFile = INPUT_FOLDER+"PROTEIN/gene_association.goa_human"
     outFile = OUTPUT_FOLDER+"PROTEIN/gene_association.goa_human" #"gene_ontology_annotation.goa_human"
@@ -284,12 +296,38 @@ def makeGeneOntologyAnnotation(testing_proteins):
      
 #     for protein in testingProteins:
 #         cmd = "awk '$2==%s' %s" % ('"'+protein+'"',inFile)
-#         outHandler.write(runProcess(cmd))
+#         outHandler.write(run_process(cmd))
      
     outHandler.close()
 
 
-def makeInteractomeDefinition(testing_proteins,protein_xref):
+def make_reactome_pathway_annotation(testing_proteins):
+    
+    #===============================================================================
+    # File: all_reactome_pathway_annotations.txt ; REACTOME_PATHWAY_ANNOTATION
+    #===============================================================================
+
+    # Example
+    # Q6PIL0    R-HSA-2029481    http://www.reactome.org/PathwayBrowser/#/R-HSA-2029481    FCGR activation    TAS    Homo sapiens
+
+    print("make_reactome_pathway_annotation..")
+
+    inFile = INPUT_FOLDER+"PROTEIN/all_reactome_pathway_annotations.txt"
+    outFile = OUTPUT_FOLDER+"PROTEIN/all_reactome_pathway_annotations.txt"
+
+    inHandler = open(inFile,"r")    
+    outHandler = open(outFile,"w")
+
+    #writing header    
+    for line in inHandler:
+        spl = line.strip().split("\t")
+        if spl[0] in testing_proteins:
+            outHandler.write(line)
+     
+    outHandler.close()
+
+
+def make_interactome_definition(testing_proteins,protein_xref):
     
     #===============================================================================
     # File: human.pairmap ; INTERACTOME_DEFINITION
@@ -299,7 +337,7 @@ def makeInteractomeDefinition(testing_proteins,protein_xref):
     #     entrez gene/locuslink:5764      PTN_HUMAN       entrez gene/locuslink:6745      SSRA_HUMAN      MI:0018(two hybrid)     PUBMED:16169070 BIOGRID  "MI:0407"(direct interaction)  score:3.0
     #     entrez gene/locuslink:10865     ARI5A_HUMAN     entrez gene/locuslink:2100      ESR2_HUMAN      MI:0018(two hybrid)     PUBMED:15941852 BIOGRID  "MI:0407"(direct interaction)  -
 
-    print ("makeInteractomeDefinition..")
+    print ("make_interactome_definition..")
 
     inFile = INPUT_FOLDER+"PROTEIN/human.pairmap"
     outFile = OUTPUT_FOLDER+"PROTEIN/human.pairmap" #"interactome_definition.pairmap"
@@ -332,7 +370,7 @@ def makeInteractomeDefinition(testing_proteins,protein_xref):
     outHandler.close()
 
 
-def makeInteractomeNetworkDefinition(testing_proteins,protein_xref):
+def make_interactome_network_definition(testing_proteins,protein_xref):
     
     #===============================================================================
     # File: human.binary.nr0.95.connected.gr ; INTERACTOME_NETWORK_DEFINITION
@@ -342,7 +380,7 @@ def makeInteractomeNetworkDefinition(testing_proteins,protein_xref):
     #     PRRT3_HUMAN     TMM17_HUMAN
     #     HES6_HUMAN      TLE1_HUMAN
 
-    print ("makeInteractomeNetworkDefinition..")
+    print ("make_interactome_network_definition..")
 
     inFile = INPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr"
     outFile = OUTPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr" #"interactome_network_definition.pairmap"
@@ -375,7 +413,7 @@ def makeInteractomeNetworkDefinition(testing_proteins,protein_xref):
     outHandler.close()
 
 
-def makeRNADefinition(sample_number):
+def make_RNA_definition(testing_RNAs):
 
     #===============================================================================
     # File: RNA_ATTRIBUTES.tsv ; RNA_DEFINITION
@@ -388,22 +426,27 @@ def makeRNADefinition(sample_number):
     # RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
     # RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
 
-    print ("makeRNADefinition..")
+    print ("make_RNA_definition..")
 
-    testingRNA = set() # will store the initial sample of proteins
+    #First, run shuffling command to get initial sample
 
     inFile = INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv"
     outFile = OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv" 
 
+    inHandler = open(inFile,"r")
     outHandler = open(outFile,"w")
-    outHandler.write("\t".join(DataConstants.RNA_HEADERS)+"\n")
+
+    outHandler.write(inHandler.readline()) #write header
+
+    for line in inHandler:
+        RNA = line.split("\t")[0]
+        if RNA in testing_RNAs:
+            outHandler.write(line)
+
     outHandler.close()
 
-    cmd = "shuf -n %s %s >> %s"  % (sample_number,inFile,outFile)
-    runProcess(cmd)
 
-
-def makeRNACrossReferences(testing_RNAs):
+def make_RNA_cross_references(testing_RNAs):
 
     #===============================================================================
     # File: RNA_XREF_ATTRIBUTES.tsv ; RNA_CROSS_REFERENCE
@@ -413,7 +456,7 @@ def makeRNACrossReferences(testing_RNAs):
     # ENST00000215906 hgnc_id HGNC:30437
     # ENST00000000412 hpa     HPA040445
     
-    print("makeRNACrossReferences..")
+    print("make_RNA_cross_references..")
     
     inFile = INPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
     outFile = OUTPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
@@ -422,14 +465,14 @@ def makeRNACrossReferences(testing_RNAs):
      
     for RNA in testing_RNAs:
         cmd = "awk '$1==%s' %s" % ('"'+RNA+'"',inFile)
-        out = runProcess(cmd)
+        out = run_process(cmd)
         if len(out) > 1:
             outHandler.write(out+"\n")
      
     outHandler.close()
 
 
-def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
+def make_PRI_catRAPID(testing_RNAs, testing_proteins, protein_xref):
 
     #===============================================================================
     # File: outFile_T-T.2825-7004.sorted.txt ; PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION
@@ -441,7 +484,7 @@ def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
     # 1       1       ENSP00000269701_ENST00000456726 -266.23 0.986
     # 2       0.99999994945998        ENSP00000244230_ENST00000436616 -254.95 0.242
     
-    print("makePRICatRAPID..")
+    print("make_PRI_catRAPID..")
     
     inFile = INPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
     outFile = OUTPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
@@ -450,30 +493,45 @@ def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
       
     #because interaction file uses ENSP IDs, get all such IDs
     enspRefs = [xref for xref in protein_xref if xref.startswith("ENSP") ]
-    
-    #Produce file with list of patterns for grep
-    
-    tmpFile = OUTPUT_FOLDER+"RNA/pri_patterns.tmp"
-    tmpHandler = open(tmpFile,"w")
-    
+     
+    ##Note: doing grep becomes very slow for >100 proteins/RNAs
+#     #Produce file with list of patterns for grep    
+#     tmpFile = OUTPUT_FOLDER+"RNA/pri_patterns.tmp"
+#     tmpHandler = open(tmpFile,"w")
+#     
+#     for RNA in testing_RNAs:
+#         for protein in enspRefs:
+#             key = protein+"_"+RNA
+#             tmpHandler.write(key+"\n")
+# 
+#     tmpHandler.close()
+# 
+#     #make a single grep for several patterns    
+#     cmd = "grep -f %s %s" % (tmpFile,inFile)
+#     out = run_process(cmd)
+#     if len(out) > 1:
+#         outHandler.write(out+"\n")
+# 
+# 
+#     outHandler.close()
+# 
+#     os.remove(tmpFile)
+
+
+    #Produce file with list of patterns for grep    
+    patterns = set()
     for RNA in testing_RNAs:
         for protein in enspRefs:
             key = protein+"_"+RNA
-            tmpHandler.write(key+"\n")
+            patterns.add(key)
 
-    tmpHandler.close()
-
-    #make a single grep for several patterns    
-    cmd = "grep -f %s %s" % (tmpFile,inFile)
-    out = runProcess(cmd)
-    if len(out) > 1:
-        outHandler.write(out+"\n")
-
+    inHandler = open(inFile,"r")
+    for line in inHandler:
+        pair = line.split("\t")[2]
+        if pair in patterns:
+            outHandler.write(line)
 
     outHandler.close()
-
-    os.remove(tmpFile)
-
 
 
 #===============================================================================
@@ -484,24 +542,31 @@ def makePRICatRAPID(testing_RNAs, testing_proteins, protein_xref):
 #===============================================================================
 # Proteins and PPI
 #===============================================================================
-makeProteinUniprotDefinition(SAMPLE_NUMBER)
-testingProteins = listGetter(SAMPLE_NUMBER,OUTPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt",OUTPUT_FOLDER+"/sampled_item_list","testing_proteins_list.txt")
-proteinXref = makeProteinCrossReferences(testingProteins)
-makeProteinIsoforms(testingProteins)
-makeGeneOntologyAnnotation(testingProteins)
-makeInteractomeDefinition(testingProteins,proteinXref)
-makeInteractomeNetworkDefinition(testingProteins,proteinXref)
+if FORCE_CREATION:
+    make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt", OUTPUT_FOLDER+"/sampled_item_list/","testing_proteins_list.txt")
+testingProteins = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_proteins_list.txt")
+
+make_protein_uniprot_definition(testingProteins)
+proteinXref = make_protein_cross_references(testingProteins)
+make_protein_isoforms(testingProteins)
+make_gene_ontology_annotation(testingProteins)
+make_reactome_pathway_annotation(testingProteins)
+make_interactome_definition(testingProteins,proteinXref)
+make_interactome_network_definition(testingProteins,proteinXref)
  
 #===============================================================================
 # RNA and PRI
 #===============================================================================
-makeRNADefinition(SAMPLE_NUMBER)
-testingRNAs = listGetter(SAMPLE_NUMBER,OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv",OUTPUT_FOLDER+"/sampled_item_list","testing_RNA_list.txt")
-makeRNACrossReferences(testingRNAs)
-makePRICatRAPID(testingRNAs,testingProteins,proteinXref)
+if FORCE_CREATION:
+    make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv", OUTPUT_FOLDER+"/sampled_item_list/","testing_RNA_list.txt")
+testingRNAs = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_RNA_list.txt")
 
+make_RNA_definition(testingRNAs)
+make_RNA_cross_references(testingRNAs)
+make_PRI_catRAPID(testingRNAs,testingProteins,proteinXref)
+  
 # Copy remaining (unchanged) files
-copyFiles(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
+copy_files(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
 
 #===============================================================================
 
