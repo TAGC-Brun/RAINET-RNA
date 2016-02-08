@@ -1,5 +1,6 @@
 
 import os
+from fr.tagc.rainet.core.data import DataConstants
 
 PATH_LOG = os.path.expanduser('~') + '/.rainet/Rainet.log'
 
@@ -44,3 +45,14 @@ STATUS_OK = "OK"
 STATUS_WARNING = "WARNING"
 STATUS_RAINET_ERROR = "RAINET ERROR"
 STATUS_ERROR = "ERROR" 
+
+#===============================================================================
+# Constants for analysis strategy
+#===============================================================================
+DEFAULT_INTERACTION_SCORE = float("-inf")
+BIOTYPE_LNCRNA = "LncRNA"
+BIOTYPE_MRNA = "MRNA"
+BIOTYPE_OTHERRNA = "OtherRNA"
+TRANSCRIPT_BIOTYPES = { BIOTYPE_LNCRNA, BIOTYPE_MRNA, BIOTYPE_OTHERRNA }
+LNCRNA_BIOTYPES = DataConstants.RNA_LNCRNA_BIOTYPE
+DEFAULT_LNCRNA_BIOTYPES = ",".join(LNCRNA_BIOTYPES)
