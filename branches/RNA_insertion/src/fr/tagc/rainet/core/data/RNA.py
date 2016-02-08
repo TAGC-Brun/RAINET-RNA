@@ -91,7 +91,7 @@ class RNA( Base ):
         if transcript_biotype != "":
             if transcript_biotype in DataConstants.RNA_MRNA_BIOTYPE:
                 from fr.tagc.rainet.core.data.MRNA import MRNA
-                myRNA = MRNA()
+                myRNA = MRNA(peptide_ID)
             elif transcript_biotype in DataConstants.RNA_LNCRNA_BIOTYPE:
                 from fr.tagc.rainet.core.data.LncRNA import LncRNA
                 myRNA = LncRNA()
@@ -112,6 +112,10 @@ class RNA( Base ):
         else:
             raise RainetException( "RNA.__init__ : The value of transcript ID is empty: " + str( transcript_ID ) )   
         
+        # in the input file there is some exceptions where NA is added instead of being empty, 
+        # but only occurs with programmatic query and not when querying webserver
+        if peptide_ID == "NA":
+            peptide_ID = ""
         myRNA.peptideID = peptide_ID
         
         try:
