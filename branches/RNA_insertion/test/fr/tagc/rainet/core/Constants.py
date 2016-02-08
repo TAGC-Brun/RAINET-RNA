@@ -38,6 +38,7 @@ EXAMPLE_MRNA_XREFS = {
                      "uniprot_sptrembl|B1ALD9",
                      "refseq_mrna_predicted|XM_005266231"
                     }
+EXAMPLE_MRNA_PEPTIDE = ["ENST00000379749","B1ALD9"]
 EXAMPLE_PRI_RNA = "ENST00000411230"
 EXAMPLE_PRI_RNA_INTERACTIONS = {
                                 "ENSP00000410728" : -7.61,
