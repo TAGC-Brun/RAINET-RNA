@@ -235,7 +235,9 @@ RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","t
 RNA_COMMENT_CHAR = "#"
 
 RNA_MRNA_BIOTYPE = {"protein_coding"}
-RNA_LNCRNA_BIOTYPE = {"3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC","known_ncrna"} #Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
+
+# LncRNA biotypes: Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
+RNA_LNCRNA_BIOTYPE = {"3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC","known_ncrna"} 
 
 # Headers and Parameters for RNACrossReference
 #===============================================================================
