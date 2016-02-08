@@ -27,9 +27,15 @@ if sys.version_info.major < 3:
 #===============================================================================
 
 # Store all the files that will be copied as they are originally (files that we do not make smaller for testing database)
-REMAINING_FILES = ["all_protein_domains_smart.txt","Pfam-A.clans.tsv","go-basic.obo","human_kegg_pathway_definitions.txt",
-                   "human_kegg_pathway_annotations.txt","all_reactome_pathway_definitions.txt",
-                   "human.binary.gr","human.binary.nr0.95.connected.clas","human.binary.nr0.95.connected.fm","human_0.95.blastmap"]
+REMAINING_FILES = ["all_protein_domains_smart.txt",
+                   "Pfam-A.clans.tsv","go-basic.obo",
+                   "human_kegg_pathway_definitions.txt",
+                   "human_kegg_pathway_annotations.txt",
+                   "all_reactome_pathway_definitions.txt",
+                   "human.binary.nr0.95.connected.noself.gr",
+                   "human.binary.nr0.95.connected.noself.clas",
+                   "human.binary.nr0.95.connected.noself.fm",
+                   "human_0.95.blastmap"]
 
 #note that output of this script will be used as input for testing
 OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/" 
@@ -51,40 +57,38 @@ if not os.path.exists(OUTPUT_FOLDER+"/RNA"): os.mkdir(OUTPUT_FOLDER+"/RNA")
 # Copy of file used for full Rainet DB insertion. We want to make smaller file versions for some of these.
 #
 #===============================================================================
-# 
 # [PROTEINS]
-# PROTEIN_UNIPROT_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_uniprot_protein_list.txt
-# PROTEIN_CROSSREFERENCES = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/HUMAN_9606_idmapping.dat
-# PROTEIN_ISOFORMS = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/UP000005640_9606_additional.fasta
-# PROTEIN_DOMAIN_SMART = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_protein_domains_smart.txt
-# PROTEIN_DOMAIN_PFAM = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/Pfam-A.clans.tsv
+# PROTEIN_UNIPROT_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human_uniprot_protein_list.txt
+# PROTEIN_CROSSREFERENCES = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/HUMAN_9606_idmapping.dat
+# PROTEIN_ISOFORMS = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/UP000005640_9606_additional.fasta
+# PROTEIN_DOMAIN_SMART = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/all_protein_domains_smart.txt
+# PROTEIN_DOMAIN_PFAM = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/Pfam-A.clans.tsv
 # 
 # [GENE_ONTONLOGY]
-# GENE_ONTOLOGY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/go-basic.obo
-# GENE_ONTOLOGY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/gene_association.goa_human
+# GENE_ONTOLOGY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/go-basic.obo
+# GENE_ONTOLOGY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/gene_association.goa_human
 # 
 # [KEGG_PATHWAY]
-# KEGG_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_kegg_pathway_definitions.txt
-# KEGG_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_kegg_pathway_annotations.txt
+# KEGG_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human_kegg_pathway_definitions.txt
+# KEGG_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human_kegg_pathway_annotations.txt
 # 
 # [REACTOME PATHWAY]
-# REACTOME_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_reactome_pathway_definitions.txt
-# REACTOME_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/all_reactome_pathway_annotations.txt
+# REACTOME_PATHWAY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/all_reactome_pathway_definitions.txt
+# REACTOME_PATHWAY_ANNOTATION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/all_reactome_pathway_annotations.txt
 # 
 # [INTERACTOME]
-# INTERACTOME_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.pairmap
-# INTERACTOME_NETWORK_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.gr
-# INTERACTOME_NETWORK_PARTITION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.clas
-# INTERACTOME_NETWORK_PARTITION_ANNOTATION =  /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.fm
-# INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human_0.95.blastmap
+# INTERACTOME_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human.pairmap
+# INTERACTOME_NETWORK_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr
+# INTERACTOME_NETWORK_PARTITION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human.binary.nr0.95.connected.noself.clas
+# INTERACTOME_NETWORK_PARTITION_ANNOTATION =  /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human.binary.nr0.95.connected.noself.fm
+# INTERACTOME_NETWORK_REDUNDANCY_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/PROTEIN/human_0.95.blastmap
 # 
 # [RNA]
-# RNA_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/RNA_ATTRIBUTES.tsv
-# RNA_CROSS_REFERENCE = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/RNA_XREF_ATTRIBUTES.tsv
+# RNA_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/RNA_ATTRIBUTES_ensembl82.tsv
+# RNA_CROSS_REFERENCE = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/RNA_XREF_ATTRIBUTES_ensembl82.tsv
 # 
 # [PROTEIN_RNA_INTERACTION]
-# PROTEIN_RNA_INTERACTION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/outFile_T-T.2825-7004.sorted.txt
-#===============================================================================
+# PROTEIN_RNA_INTERACTION_DEFINITION = /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/outFile_T-T.2825-7004.sorted.txt
 
 #===============================================================================
 # Files that do not need to be newly created:
@@ -373,7 +377,7 @@ def make_interactome_definition(testing_proteins,protein_xref):
 def make_interactome_network_definition(testing_proteins,protein_xref):
     
     #===============================================================================
-    # File: human.binary.nr0.95.connected.gr ; INTERACTOME_NETWORK_DEFINITION
+    # File: human.binary.nr0.95.connected.noself.gr ; INTERACTOME_NETWORK_DEFINITION
     #===============================================================================
 
     # Example
@@ -382,8 +386,8 @@ def make_interactome_network_definition(testing_proteins,protein_xref):
 
     print ("make_interactome_network_definition..")
 
-    inFile = INPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr"
-    outFile = OUTPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.gr" #"interactome_network_definition.pairmap"
+    inFile = INPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.noself.gr"
+    outFile = OUTPUT_FOLDER+"PROTEIN/human.binary.nr0.95.connected.noself.gr" #"interactome_network_definition.pairmap"
 
     inHandler = open(inFile,"r")    
     outHandler = open(outFile,"w")
@@ -430,8 +434,8 @@ def make_RNA_definition(testing_RNAs):
 
     #First, run shuffling command to get initial sample
 
-    inFile = INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv"
-    outFile = OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv" 
+    inFile = INPUT_FOLDER+"RNA/RNA_ATTRIBUTES_ensembl82.tsv"
+    outFile = OUTPUT_FOLDER+"RNA/RNA_ATTRIBUTES_ensembl82.tsv" 
 
     inHandler = open(inFile,"r")
     outHandler = open(outFile,"w")
@@ -458,8 +462,8 @@ def make_RNA_cross_references(testing_RNAs):
     
     print("make_RNA_cross_references..")
     
-    inFile = INPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
-    outFile = OUTPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES.tsv"
+    inFile = INPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES_ensembl82.tsv"
+    outFile = OUTPUT_FOLDER+"RNA/RNA_XREF_ATTRIBUTES_ensembl82.tsv"
      
     outHandler = open(outFile,"w")
      
@@ -564,7 +568,7 @@ testingRNAs = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testin
 make_RNA_definition(testingRNAs)
 make_RNA_cross_references(testingRNAs)
 make_PRI_catRAPID(testingRNAs,testingProteins,proteinXref)
-  
+
 # Copy remaining (unchanged) files
 copy_files(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
 
