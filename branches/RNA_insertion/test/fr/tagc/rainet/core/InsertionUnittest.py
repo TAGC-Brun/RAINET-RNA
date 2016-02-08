@@ -96,6 +96,8 @@ class InsertionUnittest(unittest.TestCase):
                 gene = self.sql_session.query( Gene ).filter(Gene.geneID == value).first()
                 self.assertTrue(gene != None,"assert that gene of given RNA is present in Gene table.")
         
+        response = self.sql_session.query( MRNA ).filter(MRNA.transcriptID == EXAMPLE_MRNA_PEPTIDE[0]).first()
+        self.assertTrue(response.proteinID == EXAMPLE_MRNA_PEPTIDE[1], "asserting insertion of proteinID on the MRNA table")
 
     # #
     # Unittest for RNACrossReference SQL table and python objects
