@@ -53,8 +53,8 @@ RNA_CROSS_REFERENCE_ATTRIBUTES =  c(
   "rfam"     
 )
 
-OUTPUT_RNA_ATTRIBUTES = "/home/diogo/Documents/RAINET_data/BioMart/RNA_ATTRIBUTES.tsv"
-OUTPUT_RNA_XREF_ATTRIBUTES = "/home/diogo/Documents/RAINET_data/BioMart/RNA_XREF_ATTRIBUTES.tsv"
+OUTPUT_RNA_ATTRIBUTES = "/home/diogo/Documents/RAINET_data/BioMart/RNA_ATTRIBUTES_ensembl82.tsv"
+OUTPUT_RNA_XREF_ATTRIBUTES = "/home/diogo/Documents/RAINET_data/BioMart/RNA_XREF_ATTRIBUTES_ensembl82.tsv"
 
 if (file.exists(OUTPUT_RNA_ATTRIBUTES)) {
   warning("The following output file already exists, this script will append data to it: ",OUTPUT_RNA_ATTRIBUTES)
