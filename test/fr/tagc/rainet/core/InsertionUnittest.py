@@ -29,11 +29,7 @@ from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 
-from Constants import *
-
-#=======================================================================
-# UNITTESTS
-#=======================================================================
+from UnittestConstants import *
 
 # #
 # Unittesting a database produced and populated by Rainet InsertionStrategy. 
@@ -73,6 +69,7 @@ class InsertionUnittest(unittest.TestCase):
                 columnNames = [column['name'] for column in columns]
                 self.assertTrue("type" in columnNames,"'type' column represents correspondence to RNA subtype ")
 
+
     # #
     # Unittest for RNA SQL table and python objects
     def testRNA(self):
@@ -98,6 +95,7 @@ class InsertionUnittest(unittest.TestCase):
         
         response = self.sql_session.query( MRNA ).filter(MRNA.transcriptID == EXAMPLE_MRNA_PEPTIDE[0]).first()
         self.assertTrue(response.proteinID == EXAMPLE_MRNA_PEPTIDE[1], "asserting insertion of proteinID on the MRNA table")
+
 
     # #
     # Unittest for RNACrossReference SQL table and python objects
@@ -140,5 +138,4 @@ class InsertionUnittest(unittest.TestCase):
     def tearDown(self):
         pass
     
-#=======================================================================    
 
