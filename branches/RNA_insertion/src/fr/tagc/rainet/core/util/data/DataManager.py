@@ -3,6 +3,27 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.data import DataConstants
 
+from fr.tagc.rainet.core.data.GeneOntology import GeneOntology
+from fr.tagc.rainet.core.data.GeneSymbol import GeneSymbol
+from fr.tagc.rainet.core.data.KEGGPathway import KEGGPathway
+from fr.tagc.rainet.core.data.NetworkModuleAnnotation import NetworkModuleAnnotation
+from fr.tagc.rainet.core.data.NetworkModule import NetworkModule
+from fr.tagc.rainet.core.data.OCGPartitionAnalysis import OCGPartitionAnalysis
+from fr.tagc.rainet.core.data.PartitionAnalysis import PartitionAnalysis
+from fr.tagc.rainet.core.data.PPINetworkInteraction import PPINetworkInteraction
+from fr.tagc.rainet.core.data.PPINetwork import PPINetwork
+from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
+from fr.tagc.rainet.core.data.ProteinDomain import ProteinDomain
+from fr.tagc.rainet.core.data.ProteinGOAnnotation import ProteinGOAnnotation
+from fr.tagc.rainet.core.data.ProteinInteraction import ProteinInteraction
+from fr.tagc.rainet.core.data.ProteinIsoform import ProteinIsoform
+from fr.tagc.rainet.core.data.ProteinKEGGAnnotation import ProteinKEGGAnnotation
+from fr.tagc.rainet.core.data.ProteinNetworkModule import ProteinNetworkModule
+from fr.tagc.rainet.core.data.Protein import Protein
+from fr.tagc.rainet.core.data.ProteinReactomeAnnotation import ProteinReactomeAnnotation
+from fr.tagc.rainet.core.data.ReactomePathway import ReactomePathway
+from fr.tagc.rainet.core.data.SynonymGeneSymbol import SynonymGeneSymbol
+from fr.tagc.rainet.core.data.Gene import Gene
 from fr.tagc.rainet.core.data.RNA import RNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.MRNA import MRNA
@@ -10,6 +31,7 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
+from sqlalchemy.inspection import inspect
 
 
 # #
@@ -24,7 +46,7 @@ class DataManager( object ) :
     #
     def __init__( self ):
 
-        #keys of dictionary, given by user, will point to query result
+        #keys of dictionary, given by user, will point to query / data result
         self.data = {} 
         
 
@@ -45,7 +67,8 @@ class DataManager( object ) :
         try:
             query_result = eval( full_query)
         except Exception as ex:
-            raise RainetException( "DataManager.init : Exception occurred during query on DB", ex)
+            Logger.get_instance().error(str(ex) )
+            raise RainetException( "DataManager.init : Exception occurred during query on DB"  )
 
         self.data[keyword] = query_result
 
@@ -64,7 +87,7 @@ class DataManager( object ) :
         if keyword in self.data:
             data = self.data[keyword]
         else:
-            raise RainetException("DataManager.query_to_dict : Data keyword does not exist"+keyword)            
+            raise RainetException("DataManager.query_to_dict : Data keyword does not exist: "+keyword)            
         
         try:
             for entry in data:
@@ -94,11 +117,17 @@ class DataManager( object ) :
     def query_to_set(self, keyword, col):
 
         outSet = set()
-        
+
         if keyword in self.data:
             data = self.data[keyword]
         else:
-            raise RainetException("DataManager.query_to_set : Data keyword does not exist"+keyword)            
+            raise RainetException("DataManager.query_to_set : Data keyword does not exist: "+keyword)            
+
+        try:
+            int(col)
+        except TypeError:
+            raise RainetException("DataManager.query_to_set : Column index needs to be integer: "+col)
+                    
 
         try:
             for entry in data:
@@ -119,6 +148,21 @@ class DataManager( object ) :
 
 
     # #
+    # Store any type of data (object) on DataManager.data into provided a dictionary keyword
+    #
+    # @param keyword: the data dictionary keyword to access the data
+    #
+    def store_data(self, keyword, data):
+        
+        try:
+            keyword = str(keyword)
+        except:
+            raise RainetException("DataManager.get_data : keyword must be a string.")
+        
+        self.data[keyword] = data
+
+
+    # #
     # Get previously stored results
     #
     # @param keyword: the data dictionary keyword to access the data
@@ -132,7 +176,7 @@ class DataManager( object ) :
             raise RainetException("DataManager.get_data : keyword must be a string.")
         
         if keyword not in self.data:
-            raise RainetException("DataManager.get_data : Data keyword does not exist"+keyword)
+            raise RainetException("DataManager.get_data : Data keyword does not exist: "+keyword)
             
         return self.data[keyword]
 
@@ -152,7 +196,7 @@ class DataManager( object ) :
         if keyword in self.data:
             del self.data[keyword]
         else:
-            raise RainetException("DataManager.delete_data : Data keyword does not exist"+keyword)
+            raise RainetException("DataManager.delete_data : Data keyword does not exist: "+keyword)
             
 
     # #
