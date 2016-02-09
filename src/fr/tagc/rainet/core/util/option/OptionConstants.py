@@ -32,6 +32,7 @@ OPTION_QUERY_FILE = "query_file"
 OPTION_MINIMUM_INTERACTION_SCORE = "interaction_score"
 OPTION_TRANSCRIPT_BIOTYPE = "transcript_biotype"
 OPTION_LNCRNA_BIOTYPES = "lncRNA_biotypes"
+OPTION_GENCODE = "gencode_basic"
 
 #===============================================================================
 # The definition of the options
@@ -53,9 +54,10 @@ OPTION_LIST = {  "Insertion": [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
                     [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."],
                     [ "-v", "--verbose", "store", "string", OPTION_VERBOSITY, Constants.MODE_INFO, "The level of verbosity. Must be one of : " + str( Constants.VERBOSITY_LEVELS)],
-                    [ "-m", "--minimumInteractionScore", "store", "string", OPTION_MINIMUM_INTERACTION_SCORE, Constants.DEFAULT_INTERACTION_SCORE, "Protein-RNA interactions with interaction score below given value will be excluded from analysis."],
-                    [ "-b", "--transcriptBiotype", "store", "string", OPTION_TRANSCRIPT_BIOTYPE, None, "General transcript biotype to be INCLUDED in analysis. Must be one of :"+ str(Constants.TRANSCRIPT_BIOTYPES)],
-                    [ "-l", "--lncRNABiotype", "store", "string", OPTION_LNCRNA_BIOTYPES, Constants.DEFAULT_LNCRNA_BIOTYPES, "Comma-separated list of lncRNA subtypes to be INCLUDED in analysis. Default: all subtypes are considered. Can one or several of :"+ str(Constants.LNCRNA_BIOTYPES)]
+                    [ "-m", "--minimumInteractionScore", "store", "string", OPTION_MINIMUM_INTERACTION_SCORE, Constants.DEFAULT_INTERACTION_SCORE, "Protein-RNA interactions with interaction score below given value will be excluded from analysis. Default: OFF"],
+                    [ "-b", "--transcriptBiotype", "store", "string", OPTION_TRANSCRIPT_BIOTYPE, Constants.DEFAULT_BIOTYPE, "General transcript biotype to be INCLUDED in analysis. Default = RNA (i.e. any type of RNA). Can be one of :"+ str(Constants.TRANSCRIPT_BIOTYPES)],
+                    [ "-l", "--lncRNABiotype", "store", "string", OPTION_LNCRNA_BIOTYPES, Constants.DEFAULT_LNCRNA_BIOTYPES, "Comma-separated list of lncRNA subtypes to be INCLUDED in analysis. Default: OFF (i.e. all subtypes are considered). Can one or several of :"+ str(Constants.LNCRNA_BIOTYPES)],
+                    [ "-g", "--gencodeBasicOnly", "store", "int", OPTION_GENCODE, Constants.DEFAULT_GENCODE, "If 1, include in analysis ONLY transcripts tagged as present in 'GENCODE basic'. Default: OFF (i.e. all RNAs are considered)."]
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
