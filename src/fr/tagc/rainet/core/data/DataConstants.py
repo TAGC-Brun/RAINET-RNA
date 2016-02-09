@@ -269,8 +269,24 @@ PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
 PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB = "Ensembl_PRO"
 
+
+#===============================================================================
+#===============================================================================
+# DATA MANAGER OBJECT CONSTANTS
+#===============================================================================
+#===============================================================================
+
+# Insertion strategy
+#===============================================================================
+
 PROTEIN_RNA_INTERACTION_CATRAPID_PXREF = "ProteinRNAInteractionCatRAPID_PXref"
 PROTEIN_RNA_INTERACTION_CATRAPID_PXREF_QUERY = "query( ProteinCrossReference.protein_id,ProteinCrossReference.crossReferenceID ).filter(ProteinCrossReference.sourceDB == DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB).all()"
 PROTEIN_RNA_INTERACTION_CATRAPID_RXREF = "ProteinRNAInteractionCatRAPID_RXref"
 PROTEIN_RNA_INTERACTION_CATRAPID_RXREF_QUERY = "query( RNA.transcriptID ).all()"
+
+# Analysis strategy
+#===============================================================================
+RNA_FILTER_KW = "selectedRNAs"
+PROT_FILTER_KW = "selectedProteins"
+PRI_FILTER_KW = "selectedInteractions"
 
