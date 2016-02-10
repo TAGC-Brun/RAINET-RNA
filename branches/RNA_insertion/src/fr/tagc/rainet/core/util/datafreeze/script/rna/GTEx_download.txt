@@ -1,0 +1,12 @@
+#10-Fev-2016 Diogo Ribeiro
+#Download of Human multi-tissue transcript expression data.
+
+http://www.gtexportal.org/home/datasets
+
+GTEx Analysis V6 (dbGaP Accession phs000424.v6.p1)
+
+Files downloaded:
+- 	GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_reads.txt.gz
+-	GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt.gz 
+Note: to download the file, we need to create a simple account.
+

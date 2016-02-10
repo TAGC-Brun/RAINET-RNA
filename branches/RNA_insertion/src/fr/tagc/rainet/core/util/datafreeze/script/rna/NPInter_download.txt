@@ -1,0 +1,12 @@
+#10-Fev-2016 Diogo Ribeiro
+#Download of NPInter data
+
+#NPInter v3.0: database containing interactions between Protein, RNA and DNA molecules (pairwise)
+
+#Dataset with all interactions: interaction_NPInter[v3.0].txt.tar.gz
+wget http://www.bioinfo.org/NPInter/datadownload/interaction_NPInter%5Bv3.0%5D.txt.tar.gz 
+
+#Dataset with more confident interactions: golden_set_NPInter[v3.0].txt.tar.gz
+wget http://www.bioinfo.org/NPInter/datadownload/golden_set_NPInter%5Bv3.0%5D.txt.tar.gz
+
+
