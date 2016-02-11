@@ -45,18 +45,3 @@ STATUS_OK = "OK"
 STATUS_WARNING = "WARNING"
 STATUS_RAINET_ERROR = "RAINET ERROR"
 STATUS_ERROR = "ERROR" 
-
-#===============================================================================
-# Constants for analysis strategy
-#===============================================================================
-
-DEFAULT_BIOTYPE = "RNA"
-DEFAULT_LNCRNA_BIOTYPES = "OFF"
-DEFAULT_INTERACTION_SCORE = "OFF"
-DEFAULT_GENCODE = "OFF"
-
-BIOTYPE_LNCRNA = "LncRNA"
-BIOTYPE_MRNA = "MRNA"
-BIOTYPE_OTHERRNA = "OtherRNA"
-TRANSCRIPT_BIOTYPES = { DEFAULT_BIOTYPE, BIOTYPE_LNCRNA, BIOTYPE_MRNA, BIOTYPE_OTHERRNA }
-LNCRNA_BIOTYPES = DataConstants.RNA_LNCRNA_BIOTYPE
