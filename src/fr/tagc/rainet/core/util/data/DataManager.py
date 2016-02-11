@@ -67,8 +67,8 @@ class DataManager( object ) :
         try:
             query_result = eval( full_query)
         except Exception as ex:
-            Logger.get_instance().error(str(ex) )
-            raise RainetException( "DataManager.init : Exception occurred during query on DB"  )
+            Logger.get_instance().error("******************************************************** EXCEPTION TEST")
+            raise RainetException( "DataManager.init : Exception occurred during query on DB",ex  )
 
         self.data[keyword] = query_result
 
