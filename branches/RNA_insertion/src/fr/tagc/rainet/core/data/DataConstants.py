@@ -239,6 +239,12 @@ RNA_MRNA_BIOTYPE = {"protein_coding"}
 # LncRNA biotypes: Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
 RNA_LNCRNA_BIOTYPE = {"3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC","known_ncrna"} 
 
+RNA_ALL_KW = "allRNAs"
+
+PROTEIN_ENSP_XREF_DB = "Ensembl_PRO"
+PROTEIN_ENSP_XREF_KW = "ProteinEnsemblPROCrossReference"
+
+
 # Headers and Parameters for RNACrossReference
 #===============================================================================
 
@@ -267,26 +273,5 @@ PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS = ["incremental", "unknown", "interacto
 PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS = ["interactors", "interactionScore"]
 PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
-PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB = "Ensembl_PRO"
 
-
-#===============================================================================
-#===============================================================================
-# DATA MANAGER OBJECT CONSTANTS
-#===============================================================================
-#===============================================================================
-
-# Insertion strategy
-#===============================================================================
-
-PROTEIN_RNA_INTERACTION_CATRAPID_PXREF = "ProteinRNAInteractionCatRAPID_PXref"
-PROTEIN_RNA_INTERACTION_CATRAPID_PXREF_QUERY = "query( ProteinCrossReference.protein_id,ProteinCrossReference.crossReferenceID ).filter(ProteinCrossReference.sourceDB == DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CROSSREF_DB).all()"
-PROTEIN_RNA_INTERACTION_CATRAPID_RXREF = "ProteinRNAInteractionCatRAPID_RXref"
-PROTEIN_RNA_INTERACTION_CATRAPID_RXREF_QUERY = "query( RNA.transcriptID ).all()"
-
-# Analysis strategy
-#===============================================================================
-RNA_FILTER_KW = "selectedRNAs"
-PROT_FILTER_KW = "selectedProteins"
-PRI_FILTER_KW = "selectedInteractions"
 
