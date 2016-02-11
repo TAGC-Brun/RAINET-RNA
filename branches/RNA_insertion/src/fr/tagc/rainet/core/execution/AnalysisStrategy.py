@@ -1,4 +1,5 @@
 
+import pandas as pd
 from sqlalchemy import or_,and_,distinct
 
 from fr.tagc.rainet.core.execution.ExecutionStrategy import ExecutionStrategy
@@ -54,7 +55,6 @@ class AnalysisStrategy(ExecutionStrategy):
 
 
     # Data Manager Keywords
-    ALL_RNAS_KW = "allRNAs"
     
     RNA_FILTER_KW = "selectedRNAs"
     PROT_FILTER_KW = "selectedProteins"
@@ -153,28 +153,27 @@ class AnalysisStrategy(ExecutionStrategy):
 
         Logger.get_instance().info("AnalysisStrategy.filter_RNA..")
 
-        # Get all RNA items
-        DataManager.get_instance().perform_query(AnalysisStrategy.ALL_RNAS_KW, "query(RNA).all()")
-        allRNAs = DataManager.get_instance().get_data(AnalysisStrategy.ALL_RNAS_KW)
+        # Get all RNA objects
+        allRNAs = self.sql_session.query(RNA).all()
                 
         # Filter transcripts based on biotype or Filter LncRNAs based on wanted subtypes (if lncRNA biotype chosen)
         if self.transcriptBiotype == OptionConstants.BIOTYPE_LNCRNA and self.lncRNABiotypes != OptionConstants.DEFAULT_LNCRNA_BIOTYPES:       
-            query = "query(" + self.transcriptBiotype + ").filter(" + self.transcriptBiotype + ".transcriptBiotype.in_([" + self.lncRNABiotypes + "])).all() "
+            queryText = "query(" + self.transcriptBiotype + ".transcriptID).filter(" + self.transcriptBiotype + ".transcriptBiotype.in_([" + self.lncRNABiotypes + "])).all() "
         else:
-            query = "query(" + self.transcriptBiotype + ").all()"
+            queryText = "query(" + self.transcriptBiotype + ".transcriptID).all()"
 
-        DataManager.get_instance().perform_query("filterRNA1", query) 
-        filterRNA1 = {str(item.transcriptID) for item in DataManager.get_instance().get_data("filterRNA1")}
+        filterRNA1 = eval('self.sql_session.' +  queryText)
+        filterRNA1 = {str(item.transcriptID) for item in filterRNA1}
 
         # Filter transcripts based on gencode_basic presence
         if self.gencode == 1:
-            query = "query(RNA).filter(RNA.transcriptGencodeBasic == 1).all()"
+            queryText = "query(RNA.transcriptID).filter(RNA.transcriptGencodeBasic == 1).all()"
         else:
-            query = "query(RNA).all()"
-        
-        DataManager.get_instance().perform_query("filterRNA2", query)  
-        filterRNA2 = {str(item.transcriptID) for item in DataManager.get_instance().get_data("filterRNA2")}
-                       
+            queryText = "query(RNA.transcriptID).all()"
+
+        filterRNA2 = eval('self.sql_session.' +  queryText)
+        filterRNA2 = {str(item.transcriptID) for item in filterRNA2}
+                               
         # Get intersection of the various filterings
         selectedRNAs = []
         for rna in allRNAs:
@@ -198,10 +197,6 @@ class AnalysisStrategy(ExecutionStrategy):
         query = "query( Protein ).all()"
         DataManager.get_instance().perform_query(AnalysisStrategy.PROT_FILTER_KW, query) 
 
-        # Will filter out:
-        # - Protein isoforms (?)
-        # - Proteins based on their mRNA expression
-
 
     # #
     # Filter protein-RNA interactions
@@ -217,18 +212,16 @@ class AnalysisStrategy(ExecutionStrategy):
         # Filter interactions based on minimumInteractionScore
          
         if self.minimumInteractionScore != OptionConstants.DEFAULT_INTERACTION_SCORE:
-            query = "query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.interactionScore >= "+str(self.minimumInteractionScore)+").all()"    
+            queryText = "query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.interactionScore >= "+str(self.minimumInteractionScore)+").all()"    
         else:
             # Running this on whole database may crash computer
             items = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
             if items > 1000000: # dr: improve this
-                raise RainetException( "AnalysisStrategy.filter_PRI: intended query is too large and may crash computer.")
+                raise RainetException( "AnalysisStrategy.filter_PRI: intended query may use prohibitive amounts of system memory.")
             else:
-                query = "query( ProteinRNAInteractionCatRAPID ).all()"
+                queryText = "query( ProteinRNAInteractionCatRAPID ).all()"
  
-        DataManager.get_instance().perform_query(AnalysisStrategy.PRI_FILTER_KW, query)
- 
-        interactions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        interactions = eval('self.sql_session.' +  queryText)
  
         # Filter for interactions between selected RNAs and proteins
         selectedInteractions = []
