@@ -9,9 +9,6 @@ from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.util.option import OptionConstants
 from fr.tagc.rainet.core.execution.AnalysisStrategy import AnalysisStrategy
 
-from fr.tagc.rainet.core.data import DataConstants
-from fr.tagc.rainet.core.util import Constants as OptionConstantsConstants
-
 from fr.tagc.rainet.core.data.DBParameter import DBParameter
 from fr.tagc.rainet.core.data.GeneOntology import GeneOntology
 from fr.tagc.rainet.core.data.GeneSymbol import GeneSymbol
@@ -42,6 +39,7 @@ from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 
 from UnittestConstants import *
+from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 
 # #
 # Unittesting the Rainet AnalysisStrategy on a specific validated database. 
@@ -53,6 +51,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     
     # #
     # Runs before each test
+    # name of this function needs forcely to be 'setUp'
     def setUp(self):
                 
         # Set the options
@@ -63,130 +62,146 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_VERBOSITY, "debug")
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, DB_PATH)
         optionManager.set_option(OptionConstants.OPTION_SPECIES, "human")
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, OptionConstantsConstants.DEFAULT_BIOTYPE)
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstantsConstants.DEFAULT_INTERACTION_SCORE )
-        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, OptionConstantsConstants.DEFAULT_LNCRNA_BIOTYPES)
-        optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstantsConstants.DEFAULT_GENCODE)
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, OptionConstants.DEFAULT_BIOTYPE)
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstants.DEFAULT_INTERACTION_SCORE)
+        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, OptionConstants.DEFAULT_LNCRNA_BIOTYPES)
+        optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstants.DEFAULT_GENCODE)
         
         # Set the level of verbosity
-        Logger.get_instance().set_level( OptionManager.get_instance().get_option( OptionConstants.OPTION_VERBOSITY))
+        Logger.get_instance().set_level(OptionManager.get_instance().get_option(OptionConstants.OPTION_VERBOSITY))
 
         # Setting up SQL manager
         SQLManager.get_instance().set_DBpath(DB_PATH)
         self.sql_session = SQLManager.get_instance().get_session()
 
-        #create instance of strategy    
+        # create instance of strategy    
         self.strategy = AnalysisStrategy()
-        
+                
         
     # #
     # Test running AnalysisStrategy with default parameters
-    def testDefaultParams(self):
-        
+    def test_default_params(self):
+
+        #Note: if wanting to catch the exception (and its message) use the following (because unittest bypasses Rainet.py)
+#         try:
+#             self.strategy.execute()
+#             DataManager.get_instance().perform_query("kww","query( faketable ).all()")
+#         except RainetException as re:
+#             Logger.get_instance().error(re.to_string())
+#             self.assertTrue(False,"asserting if exception occurred during execution.")
+
         self.strategy.execute()
 
-        RNAs = DataManager.get_instance().get_data(DataConstants.RNA_FILTER_KW)
-        Prots = DataManager.get_instance().get_data(DataConstants.PROT_FILTER_KW)
-        PRIs = DataManager.get_instance().get_data(DataConstants.PRI_FILTER_KW)
-                
+        RNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+        Prots = DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW)
+        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+
         self.assertTrue(len(RNAs) == 200, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(Prots) == 200, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(PRIs) == 54, "asserting if number of objects retrieved is correct") 
-
-
+  
+  
     # #
     # Test filtering for mRNAs
-    def testRNAFilterOne(self):
-
+    def test_RNA_filter_one(self):
+  
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE,"MRNA")
-        
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "MRNA")
+          
         self.strategy.execute()
-
-        mRNAs = DataManager.get_instance().get_data(DataConstants.RNA_FILTER_KW)
-        
+  
+        mRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+          
         self.assertTrue(len(mRNAs) == 82, "asserting if number of objects retrieved is correct") 
- 
+   
         for mRNA in mRNAs:       
-            self.assertTrue(isinstance(mRNA, MRNA),"check if the mRNA is instance of MRNA table/class")
-
+            self.assertTrue(isinstance(mRNA, MRNA), "check if the mRNA is instance of MRNA table/class")
+  
     # #
     # Test filtering for specific subtypes of lncRNAs
-    def testRNAFilterTwo(self):
-
+    def test_RNA_filter_two(self):
+  
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE,"LncRNA")
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
         optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "antisense,lincRNA")
         self.strategy.execute()
-
-        lncRNAs = DataManager.get_instance().get_data(DataConstants.RNA_FILTER_KW)
-        
-        self.assertTrue(len(lncRNAs) == 18, "asserting if number of objects retrieved is correct") 
   
+        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+          
+        self.assertTrue(len(lncRNAs) == 18, "asserting if number of objects retrieved is correct") 
+    
         for lncRNA in lncRNAs:       
-            self.assertTrue(isinstance(lncRNA, LncRNA),"check if the lncRNA is instance of LncRNA table/class")
-
+            self.assertTrue(isinstance(lncRNA, LncRNA), "check if the lncRNA is instance of LncRNA table/class")
+  
     # #
     # Test default lncRNA subtype option
-    def testRNAFilterThree(self):
-
-        optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE,"LncRNA")
-        self.strategy.execute()
-
-        lncRNAs = DataManager.get_instance().get_data(DataConstants.RNA_FILTER_KW)
-        response = self.sql_session.query( LncRNA ).all()
-        
-        self.assertTrue(len(lncRNAs) == len(response), "asserting if number of objects in lncRNA default (off) option is same as querying directly lncRNA table") 
+    def test_RNA_filter_three(self):
   
-
+        optionManager = OptionManager.get_instance()
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
+        self.strategy.execute()
+  
+        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+        response = self.sql_session.query(LncRNA).all()
+          
+        self.assertTrue(len(lncRNAs) == len(response), "asserting if number of objects in lncRNA default (off) option is same as querying directly lncRNA table") 
+    
+  
     # #
     # Test gencode filtering
-    def testRNAFilterFour(self):
- 
+    def test_RNA_filter_four(self):
+   
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE,"LncRNA")
-        optionManager.set_option(OptionConstants.OPTION_GENCODE,"1")
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
+        optionManager.set_option(OptionConstants.OPTION_GENCODE, "1")
         self.strategy.execute()
- 
-        lncRNAs = DataManager.get_instance().get_data(DataConstants.RNA_FILTER_KW)
-         
+   
+        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+           
         self.assertTrue(len(lncRNAs) == 19, "asserting if number of objects in being both lncRNA and gencode is correct") 
-
-
-    # #
+  
+  
+    # # 
     # Test simple PRI filter
-    def testPRIFilterOne(self):
- 
+    def test_PRI_filter_one(self):
+   
         optionManager = OptionManager.get_instance()        
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "10.0" )
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "10.0")
         self.strategy.execute()
- 
-        PRIs = DataManager.get_instance().get_data(DataConstants.PRI_FILTER_KW)
-         
+   
+        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+           
         self.assertTrue(len(PRIs) == 18, "asserting if number of interactions above certain interaction score is correct") 
-
-
+  
+  
     # #
     # Test PRI and RNA filter together
-    def testPRIFilterTwo(self):
- 
+    def test_PRI_filter_two(self):
+   
         optionManager = OptionManager.get_instance()        
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28" )
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE,"LncRNA")
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
         optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "lincRNA")
-        optionManager.set_option(OptionConstants.OPTION_GENCODE,"1")
+        optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
         self.strategy.execute()
- 
-        PRIs = DataManager.get_instance().get_data(DataConstants.PRI_FILTER_KW)
- 
+   
+        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+   
         self.assertTrue(len(PRIs) == 2, "asserting if PRIs are affected by RNA-level filters") 
+
+
+#     def test_extra(self):
+#         
+#         self.strategy.execute()
+#         
+#         self.strategy.check_isoforms()
 
 
     # #
     # Runs after each test
     def tearDown(self):
         pass
+    
     
     
     
