@@ -93,7 +93,7 @@ class OptionManager( object ) :
             self.optionDict = {}
             
         if option_name != None and len( option_name) > 0:
-            if option_value != None and len( option_value) > 0:
+            if option_value != None:
                 self.optionDict[ option_name] = option_value
             else: Logger.get_instance().warning( "OptionManager.set_option: Trying to pass a None or void value on option dictionary for key : " + option_name) 
         else:
