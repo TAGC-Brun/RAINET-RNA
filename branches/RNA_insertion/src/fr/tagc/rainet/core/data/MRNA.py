@@ -35,7 +35,7 @@ class MRNA( RNA ):
  
         from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
-        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF)
+        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_ENSP_XREF_KW)
         
         if peptide_id in proteinXrefs:
             self.proteinID = proteinXrefs[peptide_id][0]

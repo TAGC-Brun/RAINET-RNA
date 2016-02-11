@@ -178,9 +178,10 @@ class InsertionStrategy( ExecutionStrategy ):
             #===================================================================
 
             #Make query of specific type of protein cross references to speed up insertion
-            DataManager.get_instance().perform_query(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF,DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF_QUERY) 
+            DataManager.get_instance().perform_query(DataConstants.PROTEIN_ENSP_XREF_KW,
+                                                     "query( ProteinCrossReference.protein_id,ProteinCrossReference.crossReferenceID ).filter(ProteinCrossReference.sourceDB == DataConstants.PROTEIN_ENSP_XREF_DB).all()") 
             #Convert query into a dictionary
-            DataManager.get_instance().query_to_dict(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF, 1, 0)
+            DataManager.get_instance().query_to_dict(DataConstants.PROTEIN_ENSP_XREF_KW, 1, 0)
   
             # Parse the RNA file
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_DEFINITION_PROPERTY, True)
@@ -189,23 +190,26 @@ class InsertionStrategy( ExecutionStrategy ):
             # Parse the RNA cross references file
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
+
    
             #===================================================================
             # PROTEIN RNA INTERACTION
             #===================================================================
    
-
             #Make query of all RNA IDs to speed up insertion
-            DataManager.get_instance().perform_query(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_RXREF,DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_RXREF_QUERY) 
+            DataManager.get_instance().perform_query(DataConstants.RNA_ALL_KW,"query( RNA.transcriptID ).all()") 
             #Convert query into a set
-            DataManager.get_instance().query_to_set(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_RXREF, 0)
+            DataManager.get_instance().query_to_set(DataConstants.RNA_ALL_KW, 0)
 
             # Parse the ProteinRNAInteractionCatRAPID file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
-            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS, \
-                                       DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,\
+            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
+                                       DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
  
+            DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
+            DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
+
             #===================================================================
             #===================================================================
             # DR7 STOP

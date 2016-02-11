@@ -90,12 +90,12 @@ class ProteinRNAInteractionCatRAPID( Base ):
  
         from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
-        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PXREF)
+        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_ENSP_XREF_KW)
 
         if peptide_id in proteinXrefs:
             self.proteinID = proteinXrefs[peptide_id][0]
         else:
-            Logger.get_instance().debug( "\nPeptide ID not found:\t" + str(peptide_id) )
+            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Peptide ID not found:\t" + str(peptide_id) )
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init : No Protein found, instance will not be created.")
  
         #=======================================================================
@@ -103,12 +103,12 @@ class ProteinRNAInteractionCatRAPID( Base ):
         # See if RNA with given transcript_id exists in database
         #=======================================================================
 
-        RNA_list = DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_RXREF)
+        RNA_list = DataManager.get_instance().get_data(DataConstants.RNA_ALL_KW)
  
         if transcript_id in RNA_list:
             self.transcriptID = transcript_id
         else:
-            Logger.get_instance().debug( "\nRNA ID not found:\t" + str(transcript_id) )
+            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : RNA ID not found:\t" + str(transcript_id) )
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init: No RNA found, instance will not be created." )
 
 
