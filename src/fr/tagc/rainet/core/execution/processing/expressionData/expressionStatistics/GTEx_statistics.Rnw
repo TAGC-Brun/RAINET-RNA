@@ -30,6 +30,14 @@ file with the attribute SMTS (the less-specific tissue terms).
   source( paste( working_dir, "samples_per_tissue.R", sep="/"))
 @
 
+\section{Expression per tissue}
+
+Expression values per tissue using the whole GTEx\_Analysis\_v6\_RNA-seq\_Flux1.6\_transcript\_rpkm\_test.txt
+file.
+
+<<expression_per_tissue, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "expression_per_tissue.R", sep="/"))
+@
 
 \newpage
 
