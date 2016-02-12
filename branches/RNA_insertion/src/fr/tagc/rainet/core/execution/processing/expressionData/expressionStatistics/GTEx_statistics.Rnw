@@ -1,0 +1,40 @@
+\documentclass{article}
+
+\usepackage{multicol}
+\usepackage{geometry}
+\usepackage{amsmath}
+
+\geometry{
+ a4paper,
+ total={210mm,297mm},
+ left=20mm,
+ right=20mm,
+ top=20mm,
+ bottom=20mm,
+ }
+
+\begin{document}
+
+\title{GTEx expression data\\-\\
+        Rainet project}
+\author{Diogo Ribeiro, Lionel Spinelli, Andreas Zanzoni, Christine Brun}
+\maketitle
+
+
+\section{Samples per tissue}
+
+Number of samples per tissue using the whole GTEx\_Data\_V6\_Annotations\_SampleAttributesDS.txt
+file with the attribute SMTS (the less-specific tissue terms).
+
+<<samples_per_tissue, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "samples_per_tissue.R", sep="/"))
+@
+
+
+\newpage
+
+\section{TO DO}
+
+In this section..
+
+\end{document}

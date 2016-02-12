@@ -1,0 +1,26 @@
+
+
+processing file: GTEx_statistics.Rnw
+  |                                                                         |                                                                 |   0%  |                                                                         |......................                                           |  33%
+  ordinary text without R code
+
+  |                                                                         |...........................................                      |  67%
+label: samples_per_tissue (with options) 
+List of 4
+ $ fig.keep: chr "all"
+ $ echo    : logi FALSE
+ $ message : symbol F
+ $ warning : symbol F
+
+  |                                                                         |.................................................................| 100%
+  ordinary text without R code
+
+
+output file: GTEx_statistics.tex
+
+[1] "GTEx_statistics.pdf"
+Warning message:
+In brewer.pal(length(sorted_annotation_df$V1), "Dark2") :
+  n too large, allowed maximum for palette Dark2 is 8
+Returning the palette you asked for with that many colors
+
