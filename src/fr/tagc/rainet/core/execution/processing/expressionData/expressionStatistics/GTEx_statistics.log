@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.11)  12 FEB 2016 17:39
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.11)  15 FEB 2016 14:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -341,34 +341,38 @@ Overfull \hbox (15.0pt too wide) in paragraph at lines 80--81
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./figure/samples_per_tissu
 e-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 96.
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 99.
+Package color Info: Redefining color shadecolor on input line 94.
+ <figure/expression_per_tissue-1.pdf, id=16, 505.89pt x 505.89pt>
+File: figure/expression_per_tissue-1.pdf Graphic file (type pdf)
 
-Overfull \hbox (15.04878pt too wide) in paragraph at lines 99--99
-[]\OT1/cmtt/m/n/10 ## Error in scan(file, what, nmax, sep, dec, quote, skip, nl
-ines, na.strings, : line 1 did not
+<use figure/expression_per_tissue-1.pdf>
+Package pdftex.def Info: figure/expression_per_tissue-1.pdf used on input line 
+95.
+(pdftex.def)             Requested size: 483.69687pt x 483.70361pt.
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 95--96
+[][] 
  []
 
-[2] [3] (./GTEx_statistics.aux) ) 
+[2 <./figure/expression_per_tissue-1.pdf>] [3] (./GTEx_statistics.aux) ) 
 Here is how much of TeX's memory you used:
- 2804 strings out of 495028
- 38703 string characters out of 6181497
- 106273 words of memory out of 5000000
- 5974 multiletter control sequences out of 15000+600000
+ 2808 strings out of 495028
+ 38869 string characters out of 6181497
+ 105273 words of memory out of 5000000
+ 5977 multiletter control sequences out of 15000+600000
  8122 words of font info for 30 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  38i,6n,28p,315b,191s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr1
-7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-
-Output written on GTEx_statistics.pdf (3 pages, 74293 bytes).
+</usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on GTEx_statistics.pdf (3 pages, 119226 bytes).
 PDF statistics:
- 41 PDF objects out of 1000 (max. 8388607)
- 28 compressed objects within 1 object stream
+ 47 PDF objects out of 1000 (max. 8388607)
+ 32 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -2,7 +2,8 @@
 import subprocess
 import os
 import glob
-import numpy
+import numpy as np
+from scipy import stats
 
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -122,7 +123,8 @@ class ProcessGTExData( object ):
         inHandler.close()
 
         # Write file to be read by R
-        outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )        
+        outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
+        #outHandler.write("%s,%s\n" % (ProcessGTExData.TISSUE_ANNOTATIONS_VALUE,"'#_samples'") )
         for tissue in tissueSample:
             outHandler.write( "%s,%s\n" % ( tissue, len(tissueSample[tissue])) )
         outHandler.close()
@@ -225,7 +227,10 @@ class ProcessGTExData( object ):
                     
                     # add data to data structures
                     for idx in headerIndexMap[tiss]:
-                        value = spl[idx]
+                        try:
+                            value = float(spl[idx])
+                        except ValueError:
+                            raise RainetException( "read_transcript_expression : expression value is non-numeric: "+ spl[idx] )                           
                         txExpressionTissue[transcriptID][tiss].append( value)
                         expressionTissue[tiss].append( value)
 
@@ -243,7 +248,7 @@ class ProcessGTExData( object ):
         for tiss in expressionTissue:
             line = tiss+","
             for val in expressionTissue[tiss]:
-                line+= val+","
+                line+= str(val)+","
             line = line[:-1]+"\n" # remove last comma
             outHandler.write(line)
             
@@ -251,6 +256,7 @@ class ProcessGTExData( object ):
 
         print ("Total tissues", len(expressionTissue))
         print ("Total transcripts", len(txExpressionTissue)) #check that total transcripts is same as gencode v19 # I should have it as unittest
+
 
         ###make same report as before but with the samples that are on expression file
 
@@ -274,13 +280,24 @@ class ProcessGTExData( object ):
         Logger.get_instance().info( "run_statistics : Running command : "+command)
         
         # run the command in a subprocess
-        outfile = open( ProcessGTExData.WORKING_DIR+"/analysis.log", "wb")
-        p = subprocess.Popen( command, shell=True, stdout=outfile, stderr=outfile)
+        p = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while True:
             if p.poll() != None:
                 break
 
+        stderrText = p.stderr.read().decode("UTF-8").strip()
+        stdoutText = p.stdout.read().decode("UTF-8").strip()
     
+        if len(stderrText) > 0:
+            Logger.get_instance().warning("run_statistics : STDERR:\n"+stderrText)
+
+        if p.returncode != 0:
+            Logger.get_instance().error("run_statistics : ERROR: Return code:"+str(p.returncode)+"\t"+command)
+        
+        if len(stdoutText) > 0:
+            Logger.get_instance().info("run_statistics : STDOUT:\n"+stdoutText)
+
+
 
     # #
     # Method to remove files that are recreated each time.

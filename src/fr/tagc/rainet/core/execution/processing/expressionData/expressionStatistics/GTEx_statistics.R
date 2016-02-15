@@ -14,6 +14,6 @@ if( length(args) != 3){
 
 working_dir = args[1]
 annotation_input_file = args[2]
-expression_input_file = args[2]
+expression_input_file = args[3]
 
 knit2pdf('GTEx_statistics.Rnw')
