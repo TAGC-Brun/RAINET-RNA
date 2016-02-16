@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.11)  15 FEB 2016 14:37
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.2.11)  16 FEB 2016 18:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -324,55 +324,55 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package color Info: Redefining color shadecolor on input line 79.
+Package color Info: Redefining color shadecolor on input line 92.
 <figure/samples_per_tissue-1.pdf, id=1, 505.89pt x 505.89pt>
 File: figure/samples_per_tissue-1.pdf Graphic file (type pdf)
 
 <use figure/samples_per_tissue-1.pdf>
-Package pdftex.def Info: figure/samples_per_tissue-1.pdf used on input line 80.
+Package pdftex.def Info: figure/samples_per_tissue-1.pdf used on input line 93.
 
 (pdftex.def)             Requested size: 483.69687pt x 483.70361pt.
 
-Overfull \hbox (15.0pt too wide) in paragraph at lines 80--81
+Overfull \hbox (15.0pt too wide) in paragraph at lines 93--94
 [][] 
  []
 
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./figure/samples_per_tissu
-e-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 94.
- <figure/expression_per_tissue-1.pdf, id=16, 505.89pt x 505.89pt>
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Package color Info: Redefining color shadecolor on input line 110.
+ [2 <./figure/samples_per_tissue-1.pdf>]
+<figure/expression_per_tissue-1.pdf, id=20, 505.89pt x 505.89pt>
 File: figure/expression_per_tissue-1.pdf Graphic file (type pdf)
 
 <use figure/expression_per_tissue-1.pdf>
 Package pdftex.def Info: figure/expression_per_tissue-1.pdf used on input line 
-95.
+126.
 (pdftex.def)             Requested size: 483.69687pt x 483.70361pt.
 
-Overfull \hbox (15.0pt too wide) in paragraph at lines 95--96
+Overfull \hbox (15.0pt too wide) in paragraph at lines 126--127
 [][] 
  []
 
-[2 <./figure/expression_per_tissue-1.pdf>] [3] (./GTEx_statistics.aux) ) 
+[3 <./figure/expression_per_tissue-1.pdf>] [4] (./GTEx_statistics.aux) ) 
 Here is how much of TeX's memory you used:
  2808 strings out of 495028
  38869 string characters out of 6181497
- 105273 words of memory out of 5000000
+ 107273 words of memory out of 5000000
  5977 multiletter control sequences out of 15000+600000
  8122 words of font info for 30 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,6n,28p,315b,191s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,28p,501b,191s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/s
 hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/t
 exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on GTEx_statistics.pdf (3 pages, 119226 bytes).
+Output written on GTEx_statistics.pdf (4 pages, 98666 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
- 32 compressed objects within 1 object stream
+ 50 PDF objects out of 1000 (max. 8388607)
+ 34 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

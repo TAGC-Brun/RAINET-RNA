@@ -3,6 +3,7 @@ import subprocess
 import os
 import glob
 import numpy as np
+import random 
 from scipy import stats
 
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
@@ -35,7 +36,9 @@ class ProcessGTExData( object ):
 
     # GTEx Input files
     TISSUE_ANNOTATIONS = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Data_V6_Annotations_SampleAttributesDS.txt"
-    TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_test.txt"
+    TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_SHUFFLED.txt"
+    #test file: "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_SHUFFLED.txt"
+    #real file: "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt"
 
     # Fields from TISSUE_ANNOTATIONS file that we want to keep
     TISSUE_ANNOTATIONS_KEY = "SAMPID"
@@ -47,6 +50,8 @@ class ProcessGTExData( object ):
     # Python files
     ANNOTATION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/annotation.csv"
     EXPRESSION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression.csv"
+    EXPRESSION_SAMPLE_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression_sample.csv"
+    TX_EXPRESSION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/transcript_expression.csv"
 
     # R files    
     WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/expressionStatistics"
@@ -57,6 +62,13 @@ class ProcessGTExData( object ):
     
     # Files to be removed before each run of this script
     FILES_TO_REFRESH = [ANNOTATION_OUTPUT_FILE, EXPRESSION_OUTPUT_FILE, WORKING_DIR+"/*.tex", WORKING_DIR+"/*.log", WORKING_DIR+"/*.aux", WORKING_DIR+"/*.pdf"]
+
+    # Predefined tissues
+#    PREDEFINED_TISSUES = []
+
+    # Sampling
+    RNA_SAMPLE_NUMBER = 50
+    RNA_TEMP_FILE = WORKING_DIR+"/RNA_TEMP_FILE"
 
 
     def __init__(self):
@@ -135,9 +147,12 @@ class ProcessGTExData( object ):
     # 
     def read_transcript_expression(self, sampleTissue, tissueSample, problematicSamples):
 
+
         inHandler = FileUtils.open_text_r( ProcessGTExData.TISSUE_EXPRESSION)
         
+        #===============================================================================
         # Read header
+        #===============================================================================
         headerLine = inHandler.readline()
         header = headerLine.split("\t")
         lenHeader = len( header)
@@ -162,10 +177,13 @@ class ProcessGTExData( object ):
                     headerIndexMap[tiss].add( i)
                     processedSamples+= 1
 
-
         summ = 0
+        minimumSamples = float("inf")
         for tiss in headerIndexMap:
-            summ+= len(headerIndexMap[tiss])
+            l = len(headerIndexMap[tiss])
+            summ+= l
+            if l < minimumSamples:
+                minimumSamples = l
 #             # trying to use ranges instead of actual coordinates. Not possible because of erroneous data
 #             minIndex = min(headerIndexMap[ tiss])
 #             maxIndex = max(headerIndexMap[ tiss])
@@ -175,13 +193,28 @@ class ProcessGTExData( object ):
         if summ != processedSamples:
             raise RainetException( "read_transcript_expression : index insertion was not performed correctly: ")
 
+        # # To produce similar report as in read_tissue_annotations
+        # # Write file to be read by R
+        # outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
+        # for tissue in headerIndexMap:
+        #     outHandler.write( "%s,%s\n" % ( tissue, len(headerIndexMap[tissue])) )
+        # outHandler.close()
+
+
+        #===============================================================================
+        # Read the rest of the file
+        #===============================================================================
+        
         # initialise dictionaries which will contain results
         txExpressionTissue = {} #transcript expression per tissue. key -> transcript ID, val -> dict: key -> tissue, val -> list of expression values
         expressionTissue = {} #expression per tissue. key -> tissue, val -> list of expression values (i.e. across transcripts)
         for tiss in headerIndexMap:
             expressionTissue[tiss] = []
+        expressionTissueSample = {}
+        for tiss in headerIndexMap:
+            expressionTissueSample[tiss] = []
 
-        # Read each non-header line of expression file
+        # loop per line
         count = 0
         for line in inHandler:
 
@@ -199,12 +232,12 @@ class ProcessGTExData( object ):
             txSpl = tx.split("_")
             if len( txSpl) > 2: 
                 raise RainetException( "read_transcript_expression : transcript ID is not expected: "+ tx )
-
+ 
             for tx in txSpl:
                 # GTEx should use only Ensembl transcript IDs (ENST*), raise exception if something else is found
                 if not tx.startswith("ENST"):
                     raise RainetException( "read_transcript_expression : transcript ID is not expected: "+ tx )
-    
+     
                 # GTEx transcript IDs have a different termination which is not used in Ensembl (e.g. "ENST00000002501.6"). This is being removed here.
                 if "." not in tx:
                     transcriptID = tx
@@ -214,16 +247,18 @@ class ProcessGTExData( object ):
                         transcriptID = txSpl[0]
                     else:
                         raise RainetException( "read_transcript_expression : transcript ID is not expected: "+ tx )
-
+ 
                 # initialise dict for transcript
                 if transcriptID not in txExpressionTissue:
                     txExpressionTissue[transcriptID] = {}
-    
+     
                 for tiss in headerIndexMap:
-    
+     
                     # initialise for transcript-tissue pair
                     if tiss not in txExpressionTissue[transcriptID]:
                         txExpressionTissue[transcriptID][tiss] = []
+                    
+                    idxSample = random.sample(headerIndexMap[tiss],minimumSamples)
                     
                     # add data to data structures
                     for idx in headerIndexMap[tiss]:
@@ -233,18 +268,32 @@ class ProcessGTExData( object ):
                             raise RainetException( "read_transcript_expression : expression value is non-numeric: "+ spl[idx] )                           
                         txExpressionTissue[transcriptID][tiss].append( value)
                         expressionTissue[tiss].append( value)
+                        if idx in idxSample:
+                            expressionTissueSample[tiss].append( value)
 
             count+= 1
             if count % 1000 == 0:
                 Logger.get_instance().info( "read_transcript_expression : reading file.. %s lines done." % count)
 
 
-        # #
-        # Write into files for R
+
+        print ("Total tissues", len(expressionTissue))
+        print ("Total transcripts", len(txExpressionTissue)) #check that total transcripts is same as gencode v19 # I should have it as unittest
+
+
+        #===============================================================================
+        # Write variables into files for R usage
+        #===============================================================================
+        
+        # Files with data per tissue: Aim is to use this data to produce a boxplot for each tissue
+        #
+        # E.g. of wanted output: tissue and all its values on each line
+        # Thyroid,99.987946,51.082527,73.664589,107.893951
+        # Kidney,78.215836,94.459152,104.612236,143.620743,91.351257,134.171814,144.965485,111.592468
+        # Pancreas,92.215179,98.487106
 
         outHandler = FileUtils.open_text_w( ProcessGTExData.EXPRESSION_OUTPUT_FILE )        
 
-        # File with data per tissue
         for tiss in expressionTissue:
             line = tiss+","
             for val in expressionTissue[tiss]:
@@ -254,13 +303,27 @@ class ProcessGTExData( object ):
             
         outHandler.close()
 
-        print ("Total tissues", len(expressionTissue))
-        print ("Total transcripts", len(txExpressionTissue)) #check that total transcripts is same as gencode v19 # I should have it as unittest
+        # same but for the sample object
+        outHandler = FileUtils.open_text_w( ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE )        
+
+        for tiss in expressionTissueSample:
+            line = tiss+","
+            for val in expressionTissueSample[tiss]:
+                line+= str(val)+","
+            line = line[:-1]+"\n" # remove last comma
+            outHandler.write(line)
+            
+        outHandler.close()
 
 
-        ###make same report as before but with the samples that are on expression file
+        # File with data per transcript: aim is to produce a histogram of expression values of a few randomly selected transcripts
+        #
+        # Create folder to contain several files to be read by R, one file per transcript.
 
-        #e.g. validation
+        
+
+
+        #e.g. validation 
 #         grep ENST00000002501.6 GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_test.txt | cut -f7927
 #         1.721180
 
@@ -275,10 +338,20 @@ class ProcessGTExData( object ):
                 raise RainetException( "run_statistics : Input file is not present: " + filePath )
                 
         # launch the analysis
-        command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s" % ( ProcessGTExData.SWEAVE_R_SCRIPT, ProcessGTExData.WORKING_DIR, ProcessGTExData.ANNOTATION_OUTPUT_FILE, ProcessGTExData.EXPRESSION_OUTPUT_FILE)
+        command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s %s" % ( ProcessGTExData.SWEAVE_R_SCRIPT, 
+                                                                                                         ProcessGTExData.WORKING_DIR, 
+                                                                                                         ProcessGTExData.ANNOTATION_OUTPUT_FILE, 
+                                                                                                         ProcessGTExData.EXPRESSION_OUTPUT_FILE,
+                                                                                                         ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE)
 
         Logger.get_instance().info( "run_statistics : Running command : "+command)
-        
+
+        self.run_command(command)
+
+
+    # #
+    # Method to run external commands and retrieve standard output and error    
+    def run_command(self, command):
         # run the command in a subprocess
         p = subprocess.Popen( command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while True:
