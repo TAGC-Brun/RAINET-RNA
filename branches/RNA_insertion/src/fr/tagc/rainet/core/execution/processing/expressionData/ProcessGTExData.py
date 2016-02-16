@@ -51,7 +51,7 @@ class ProcessGTExData( object ):
     ANNOTATION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/annotation.csv"
     EXPRESSION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression.csv"
     EXPRESSION_SAMPLE_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression_sample.csv"
-    TX_EXPRESSION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/transcript_expression.csv"
+    TX_EXPRESSION_OUTPUT_FOLDER = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/transcript_expression"
 
     # R files    
     WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/expressionStatistics"
@@ -61,14 +61,15 @@ class ProcessGTExData( object ):
     R_REQUIRED_FILES = [SWEAVE_R_SCRIPT, WORKING_DIR, ANNOTATION_OUTPUT_FILE]
     
     # Files to be removed before each run of this script
-    FILES_TO_REFRESH = [ANNOTATION_OUTPUT_FILE, EXPRESSION_OUTPUT_FILE, WORKING_DIR+"/*.tex", WORKING_DIR+"/*.log", WORKING_DIR+"/*.aux", WORKING_DIR+"/*.pdf"]
+    FILES_TO_REFRESH = [ANNOTATION_OUTPUT_FILE, EXPRESSION_OUTPUT_FILE, WORKING_DIR+"/*.tex", WORKING_DIR+"/*.log", WORKING_DIR+"/*.aux", WORKING_DIR+"/*.pdf", TX_EXPRESSION_OUTPUT_FOLDER+"/*"]
 
     # Predefined tissues
-#    PREDEFINED_TISSUES = []
+    PREDEFINED_TISSUES = ["Brain","Blood","Stomach","Cervix Uteri","Fallopian Tube"]
 
     # Sampling
     RNA_SAMPLE_NUMBER = 50
     RNA_TEMP_FILE = WORKING_DIR+"/RNA_TEMP_FILE"
+    RNA_SAMPLE_NUMBER_PER_TX = 12
 
 
     def __init__(self):
@@ -134,12 +135,12 @@ class ProcessGTExData( object ):
 
         inHandler.close()
 
-        # Write file to be read by R
-        outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
-        #outHandler.write("%s,%s\n" % (ProcessGTExData.TISSUE_ANNOTATIONS_VALUE,"'#_samples'") )
-        for tissue in tissueSample:
-            outHandler.write( "%s,%s\n" % ( tissue, len(tissueSample[tissue])) )
-        outHandler.close()
+#         # Write file to be read by R
+#         outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
+#         #outHandler.write("%s,%s\n" % (ProcessGTExData.TISSUE_ANNOTATIONS_VALUE,"'#_samples'") )
+#         for tissue in tissueSample:
+#             outHandler.write( "%s,%s\n" % ( tissue, len(tissueSample[tissue])) )
+#         outHandler.close()
 
         return sampleTissue, tissueSample, problematicSamples
 
@@ -193,12 +194,6 @@ class ProcessGTExData( object ):
         if summ != processedSamples:
             raise RainetException( "read_transcript_expression : index insertion was not performed correctly: ")
 
-        # # To produce similar report as in read_tissue_annotations
-        # # Write file to be read by R
-        # outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
-        # for tissue in headerIndexMap:
-        #     outHandler.write( "%s,%s\n" % ( tissue, len(headerIndexMap[tissue])) )
-        # outHandler.close()
 
 
         #===============================================================================
@@ -285,6 +280,14 @@ class ProcessGTExData( object ):
         # Write variables into files for R usage
         #===============================================================================
         
+        # File with number of samples per tissue
+        # Note 12-Feb-2016: I decided to write the file after parsing the expression file instead of the annotation file, values are accurate
+        outHandler = FileUtils.open_text_w( ProcessGTExData.ANNOTATION_OUTPUT_FILE )       
+        for tissue in headerIndexMap:
+            outHandler.write( "%s,%s\n" % ( tissue, len(headerIndexMap[tissue])) )
+        outHandler.close()
+
+        
         # Files with data per tissue: Aim is to use this data to produce a boxplot for each tissue
         #
         # E.g. of wanted output: tissue and all its values on each line
@@ -320,8 +323,23 @@ class ProcessGTExData( object ):
         #
         # Create folder to contain several files to be read by R, one file per transcript.
 
-        
+        if not os.path.exists( ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER):
+            os.mkdir( ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER)
 
+        txSample = random.sample(txExpressionTissue.keys(), ProcessGTExData.RNA_SAMPLE_NUMBER_PER_TX)
+        
+        for tx in txSample:
+            outHandler = FileUtils.open_text_w( ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER+"/"+tx )
+            txData = txExpressionTissue[tx]
+            for tiss in txData:
+                if tiss in ProcessGTExData.PREDEFINED_TISSUES:
+                    line = tiss+","
+                    for val in txData[tiss]:
+                        line+= str(val)+","
+                    line = line[:-1]+"\n" # remove last comma
+                    outHandler.write(line)
+
+            outHandler.close()
 
         #e.g. validation 
 #         grep ENST00000002501.6 GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_test.txt | cut -f7927
@@ -338,11 +356,14 @@ class ProcessGTExData( object ):
                 raise RainetException( "run_statistics : Input file is not present: " + filePath )
                 
         # launch the analysis
-        command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s %s" % ( ProcessGTExData.SWEAVE_R_SCRIPT, 
-                                                                                                         ProcessGTExData.WORKING_DIR, 
-                                                                                                         ProcessGTExData.ANNOTATION_OUTPUT_FILE, 
-                                                                                                         ProcessGTExData.EXPRESSION_OUTPUT_FILE,
-                                                                                                         ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE)
+        command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s %s %s" % ( 
+                                                                                                             ProcessGTExData.SWEAVE_R_SCRIPT, 
+                                                                                                             ProcessGTExData.WORKING_DIR, 
+                                                                                                             ProcessGTExData.ANNOTATION_OUTPUT_FILE, 
+                                                                                                             ProcessGTExData.EXPRESSION_OUTPUT_FILE,
+                                                                                                             ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE,
+                                                                                                             ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER
+                                                                                                             )
 
         Logger.get_instance().info( "run_statistics : Running command : "+command)
 
