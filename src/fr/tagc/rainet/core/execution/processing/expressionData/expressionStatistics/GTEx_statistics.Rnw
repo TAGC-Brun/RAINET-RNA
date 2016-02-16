@@ -59,8 +59,12 @@ We can see that the number of samples does not drastically change the overal dis
 
 \newpage
 
-\section{TO DO}
+\section{Expression distribution per transcript}
 
-In this section..
+Selected 5 tissues with different sample numbers, randomly selected 12 transcripts
+
+<<density_plot_example_transcripts, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "density_plot_example_transcripts.R", sep="/"))
+@
 
 \end{document}
