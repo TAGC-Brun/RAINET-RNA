@@ -47,7 +47,7 @@ We can see that number of samples per tissue is highly variable. Perhaps this sh
 
 \section{Expression variability per tissue}
 
-Distribution of all the expression values per tissue of 50 randomly sampled transcripts (out of >190 thousand), sampled from the whole GTEx rpkm file. Keep in mind that different tissues have different sample sizes, and thus a different amount of values are plotted on each tissue. \par 
+Distribution of all the expression values per tissue of 50 randomly sampled transcripts (out of 195.747 thousand from GENCODE), sampled from the whole GTEx rpkm file. Keep in mind that different tissues have different sample sizes, and thus a different amount of values are plotted on each tissue. \par 
 The purpose here is not to compare which tissue has higher or lower expression, or higher or lower variability in expression, but to understand the variability of expression between each tissue, coming from both biological variability and sampling variability. \par
 The left-side of the following boxplot contains the distribution of expression values for the sample transcripts using all available samples (e.g. thousands in brain, a handful in Fallopian tube), whereas the right-side boxplot displays the data for the same transcript when only considering 6 (random) samples for each tissue.
 
