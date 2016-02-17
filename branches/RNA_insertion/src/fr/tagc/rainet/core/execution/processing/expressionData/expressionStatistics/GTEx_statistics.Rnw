@@ -61,10 +61,35 @@ We can see that the number of samples does not drastically change the overal dis
 
 \section{Expression distribution per transcript}
 
-Selected 5 tissues with different sample numbers, randomly selected 12 transcripts
+Selected 5 tissues with different sample numbers (2 with highest, 1 medium, 2 with lowest sample numbers), randomly selected 12 transcripts and plotted their RPKM value distribution, using all available samples. Note that many transcript have 0 or close to 0 RPKM (*Bug in graphics when all RPKMs are zero) in all addressed tissues. We plan to average the RPKM values of a transcript in a given tissue.
 
 <<density_plot_example_transcripts, fig.keep="all", echo=FALSE, message=F, warning=F>>=
   source( paste( working_dir, "density_plot_example_transcripts.R", sep="/"))
 @
 
+The distributions are highly variable between transcripts. 
+
+\section{Average expression of transcripts per tissue}
+
+To merge sample values within the same tissue and transcript, we can use mean or median. Below are the distributions of averaged RPKM values among all transcripts and all tissues.\par
+The blue horizontal lines represent either the mean or the median, the red lines represent the noise cutoff of 0.1 RPKM suggested in the GTEx papers.
+
+<<transcript_expression_averages, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "transcript_expression_averages.R", sep="/"))
+@
+
+\section{Conclusion}
+
+We intend to use this expression data not for an expression analysis, but only as a filter layer to ensure lncRNA-protein co-existence in a cell. After setting a rpkm cutoff that distinguishes expression noise from real expression, we will turn our values into binary presence/absence.\par
+Because we want to keep the maximum data possible, we do not need to filter out tissues that have low sample numbers, or to normalise data in tissues with a vast number of samples.\\
+
+
+Parameters for filtering:\\
+- minimum rpkm value\\
+- interacting pair having to be present in X\% tissues
+
+Need to decide:\\
+- what level: tissue or body part?\\
+
 \end{document}
+

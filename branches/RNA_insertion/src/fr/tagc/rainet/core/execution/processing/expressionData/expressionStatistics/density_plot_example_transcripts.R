@@ -38,9 +38,12 @@ for (file in list.files(tx_expression_input_folder)){
   i=i+1
   
   listPlot[[i]] <- ggplot(expression_df, aes(x = value ) )  +
-    geom_density(aes(color=tissues), size=1) + # could also use fill instead of color
+    geom_line(stat="density",aes(color=tissues)) +
+#    geom_density(aes(color=tissues), size=1) + # could also use fill instead of color
+#    geom_histogram(aes(color=tissues), size=1) + # could also use fill instead of color
     ggtitle(file) +
     theme_minimal()
+  
 }
 
 grid_arrange_shared_legend(listPlot)
