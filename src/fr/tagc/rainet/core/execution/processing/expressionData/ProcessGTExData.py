@@ -39,12 +39,12 @@ class ProcessGTExData( object ):
     TESTING = 0
 
     # GTEx Input files
-    TISSUE_ANNOTATIONS = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Data_V6_Annotations_SampleAttributesDS.txt"
+    TISSUE_ANNOTATIONS = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/GTEx/GTEx_Data_V6_Annotations_SampleAttributesDS.txt"
     if TESTING:
         TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_SHUFFLED.txt"
     else:
-        # Using full file may take more than 14 Gb RAM and 23 minutes.
-        TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt"
+        # Using full file may take more than 14 Gb RAM and 26 minutes.
+        TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNAGTEx//GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt"
 
     # Fields from TISSUE_ANNOTATIONS file that we want to keep
     TISSUE_ANNOTATIONS_KEY = "SAMPID"
