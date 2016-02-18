@@ -538,6 +538,42 @@ def make_PRI_catRAPID(testing_RNAs, testing_proteins, protein_xref):
     outHandler.close()
 
 
+def make_tx_expression(testing_RNAs):
+
+    #===============================================================================
+    # File: tx_expression_avg.tsv ; RNA_TISSUE_EXPRESSION_PROPERTY 
+    #===============================================================================
+
+    # Example
+    # TranscriptID    TissueName      ExprMean        ExprStd ExprMedian
+    # ENST00000496116 Thyroid 0.043   0.069   0.000
+    # ENST00000496116 Testis  0.057   0.061   0.046    
+    
+    print("make_tx_expression..")
+    
+    inFile = INPUT_FOLDER+"/RNA/tx_expression_avg.tsv"
+    outFile = OUTPUT_FOLDER+"/RNA/tx_expression_avg.tsv"
+     
+    outHandler = open(outFile,"w")
+      
+    inHandler = open(inFile,"r")
+    
+    # Get header
+    outHandler.write(inHandler.readline())
+
+    # uniqueFound = set()
+    
+    for line in inHandler:
+        tx = line.split("\t")[0]
+        if tx in testing_RNAs:
+            # uniqueFound.add(tx)
+            outHandler.write(line)
+
+    # Note: the testingRNAs may be more than the number of transcripts retrieved from GTEx. This reflects difference in Ensembl versions used.
+
+    outHandler.close()
+
+
 #===============================================================================
 # Client
 #
@@ -549,7 +585,7 @@ def make_PRI_catRAPID(testing_RNAs, testing_proteins, protein_xref):
 if FORCE_CREATION:
     make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt", OUTPUT_FOLDER+"/sampled_item_list/","testing_proteins_list.txt")
 testingProteins = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_proteins_list.txt")
-
+  
 make_protein_uniprot_definition(testingProteins)
 proteinXref = make_protein_cross_references(testingProteins)
 make_protein_isoforms(testingProteins)
@@ -557,21 +593,21 @@ make_gene_ontology_annotation(testingProteins)
 make_reactome_pathway_annotation(testingProteins)
 make_interactome_definition(testingProteins,proteinXref)
 make_interactome_network_definition(testingProteins,proteinXref)
- 
+   
 #===============================================================================
 # RNA and PRI
 #===============================================================================
 if FORCE_CREATION:
     make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv", OUTPUT_FOLDER+"/sampled_item_list/","testing_RNA_list.txt")
 testingRNAs = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_RNA_list.txt")
-
+ 
 make_RNA_definition(testingRNAs)
 make_RNA_cross_references(testingRNAs)
 make_PRI_catRAPID(testingRNAs,testingProteins,proteinXref)
+make_tx_expression(testingRNAs)
 
 # Copy remaining (unchanged) files
 copy_files(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
-
 #===============================================================================
 
 print ("FINISHED!")
