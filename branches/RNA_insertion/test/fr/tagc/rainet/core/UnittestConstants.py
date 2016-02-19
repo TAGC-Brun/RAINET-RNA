@@ -12,7 +12,7 @@ DB_PATH = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rain
 # Test input files: /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data
 #=======================================================================
 
-TOTAL_NUMBER_TABLES = 29
+TOTAL_NUMBER_TABLES = 31
 TOTAL_COLUMNS_IN_RNA_TABLE = 15
 TOTAL_COLUMNS_IN_RNAXREF_TABLE = 3
 EXAMPLE_MRNA = "ENST00000379749"
@@ -50,6 +50,7 @@ EXAMPLE_PRI_RNA_INTERACTIONS = {
                                 "ENSP00000431009" : 8.68
                                 }
 EXAMPLE_PRI_RNA_PROTEIN_UNIPROT = {"ENSP00000410728" : "Q5RI18"} 
+NUMBER_TISSUES = 30
 
 #=======================================================================
 
