@@ -274,4 +274,23 @@ PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS = ["interactors", "interactionScore"]
 PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
 
+#===============================================================================
+#===============================================================================
+# RNA EXPRESSION DATA
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for RNA Tissue Expression
+#===============================================================================
+
+RNA_TISSUE_EXPRESSION_PROPERTY = "RNA_TISSUE_EXPRESSION"
+
+RNA_TISSUE_EXPRESSION_CLASS = "RNATissueExpression"
+
+RNA_TISSUE_EXPRESSION_HEADERS = ["TranscriptID", "TissueName", "ExprMean", "ExprStd", "ExprMedian"]
+RNA_TISSUE_EXPRESSION_PARAMS = ["TranscriptID", "TissueName", "ExprMean","SourceDB"]
+RNA_TISSUE_EXPRESSION_COMMENT_CHAR = "#"
+
+RNA_TISSUE_EXPRESSION_SOURCEDB = "GTEx v6"
+RNA_TISSUE_EXPRESSION_VALUE = [None, None, None, RNA_TISSUE_EXPRESSION_SOURCEDB]
 
