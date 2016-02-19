@@ -28,6 +28,8 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
+from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
+from fr.tagc.rainet.core.data.Tissue import Tissue
 
 from UnittestConstants import *
 
@@ -61,7 +63,7 @@ class InsertionUnittest(unittest.TestCase):
         tableNames = inspector.get_table_names()
         
         self.assertTrue(len(tableNames) == TOTAL_NUMBER_TABLES,"asserting that number of tables in database is the expected")
-
+        
         for tableName in tableNames:
             columns = inspector.get_columns(tableName)
             if tableName == "RNA":
@@ -133,6 +135,21 @@ class InsertionUnittest(unittest.TestCase):
                 self.assertTrue(protein != None,"assert that a given protein in protein-RNA interaction table is present in protein table")
  
 
+    # #
+    # Unittest for RNATissueExpression and Tissue SQL table and python objects
+    def testRNATissueExpression(self):
+
+        response = self.sql_session.query( RNATissueExpression ).filter(RNATissueExpression.transcriptID == EXAMPLE_MRNA).all()
+        tissues = self.sql_session.query( Tissue.tissueName ).all()
+        
+        tissues = [tiss[0] for tiss in tissues]
+        
+        self.assertTrue(len(tissues) == NUMBER_TISSUES, "asserting that correct number of tissues exists")
+        
+        for line in response:
+            self.assertTrue( (line.tissueName) in tissues, "asserting that tissues are connected")
+ 
+ 
     # #    
     # Run after each test    
     def tearDown(self):
