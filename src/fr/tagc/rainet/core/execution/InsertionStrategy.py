@@ -32,6 +32,8 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
+from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
+from fr.tagc.rainet.core.data.Tissue import Tissue
 
 # #
 # This class define the Strategy executing insertion of the various data in database
@@ -191,7 +193,17 @@ class InsertionStrategy( ExecutionStrategy ):
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
 
-   
+
+            #===================================================================
+            # RNA TISSUE EXPRESSION
+            #===================================================================
+
+            # Parse the RNA tissue expression file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
+                                        DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
+                                        DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
+
             #===================================================================
             # PROTEIN RNA INTERACTION
             #===================================================================
@@ -455,4 +467,8 @@ class InsertionStrategy( ExecutionStrategy ):
             OtherRNA.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), ProteinRNAInteractionCatRAPID.__tablename__):
             ProteinRNAInteractionCatRAPID.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), RNATissueExpression.__tablename__):
+            RNATissueExpression.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), Tissue.__tablename__):
+            Tissue.__table__.create(bind = db_engine)
 
