@@ -44,23 +44,23 @@ class ProcessGTExData( object ):
         TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/RNA/expression_test/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm_SHUFFLED.txt"
     else:
         # Using full file may take more than 14 Gb RAM and 26 minutes.
-        TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNAGTEx//GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt"
+        TISSUE_EXPRESSION = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/RNA/GTEx/GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt"
 
     # Fields from TISSUE_ANNOTATIONS file that we want to keep
     TISSUE_ANNOTATIONS_KEY = "SAMPID"
-    TISSUE_ANNOTATIONS_VALUE = "SMTS" # Which level of tissue definition to use for grouping samples, could also be SMTSD
+    TISSUE_ANNOTATIONS_VALUE = "SMTSD" # Which level of tissue definition to use for grouping samples, could also be SMTSD
 
-    # Fields from TISSUE_EXPRESSION that are special
+    # Fields from TISSUE_EXPRESSION that are not samples
     TISSUE_EXPRESSION_SPECIAL_COLUMNS = [ "TargetID", "Gene_Symbol", "Chr", "Coord"]
 
-    # Python files
+    # Python output files
     ANNOTATION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/annotation.csv"
     EXPRESSION_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression.csv"
     EXPRESSION_SAMPLE_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/expression_sample.csv"
     TX_EXPRESSION_OUTPUT_FOLDER = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/transcript_expression"
     TX_EXPRESSION_AVG_OUTPUT_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/dataFiles/tx_expression_avg.tsv"
 
-    # R files    
+    # R script files    
     WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/expressionStatistics"
     SWEAVE_R_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/expressionData/expressionStatistics/GTEx_statistics.R"
 
@@ -71,7 +71,8 @@ class ProcessGTExData( object ):
     FILES_TO_REFRESH = [ANNOTATION_OUTPUT_FILE, EXPRESSION_OUTPUT_FILE, WORKING_DIR+"/*.tex", WORKING_DIR+"/*.log", WORKING_DIR+"/*.aux", WORKING_DIR+"/*.pdf", TX_EXPRESSION_OUTPUT_FOLDER+"/*"]
 
     # Predefined tissues
-    PREDEFINED_TISSUES = ["Brain","Skin","Stomach","Cervix Uteri","Fallopian Tube"]
+    PREDEFINED_TISSUES = ["Muscle - Skeletal","Whole Blood","Stomach","Fallopian Tube","Cervix - Endocervix"]
+    SINGLE_TISSUE = "Muscle - Skeletal"
 
     # Sampling
     RNA_SAMPLE_NUMBER = 50 # for the tissue expression boxplots #note that final picked number may be slightly different
@@ -81,7 +82,6 @@ class ProcessGTExData( object ):
 
 
     def __init__(self):
-        
         pass
         
 
@@ -246,6 +246,7 @@ class ProcessGTExData( object ):
                 # loop over each tissue to retrieve data for all sample indexes of that tissue
                 for tiss in headerIndexMap:
      
+                    # pick sample of data for reporting purposes
                     idxSample = random.sample(headerIndexMap[tiss],minimumSamples)
 
                     # add data to data structures
@@ -255,26 +256,28 @@ class ProcessGTExData( object ):
                             value = float(spl[idx])
                         except ValueError:
                             raise RainetException( "read_transcript_expression : expression value is non-numeric: "+ spl[idx] )                           
-
+ 
                         localList.append( value)
-
+ 
                         # Whether this is running in the test file or not, get only values for a limited amount of transcripts             
                         if count in txSampling or ProcessGTExData.TESTING:
                             expressionTissue[tiss].append( value)
-    
+     
                             # produce sample of data for reporting purposes                    
                             if idx in idxSample:
                                 expressionTissueSample[tiss].append( value)
 
                     # initialise for transcript-tissue pair
                     if tiss not in txExpressionTissue[transcriptID]:
-                        txExpressionTissue[transcriptID][tiss] = np.array(localList) #array('d')
+                        #if tiss == ProcessGTExData.SINGLE_TISSUE: # testing only; to remove
+                        txExpressionTissue[transcriptID][tiss] = np.array(localList)
 
 
             count+= 1
             if count % 1000 == 0:
                 Logger.get_instance().info( "read_transcript_expression : reading file.. %s lines done." % count)
-
+#             if count > 10000: #to remove
+#                 break
 
         print ("Total tissues", len(expressionTissue))
         print ("Total transcripts", len(txExpressionTissue)) #check that total transcripts is same as gencode v19
@@ -356,24 +359,53 @@ class ProcessGTExData( object ):
 
     # #
     # Function to produce single value for each tissue-transcript pair
+    #
     # Write to final file for insertion into RAINET database
+    #
     def average_sample_values(self, txExpressionTissue):
         
-        # Produce TSV file
-        # e.g.
-        
+        # Outputs TSV file
+        # e.g. TranscriptID    TissueName      ExprMean        ExprStd ExprMedian      CoefVariation   Max
+        #      ENST00000496116 Muscle - Skeletal       0.101   0.103   0.069   1.02415982815   0.426
+
+        # open output file        
         outHandler = FileUtils.open_text_w( ProcessGTExData.TX_EXPRESSION_AVG_OUTPUT_FILE )
 
         # Header
-        outHandler.write( "TranscriptID\tTissueName\tExprMean\tExprStd\tExprMedian\n")
+        outHandler.write( "TranscriptID\tTissueName\tExprMean\tExprStd\tExprMedian\tCoefVariation\tMax\n")
         
         # Calculate several metrics using numpy
+        count = 0
         for tx in txExpressionTissue:
-            for tiss in txExpressionTissue[ tx]:
-                a = txExpressionTissue[ tx][ tiss]
-                outHandler.write("%s\t%s\t%.3f\t%.3f\t%.3f\n" % ( tx, tiss, np.mean( a), np.std( a), np.median( a) ) )
-            
+            count+=1
+            if count % 10000 == 0:
+                Logger.get_instance().info( "read_transcript_expression : reading file.. %s lines done." % count)
 
+            for tiss in txExpressionTissue[ tx]:
+
+                # get array of values for transcript-tissue
+                sampleArray = txExpressionTissue[ tx][ tiss]
+                    
+                # Remove outliers by excluding values out of the range: Q1 - 1.5xIQR : Q3 + 1.5xIQR
+                # Note: Q1 = 25th percentile, Q3 = 75th percentile
+                q1, q3 = np.percentile( sampleArray, [ 25, 75])
+                iqr = q3 - q1
+                rangeMin = q1 - 1.5 * iqr
+                rangeMax = q3 + 1.5 * iqr 
+                valuesInRange = [x for x in sampleArray if rangeMin <= x <= rangeMax]
+
+                # compute descriptive statistics
+                maxi = np.max( valuesInRange)
+                std = np.std( valuesInRange) 
+                mean = np.mean( valuesInRange)
+
+                if np.isnan(std) or np.isnan(mean) or mean == 0:
+                    coefVar = 0
+                else:
+                    coefVar = float(std) / float(mean) 
+
+                outHandler.write("%s\t%s\t%.3f\t%.3f\t%.3f\t%s\t%.3f\n" % ( tx, tiss, mean, std, np.median( valuesInRange), coefVar, maxi ) )
+        
 
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
@@ -451,16 +483,16 @@ if __name__ == "__main__":
         # Read annotation file
         Timer.get_instance().step( "reading annotation file..")    
         sampleTissue, tissueSample, problematicSamples = run.read_tissue_annotations()
-        
+          
         # Read expression file, using annotations
         Timer.get_instance().step( "reading expression file..")    
         txExpressionTissue = run.read_transcript_expression(sampleTissue, tissueSample, problematicSamples)
-        
+                 
         # Process sample data into a single value
         run.average_sample_values(txExpressionTissue)
         
         # Run R scripts / report
-        run.run_statistics()
+        # run.run_statistics()
 
     # Use RainetException to catch errors
     except RainetException as rainet:
