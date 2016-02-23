@@ -169,13 +169,6 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_HEADERS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_CLASS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PARAMS, interactome_network_redundancy_definition_value, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_COMMENT_CHAR, "Redundancy", False )
             
             #===================================================================
-            #===================================================================
-            # DR7 START
-            #===================================================================
-            #===================================================================
-
- 
-            #===================================================================
             # RNA DEFINITION
             #===================================================================
 
@@ -194,19 +187,21 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
 
 
-            #===================================================================
-            # RNA TISSUE EXPRESSION
-            #===================================================================
-
-            # Parse the RNA tissue expression file
-            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
-            self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
-                                        DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
-                                        DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
+#             #===================================================================
+#             # RNA TISSUE EXPRESSION
+#             #===================================================================
+# 
+#             # Parse the RNA tissue expression file
+#             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
+#             self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
+#                                         DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
+#                                         DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
 
             #===================================================================
             # PROTEIN RNA INTERACTION
             #===================================================================
+   
+            self.forceOverride = 1
    
             #Make query of all RNA IDs to speed up insertion
             DataManager.get_instance().perform_query(DataConstants.RNA_ALL_KW,"query( RNA.transcriptID ).all()") 
@@ -222,16 +217,18 @@ class InsertionStrategy( ExecutionStrategy ):
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
 
-            #===================================================================
-            #===================================================================
-            # DR7 STOP
-            #===================================================================
-            #===================================================================
+            self.forceOverride = 0
+            
+
 
         except RainetException as re:
             Logger.get_instance().error( re.to_string() )
             Timer.get_instance().stop_chrono( "ERROR : Data insertion FAILED" )
             return
+
+        # Report on potential missing data
+        self.check_missing_data()
+
         
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "Data insertion finished" )
@@ -443,7 +440,14 @@ class InsertionStrategy( ExecutionStrategy ):
                     db_status.tableStatus = status
                     sql_session.add( db_status )
                 SQLManager.get_instance().commit()
-        
+
+    # Report on data that failed to be inserted in the database
+    def check_missing_data(self):
+
+        # Report on failed insertions during Protein-RNA interaction insertion
+        print (DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW) )
+        print (DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) )
+
 
     def check_database_tables(self):
         

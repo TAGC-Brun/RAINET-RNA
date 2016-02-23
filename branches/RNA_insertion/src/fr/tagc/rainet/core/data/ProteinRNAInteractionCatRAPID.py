@@ -53,8 +53,17 @@ class ProteinRNAInteractionCatRAPID( Base ):
     #
     def __init__( self, interactors, interaction_score):
 
-        sql_session = SQLManager.get_instance().get_session()
+        from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
+        sql_session = SQLManager.get_instance().get_session()
+        dt_manager = DataManager.get_instance()
+
+        # Initialize data items to store missing interactions
+        if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in dt_manager.data:
+            dt_manager.store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
+        if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW not in dt_manager.data:
+            dt_manager.store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW,[])
+            
         #=======================================================================
         # Parse interactors
         #
@@ -75,7 +84,7 @@ class ProteinRNAInteractionCatRAPID( Base ):
         #=======================================================================
 
         try:
-            self.interactionScore = float(interaction_score)
+            self.interactionScore = float( interaction_score)
         except ValueError as ve:
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The value of interaction score is not a float: " + str( interaction_score ), ve )
 
@@ -88,14 +97,14 @@ class ProteinRNAInteractionCatRAPID( Base ):
         # Note: assuming that if uniprot_ac exists in protein cross reference table it will also exist in protein table.
         #=======================================================================
  
-        from fr.tagc.rainet.core.util.data.DataManager import DataManager
-
-        proteinXrefs = DataManager.get_instance().get_data(DataConstants.PROTEIN_ENSP_XREF_KW)
+        proteinXrefs = dt_manager.get_data( DataConstants.PROTEIN_ENSP_XREF_KW)
 
         if peptide_id in proteinXrefs:
-            self.proteinID = proteinXrefs[peptide_id][0]
+            self.proteinID = proteinXrefs[ peptide_id][0]
         else:
-            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Peptide ID not found:\t" + str(peptide_id) )
+            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Peptide ID not found, will skip interaction:\t" + str( peptide_id) )
+            # Store missing peptide ID in a list
+            dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW].append( peptide_id)
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init : No Protein found, instance will not be created.")
  
         #=======================================================================
@@ -103,12 +112,14 @@ class ProteinRNAInteractionCatRAPID( Base ):
         # See if RNA with given transcript_id exists in database
         #=======================================================================
 
-        RNA_list = DataManager.get_instance().get_data(DataConstants.RNA_ALL_KW)
+        RNA_list = dt_manager.get_data( DataConstants.RNA_ALL_KW)
  
         if transcript_id in RNA_list:
             self.transcriptID = transcript_id
         else:
-            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : RNA ID not found:\t" + str(transcript_id) )
+            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : RNA ID not found, will skip interaction:\t" + str( transcript_id) )
+            # Store missing RNA ID in a list
+            dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW].append( transcript_id)
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init: No RNA found, instance will not be created." )
 
 
