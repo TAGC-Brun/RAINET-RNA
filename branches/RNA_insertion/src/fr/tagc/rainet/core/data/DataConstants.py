@@ -237,7 +237,7 @@ RNA_COMMENT_CHAR = "#"
 RNA_MRNA_BIOTYPE = {"protein_coding"}
 
 # LncRNA biotypes: Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
-RNA_LNCRNA_BIOTYPE = {"3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC","known_ncrna"} 
+RNA_LNCRNA_BIOTYPE = ["3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC"]
 
 RNA_ALL_KW = "allRNAs"
 
@@ -273,6 +273,8 @@ PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS = ["incremental", "unknown", "interacto
 PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS = ["interactors", "interactionScore"]
 PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
+PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW = "peptides_not_found"
+PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW = "RNAs_not_found"
 
 #===============================================================================
 #===============================================================================
