@@ -29,8 +29,6 @@ class RNATissueExpression( Base ):
     # @param source_db : string - database/dataset where the information comes from. This is given in the DataConstants.
     def __init__(self, transcript_id, tissue_name, expression_value, source_db):
 
-        print (transcript_id)
-
         #=======================================================================        
         # Approach: read single file which contains the expression values and the tissues.
         # Create the tissue objects while reading the file and add the correspondence between
@@ -92,6 +90,7 @@ class RNATissueExpression( Base ):
                 raise RainetException( "RNATissueExpression.init : Abnormal number of RNATissueExpression found for rna= " + transcript_id + " and tissue=" + tissue_name + " : " + str( len( expression_list))) 
         else:
             raise RainetException( "RNATissueExpression.init : No RNATissueExpression found for rna = " + transcript_id + " and tissue=" + tissue_name)
+
 
         raise NotRequiredInstantiationException( "RNATissueExpression.init : RNATissueExpression objects do not have to be inserted by __init__ since they are created by Tissue to RNA association table.")
   

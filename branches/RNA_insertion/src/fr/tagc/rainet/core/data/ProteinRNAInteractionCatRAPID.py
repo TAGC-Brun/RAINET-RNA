@@ -102,6 +102,7 @@ class ProteinRNAInteractionCatRAPID( Base ):
         if peptide_id in proteinXrefs:
             self.proteinID = proteinXrefs[ peptide_id][0]
         else:
+#            raise RainetException( "ProteinRNAInteractionCatRAPID.init : No Protein object while using cross references for peptide_id = " + peptide_id)
             Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Peptide ID not found, will skip interaction:\t" + str( peptide_id) )
             # Store missing peptide ID in a list
             dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW].append( peptide_id)
@@ -117,6 +118,7 @@ class ProteinRNAInteractionCatRAPID( Base ):
         if transcript_id in RNA_list:
             self.transcriptID = transcript_id
         else:
+#            raise RainetException( "ProteinRNAInteractionCatRAPID.init : No RNA object found for transcript_id = " + transcript_id)
             Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : RNA ID not found, will skip interaction:\t" + str( transcript_id) )
             # Store missing RNA ID in a list
             dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW].append( transcript_id)
