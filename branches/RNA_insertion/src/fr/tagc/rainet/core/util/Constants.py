@@ -1,6 +1,5 @@
 
 import os
-from fr.tagc.rainet.core.data import DataConstants
 
 PATH_LOG = os.path.expanduser('~') + '/.rainet/Rainet.log'
 
@@ -45,3 +44,8 @@ STATUS_OK = "OK"
 STATUS_WARNING = "WARNING"
 STATUS_RAINET_ERROR = "RAINET ERROR"
 STATUS_ERROR = "ERROR" 
+
+#===============================================================================
+# Constants on folder creation
+#===============================================================================
+REPORT_FOLDER = "Report"
