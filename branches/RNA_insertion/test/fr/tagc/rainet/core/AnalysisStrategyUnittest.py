@@ -79,7 +79,10 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 
         # create instance of strategy    
         self.strategy = AnalysisStrategy()
-                
+        
+        self.expectedFolder = os.getcwd() + "/test_expected/Report"
+        self.outputFolder = os.getcwd() + "/" + OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER ) + "/Report/"
+
 
     # #
     # Test running AnalysisStrategy with default parameters
@@ -206,16 +209,34 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         self.assertTrue(len(PRIs) == 2, "asserting if PRIs are affected by RNA-level filters") 
 
+    # #
+    # Test function to create report files
+    def test_after_filter_report_one(self):
 
-    def test_extra(self):
+        print "| test_after_filter_report_one | "
 
-        print "| text_extra | "
-         
         self.strategy.execute()
          
         self.strategy.after_filter_report()
 
-        ## check one/two report files at a time, e.g. using just RNA filtering, other using just PPI filtering
+        # list of report files created in AnalysisStrategy
+        reportConstants = [AnalysisStrategy.REPORT_RNA_NUMBERS,
+                           AnalysisStrategy.REPORT_RNA_EXPRESSION,
+                           AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE,
+                           AnalysisStrategy.REPORT_INTERACTION_NUMBERS
+                           ]
+
+        # assert each report file
+        for report in reportConstants:
+            with open(self.outputFolder + report, "r") as out:
+                with open(self.expectedFolder + "_test_after_filter_report_one/" + report, "r") as exp:
+                    self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+        # I should do test in the values, but after I have defined fields / stable files
+#         # assert each report file
+#         with open(self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS, "r") as out:
+#             for line in out:
+#                 print (line)
 
 
     # #

@@ -1,0 +1,8 @@
+expression_value_cutoff: 1.0
+interaction_score: 50.0
+databasePath: /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet_testing_DB.sqlite
+transcript_biotype: LncRNA
+lncRNA_biotypes: OFF
+species: human
+gencode_basic: 0
+output_folder: /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results
