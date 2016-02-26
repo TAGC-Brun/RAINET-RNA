@@ -69,6 +69,8 @@ class AnalysisStrategy(ExecutionStrategy):
     PARAMETERS_LOG = "parameters.log"
     REPORT_RNA_NUMBERS = "rna_numbers.tsv"
     REPORT_RNA_EXPRESSION = "rna_expression.tsv"
+    REPORT_RNA_EXPRESSION_DATA_PRESENCE = "rna_expression_data_presence.tsv"
+    REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
 
     # #
     # The Strategy execution method
@@ -166,7 +168,7 @@ class AnalysisStrategy(ExecutionStrategy):
         # Perform analysis
         #===================================================================
 
-#         self.after_filter_report()
+        self.after_filter_report()
 # 
 #         self.enrichement_analysis()
 
@@ -263,8 +265,8 @@ class AnalysisStrategy(ExecutionStrategy):
             queryText = "query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.interactionScore >= "+str(self.minimumInteractionScore)+").all()"    
         else:
             # Running this on whole database may crash computer
-            items = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
-            if items > 1000000: # dr: improve this
+            nItems = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
+            if nItems > 1000000: # dr: improve this
                 raise RainetException( "AnalysisStrategy.filter_PRI: intended query may use prohibitive amounts of system memory. Quitting..")
             else:
                 queryText = "query( ProteinRNAInteractionCatRAPID ).all()"
@@ -286,8 +288,10 @@ class AnalysisStrategy(ExecutionStrategy):
         #=================================================================== 
         # TODO: first we need to know which expression data we have
 
+
     # #
-    # TODO: function to write an R report
+    # Retrieve statistics before and after the filtering steps.
+    # Produce output files that will be used for a pdf report
     def after_filter_report(self):
 
         #===================================================================    
@@ -305,6 +309,9 @@ class AnalysisStrategy(ExecutionStrategy):
 
         #===================================================================    
         # RNA numbers report
+        #
+        # 'Before filtering' = before any RNA, protein or interactions filtering
+        # 'After filtering' = after RNA filter, but before interactions filter
         #=================================================================== 
 
         #
@@ -315,8 +322,8 @@ class AnalysisStrategy(ExecutionStrategy):
         
         # Write header
         outHandler.write( "Data\t" +
-                           "\t".join( OptionConstants.TRANSCRIPT_BIOTYPES) +
-                           "\t" +
+                          "Gene\t" +
+                           "\t".join( OptionConstants.TRANSCRIPT_BIOTYPES) + "\t" +
                            "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
 
         # Get filtered and unfiltered RNAs
@@ -330,9 +337,17 @@ class AnalysisStrategy(ExecutionStrategy):
         allLncRNATypes = [ rna.transcriptBiotype for rna in allRNAs if rna.type == OptionConstants.BIOTYPE_LNCRNA]
         filteredLncRNATypes = [ rna.transcriptBiotype for rna in filteredRNAs if rna.type == OptionConstants.BIOTYPE_LNCRNA]
 
-        # Report numbers before and after filtering
-        beforeFilterText = "Before filter"
-        afterFilterText = "After filter"
+        allGenes = { rna.geneID for rna in allRNAs}
+        filteredGenes = { rna.geneID for rna in filteredRNAs}
+
+        # # Report numbers before and after filtering        
+        beforeFilterText = "Before_RNA_filter"
+        afterFilterText = "After_RNA_filter"
+
+        # Number of unique gene IDs
+        beforeFilterText+= "\t%i" % len(allGenes)
+        afterFilterText+= "\t%i" % len(filteredGenes)      
+        
         # RNA biotypes
         for biotype in OptionConstants.TRANSCRIPT_BIOTYPES:
             if biotype != OptionConstants.DEFAULT_BIOTYPE:
@@ -341,13 +356,13 @@ class AnalysisStrategy(ExecutionStrategy):
             else:
                 beforeFilterText+= "\t%i" % len( allRNAs)
                 afterFilterText+= "\t%i" % len( filteredRNAs)
+        
         # LncRNA biotypes
         for lncBiotype in OptionConstants.LNCRNA_BIOTYPES:
             beforeFilterText+=  "\t%i" % allLncRNATypes.count( lncBiotype)
             afterFilterText+=  "\t%i" % filteredLncRNATypes.count( lncBiotype)
 
-        outHandler.write( beforeFilterText+"\n")
-        outHandler.write( afterFilterText)
+        outHandler.write( beforeFilterText+"\n"+afterFilterText+"\n")
         outHandler.close()
 
         #===================================================================    
@@ -363,50 +378,183 @@ class AnalysisStrategy(ExecutionStrategy):
         # Write header
         outHandler.write("transcriptID\ttype\ttranscriptBiotype\tmeanExpression\n") 
 
-        noExpressionData = {} # stores counts of RNAs with no expression data per RNA subtype
+        expressionDataCounts = {} # stores counts of RNAs with or without expression data per RNA subtype
         for rna in filteredRNAs:
+            # Get expression values on the several tissues for filtered transcript
             queryResult = self.sql_session.query( RNATissueExpression.expressionValue).filter( RNATissueExpression.transcriptID == rna.transcriptID).all()
 
+            # Initialise dict to store existence/absence of data
+            if rna.transcriptBiotype not in expressionDataCounts:
+                expressionDataCounts[ rna.transcriptBiotype] = {}
+                expressionDataCounts[ rna.transcriptBiotype]["with"] = 0
+                expressionDataCounts[ rna.transcriptBiotype]["without"] = 0
+
+            # if there is expression data for this transcript
             if queryResult != None and len(queryResult) > 0:
+                expressionDataCounts[ rna.transcriptBiotype]["with"]+= 1
+
+                # Array with the actual expression values
                 expressionValues = [ result[0] for result in queryResult]        
+                # Write into file the average expression value between tissues
                 outHandler.write( "%s\t%s\t%s\t%.2f\n" % (rna.transcriptID, rna.type, rna.transcriptBiotype, sum(expressionValues)/len(expressionValues)) )
             else:
-                if rna.transcriptBiotype not in noExpressionData:
-                    noExpressionData[ rna.transcriptBiotype] = 0
-                noExpressionData[ rna.transcriptBiotype]+= 1
+                # If is possible to have transcripts (from RNA table) that are not present in the "RNATissueExpression" table,
+                # since we and GTEx are using different Ensembl/GENCODE releases and some transcripts were deprecated or are new.
+                expressionDataCounts[ rna.transcriptBiotype]["without"]+= 1
 
         outHandler.close()
 
-        for subtype in noExpressionData:
-            print ( subtype, noExpressionData[subtype])
-        
-        ### continue here!
-        
+        #
+        # File with percentage of transcript with expression data, discrimination of RNA types and lncRNA subtypes
+        #
 
-#         interactions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-#  
-#         setRNAs = {inter.transcriptID for inter in interactions}
-#         setProteins = {inter.proteinID for inter in interactions}
-#         setPeptides = {inter.peptideID for inter in interactions}
-#         setGenes = set()
-#         for rna in setRNAs:
-#             gene = self.sql_session.query( RNA.geneID ).filter( RNA.transcriptID == rna ).all()
-#             if len(gene) == 1:
-#                 setGenes.add(str(gene[0]) )
-#             else:
-#                 print ("PROBLEM, more than 1 gene per RNA")
-#                  
-#         print ("RNAs:", len(setRNAs))
-#         print ("Genes:", len(setGenes))
-#         print ("Peptides:", len(setPeptides))
-#         print ("Proteins:", len(setProteins))
-#  
-#         # Percentage of interacting LncRNAs
-#         totalRNAs = len(DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW))
-#         print ("%% interacting LncRNAs: %.2f" % (len(setRNAs)*100.0/totalRNAs) )
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE )
+
+        # Write header
+        outHandler.write("subtype\ttx_with_expression_data\ttx_without_expression_data\tperc_tx_with_expression_data\n") 
+
+        for subtype in expressionDataCounts:
+            withExpression = expressionDataCounts[subtype]["with"]
+            withoutExpression = expressionDataCounts[subtype]["without"]
+            if withExpression > 0:
+                perc = "%.2f%%" % (withExpression*100.0 / (withoutExpression+withExpression) )
+            else:
+                perc = "NA"
+            outHandler.write("%s\t%i\t%i\t%s\n" % ( subtype, withExpression, withoutExpression, perc) )
+        
+        outHandler.close()
+
+
+        #===================================================================    
+        # Interactions report
+        #
+        # Note1: interactions filtering is applied after RNA and protein filterings
+        #        'Before filtering' = before interactions filtering, but after RNA and protein filters
+        #        'After filtering' = after interactions filtering AND after RNA and protein filters
+        #        Therefore, 'filtering'-named objects refer to the interaction filter
+        #
+        # Note2: the protein-RNA interactions are a natural filter, even with default parameters,
+        #        not all RNA's / proteins will be interacting (e.g. they lack interaction data)
+        #=================================================================== 
+
+        #
+        # File with number of interactions and numbers of proteins and RNAs involved, before and after filter
+        #
+
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_NUMBERS )
+
+        # Write header
+        outHandler.write( "Data\t" +
+                          "Total_interactions\t" +
+                          "Interacting_Proteins\t" +
+                          "Interacting_RNAs\t" +
+                          "Interacting_LncRNAs\t" +                          
+                           "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
+
+        # Get filtered interactions
+        filteredInteractions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+
+        # Get count of filtered and unfiltered interactions
+        # Note: opposed to filtered interactions, it may not be possible to retrieve all interaction objects due to computational constraints
+        filteredInteractionsCount = len(filteredInteractions)
+        allInteractionsCount = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
+        
+        # Lists of IDs for the filtered interactions
+        setRNAs = {inter.transcriptID for inter in filteredInteractions}
+        setProteins = {inter.proteinID for inter in filteredInteractions}
+        
+        # Counts for proteins and RNAs with interactions, before and after filtering
+        allDistinctTxCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).distinct().count()
+        allDistinctProtCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.proteinID ).distinct().count()
+        filteredDistinctTxCount = len(setRNAs)
+        filteredDistinctProtCount = len(setProteins)
+
+        # # Report numbers before and after filtering        
+        beforeFilterText = "Before_interactions_filter"
+        afterFilterText = "After_interactions_filter"
+
+        # Total number of interactions
+        beforeFilterText+= "\t%i" % allInteractionsCount
+        afterFilterText+= "\t%i" % filteredInteractionsCount   
+
+        # numbers of proteins in interactions
+        beforeFilterText+= "\t%i" % allDistinctProtCount
+        afterFilterText+= "\t%i" % filteredDistinctProtCount
+        
+        # numbers of RNAs in interactions
+        beforeFilterText+= "\t%i" % allDistinctTxCount
+        afterFilterText+= "\t%i" % filteredDistinctTxCount
+
+        # numbers of lncRNAs in interactions, and their subtypes
+        filteredRNATypesCounts = {} # key -> transcriptBiotype, value -> number of interacting RNAs with that transcriptBiotype
+        filteredInteractingLncRNAs = {} # key -> transcriptID of interacting lncRNA, value -> RNA object
+
+        # Get values for filtered interactions
+        for rna in filteredRNAs: # filtered RNAs is list of RNAs after RNA filter (not related to interactions filter)
+            # if the RNA is in the set of interacting RNAs
+            if rna.transcriptID in setRNAs:
+                if rna.transcriptBiotype not in filteredRNATypesCounts:
+                    filteredRNATypesCounts[ rna.transcriptBiotype] = 0
+                filteredRNATypesCounts[ rna.transcriptBiotype]+= 1
+
+                # if interacting RNA is a lncRNA
+                if rna.transcriptBiotype in OptionConstants.LNCRNA_BIOTYPES: 
+                    if rna.transcriptID not in filteredInteractingLncRNAs:
+                        filteredInteractingLncRNAs[rna.transcriptID] = rna
+                    else:
+                        RainetException( "AnalysisStrategy.after_filter_report : abnormal duplicate transcript ID: " +  rna.transcriptID)
+
+        # numbers of lncRNAs           
+        # query number of lncRNAs that are interacting             
+        allInteractingLncRNACount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).filter( \
+                                                            and_(ProteinRNAInteractionCatRAPID.transcriptID == RNA.transcriptID,
+                                                            RNA.type == OptionConstants.BIOTYPE_LNCRNA ) ).distinct().count()
+
+        assert( allInteractingLncRNACount <= len(allRNAs),
+                 "Number of all lncRNAs must be less or equal to total number of all RNAs.")
+
+        assert( len(filteredInteractingLncRNAs) <= len(filteredRNAs),
+                 "Number of filtered lncRNAs must be less or equal to total number of filtered RNAs.")
+
+        beforeFilterText+= "\t%i" % allInteractingLncRNACount
+        afterFilterText+= "\t%i" % len( filteredInteractingLncRNAs)
+
+        # numbers for each subtype of lncRNAs
+        for lncBiotype in OptionConstants.LNCRNA_BIOTYPES:
+            # before filter
+            # query for all interactions in PRI table for numbers of RNAs with specific biotype
+            allRNACount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).filter( \
+                                                  and_(ProteinRNAInteractionCatRAPID.transcriptID == RNA.transcriptID, 
+                                                  RNA.transcriptBiotype == lncBiotype ) ).distinct().count()
+
+            # Note: a "count" query will give 0 and not None if nothing found            
+                 
+            # after filter
+            if lncBiotype in filteredRNATypesCounts:
+                filteredRNACount = filteredRNATypesCounts[ lncBiotype]
+            else:
+                filteredRNACount = 0
+
+            assert( allRNACount <= allInteractingLncRNACount,
+                    "Number of interacting lncRNAs of a subtype must be less or equal to number of interacting lncRNAs.")
+            assert( filteredRNACount <= filteredInteractingLncRNAs,
+                    "Number of filtered interacting lncRNAs of a subtype must be less or equal to number of filtered interacting lncRNAs.")
+
+
+            beforeFilterText+= "\t%i" % allRNACount
+            afterFilterText+= "\t%i" % filteredRNACount
+
+
+        outHandler.write( beforeFilterText + "\n" + afterFilterText + "\n")
+        outHandler.close()
+           
+#         # Percentage of interacting RNAs
+#         filteredRNAs = len(DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW))
+#         print ("%% interacting LncRNAs: %.2f" % (len(setRNAs)*100.0/filteredRNAs) )
 #         # Percentage of interacting Proteins
-#         totalProteins = len(DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW))
-#         print ("%% interacting Proteins: %.2f" % (len(setProteins)*100.0/totalProteins) )
+#         filteredProteins = len(DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW))
+#         print ("%% interacting Proteins: %.2f" % (len(setProteins)*100.0/filteredProteins) )
+
 
         
     def enrichement_analysis(self):
@@ -437,8 +585,30 @@ class AnalysisStrategy(ExecutionStrategy):
     def hypergeometric_test(self):
         pass
 
-    
-    
-    
         #scipy.stats.hypergeom.cdf(x, M, n, N, loc=0)
 
+
+    # #
+    # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
+    def run_statistics(self):
+        pass
+
+#         # confirm that required input files are present
+#         for filePath in ProcessGTExData.R_REQUIRED_FILES:
+#             if not os.path.exists(filePath):
+#                 raise RainetException( "run_statistics : Input file is not present: " + filePath )
+#                 
+#         # launch the analysis
+#         command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s %s %s %s" % ( 
+#                                                                                                              ProcessGTExData.SWEAVE_R_SCRIPT, 
+#                                                                                                              ProcessGTExData.WORKING_DIR, 
+#                                                                                                              ProcessGTExData.ANNOTATION_OUTPUT_FILE, 
+#                                                                                                              ProcessGTExData.EXPRESSION_OUTPUT_FILE,
+#                                                                                                              ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE,
+#                                                                                                              ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER,
+#                                                                                                              ProcessGTExData.TX_EXPRESSION_AVG_OUTPUT_FILE
+#                                                                                                              )
+# 
+#         Logger.get_instance().info( "run_statistics : Running command : "+command)
+# 
+#         self.run_command(command)
