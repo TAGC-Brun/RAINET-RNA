@@ -1,5 +1,6 @@
 
 import unittest
+import os
 
 from fr.tagc.rainet.core.Rainet import Rainet
 from fr.tagc.rainet.core.util.log.Logger import Logger
@@ -48,12 +49,13 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 # Rainet.py Insertion -s human -d /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet_testing_DB.sqlite -i /home/diogo/workspace/tagc-rainet-RNA/resources/insertion_human_rna_test.ini -f
 #
 class AnalysisStrategyUnittest(unittest.TestCase):
-    
+        
     # #
     # Runs before each test
     # name of this function needs forcely to be 'setUp'
     def setUp(self):
-                
+
+        
         # Set the options
         # Note: if running from command line / main script, the optionManager gets the default values, 
         # but in unittest we must set up all arguments, whether optional or not.
@@ -62,6 +64,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_VERBOSITY, "debug")
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, DB_PATH)
         optionManager.set_option(OptionConstants.OPTION_SPECIES, "human")
+        optionManager.set_option(OptionConstants.OPTION_OUTPUT_FOLDER, "test_results/" )
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, OptionConstants.DEFAULT_BIOTYPE)
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstants.DEFAULT_INTERACTION_SCORE)
         optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, OptionConstants.DEFAULT_LNCRNA_BIOTYPES)
@@ -77,11 +80,13 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         # create instance of strategy    
         self.strategy = AnalysisStrategy()
                 
-        
+
     # #
     # Test running AnalysisStrategy with default parameters
     def test_default_params(self):
 
+        print "| test_default_params | "
+        
         #Note: if wanting to catch the exception (and its message) use the following (because unittest bypasses Rainet.py)
 #         try:
 #             self.strategy.execute()
@@ -89,7 +94,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 #         except RainetException as re:
 #             Logger.get_instance().error(re.to_string())
 #             self.assertTrue(False,"asserting if exception occurred during execution.")
-
+      
         self.strategy.execute()
 
         RNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
@@ -105,6 +110,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Test filtering for mRNAs
     def test_RNA_filter_one(self):
   
+        print "| test_RNA_filter_one | "
+        
         optionManager = OptionManager.get_instance()
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "MRNA")
           
@@ -121,6 +128,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Test filtering for specific subtypes of lncRNAs
     def test_RNA_filter_two(self):
   
+        print "| test_RNA_filter_two | "
+        
         optionManager = OptionManager.get_instance()
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
         optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "antisense,lincRNA")
@@ -137,6 +146,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Test default lncRNA subtype option
     def test_RNA_filter_three(self):
   
+        print "| test_RNA_filter_three | "
+  
         optionManager = OptionManager.get_instance()
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
         self.strategy.execute()
@@ -150,6 +161,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # #
     # Test gencode filtering
     def test_RNA_filter_four(self):
+        
+        print "| test_RNA_filter_four | "
    
         optionManager = OptionManager.get_instance()
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
@@ -165,6 +178,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Test simple PRI filter
     def test_PRI_filter_one(self):
    
+        print "| test_PRI_filter_one | "
+
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "10.0")
         self.strategy.execute()
@@ -178,6 +193,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Test PRI and RNA filter together
     def test_PRI_filter_two(self):
    
+        print "| test_PRI_filter_two | "
+   
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
@@ -190,11 +207,15 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue(len(PRIs) == 2, "asserting if PRIs are affected by RNA-level filters") 
 
 
-#     def test_extra(self):
-#         
-#         self.strategy.execute()
-#         
-#         self.strategy.check_isoforms()
+    def test_extra(self):
+
+        print "| text_extra | "
+         
+        self.strategy.execute()
+         
+        self.strategy.after_filter_report()
+
+        ## check one/two report files at a time, e.g. using just RNA filtering, other using just PPI filtering
 
 
     # #
