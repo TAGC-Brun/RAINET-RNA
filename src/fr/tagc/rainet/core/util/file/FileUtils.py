@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.exception.FileFormatException import FileFormatException
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -10,6 +12,26 @@ from string import rfind
 # and close, but some others like find extension.
 # 
 class FileUtils(object):
+
+
+    ## initialise_output_folder
+    #  --------------
+    #
+    # Initialise all Analysis output folders
+    #
+    # Return nothing
+    @staticmethod
+    def initialise_output_folders( base_folder):
+
+        # If base folder does not exist
+        if not os.path.exists( base_folder):
+            os.mkdir( base_folder)
+
+        # Try to create report folder
+        if not os.path.exists( base_folder+"/"+Constants.REPORT_FOLDER):
+            os.mkdir( base_folder+"/"+Constants.REPORT_FOLDER)
+
+        return
 
 
     #  open_text_r
