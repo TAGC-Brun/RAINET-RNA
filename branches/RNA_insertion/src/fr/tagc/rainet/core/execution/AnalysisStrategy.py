@@ -11,6 +11,7 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.util.data.DataManager import DataManager
+from fr.tagc.rainet.core.util.time.Timer import Timer
 
 from fr.tagc.rainet.core.data.DBParameter import DBParameter
 from fr.tagc.rainet.core.data.GeneOntology import GeneOntology
@@ -40,11 +41,11 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
+from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
 
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
 from fr.tagc.rainet.core.data import DataConstants
 from fr.tagc.rainet.core.util import Constants
-from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
 
 
 # #
@@ -153,25 +154,38 @@ class AnalysisStrategy(ExecutionStrategy):
     def analysis(self):
 
         Logger.get_instance().info( "AnalysisStrategy.analysis: Starting..." )
+
+        Timer.get_instance().start_chrono()
         
         #===================================================================
         # Filter datasets
         #===================================================================
 
         self.filter_RNA()
+
+        Timer.get_instance().step( "Filtered RNAs.." )        
         
         self.filter_protein()
+
+        Timer.get_instance().step( "Filtered Protein.." )        
         
         self.filter_PRI()
+
+        Timer.get_instance().step( "Filtered Interactions.." )        
 
         #===================================================================
         # Perform analysis
         #===================================================================
 
         self.after_filter_report()
-# 
-#         self.enrichement_analysis()
 
+        Timer.get_instance().step( "Produced after filter report.." )        
+
+        # self.expression_report()
+        
+        # self.enrichement_analysis()
+
+        Timer.get_instance().stop_chrono( "Analysis Finished!")
 
     # #
     # Filter RNA models
@@ -179,7 +193,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # Stores final list of RNAs on DataManager 
     def filter_RNA(self):
 
-        Logger.get_instance().info("AnalysisStrategy.filter_RNA..")
+        #Logger.get_instance().info("AnalysisStrategy.filter_RNA..")
 
         #===================================================================
         # Get all RNA objects
@@ -220,8 +234,13 @@ class AnalysisStrategy(ExecutionStrategy):
 
         DataManager.get_instance().store_data(AnalysisStrategy.RNA_FILTER_KW, selectedRNAs)
 
-
-        # TODO: Select one transcript isoform per gene
+        #===================================================================
+        # Filter transcripts belonging to same gene
+        #===================================================================
+        # TODO: decide on a set of rules for this excluding transcript redudancy.
+        # - based on interactions
+        # - based on length
+        # - based on expression
 
 
     # #
@@ -230,7 +249,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # Stores final list of proteins on DataManager 
     def filter_protein(self):
 
-        Logger.get_instance().info("AnalysisStrategy.filter_protein..")
+        #Logger.get_instance().info("AnalysisStrategy.filter_protein..")
         
         #===================================================================
         # Get all Protein objects
@@ -250,7 +269,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # Filter protein-RNA interactions
     def filter_PRI(self):
 
-        Logger.get_instance().info("AnalysisStrategy.filter_PRI..")
+        #Logger.get_instance().info("AnalysisStrategy.filter_PRI..")
 
         #===================================================================
         # Retrieve selected RNAs and proteins
@@ -282,6 +301,13 @@ class AnalysisStrategy(ExecutionStrategy):
                 selectedInteractions.append(inter)
  
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+
+
+        #===================================================================    
+        # Filter interactions based on peptide IDs corresponding to same protein
+        #=================================================================== 
+        # TODO: first we need to decide on a rule for this filtering. Pick highest interaction score? Based on expression values?
+
 
         #===================================================================    
         # Filter interactions based on RNA and Protein (mRNA) expression
@@ -345,8 +371,8 @@ class AnalysisStrategy(ExecutionStrategy):
         afterFilterText = "After_RNA_filter"
 
         # Number of unique gene IDs
-        beforeFilterText+= "\t%i" % len(allGenes)
-        afterFilterText+= "\t%i" % len(filteredGenes)      
+        beforeFilterText+= "\t%i" % len( allGenes)
+        afterFilterText+= "\t%i" % len( filteredGenes)      
         
         # RNA biotypes
         for biotype in OptionConstants.TRANSCRIPT_BIOTYPES:
@@ -365,68 +391,11 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandler.write( beforeFilterText+"\n"+afterFilterText+"\n")
         outHandler.close()
 
-        #===================================================================    
-        # RNA expression report
-        #=================================================================== 
 
-        #
-        # File with average expression (among tissues) for each transcript, discrimination of RNA types and lncRNA subtypes
-        #
-
-        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION )
-        
-        # Write header
-        outHandler.write("transcriptID\ttype\ttranscriptBiotype\tmeanExpression\n") 
-
-        expressionDataCounts = {} # stores counts of RNAs with or without expression data per RNA subtype
-        for rna in filteredRNAs:
-            # Get expression values on the several tissues for filtered transcript
-            queryResult = self.sql_session.query( RNATissueExpression.expressionValue).filter( RNATissueExpression.transcriptID == rna.transcriptID).all()
-
-            # Initialise dict to store existence/absence of data
-            if rna.transcriptBiotype not in expressionDataCounts:
-                expressionDataCounts[ rna.transcriptBiotype] = {}
-                expressionDataCounts[ rna.transcriptBiotype]["with"] = 0
-                expressionDataCounts[ rna.transcriptBiotype]["without"] = 0
-
-            # if there is expression data for this transcript
-            if queryResult != None and len(queryResult) > 0:
-                expressionDataCounts[ rna.transcriptBiotype]["with"]+= 1
-
-                # Array with the actual expression values
-                expressionValues = [ result[0] for result in queryResult]        
-                # Write into file the average expression value between tissues
-                outHandler.write( "%s\t%s\t%s\t%.2f\n" % (rna.transcriptID, rna.type, rna.transcriptBiotype, sum(expressionValues)/len(expressionValues)) )
-            else:
-                # If is possible to have transcripts (from RNA table) that are not present in the "RNATissueExpression" table,
-                # since we and GTEx are using different Ensembl/GENCODE releases and some transcripts were deprecated or are new.
-                expressionDataCounts[ rna.transcriptBiotype]["without"]+= 1
-
-        outHandler.close()
-
-        #
-        # File with percentage of transcript with expression data, discrimination of RNA types and lncRNA subtypes
-        #
-
-        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE )
-
-        # Write header
-        outHandler.write("subtype\ttx_with_expression_data\ttx_without_expression_data\tperc_tx_with_expression_data\n") 
-
-        for subtype in expressionDataCounts:
-            withExpression = expressionDataCounts[subtype]["with"]
-            withoutExpression = expressionDataCounts[subtype]["without"]
-            if withExpression > 0:
-                perc = "%.2f%%" % (withExpression*100.0 / (withoutExpression+withExpression) )
-            else:
-                perc = "NA"
-            outHandler.write("%s\t%i\t%i\t%s\n" % ( subtype, withExpression, withoutExpression, perc) )
-        
-        outHandler.close()
-
+        Timer.get_instance().step( "after_filter_report : producing RNA numbers files" )   
 
         #===================================================================    
-        # Interactions report
+        # Interactions numbers report
         #
         # Note1: interactions filtering is applied after RNA and protein filterings
         #        'Before filtering' = before interactions filtering, but after RNA and protein filters
@@ -452,11 +421,11 @@ class AnalysisStrategy(ExecutionStrategy):
                            "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
 
         # Get filtered interactions
-        filteredInteractions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
 
         # Get count of filtered and unfiltered interactions
         # Note: opposed to filtered interactions, it may not be possible to retrieve all interaction objects due to computational constraints
-        filteredInteractionsCount = len(filteredInteractions)
+        filteredInteractionsCount = len( filteredInteractions)
         allInteractionsCount = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
         
         # Lists of IDs for the filtered interactions
@@ -466,8 +435,8 @@ class AnalysisStrategy(ExecutionStrategy):
         # Counts for proteins and RNAs with interactions, before and after filtering
         allDistinctTxCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).distinct().count()
         allDistinctProtCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.proteinID ).distinct().count()
-        filteredDistinctTxCount = len(setRNAs)
-        filteredDistinctProtCount = len(setProteins)
+        filteredDistinctTxCount = len( setRNAs)
+        filteredDistinctProtCount = len( setProteins)
 
         # # Report numbers before and after filtering        
         beforeFilterText = "Before_interactions_filter"
@@ -500,7 +469,7 @@ class AnalysisStrategy(ExecutionStrategy):
                 # if interacting RNA is a lncRNA
                 if rna.transcriptBiotype in OptionConstants.LNCRNA_BIOTYPES: 
                     if rna.transcriptID not in filteredInteractingLncRNAs:
-                        filteredInteractingLncRNAs[rna.transcriptID] = rna
+                        filteredInteractingLncRNAs[ rna.transcriptID] = rna
                     else:
                         RainetException( "AnalysisStrategy.after_filter_report : abnormal duplicate transcript ID: " +  rna.transcriptID)
 
@@ -510,11 +479,11 @@ class AnalysisStrategy(ExecutionStrategy):
                                                             and_(ProteinRNAInteractionCatRAPID.transcriptID == RNA.transcriptID,
                                                             RNA.type == OptionConstants.BIOTYPE_LNCRNA ) ).distinct().count()
 
-        assert( allInteractingLncRNACount <= len(allRNAs),
-                 "Number of all lncRNAs must be less or equal to total number of all RNAs.")
-
-        assert( len(filteredInteractingLncRNAs) <= len(filteredRNAs),
-                 "Number of filtered lncRNAs must be less or equal to total number of filtered RNAs.")
+        #  "Number of all lncRNAs must be less or equal to total number of all RNAs."
+        assert allInteractingLncRNACount <= len(allRNAs)
+                
+        # "Number of filtered lncRNAs must be less or equal to total number of filtered RNAs."
+        assert len(filteredInteractingLncRNAs) <= len(filteredRNAs)
 
         beforeFilterText+= "\t%i" % allInteractingLncRNACount
         afterFilterText+= "\t%i" % len( filteredInteractingLncRNAs)
@@ -535,32 +504,92 @@ class AnalysisStrategy(ExecutionStrategy):
             else:
                 filteredRNACount = 0
 
-            assert( allRNACount <= allInteractingLncRNACount,
-                    "Number of interacting lncRNAs of a subtype must be less or equal to number of interacting lncRNAs.")
-            assert( filteredRNACount <= filteredInteractingLncRNAs,
-                    "Number of filtered interacting lncRNAs of a subtype must be less or equal to number of filtered interacting lncRNAs.")
+            # "Number of interacting lncRNAs of a subtype must be less or equal to number of interacting lncRNAs."            
+            assert allRNACount <= allInteractingLncRNACount
 
+            # "Number of filtered interacting lncRNAs of a subtype must be less or equal to number of filtered interacting lncRNAs."
+            assert filteredRNACount <= filteredInteractingLncRNAs
 
             beforeFilterText+= "\t%i" % allRNACount
             afterFilterText+= "\t%i" % filteredRNACount
 
-
         outHandler.write( beforeFilterText + "\n" + afterFilterText + "\n")
         outHandler.close()
-           
-#         # Percentage of interacting RNAs
-#         filteredRNAs = len(DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW))
-#         print ("%% interacting LncRNAs: %.2f" % (len(setRNAs)*100.0/filteredRNAs) )
-#         # Percentage of interacting Proteins
-#         filteredProteins = len(DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW))
-#         print ("%% interacting Proteins: %.2f" % (len(setProteins)*100.0/filteredProteins) )
+
+        Timer.get_instance().step( "after_filter_report : producing interaction numbers files" )   
+
+
+    # #
+    # Retrieve statistics for the expression data used.
+    # Produce output files that will be used for a pdf report
+    def expression_report(self):
+        
+        #===================================================================    
+        # RNA expression report
+        #=================================================================== 
+ 
+        #
+        # File with average expression (among tissues) for each transcript, discrimination of RNA types and lncRNA subtypes
+        #
+
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+ 
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION )
+         
+        # Write header
+        outHandler.write("transcriptID\ttype\ttranscriptBiotype\tmeanExpression\n") 
+ 
+        expressionDataCounts = {} # stores counts of RNAs with or without expression data per RNA subtype
+        for rna in filteredRNAs:
+            # Get expression values on the several tissues for filtered transcript
+            queryResult = self.sql_session.query( RNATissueExpression.expressionValue).filter( RNATissueExpression.transcriptID == rna.transcriptID).all()
+ 
+            # Initialise dict to store existence/absence of data
+            if rna.transcriptBiotype not in expressionDataCounts:
+                expressionDataCounts[ rna.transcriptBiotype] = {}
+                expressionDataCounts[ rna.transcriptBiotype]["with"] = 0
+                expressionDataCounts[ rna.transcriptBiotype]["without"] = 0
+ 
+            # if there is expression data for this transcript
+            if queryResult != None and len(queryResult) > 0:
+                expressionDataCounts[ rna.transcriptBiotype]["with"]+= 1
+ 
+                # Array with the actual expression values
+                expressionValues = [ result[0] for result in queryResult]        
+                # Write into file the average expression value between tissues
+                outHandler.write( "%s\t%s\t%s\t%.2f\n" % (rna.transcriptID, rna.type, rna.transcriptBiotype, sum(expressionValues)/len(expressionValues)) )
+            else:
+                # If is possible to have transcripts (from RNA table) that are not present in the "RNATissueExpression" table,
+                # since we and GTEx are using different Ensembl/GENCODE releases and some transcripts were deprecated or are new.
+                expressionDataCounts[ rna.transcriptBiotype]["without"]+= 1
+ 
+        outHandler.close()
+ 
+        #
+        # File with percentage of transcript with expression data, discrimination of RNA types and lncRNA subtypes
+        #
+ 
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE )
+ 
+        # Write header
+        outHandler.write("subtype\ttx_with_expression_data\ttx_without_expression_data\tperc_tx_with_expression_data\n") 
+ 
+        for subtype in expressionDataCounts:
+            withExpression = expressionDataCounts[subtype]["with"]
+            withoutExpression = expressionDataCounts[subtype]["without"]
+            if withExpression > 0:
+                perc = "%.2f%%" % (withExpression*100.0 / (withoutExpression+withExpression) )
+            else:
+                perc = "NA"
+            outHandler.write("%s\t%i\t%i\t%s\n" % ( subtype, withExpression, withoutExpression, perc) )
+         
+        outHandler.close()
 
 
         
     def enrichement_analysis(self):
-
         pass
-
+        # TODO: see below
 #  
 #         # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
 #          
@@ -582,9 +611,10 @@ class AnalysisStrategy(ExecutionStrategy):
 #  
 #             rna = self.sql_session.query( RNA ).filter( RNA.transcriptID == inter.transcriptID ).all()
 
+
     def hypergeometric_test(self):
         pass
-
+        # TODO: see below
         #scipy.stats.hypergeom.cdf(x, M, n, N, loc=0)
 
 
@@ -593,6 +623,7 @@ class AnalysisStrategy(ExecutionStrategy):
     def run_statistics(self):
         pass
 
+        # TODO: see below
 #         # confirm that required input files are present
 #         for filePath in ProcessGTExData.R_REQUIRED_FILES:
 #             if not os.path.exists(filePath):
