@@ -1,6 +1,8 @@
 
 import unittest
 import os
+import pandas as pd
+import glob
 
 from fr.tagc.rainet.core.Rainet import Rainet
 from fr.tagc.rainet.core.util.log.Logger import Logger
@@ -49,6 +51,12 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 # Rainet.py Insertion -s human -d /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet_testing_DB.sqlite -i /home/diogo/workspace/tagc-rainet-RNA/resources/insertion_human_rna_test.ini -f
 #
 class AnalysisStrategyUnittest(unittest.TestCase):
+
+    # Constants with default paramters        
+    TOTAL_RNAS = 200
+    TOTAL_PROTS = 200
+    TOTAL_PRIS = 54
+    TOTAL_PRIS_LINC_FILT = 2
         
     # #
     # Runs before each test
@@ -104,11 +112,11 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         Prots = DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW)
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
 
-        self.assertTrue(len(RNAs) == 200, "asserting if number of objects retrieved is correct") 
-        self.assertTrue(len(Prots) == 200, "asserting if number of objects retrieved is correct") 
-        self.assertTrue(len(PRIs) == 54, "asserting if number of objects retrieved is correct") 
+        self.assertTrue(len(RNAs) == AnalysisStrategyUnittest.TOTAL_RNAS, "asserting if number of objects retrieved is correct") 
+        self.assertTrue(len(Prots) == AnalysisStrategyUnittest.TOTAL_PROTS, "asserting if number of objects retrieved is correct") 
+        self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS, "asserting if number of objects retrieved is correct") 
   
-  
+    
     # #
     # Test filtering for mRNAs
     def test_RNA_filter_one(self):
@@ -207,42 +215,89 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
    
-        self.assertTrue(len(PRIs) == 2, "asserting if PRIs are affected by RNA-level filters") 
+        self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
 
     # #
-    # Test function to create report files
+    # Test function to create report files with default parameters
+    # @unittest.skip("skipping")
     def test_after_filter_report_one(self):
 
         print "| test_after_filter_report_one | "
 
         self.strategy.execute()
-         
-        self.strategy.after_filter_report()
 
-        # list of report files created in AnalysisStrategy
-        reportConstants = [AnalysisStrategy.REPORT_RNA_NUMBERS,
-                           AnalysisStrategy.REPORT_RNA_EXPRESSION,
-                           AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE,
-                           AnalysisStrategy.REPORT_INTERACTION_NUMBERS
-                           ]
+        # assert report files on filtering steps, if before and after filter have the same values
+        for report in [ AnalysisStrategy.REPORT_RNA_NUMBERS, AnalysisStrategy.REPORT_INTERACTION_NUMBERS]:
+            with open( self.outputFolder + report, "r") as out:
+                header = out.readline()
+                lineOne = out.readline().strip().split("\t")
+                lineTwo = out.readline().strip().split("\t")
+                self.assertTrue(lineOne[1:] == lineTwo[1:], "assert that values before and after filter are the same with default parameters")
 
-        # assert each report file
+        # TODO: test for expression data
+
+
+    # #
+    # Test function to create report files with filters
+    def test_after_filter_report_two(self):
+
+        print "| test_after_filter_report_two | "
+
+        optionManager = OptionManager.get_instance()        
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
+        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
+        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "lincRNA")
+        optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
+
+        self.strategy.execute()
+        
+        # RNA numbers report
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS)
+                
+        self.assertTrue( table["Gene"][0] == 198, "assert if number of Genes before filter is correct")
+        self.assertTrue( table["Gene"][1] == 8, "assert if number of Genes after filter is correct")        
+        self.assertTrue( table["RNA"][0] == AnalysisStrategyUnittest.TOTAL_RNAS,
+                          "assert if number of total RNAs before filter matches same value as other test")
+
+        # Interaction numbers report
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_NUMBERS)
+        
+        self.assertTrue( table["Total_interactions"][0] == AnalysisStrategyUnittest.TOTAL_PRIS,
+                          "assert if number of total PRI before filter matches same value as other test")
+        
+        self.assertTrue( table["Total_interactions"][1] == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT,
+                          "assert if number of total PRI after filter matches same value as other test")
+
+
+        # TODO: test for expression data
+
+
+    # #
+    # Test if report files are correctly formatted with manual inspection
+    # Also added this so that I'm sure to remember to produce test for every report file I create
+    def test_report_files(self):
+        
+        print "| test_report_files | "
+        
+        self.strategy.execute()
+
+        # list of report files created with AnalysisStrategy       
+        reportConstants = glob.glob( self.outputFolder + "/*")
+        
+        # assert if all files are as they should by manual inspection
         for report in reportConstants:
-            with open(self.outputFolder + report, "r") as out:
-                with open(self.expectedFolder + "_test_after_filter_report_one/" + report, "r") as exp:
+            with open(report, "r") as out:                
+                with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
-
-        # I should do test in the values, but after I have defined fields / stable files
-#         # assert each report file
-#         with open(self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS, "r") as out:
-#             for line in out:
-#                 print (line)
 
 
     # #
     # Runs after each test
     def tearDown(self):
-        pass
+
+        # Wipe output folder
+        cmd = "rm %s/*" % self.outputFolder
+        os.system(cmd)
     
     
     
