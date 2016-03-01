@@ -7,7 +7,11 @@ require(gridExtra)
 
 #inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/interaction_numbers.tsv"
 #inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report/interaction_numbers.tsv"
-inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report_w_filter/interaction_numbers.tsv"
+#inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report_w_filter/interaction_numbers.tsv"
+
+inputFile = paste( output_folder, report_interaction_numbers, sep = "/")
+
+print (paste("INPUT FILE:",inputFile) )
 
 inputData <- read.table(inputFile, header = TRUE, sep = "\t")
 
@@ -43,7 +47,7 @@ plt2 <- ggplot( rnaNumbers, aes(x = variable, y = value, fill = Data)) +
   theme_minimal() +
   geom_text(aes(label = value), hjust = 0.5, size = 4, position = position_dodge( width=1)) +
   scale_fill_discrete( breaks = factor(rnaNumbers$Data, levels = rev(levels(rnaNumbers$Data)))) +
-  xlab( "Class of RNA") +
+  xlab( "Biotype") +
   ylab( "Frequency")
 
 
@@ -61,7 +65,7 @@ plt3 <- ggplot( proportion, aes(x = variable, y = value)) +
   geom_text( aes( label = round(value,2) ) ) + #, hjust = -0.5, size = 4, position = position_dodge( width=1), color = "white") +
   theme_minimal() +
   ylim(c(0.0,100.0)) + 
-  xlab( "Class of RNA") +
-  ylab( "Percentage RNAs with interactions")
+  xlab( "Biotype") +
+  ylab( "Percentage after interaction filter")
 
 grid.arrange( plt1, plt2, plt3)
