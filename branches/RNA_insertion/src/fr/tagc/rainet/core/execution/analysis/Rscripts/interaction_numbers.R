@@ -2,10 +2,12 @@
 library(ggplot2)
 library(reshape)
 library(RColorBrewer)
-library(gridExtra)
+require(grid)
+require(gridExtra)
 
-inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/interaction_numbers.tsv"
-inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/interaction_numbers.tsv"
+#inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/interaction_numbers.tsv"
+#inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report/interaction_numbers.tsv"
+inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report_w_filter/interaction_numbers.tsv"
 
 inputData <- read.table(inputFile, header = TRUE, sep = "\t")
 
@@ -25,7 +27,6 @@ plt1 <- ggplot( totalInteractions, aes(x = variable, y = value, fill = Data)) +
   scale_fill_discrete( breaks = factor(totalInteractions$Data, levels = rev(levels(totalInteractions$Data)))) +
   xlab( "Number of interactions") +
   ylab( "Frequency")
-plt1
 
 # #
 # RNA numbers
@@ -44,8 +45,23 @@ plt2 <- ggplot( rnaNumbers, aes(x = variable, y = value, fill = Data)) +
   scale_fill_discrete( breaks = factor(rnaNumbers$Data, levels = rev(levels(rnaNumbers$Data)))) +
   xlab( "Class of RNA") +
   ylab( "Frequency")
-plt2
-
-grid.arrange( plt1, plt2)
 
 
+# Percentages plot
+
+proportion <- inputData[2,2:ncol(inputData)]*100.0 / inputData[1,2:ncol(inputData)]
+proportion <- melt(proportion)
+
+proportion$variable <- factor(proportion$variable, levels = rev(levels(proportion$variable)))
+
+# Bar plot for numbers of items before and after filter
+plt3 <- ggplot( proportion, aes(x = variable, y = value)) + 
+  geom_bar( stat = "identity", position=position_dodge(), fill = "red") +
+  coord_flip() + 
+  geom_text( aes( label = round(value,2) ) ) + #, hjust = -0.5, size = 4, position = position_dodge( width=1), color = "white") +
+  theme_minimal() +
+  ylim(c(0.0,100.0)) + 
+  xlab( "Class of RNA") +
+  ylab( "Percentage RNAs with interactions")
+
+grid.arrange( plt1, plt2, plt3)

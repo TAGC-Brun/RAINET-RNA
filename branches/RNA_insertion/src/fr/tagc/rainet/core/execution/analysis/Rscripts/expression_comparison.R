@@ -2,6 +2,9 @@
 library(ggplot2)
 library(reshape)
 library(RColorBrewer)
+require(grid)
+require(gridExtra)
+
 
 inFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/rna_expression.tsv"
 
@@ -18,3 +21,5 @@ plt2 <- ggplot(dataset, aes(x = transcriptBiotype, y = meanExpression, fill = ty
   coord_flip() + 
   theme_minimal()
 plt2
+
+grid.arrange( plt1, plt2)

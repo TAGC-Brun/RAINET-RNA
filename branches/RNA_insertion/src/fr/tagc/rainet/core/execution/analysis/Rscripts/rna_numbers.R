@@ -2,7 +2,8 @@
 library(ggplot2)
 library(reshape)
 library(RColorBrewer)
-library(gridExtra)
+require(grid)
+require(gridExtra)
 
 inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/rna_numbers.tsv"
 #inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/rna_numbers.tsv"
