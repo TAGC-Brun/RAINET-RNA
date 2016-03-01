@@ -181,7 +181,7 @@ class AnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().start_chrono()
         
         #===================================================================
-        # AZpply filterings
+        # Apply filterings
         #===================================================================
 
         Timer.get_instance().step( "Filtered RNAs.." )        
@@ -444,9 +444,9 @@ class AnalysisStrategy(ExecutionStrategy):
         # Write header
         outHandler.write( "Data\t" +
                           "Total_interactions\t" +
-                          "Interacting_Proteins\t" +
-                          "Interacting_RNAs\t" +
-                          "Interacting_LncRNAs\t" +                          
+                          "Proteins\t" +
+                          "RNAs\t" +
+                          "LncRNAs\t" +                          
                            "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
 
         # Get filtered interactions
@@ -723,15 +723,22 @@ class AnalysisStrategy(ExecutionStrategy):
                  
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
-                 "; Rscript %s %s %s %s %s %s" % ( 
-                                                 AnalysisStrategy.R_MAIN_SCRIPT, 
-                                                 AnalysisStrategy.R_WORKING_DIR, 
-                                                 AnalysisStrategy.R_SWEAVE_FILE, 
-                                                 os.getcwd()+"/"+self.outputFolderReport,
-                                                 AnalysisStrategy.PARAMETERS_LOG, 
-                                                 AnalysisStrategy.REPORT_RNA_NUMBERS,
-                                                 )
+                 "; Rscript %s %s %s %s %s %s %s %s %s" % \
+                 ( 
+                     AnalysisStrategy.R_MAIN_SCRIPT, 
+                     AnalysisStrategy.R_WORKING_DIR, 
+                     AnalysisStrategy.R_SWEAVE_FILE, 
+                     os.getcwd()+"/"+self.outputFolderReport,
+                     AnalysisStrategy.PARAMETERS_LOG, 
+                     AnalysisStrategy.REPORT_RNA_NUMBERS,
+                     AnalysisStrategy.REPORT_INTERACTION_NUMBERS,                     
+                     AnalysisStrategy.REPORT_INTERACTION_SCORES,
+                     AnalysisStrategy.REPORT_INTERACTION_PARTNERS
+                     )
+
   
-        SubprocessUtil.run_command(self, command)
+        returnCode = SubprocessUtil.run_command(self, command)
+        if returnCode:
+            raise RainetException(" AnalysisStrategy.run_statistics : external command with return code:" + str( returnCode) )
 
 
