@@ -4,6 +4,7 @@ import os
 from sqlalchemy import or_,and_,distinct
 
 from fr.tagc.rainet.core.execution.ExecutionStrategy import ExecutionStrategy
+
 from fr.tagc.rainet.core.util.option.OptionManager import OptionManager
 from fr.tagc.rainet.core.util.option import OptionConstants
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
@@ -12,6 +13,7 @@ from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.util.data.DataManager import DataManager
 from fr.tagc.rainet.core.util.time.Timer import Timer
+from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 
 from fr.tagc.rainet.core.data.DBParameter import DBParameter
 from fr.tagc.rainet.core.data.GeneOntology import GeneOntology
@@ -42,8 +44,8 @@ from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
-
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
+
 from fr.tagc.rainet.core.data import DataConstants
 from fr.tagc.rainet.core.util import Constants
 
@@ -54,10 +56,14 @@ class AnalysisStrategy(ExecutionStrategy):
 
 
     #===============================================================================
+    #
     # Analysis strategy Constants
+    #
     #===============================================================================
 
+    #===================================================================
     # Data Manager Keywords
+    #===================================================================
 
     RNA_ALL_KW = "allRNAs"
     PROT_ALL_KW = "allProteins"
@@ -66,12 +72,26 @@ class AnalysisStrategy(ExecutionStrategy):
     PROT_FILTER_KW = "selectedProteins"
     PRI_FILTER_KW = "selectedInteractions"
 
-    # Report files
+    #===================================================================
+    # Report files constants       
+    #===================================================================
+
+    # R files
+    R_WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/"
+    R_MAIN_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.R"
+    R_SWEAVE_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.Rnw"
+    
+    # After filter report
     PARAMETERS_LOG = "parameters.log"
     REPORT_RNA_NUMBERS = "rna_numbers.tsv"
     REPORT_RNA_EXPRESSION = "rna_expression.tsv"
     REPORT_RNA_EXPRESSION_DATA_PRESENCE = "rna_expression_data_presence.tsv"
     REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
+
+    # Interaction report
+    REPORT_INTERACTION_SCORES = "interaction_scores.tsv"
+    REPORT_INTERACTION_PARTNERS = "interaction_partners.tsv"
+
 
     # #
     # The Strategy execution method
@@ -90,6 +110,7 @@ class AnalysisStrategy(ExecutionStrategy):
         self.gencode = OptionManager.get_instance().get_option(OptionConstants.OPTION_GENCODE)
         self.expressionValueCutoff = OptionManager.get_instance().get_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF)
 
+        # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
                           OptionConstants.OPTION_SPECIES : self.species,
                           OptionConstants.OPTION_OUTPUT_FOLDER : self.outputFolder,
@@ -100,6 +121,10 @@ class AnalysisStrategy(ExecutionStrategy):
                           OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF : self.expressionValueCutoff
                         }
 
+
+        #===================================================================
+        # Check input argument validity      
+        #===================================================================
         
         # Check if output folder path exists, create it if not
         if self.outputFolder != "" and len(self.outputFolder) > 0:
@@ -107,8 +132,7 @@ class AnalysisStrategy(ExecutionStrategy):
             self.outputFolderReport = self.outputFolder+"/"+Constants.REPORT_FOLDER
         else:
             raise RainetException( "AnalysisStrategy.execute: Provided output folder is empty.")
-            
-        
+                    
         # Check if minimumInteractionScore is float or OFF
         if self.minimumInteractionScore != OptionConstants.DEFAULT_INTERACTION_SCORE:
             try:
@@ -137,7 +161,6 @@ class AnalysisStrategy(ExecutionStrategy):
         if self.gencode != 1 and self.gencode != 0:
             raise RainetException( "AnalysisStrategy.execute: Provided GencodeBasicOnly argument must be either 0 or 1.")
 
-
         #===================================================================
         # Initialisation
         #===================================================================
@@ -150,7 +173,7 @@ class AnalysisStrategy(ExecutionStrategy):
         self.analysis()
         
     # #
-    # Run analysis-related functions in order
+    # Central function to run analysis-related functions in order
     def analysis(self):
 
         Logger.get_instance().info( "AnalysisStrategy.analysis: Starting..." )
@@ -158,28 +181,32 @@ class AnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().start_chrono()
         
         #===================================================================
-        # Filter datasets
+        # AZpply filterings
         #===================================================================
+
+        Timer.get_instance().step( "Filtered RNAs.." )        
 
         self.filter_RNA()
 
-        Timer.get_instance().step( "Filtered RNAs.." )        
+        Timer.get_instance().step( "Filtered Protein.." )        
         
         self.filter_protein()
 
-        Timer.get_instance().step( "Filtered Protein.." )        
+        Timer.get_instance().step( "Filtered Interactions.." )        
         
         self.filter_PRI()
 
-        Timer.get_instance().step( "Filtered Interactions.." )        
+        Timer.get_instance().step( "Produced after filter report.." )        
+
+        self.after_filter_report()
 
         #===================================================================
         # Perform analysis
         #===================================================================
 
-        self.after_filter_report()
+        Timer.get_instance().step( "Produced interaction report.." )        
 
-        Timer.get_instance().step( "Produced after filter report.." )        
+        self.interaction_report()
 
         # self.expression_report()
         
@@ -259,8 +286,7 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().store_data(AnalysisStrategy.PROT_ALL_KW, allProts)
 
         # TODO: potential filterings on the protein level
-        
-        selectedProts = allProts # to be changed
+        selectedProts = allProts # to be changed according to filtering
 
         DataManager.get_instance().perform_query(AnalysisStrategy.PROT_FILTER_KW, selectedProts) 
 
@@ -324,13 +350,15 @@ class AnalysisStrategy(ExecutionStrategy):
         # Write log of parameters used
         #=================================================================== 
 
-        outHandler = FileUtils.open_text_w( self.outputFolder + "/" + AnalysisStrategy.PARAMETERS_LOG )
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.PARAMETERS_LOG )
         
         Logger.get_instance().info( "\nARGUMENTS USED:" )
 
-        for argName,argValue in self.arguments.iteritems():
-            Logger.get_instance().info( "%s: %s" % ( argName, argValue) ) 
-            outHandler.write( "%s: %s\n" % ( argName, argValue) )
+        outHandler.write( "Argument\tValue\n")
+        for argName in sorted( self.arguments):
+            argValue = self.arguments[argName]
+            Logger.get_instance().info( "%s:\t%s" % ( argName, argValue) ) 
+            outHandler.write( "%s:\t%s\n" % ( argName, argValue) )
         outHandler.close()
 
         #===================================================================    
@@ -343,6 +371,8 @@ class AnalysisStrategy(ExecutionStrategy):
         #
         # File with number of RNAs types and lncRNA subtypes, before and after filter
         #
+
+        Timer.get_instance().step( "after_filter_report : producing RNA numbers files" )   
 
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_NUMBERS )
         
@@ -391,9 +421,6 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandler.write( beforeFilterText+"\n"+afterFilterText+"\n")
         outHandler.close()
 
-
-        Timer.get_instance().step( "after_filter_report : producing RNA numbers files" )   
-
         #===================================================================    
         # Interactions numbers report
         #
@@ -405,6 +432,8 @@ class AnalysisStrategy(ExecutionStrategy):
         # Note2: the protein-RNA interactions are a natural filter, even with default parameters,
         #        not all RNA's / proteins will be interacting (e.g. they lack interaction data)
         #=================================================================== 
+
+        Timer.get_instance().step( "after_filter_report : producing interaction numbers files" )   
 
         #
         # File with number of interactions and numbers of proteins and RNAs involved, before and after filter
@@ -457,7 +486,6 @@ class AnalysisStrategy(ExecutionStrategy):
         # numbers of lncRNAs in interactions, and their subtypes
         filteredRNATypesCounts = {} # key -> transcriptBiotype, value -> number of interacting RNAs with that transcriptBiotype
         filteredInteractingLncRNAs = {} # key -> transcriptID of interacting lncRNA, value -> RNA object
-
         # Get values for filtered interactions
         for rna in filteredRNAs: # filtered RNAs is list of RNAs after RNA filter (not related to interactions filter)
             # if the RNA is in the set of interacting RNAs
@@ -516,7 +544,79 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandler.write( beforeFilterText + "\n" + afterFilterText + "\n")
         outHandler.close()
 
-        Timer.get_instance().step( "after_filter_report : producing interaction numbers files" )   
+
+    # #
+    # Retrieve statistics for the interaction data after filtering.
+    # Produce output files that will be used for a pdf report
+    def interaction_report(self):
+
+
+        # Get filtered interactions
+        filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
+        
+        # Get filtered RNAs
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+        # Make dictionary of filtered RNAs for quicker access
+        filteredRNAsDict = { str( rna.transcriptID) : rna for rna in filteredRNAs }
+
+        # Store interaction and RNA information for each interaction
+        interactionsPerBiotype = {} # Key -> biotype, value -> dict: Key -> transcript ID, value -> dict: Key -> protein ID, value -> interaction score
+        for inter in filteredInteractions:
+            txID = str( inter.transcriptID)
+            protID = str( inter.proteinID)
+            interScore = float( inter.interactionScore)
+
+            if txID not in filteredRNAsDict:
+                raise RainetException( "AnalysisStrategy.interaction_report : interacting RNA not in filtered RNA list.")
+            
+            biotype = str( filteredRNAsDict[ txID].transcriptBiotype)
+            
+            if biotype not in interactionsPerBiotype:
+                interactionsPerBiotype[ biotype] = {}
+            if txID not in interactionsPerBiotype[ biotype]:
+                interactionsPerBiotype[ biotype][ txID] = {}
+            
+            interactionsPerBiotype[ biotype][ txID][ protID] = interScore       
+
+        #
+        # File with interaction scores for each subclass of lncRNAs
+        #        
+        # E.g. biotype\tlist_of_with_scores
+
+        outHandlerScore = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_SCORES )
+        outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS )
+
+        
+        # Get biotypes of lncRNAs plus mRNA
+        wantedBiotypes = DataConstants.RNA_LNCRNA_BIOTYPE[:]
+        for item in DataConstants.RNA_MRNA_BIOTYPE:
+            mRNABiotype = item
+        wantedBiotypes.append( mRNABiotype )
+
+        # Data for lncRNAs subtypes and mRNA
+        # Note: this excludes biotypes such as misc_RNA and others, therefore some interactions will be excluded in this step.
+        for biotype in sorted( wantedBiotypes):
+            
+            textScore = biotype
+            textPartners = biotype
+            
+            if biotype in interactionsPerBiotype and len( interactionsPerBiotype[ biotype]) > 0:
+                for txID in interactionsPerBiotype[ biotype]:
+                    textPartners+= "," + str( len(interactionsPerBiotype[ biotype][ txID]) )
+                    for protID in interactionsPerBiotype[ biotype][ txID]:
+                        score = interactionsPerBiotype[ biotype][ txID][ protID]
+                        textScore+= "," + str( score)
+                        # print (biotype, txID, protID, score)
+            else:
+                textScore+= ",NA"
+                textPartners+= ",NA"
+            
+            outHandlerScore.write( textScore + "\n")
+            outHandlerPartners.write( textPartners + "\n")
+
+        outHandlerScore.close()
+        outHandlerPartners.close()
+
 
 
     # #
@@ -585,7 +685,6 @@ class AnalysisStrategy(ExecutionStrategy):
          
         outHandler.close()
 
-
         
     def enrichement_analysis(self):
         pass
@@ -621,25 +720,18 @@ class AnalysisStrategy(ExecutionStrategy):
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
     def run_statistics(self):
-        pass
+                 
+        # launch the analysis
+        command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
+                 "; Rscript %s %s %s %s %s %s" % ( 
+                                                 AnalysisStrategy.R_MAIN_SCRIPT, 
+                                                 AnalysisStrategy.R_WORKING_DIR, 
+                                                 AnalysisStrategy.R_SWEAVE_FILE, 
+                                                 os.getcwd()+"/"+self.outputFolderReport,
+                                                 AnalysisStrategy.PARAMETERS_LOG, 
+                                                 AnalysisStrategy.REPORT_RNA_NUMBERS,
+                                                 )
+  
+        SubprocessUtil.run_command(self, command)
 
-        # TODO: see below
-#         # confirm that required input files are present
-#         for filePath in ProcessGTExData.R_REQUIRED_FILES:
-#             if not os.path.exists(filePath):
-#                 raise RainetException( "run_statistics : Input file is not present: " + filePath )
-#                 
-#         # launch the analysis
-#         command = "cd " + os.path.dirname(ProcessGTExData.SWEAVE_R_SCRIPT) + "; Rscript %s %s %s %s %s %s %s" % ( 
-#                                                                                                              ProcessGTExData.SWEAVE_R_SCRIPT, 
-#                                                                                                              ProcessGTExData.WORKING_DIR, 
-#                                                                                                              ProcessGTExData.ANNOTATION_OUTPUT_FILE, 
-#                                                                                                              ProcessGTExData.EXPRESSION_OUTPUT_FILE,
-#                                                                                                              ProcessGTExData.EXPRESSION_SAMPLE_OUTPUT_FILE,
-#                                                                                                              ProcessGTExData.TX_EXPRESSION_OUTPUT_FOLDER,
-#                                                                                                              ProcessGTExData.TX_EXPRESSION_AVG_OUTPUT_FILE
-#                                                                                                              )
-# 
-#         Logger.get_instance().info( "run_statistics : Running command : "+command)
-# 
-#         self.run_command(command)
+

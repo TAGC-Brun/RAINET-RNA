@@ -220,9 +220,9 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # #
     # Test function to create report files with default parameters
     # @unittest.skip("skipping")
-    def test_after_filter_report_one(self):
+    def test_report_one(self):
 
-        print "| test_after_filter_report_one | "
+        print "| test_report_one | "
 
         self.strategy.execute()
 
@@ -239,9 +239,9 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 
     # #
     # Test function to create report files with filters
-    def test_after_filter_report_two(self):
+    def test_report_two(self):
 
-        print "| test_after_filter_report_two | "
+        print "| test_report_two | "
 
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
@@ -268,6 +268,18 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue( table["Total_interactions"][1] == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT,
                           "assert if number of total PRI after filter matches same value as other test")
 
+        # Interaction scores report
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_SCORES, header = None, sep = ",", skip_blank_lines = True)
+                
+        self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
+        self.assertTrue( table[1][5] == 28.16, "assert if last value of lincRNA score is correct")
+
+        # Interaction partners report
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS, header = None, sep = ",", skip_blank_lines = True)
+
+        self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
+        self.assertTrue( table[1][5] == 1, "assert if number of protein partners is correct")
+        
 
         # TODO: test for expression data
 
@@ -291,14 +303,24 @@ class AnalysisStrategyUnittest(unittest.TestCase):
                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
 
+    def test_sweaving(self):
+
+        print "| test_sweaving | "
+                
+        self.strategy.execute()
+        
+        self.strategy.run_statistics()
+
+
+ 
     # #
     # Runs after each test
     def tearDown(self):
-
+   
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
-    
-    
+      
+     
     
     
