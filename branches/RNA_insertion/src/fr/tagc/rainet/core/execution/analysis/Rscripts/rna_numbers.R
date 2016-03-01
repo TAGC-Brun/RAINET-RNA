@@ -5,8 +5,10 @@ library(RColorBrewer)
 require(grid)
 require(gridExtra)
 
-inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/rna_numbers.tsv"
 #inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/rna_numbers.tsv"
+inputFile = paste( output_folder, report_rna_numbers, sep = "/")
+
+print (paste("INPUT FILE:",inputFile) )
 
 inputData <- read.table(inputFile, header = TRUE, sep = "\t")
 
@@ -24,6 +26,5 @@ plt1 <- ggplot( rnaNumbers, aes(x = variable, y = value, fill = Data)) +
   scale_fill_discrete( breaks = factor(rnaNumbers$Data, levels = rev(levels(rnaNumbers$Data)))) +
   xlab( "Class of RNA") +
   ylab( "Frequency")
-plt1
 
-
+print(plt1)
