@@ -93,6 +93,12 @@ class AnalysisStrategy(ExecutionStrategy):
     REPORT_INTERACTION_PARTNERS = "interaction_partners.tsv"
 
 
+    def __init__(self):  
+        
+        # Switch for write external report file      
+        self.writeReportFile = 1
+
+
     # #
     # The Strategy execution method
     def execute(self):
@@ -179,6 +185,8 @@ class AnalysisStrategy(ExecutionStrategy):
         Logger.get_instance().info( "AnalysisStrategy.analysis: Starting..." )
 
         Timer.get_instance().start_chrono()
+
+        self.write_parameter_log()
         
         #===================================================================
         # Apply filterings
@@ -211,6 +219,9 @@ class AnalysisStrategy(ExecutionStrategy):
         # self.expression_report()
         
         # self.enrichement_analysis()
+        
+        if self.writeReportFile:
+            self.write_report()
 
         Timer.get_instance().stop_chrono( "Analysis Finished!")
 
@@ -342,10 +353,9 @@ class AnalysisStrategy(ExecutionStrategy):
 
 
     # #
-    # Retrieve statistics before and after the filtering steps.
-    # Produce output files that will be used for a pdf report
-    def after_filter_report(self):
-
+    # Write output file with the parameters used
+    def write_parameter_log(self):
+                
         #===================================================================    
         # Write log of parameters used
         #=================================================================== 
@@ -360,6 +370,12 @@ class AnalysisStrategy(ExecutionStrategy):
             Logger.get_instance().info( "%s:\t%s" % ( argName, argValue) ) 
             outHandler.write( "%s:\t%s\n" % ( argName, argValue) )
         outHandler.close()
+
+
+    # #
+    # Retrieve statistics before and after the filtering steps.
+    # Produce output files that will be used for a pdf report
+    def after_filter_report(self):
 
         #===================================================================    
         # RNA numbers report
@@ -719,8 +735,8 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
-    def run_statistics(self):
-                 
+    def write_report(self):
+                
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
                  "; Rscript %s %s %s %s %s %s %s %s %s" % \
@@ -728,7 +744,7 @@ class AnalysisStrategy(ExecutionStrategy):
                      AnalysisStrategy.R_MAIN_SCRIPT, 
                      AnalysisStrategy.R_WORKING_DIR, 
                      AnalysisStrategy.R_SWEAVE_FILE, 
-                     os.getcwd()+"/"+self.outputFolderReport,
+                     self.outputFolderReport,
                      AnalysisStrategy.PARAMETERS_LOG, 
                      AnalysisStrategy.REPORT_RNA_NUMBERS,
                      AnalysisStrategy.REPORT_INTERACTION_NUMBERS,                     
@@ -739,6 +755,6 @@ class AnalysisStrategy(ExecutionStrategy):
   
         returnCode = SubprocessUtil.run_command(self, command)
         if returnCode:
-            raise RainetException(" AnalysisStrategy.run_statistics : external command with return code:" + str( returnCode) )
+            raise RainetException(" AnalysisStrategy.write_report : external command with return code:" + str( returnCode) )
 
 

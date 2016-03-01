@@ -85,12 +85,16 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         SQLManager.get_instance().set_DBpath(DB_PATH)
         self.sql_session = SQLManager.get_instance().get_session()
 
-        # create instance of strategy    
-        self.strategy = AnalysisStrategy()
-        
+        # setting up internal test folder paths
         self.expectedFolder = os.getcwd() + "/test_expected/Report"
         self.outputFolder = os.getcwd() + "/" + OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER ) + "/Report/"
 
+        # create instance of strategy    
+        self.strategy = AnalysisStrategy()
+        
+        # report only written for selected tests
+        self.strategy.writeReportFile = 0
+        
 
     # #
     # Test running AnalysisStrategy with default parameters
@@ -304,12 +308,16 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 
 
     def test_sweaving(self):
-
+ 
         print "| test_sweaving | "
-                
+
+        # overwrite switch to write report file
+        self.strategy.writeReportFile = 1
+                   
         self.strategy.execute()
         
-        self.strategy.run_statistics()
+        # overwrite outputfolder path
+        self.strategy.outputFolderReport = self.outputFolder
 
 
  
