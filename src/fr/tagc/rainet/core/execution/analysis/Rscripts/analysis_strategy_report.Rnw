@@ -1,0 +1,40 @@
+\documentclass{article}
+
+\usepackage{multicol}
+\usepackage{geometry}
+\usepackage{amsmath}
+
+\geometry{
+ a4paper,
+ total={210mm,297mm},
+ left=20mm,
+ right=20mm,
+ top=20mm,
+ bottom=20mm,
+ }
+
+\begin{document}
+
+\title{Analysis Report\\-\\
+        Rainet project}
+\author{Diogo Ribeiro, Lionel Spinelli, Andreas Zanzoni, Christine Brun}
+\maketitle
+
+\section{Introduction} 
+
+TODO
+
+\section{Parameters used}
+
+<<parameters_log, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "parameters_log.R", sep="/"))
+@
+
+\section{RNA numbers report}
+
+<<rna_numbers, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "rna_numbers.R", sep="/"))
+@
+
+\end{document}
+
