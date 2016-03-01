@@ -36,5 +36,24 @@ TODO
   source( paste( working_dir, "rna_numbers.R", sep="/"))
 @
 
+\section{Interaction numbers report}
+
+<<interaction_numbers, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "interaction_numbers.R", sep="/"))
+@
+
+\section{Interaction scores report}
+
+<<interaction_scores, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "interaction_scores.R", sep="/"))
+@
+
+\section{Interaction partners report}
+
+<<interaction_partners, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+  source( paste( working_dir, "interaction_partners.R", sep="/"))
+@
+
+
 \end{document}
 
