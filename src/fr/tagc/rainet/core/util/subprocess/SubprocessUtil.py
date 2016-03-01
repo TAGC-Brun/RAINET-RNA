@@ -14,7 +14,8 @@ class SubprocessUtil( object ):
     # STDOUT as Logger info and return code != 0 as Logger error.
     # 
     # @param command : string - the bash-like command to be ran
-    @staticmethod  
+    # @return the return code of the command
+    @staticmethod
     def run_command(self, command, decoder = "UTF-8"):
 
         try:
@@ -37,12 +38,12 @@ class SubprocessUtil( object ):
     
         if len(stderrText) > 0:
             Logger.get_instance().warning( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDERR", commentLine, stderrText, commentLine) )
-
-        if p.returncode != 0:
-            Logger.get_instance().error( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "ERROR (return code != 0)", commentLine, str(p.returncode), commentLine) )
         
         if len(stdoutText) > 0:
             Logger.get_instance().info( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDOUT", commentLine, stdoutText, commentLine) )
 
-        return None
+        if p.returncode != 0:
+            Logger.get_instance().error( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "ERROR (return code != 0)", commentLine, str(p.returncode), commentLine) )
+
+        return p.returncode
 
