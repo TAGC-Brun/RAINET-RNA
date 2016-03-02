@@ -37,7 +37,7 @@ We will first perform a rough analysis of expression values distributions across
 \section{Samples variability per tissue}
 
 Number of samples per tissue using the whole GTEx\_Data\_V6\_Annotations\_SampleAttributesDS.txt
-file with the attribute SMTS (the less-specific tissue terms).
+file with the attribute SMTSD (the more-specific tissue terms).
 
 <<samples_per_tissue, fig.keep="all", echo=FALSE, message=F, warning=F>>=
   source( paste( working_dir, "samples_per_tissue.R", sep="/"))
@@ -61,7 +61,7 @@ We can see that the number of samples does not drastically change the overal dis
 
 \section{Expression distribution per transcript}
 
-Selected 5 tissues with different sample numbers (2 with highest, 1 medium, 2 with lowest sample numbers), randomly selected 12 transcripts and plotted their RPKM value distribution, using all available samples. Note that many transcript have 0 or close to 0 RPKM (*Bug in graphics when all RPKMs are zero) in all addressed tissues. We plan to average the RPKM values of a transcript in a given tissue.
+Selected 5 tissues with different sample numbers (2 with highest, 1 medium, 2 with lowest sample numbers), randomly selected 12 transcripts and plotted their RPKM value distribution, using all available samples. Note that many transcript have 0 or close to 0 RPKM (*Bug in graphics when all RPKMs are zero*) in all addressed tissues. We plan to average the RPKM values of a transcript in a given tissue.
 
 <<density_plot_example_transcripts, fig.keep="all", echo=FALSE, message=F, warning=F>>=
   source( paste( working_dir, "density_plot_example_transcripts.R", sep="/"))
@@ -72,11 +72,22 @@ The distributions are highly variable between transcripts.
 \section{Average expression of transcripts per tissue}
 
 To merge sample values within the same tissue and transcript, we can use mean or median. Below are the distributions of averaged RPKM values among all transcripts and all tissues.\par
-The blue horizontal lines represent either the mean or the median, the red lines represent the noise cutoff of 0.1 RPKM suggested in the GTEx papers.
+The blue horizontal lines represent either the mean or the median, the red lines represent the noise cutoff of 0.1 RPKM suggested in the GTEx papers.\par
+The coloured plots separate the RPKM distribution per tissue. Also note that in these plots do not display values equal to zero. Note: using xlimit at 5 RPKM.\par
 
 <<transcript_expression_averages, fig.keep="all", echo=FALSE, message=F, warning=F>>=
   source( paste( working_dir, "transcript_expression_averages.R", sep="/"))
 @
+
+From the RPKM value distributions we see that applying cutoff of 0.1 RPKM (as used in the GTEx papers) will render most transcripts in tissue as non-expressed. Also evident is the spread of the RPKM values is very high, as the mean and median are well above the values of the vast majority of transcripts. This suggests our mean is being driven by outliers with very high expression values.\par
+The coloured plots were produced to see if different tissues would display different distributions (density curves), however these are very similar to the above histogram distributions.\par
+
+%' To measure the effect of outliers in our data we plot the coefficient of variation (std/mean) for each transcript-tissue.\par
+%' 
+%' <<coefficient_variation_distribution, fig.keep="all", echo=FALSE, message=F, warning=F>>=
+%'   source( paste( working_dir, "coefficient_variation_distribution.R", sep="/"))
+%' @
+
 
 \section{Conclusion}
 
@@ -88,8 +99,6 @@ Parameters for filtering:\\
 - minimum rpkm value\\
 - interacting pair having to be present in X\% tissues
 
-Need to decide:\\
-- what level: tissue or body part?\\
 
 \end{document}
 
