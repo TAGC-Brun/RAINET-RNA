@@ -72,7 +72,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_VERBOSITY, "debug")
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, DB_PATH)
         optionManager.set_option(OptionConstants.OPTION_SPECIES, "human")
-        optionManager.set_option(OptionConstants.OPTION_OUTPUT_FOLDER, "test_results/" )
+        optionManager.set_option(OptionConstants.OPTION_OUTPUT_FOLDER, "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/" )
         optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, OptionConstants.DEFAULT_BIOTYPE)
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstants.DEFAULT_INTERACTION_SCORE)
         optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, OptionConstants.DEFAULT_LNCRNA_BIOTYPES)
@@ -86,8 +86,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.sql_session = SQLManager.get_instance().get_session()
 
         # setting up internal test folder paths
-        self.expectedFolder = os.getcwd() + "/test_expected/Report"
-        self.outputFolder = os.getcwd() + "/" + OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER ) + "/Report/"
+        self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/Report"
+        self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER ) + "/Report/"
 
         # create instance of strategy    
         self.strategy = AnalysisStrategy()
@@ -315,16 +315,12 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.writeReportFile = 1
                    
         self.strategy.execute()
-        
-        # overwrite outputfolder path
-        self.strategy.outputFolderReport = self.outputFolder
-
 
  
     # #
     # Runs after each test
     def tearDown(self):
-      
+        
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
