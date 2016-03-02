@@ -736,7 +736,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
     def write_report(self):
-                
+        
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
                  "; Rscript %s %s %s %s %s %s %s %s %s" % \
