@@ -148,7 +148,9 @@ class InsertionUnittest(unittest.TestCase):
         
         for line in response:
             self.assertTrue( (line.tissueName) in tissues, "asserting that tissues are connected")
- 
+
+        # should add more tests after settling on exact expression data
+
  
     # #    
     # Run after each test    

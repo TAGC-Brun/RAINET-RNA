@@ -50,7 +50,7 @@ EXAMPLE_PRI_RNA_INTERACTIONS = {
                                 "ENSP00000431009" : 8.68
                                 }
 EXAMPLE_PRI_RNA_PROTEIN_UNIPROT = {"ENSP00000410728" : "Q5RI18"} 
-NUMBER_TISSUES = 30
+NUMBER_TISSUES = 49
 
 #=======================================================================
 
