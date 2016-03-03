@@ -5,7 +5,6 @@ import argparse
 import glob
 import numpy as np
 import random 
-from scipy import stats
 
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -36,6 +35,7 @@ from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 #===============================================================================
 # Processing notes:
 # 
+# 0 - This module has a unittest test which should be ran before this script
 # 1 - Some sample entries in GTEx_Data_V6_Annotations_SampleAttributesDS.txt
 #     do not contain tissue ("SMTSD") information, these are excluded
 # 2 - Some expression entries (~700 out of 200k~) in GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt
@@ -69,8 +69,7 @@ class ProcessGTExData( object ):
     R_REQUIRED_FILES = [ANNOTATION_OUTPUT_FILE, EXPRESSION_OUTPUT_FILE, TX_EXPRESSION_AVG_OUTPUT_FILE, TX_EXPRESSION_AVG_OUTPUT_FILE_NO_OUTLIERS]
     
     # Predefined tissues
-    PREDEFINED_TISSUES = ["Muscle - Skeletal","Whole Blood","Stomach","Fallopian Tube","Cervix - Endocervix"]
-#    SINGLE_TISSUE = "Muscle - Skeletal"
+    PREDEFINED_TISSUES = ["Muscle - Skeletal","Whole Blood","Stomach","Minor Salivary Gland","Kidney - Cortex"]
 
     # Sampling for report
     RNA_SAMPLE_NUMBER = 50 # for the tissue expression boxplots #note that final picked number may be slightly different
@@ -363,6 +362,7 @@ class ProcessGTExData( object ):
     #
     # Write to final file for insertion into RAINET database
     #
+    #@param tx_expression_tissue : dictionary produced by read_transcription_expression
     def average_sample_values(self, tx_expression_tissue):
         
         # Outputs TSV file
@@ -434,6 +434,8 @@ class ProcessGTExData( object ):
 
         Logger.get_instance().info("read_transcript_expression : Mean and median %% of samples removed with outlier removal:\t%.2f%%\t%.2f%%" % (np.mean(percOfRemoved),np.median(percOfRemoved)) )
 
+        # remove large dictionary from memory after writing the files
+        del tx_expression_tissue
 
     # #
     # Method to exclude outlier values from a numpy array
@@ -542,13 +544,11 @@ if __name__ == "__main__":
         # Read annotation file
         Timer.get_instance().step( "reading annotation file..")    
         sampleTissue, tissueSample, problematicSamples = run.read_tissue_annotations()
-           
-        # Read expression file, using annotations
+        
         Timer.get_instance().step( "reading expression file..")    
-        txExpressionTissue = run.read_transcript_expression(sampleTissue, tissueSample, problematicSamples)
-                  
-        # Process sample data into a single value
-        run.average_sample_values(txExpressionTissue)
+        # Read expression file, using annotations and Process sample data into a single value
+        # Note: nested function so that resource-heavy dictionary object is not duplicated
+        run.average_sample_values(run.read_transcript_expression( sampleTissue, tissueSample, problematicSamples) )
          
         # Run R scripts / report
         run.run_statistics()
