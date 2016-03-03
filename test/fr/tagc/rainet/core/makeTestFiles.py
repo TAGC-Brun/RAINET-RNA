@@ -541,18 +541,18 @@ def make_PRI_catRAPID(testing_RNAs, testing_proteins, protein_xref):
 def make_tx_expression(testing_RNAs):
 
     #===============================================================================
-    # File: tx_expression_avg.tsv ; RNA_TISSUE_EXPRESSION_PROPERTY 
+    # File: transcript_expression_metrics_no_outliers.tsv ; RNA_TISSUE_EXPRESSION_PROPERTY 
     #===============================================================================
 
     # Example
-    # TranscriptID    TissueName      ExprMean        ExprStd ExprMedian
-    # ENST00000496116 Thyroid 0.043   0.069   0.000
-    # ENST00000496116 Testis  0.057   0.061   0.046    
-    
+    # transcript_id   tissue_name     rpkm_mean       rpkm_std        rpkm_median     coef_variation  max
+    # ENST00000461495 Thyroid 0.000   0.000   0.000   0       0.000
+    # ENST00000461495 Testis  0.000   0.000   0.000   0       0.000    
+
     print("make_tx_expression..")
     
-    inFile = INPUT_FOLDER+"/RNA/tx_expression_avg.tsv"
-    outFile = OUTPUT_FOLDER+"/RNA/tx_expression_avg.tsv"
+    inFile = INPUT_FOLDER+"/RNA/transcript_expression_metrics_no_outliers.tsv"
+    outFile = OUTPUT_FOLDER+"/RNA/transcript_expression_metrics_no_outliers.tsv"
      
     outHandler = open(outFile,"w")
       
