@@ -10,27 +10,25 @@ from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.time.Timer import Timer
-from array import array
 
 #===============================================================================
-# 12-Fev-2016 Diogo Ribeiro
+# Started 12-Fev-2016 
+# Diogo Ribeiro
 # Script to process GTEx tissue expression files
 #
 # Objective is to produce basic statistics on the expression levels of transcripts,
-# normalise and modify the data for Rainet database insertion. I.e. reduce sample dimension
-# E.g. have a single expression value per transcript per tissue.
+# normalise and modify the data (e.g. reduce sample dimension) for Rainet database insertion. 
 #===============================================================================
 
 #===============================================================================
 # Plan
 # 
 # Read file GTEx_Data_V6_Annotations_SampleAttributesDS.txt, make dictionary of sample IDs -> tissue
-# Make basic stats on number of samples per tissue
 # Read header of GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm, make column indexes for each tissue (e.g. in the 8k samples, which ones belong to blood, which to heart etc)
 # Read GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm entries and group results of samples of same tissue.
-# Measure variability of expression per tissue, and variability of expression per RNA, look at GTEx papers as well
-# Based on distribution of values, merge data so that we have a single RPKM value for each transcript-tissue pair
-# Add data to RAINET database!
+# Produce report on variability of expression per tissue, and variability of expression per RNA
+# Average data so that we have a single RPKM value for each transcript-tissue pair
+# Write file for RAINET database insertion
 #===============================================================================
 
 class ProcessGTExData( object ):
@@ -107,15 +105,15 @@ class ProcessGTExData( object ):
         tissueSample = {} # key -> tissue, val -> sample ID
         problematicSamples = set() # stores sample IDs that are problematic/erronic
         for line in inHandler:
-            if line != '' and not line.startswith( "#") and len(line) > 0:
+            if line != '' and not line.startswith( "#") and len( line) > 0:
                 spl = line.split( "\t")
 
                 #Check if the line has as many columns as header
                 if len( spl) > len( header):
                     raise RainetException( "read_tissue_annotations : Bad line format in file. More columns than in header: " + str(len(spl)) )
 
-                keyIdx = headerIndexMap[ProcessGTExData.TISSUE_ANNOTATIONS_KEY]
-                valIdx = headerIndexMap[ProcessGTExData.TISSUE_ANNOTATIONS_VALUE]
+                keyIdx = headerIndexMap[ ProcessGTExData.TISSUE_ANNOTATIONS_KEY]
+                valIdx = headerIndexMap[ ProcessGTExData.TISSUE_ANNOTATIONS_VALUE]
 
                 sample = spl[keyIdx]
                 tissue = spl[valIdx]
@@ -149,7 +147,7 @@ class ProcessGTExData( object ):
 
     # #
     # Read GTEx rpkm file using previous sample-tissue mapping, group data on transcript-tissue
-    def read_transcript_expression(self, sampleTissue, tissueSample, problematicSamples):
+    def read_transcript_expression(self, sample_tissue, tissue_sample, problematic_samples):
 
         inHandler = FileUtils.open_text_r( ProcessGTExData.TISSUE_EXPRESSION)
         
@@ -167,24 +165,24 @@ class ProcessGTExData( object ):
         for i in xrange( lenHeader ):
             sample = header[i].strip()
             if sample not in ProcessGTExData.TISSUE_EXPRESSION_SPECIAL_COLUMNS:
-                if sample not in sampleTissue:
-                    if sample not in problematicSamples:
+                if sample not in sample_tissue:
+                    if sample not in problematic_samples:
                         raise RainetException( "read_transcript_expression : sample ID not found in tissue annotations: "+ sample )
                     else:
                         Logger.get_instance().warning( "read_transcript_expression : Known sample without tissue info present in header: "+ sample + ". Will ignore information for this sample." )
                 else:
-                    tiss = sampleTissue[sample]
+                    tiss = sample_tissue[ sample]
                     if tiss not in headerIndexMap:
-                        headerIndexMap[tiss] = set()
+                        headerIndexMap[ tiss] = set()
 
-                    headerIndexMap[tiss].add( i)
+                    headerIndexMap[ tiss].add( i)
                     processedSamples+= 1
 
         # Getting the minimum number of samples in tissues
         summ = 0
-        minimumSamples = float("inf")
+        minimumSamples = float( "inf")
         for tiss in headerIndexMap:
-            l = len(headerIndexMap[tiss])
+            l = len( headerIndexMap[ tiss])
             summ+= l
             if l < minimumSamples:
                 minimumSamples = l
@@ -492,7 +490,7 @@ if __name__ == "__main__":
         run.average_sample_values(txExpressionTissue)
         
         # Run R scripts / report
-        # run.run_statistics()
+        run.run_statistics()
 
     # Use RainetException to catch errors
     except RainetException as rainet:
