@@ -172,11 +172,11 @@ class InsertionStrategy( ExecutionStrategy ):
             # RNA DEFINITION
             #===================================================================
 
-            #Make query of specific type of protein cross references to speed up insertion
-            DataManager.get_instance().perform_query(DataConstants.PROTEIN_ENSP_XREF_KW,
+            # Make query of specific type of protein cross references to speed up insertion
+            DataManager.get_instance().perform_query( DataConstants.PROTEIN_ENSP_XREF_KW,
                                                      "query( ProteinCrossReference.protein_id,ProteinCrossReference.crossReferenceID ).filter(ProteinCrossReference.sourceDB == DataConstants.PROTEIN_ENSP_XREF_DB).all()") 
-            #Convert query into a dictionary
-            DataManager.get_instance().query_to_dict(DataConstants.PROTEIN_ENSP_XREF_KW, 1, 0)
+            # Convert query into a dictionary
+            DataManager.get_instance().query_to_dict( DataConstants.PROTEIN_ENSP_XREF_KW, 1, 0)
   
             # Parse the RNA file
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_DEFINITION_PROPERTY, True)
@@ -191,20 +191,21 @@ class InsertionStrategy( ExecutionStrategy ):
             # RNA TISSUE EXPRESSION
             #===================================================================
  
+            # Make query of all RNA IDs to speed up insertion
+            DataManager.get_instance().perform_query( DataConstants.RNA_ALL_KW, "query( RNA ).all()") 
+            # Format query into dict data structure
+            DataManager.get_instance().query_to_object_dict( DataConstants.RNA_ALL_KW, "transcriptID")
+  
             # Parse the RNA tissue expression file
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
                                         DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
                                         DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
 
+
             #===================================================================
             # PROTEIN RNA INTERACTION
             #===================================================================
-   
-            #Make query of all RNA IDs to speed up insertion
-            DataManager.get_instance().perform_query(DataConstants.RNA_ALL_KW,"query( RNA.transcriptID ).all()") 
-            #Convert query into a set
-            DataManager.get_instance().query_to_set(DataConstants.RNA_ALL_KW, 0)
 
             # Parse the ProteinRNAInteractionCatRAPID file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
@@ -215,13 +216,14 @@ class InsertionStrategy( ExecutionStrategy ):
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
             
+            
         except RainetException as re:
             Logger.get_instance().error( re.to_string() )
             Timer.get_instance().stop_chrono( "ERROR : Data insertion FAILED" )
             return
 
-        # Report on potential missing data
-        self.check_missing_data()
+#         # Report on potential missing data
+#         self.check_missing_data()
 
         
         # Stop the chrono      
@@ -435,17 +437,17 @@ class InsertionStrategy( ExecutionStrategy ):
                     sql_session.add( db_status )
                 SQLManager.get_instance().commit()
 
-    #
-    # Report on data that failed to be inserted in the database
-    def check_missing_data(self):
- 
-        Logger.get_instance().info("\nReport on number of input entries that failed to be inserted:")
-
-        # Report on failed insertions during Protein-RNA interaction insertion
-        Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of protein IDs that failed to be found in database: " + 
-                    str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW) ) ) )
-        Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of transcript IDs that failed to be found in database: " + 
-                    str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) ) ) )
+#     #
+#     # Report on data that failed to be inserted in the database
+#     def check_missing_data(self):
+#  
+#         Logger.get_instance().info("\nReport on number of input entries that failed to be inserted:")
+# 
+#         # Report on failed insertions during Protein-RNA interaction insertion
+#         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of protein IDs that failed to be found in database: " + 
+#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW) ) ) )
+#         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of transcript IDs that failed to be found in database: " + 
+#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) ) ) )
 
 
 
