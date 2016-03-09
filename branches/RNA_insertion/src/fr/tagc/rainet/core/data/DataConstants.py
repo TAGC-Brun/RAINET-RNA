@@ -289,8 +289,8 @@ RNA_TISSUE_EXPRESSION_PROPERTY = "RNA_TISSUE_EXPRESSION"
 
 RNA_TISSUE_EXPRESSION_CLASS = "RNATissueExpression"
 
-RNA_TISSUE_EXPRESSION_HEADERS = ["TranscriptID", "TissueName", "ExprMean", "ExprStd", "ExprMedian"]
-RNA_TISSUE_EXPRESSION_PARAMS = ["TranscriptID", "TissueName", "ExprMean","SourceDB"]
+RNA_TISSUE_EXPRESSION_HEADERS = ["transcript_id", "tissue_name", "rpkm_mean", "rpkm_std", "rpkm_median", "coef_variation", "max"]
+RNA_TISSUE_EXPRESSION_PARAMS = ["transcript_id", "tissue_name", "rpkm_mean", "source_db"]
 RNA_TISSUE_EXPRESSION_COMMENT_CHAR = "#"
 
 RNA_TISSUE_EXPRESSION_SOURCEDB = "GTEx v6"
