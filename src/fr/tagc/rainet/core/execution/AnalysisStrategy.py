@@ -44,6 +44,7 @@ from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
+from fr.tagc.rainet.core.data.Tissue import Tissue
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
 
 from fr.tagc.rainet.core.data import DataConstants
@@ -51,7 +52,7 @@ from fr.tagc.rainet.core.util import Constants
 
 
 # #
-# This class define the Strategy enabling user to perform DB query interactively
+# This class define the Strategy to produce analysis on the given database and parameters
 class AnalysisStrategy(ExecutionStrategy):
 
 
@@ -138,7 +139,7 @@ class AnalysisStrategy(ExecutionStrategy):
             self.outputFolderReport = self.outputFolder+"/"+Constants.REPORT_FOLDER
         else:
             raise RainetException( "AnalysisStrategy.execute: Provided output folder is empty.")
-                    
+
         # Check if minimumInteractionScore is float or OFF
         if self.minimumInteractionScore != OptionConstants.DEFAULT_INTERACTION_SCORE:
             try:
@@ -274,6 +275,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
         #===================================================================
         # Filter transcripts belonging to same gene
+        # 09-Mar-2016 : perhaps this filter does not have to be applied
         #===================================================================
         # TODO: decide on a set of rules for this excluding transcript redudancy.
         # - based on interactions
@@ -311,14 +313,14 @@ class AnalysisStrategy(ExecutionStrategy):
         #===================================================================
         # Retrieve selected RNAs and proteins
         #===================================================================                       
-        selectedRNAs = {str(item.transcriptID) for item in DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW) }
-        selectedProteins = {str(item.uniprotAC) for item in DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW) } 
+        selectedRNAs = { str( item.transcriptID) for item in DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW) }
+        selectedProteins = { str( item.uniprotAC) for item in DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW) } 
 
         #===================================================================         
         # Filter interactions based on minimumInteractionScore
         #===================================================================                 
         if self.minimumInteractionScore != OptionConstants.DEFAULT_INTERACTION_SCORE:
-            queryText = "query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.interactionScore >= "+str(self.minimumInteractionScore)+").all()"    
+            queryText = "query( ProteinRNAInteractionCatRAPID ).filter( ProteinRNAInteractionCatRAPID.interactionScore >= "+str( self.minimumInteractionScore)+").all()"    
         else:
             # Running this on whole database may crash computer
             nItems = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
@@ -337,19 +339,50 @@ class AnalysisStrategy(ExecutionStrategy):
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
  
-        DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
-
-
+ 
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
         #=================================================================== 
-        # TODO: first we need to decide on a rule for this filtering. Pick highest interaction score? Based on expression values?
+        # TODO: first we need to decide on a rule for this filtering. Pick highest interaction score?
 
 
         #===================================================================    
         # Filter interactions based on RNA and Protein (mRNA) expression
         #=================================================================== 
         # TODO: first we need to know which expression data we have
+# 
+#         # Get list of tissues for looking over their expression values on each transcript
+#         tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
+# 
+#         for inter in selectedInteractions:
+# 
+#             print inter.transcriptID, inter.proteinID
+# 
+#             # Search mRNA that produces interacting protein
+#             mRNAs = self.sql_session.query( MRNA.transcriptID ).filter( MRNA.proteinID == inter.proteinID).all()
+# 
+#             # if no corresponding mRNA found, counts as if it was not expressed
+#             if len(mRNAs) == 0 or mRNAs == None:
+#                 continue
+# 
+#             # problem 0: my test set does not contain example of interacting protein associated with a mRNA            
+#             # problem 1: there can be several mRNAs for the same protein ID, use them all ? Write down well how we dealt with this
+#             
+#             for tissue in tissues:
+#                 print inter.transcriptID, inter.proteinID, tissue
+#  
+#                 # Get RNA transcript expression in the specific tissue
+#                 queryText = "query( RNATissueExpression.expressionValue ).filter( and_( RNATissueExpression.transcriptID == inter.transcriptID, RNATissueExpression.tissueName == tissue)).first()"
+#                 txExpressionVal = float( eval( 'self.sql_session.' +  queryText)[0])
+#                 print (txExpressionVal)
+#                 
+#                 # Get the Protein expression, using its mRNA
+#                 queryText = "query( RNATissueExpression.expressionValue ).filter( and_( RNATissueExpression.transcriptID == mRNAID, RNATissueExpression.tissueName == tissue)).first()"
+#                 protExpressionVal = float( eval( 'self.sql_session.' +  queryText)[0])
+#                 print (protExpressionVal)
+
+
+        DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
 
     # #
@@ -753,7 +786,7 @@ class AnalysisStrategy(ExecutionStrategy):
                      )
 
   
-        returnCode = SubprocessUtil.run_command(self, command)
+        returnCode = SubprocessUtil.run_command( command)
         if returnCode:
             raise RainetException(" AnalysisStrategy.write_report : external command with return code:" + str( returnCode) )
 
