@@ -25,10 +25,6 @@ class Tissue( Base ):
 
     # The database / dataset where the data comes from    
     sourceDB = Column( String, primary_key = True  )
-
-    # Define the N-to-N relationship between Tissue and RNA
-    expressedRNAs = relationship('RNA', secondary=RNATissueExpression.__table__, backref="tissueExpression")
-
     
     # #
     # The Tissue constructor
@@ -40,6 +36,8 @@ class Tissue( Base ):
         self.tissueName = tissue_name
 
         self.sourceDB = source_db
+
+        self.add_to_session()
     
     ##
     # Add the object to SQLAlchemy session if it is linked to a protein
@@ -48,12 +46,5 @@ class Tissue( Base ):
         sql_session = SQLManager.get_instance().get_session()
         sql_session.add( self)
 
-    # #
-    # Add a RNA transcript to the list
-    #
-    # @param rna : string - A RNA instance
-    def add_expressed_rna( self, rna ):
 
-        if rna != None:
-            self.expressedRNAs.append( rna )
 
