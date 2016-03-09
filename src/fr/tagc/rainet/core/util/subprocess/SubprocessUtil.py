@@ -15,15 +15,18 @@ class SubprocessUtil( object ):
     # 
     # @param command : string - the bash-like command to be ran
     # @return the return code of the command
-    @staticmethod
-    def run_command(self, command, decoder = "UTF-8"):
+    @classmethod
+    def run_command(self, command, decoder = "UTF-8", verbose = 1, return_stdout = 0):
+
+        commentLine = "\n##################\n"
 
         try:
             command = str( command)
         except TypeError:
             raise RainetException( )
 
-        Logger.get_instance().info( "\nrun_command : Starting command : "+command)
+        if verbose:
+            Logger.get_instance().info( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "Starting command", commentLine, command, commentLine) )
         
         p = subprocess.Popen( command, shell=True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         
@@ -34,16 +37,18 @@ class SubprocessUtil( object ):
         stderrText = p.stderr.read().decode( decoder).strip()
         stdoutText = p.stdout.read().decode( decoder).strip()
     
-        commentLine = "\n##################\n"
+        if verbose:        
+            if len(stderrText) > 0:
+                Logger.get_instance().warning( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDERR", commentLine, stderrText, commentLine) )
+            
+            if len(stdoutText) > 0:
+                Logger.get_instance().info( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDOUT", commentLine, stdoutText, commentLine) )
     
-        if len(stderrText) > 0:
-            Logger.get_instance().warning( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDERR", commentLine, stderrText, commentLine) )
-        
-        if len(stdoutText) > 0:
-            Logger.get_instance().info( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "STDOUT", commentLine, stdoutText, commentLine) )
+            if p.returncode != 0:
+                Logger.get_instance().error( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "ERROR (return code != 0)", commentLine, str(p.returncode), commentLine) )
 
-        if p.returncode != 0:
-            Logger.get_instance().error( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "ERROR (return code != 0)", commentLine, str(p.returncode), commentLine) )
-
-        return p.returncode
+        if return_stdout:
+            return stdoutText
+        else:
+            return p.returncode
 
