@@ -1,3 +1,6 @@
+
+import inspect
+
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
@@ -32,6 +35,8 @@ from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 from sqlalchemy.inspection import inspect
+import types
+
 
 
 # #
@@ -67,7 +72,6 @@ class DataManager( object ) :
         try:
             query_result = eval( full_query)
         except Exception as ex:
-            Logger.get_instance().error("******************************************************** EXCEPTION TEST")
             raise RainetException( "DataManager.init : Exception occurred during query on DB",ex  )
 
         self.data[keyword] = query_result
@@ -108,6 +112,48 @@ class DataManager( object ) :
 
 
     # #
+    # Process previously stored results into a dictionary,
+    # where key to use is given in the parameter (but should be unique identifier / primary key),
+    # and the value is the object with that key.
+    #
+    # Assuming unique identifiers for each object, throws warning if not, keeps first found.
+    #
+    # @param keyword : String - the data dictionary keyword to access the data, the data should be a result 
+    #                  from a SQL query which returns SQL alchemy class objects and be iterable.
+    # @param identifier : String - entry identifier / attribute to be used as key in the dict
+    #
+    # @raise RainetException if the keyword is not present, if data is not iterable, other issues.
+    def query_to_object_dict(self, keyword, identifier):
+
+        outDict = {}
+        
+        if keyword in self.data:
+            data = self.data[ keyword]
+        else:
+            raise RainetException( "DataManager.query_to_object_dict : Data keyword does not exist: " + keyword)            
+
+        if not hasattr( data, '__iter__'):
+            raise RainetException( "DataManager.query_to_object_dict : query result is not iterable: " + keyword)   
+        
+        for entry in data:            
+            if not hasattr(entry, '__class__'):
+                raise RainetException( "DataManager.query_to_object_dict : provided keyword does not point to a container of class objects : " + keyword)
+                            
+            if identifier not in vars( entry):
+                raise RainetException( "DataManager.query_to_object_dict : requested identifier keyword not found as object attribute: " + str( identifier) )            
+            
+            keyItem = str( eval( "entry."+ identifier ))
+            valueItem = entry
+
+            if keyItem not in outDict:
+                outDict[ keyItem] = valueItem
+            else:
+                Logger.get_instance().warning( "DataManager.query_to_object_dict : Duplicated dictionary key : " + keyItem)
+
+        self.data[keyword] = outDict
+
+
+    # #
     # Process previously stored results into a key-value dictionary of lists
     #
     # @param keyword : String - the data dictionary keyword to access the data
@@ -131,7 +177,7 @@ class DataManager( object ) :
 
         try:
             for entry in data:
-                if col > len(entry) or col > len(entry):
+                if col > len(entry):
                     raise RainetException("DataManager.query_to_set : requested columns out of boundaries of query result: "+entry)            
                 
                 keyItem = str(entry[col])
