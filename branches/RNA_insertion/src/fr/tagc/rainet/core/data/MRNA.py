@@ -40,5 +40,5 @@ class MRNA( RNA ):
         if peptide_id in proteinXrefs:
             self.proteinID = proteinXrefs[peptide_id][0]
         else:
-            Logger.get_instance().debug( "\nPeptide ID not found:\t" + str(peptide_id) )
+            Logger.get_instance().debug( "\n MRNA.init : Peptide ID not found:\t" + str(peptide_id) )
 

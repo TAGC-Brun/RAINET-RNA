@@ -60,7 +60,7 @@ class RNA( Base ):
     type = Column ( String )
  
     #For mapping to subtypes
-    __mapper_args__ = {'polymorphic_identity':'RNA', 'polymorphic_on':type }
+    __mapper_args__ = {'polymorphic_identity' : 'RNA', 'polymorphic_on' : type }
 
 
     # #
