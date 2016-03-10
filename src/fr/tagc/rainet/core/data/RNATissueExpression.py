@@ -43,6 +43,7 @@ class RNATissueExpression( Base ):
         #=======================================================================
         
         dt_manager = DataManager.get_instance()
+        sql_session = SQLManager.get_instance().get_session()
         
         #=======================================================================
         # Search for the RNA object
@@ -70,7 +71,9 @@ class RNATissueExpression( Base ):
             dt_manager.store_data( kw, set())
   
         if tissue_name not in dt_manager.data[ kw]:
-            Tissue( tissue_name, source_db)
+            tissueObj = Tissue( tissue_name, source_db)
+            sql_session.add( tissueObj)
+            
             # add tissue names to data manager
             dt_manager.data[ kw].add( tissue_name)
 
