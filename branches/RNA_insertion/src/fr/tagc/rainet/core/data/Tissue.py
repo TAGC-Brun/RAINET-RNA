@@ -20,7 +20,7 @@ from sqlalchemy.sql.schema import PrimaryKeyConstraint, ForeignKeyConstraint
 class Tissue( Base ):
     __tablename__ = 'Tissue'
 
-    # The tissue name (e.g. SMTS from GTEx)
+    # The tissue name
     tissueName = Column( String, primary_key = True )
 
     # The database / dataset where the data comes from    
@@ -36,15 +36,4 @@ class Tissue( Base ):
         self.tissueName = tissue_name
 
         self.sourceDB = source_db
-
-        self.add_to_session()
-    
-    ##
-    # Add the object to SQLAlchemy session if it is linked to a protein
-    def add_to_session(self):
-    
-        sql_session = SQLManager.get_instance().get_session()
-        sql_session.add( self)
-
-
 
