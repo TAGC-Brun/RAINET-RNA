@@ -1,10 +1,11 @@
 
 import os
 #import pandas as pd
-from sqlalchemy import or_,and_,distinct
+import numpy as np
+
+from sqlalchemy import or_, and_, distinct
 
 from fr.tagc.rainet.core.execution.ExecutionStrategy import ExecutionStrategy
-
 from fr.tagc.rainet.core.util.option.OptionManager import OptionManager
 from fr.tagc.rainet.core.util.option import OptionConstants
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
@@ -196,13 +197,13 @@ class AnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().step( "Filtered RNAs.." )        
 
         self.filter_RNA()
-
+ 
         Timer.get_instance().step( "Filtered Protein.." )        
-        
+         
         self.filter_protein()
-
+ 
         Timer.get_instance().step( "Filtered Interactions.." )        
-        
+         
         self.filter_PRI()
 
         Timer.get_instance().step( "Produced after filter report.." )        
@@ -306,6 +307,8 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # Filter protein-RNA interactions
+    #
+    # Stores final list of interactions on DataManager 
     def filter_PRI(self):
 
         #Logger.get_instance().info("AnalysisStrategy.filter_PRI..")
@@ -316,20 +319,20 @@ class AnalysisStrategy(ExecutionStrategy):
         selectedRNAs = { str( item.transcriptID) for item in DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW) }
         selectedProteins = { str( item.uniprotAC) for item in DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW) } 
 
+
         #===================================================================         
         # Filter interactions based on minimumInteractionScore
         #===================================================================                 
+
         if self.minimumInteractionScore != OptionConstants.DEFAULT_INTERACTION_SCORE:
-            queryText = "query( ProteinRNAInteractionCatRAPID ).filter( ProteinRNAInteractionCatRAPID.interactionScore >= "+str( self.minimumInteractionScore)+").all()"    
+            queryText = "query( ProteinRNAInteractionCatRAPID.transcriptID, ProteinRNAInteractionCatRAPID.peptideID, ProteinRNAInteractionCatRAPID.proteinID, ProteinRNAInteractionCatRAPID.interactionScore ).filter( ProteinRNAInteractionCatRAPID.interactionScore >= "+str( self.minimumInteractionScore)+")"    
         else:
-            # Running this on whole database may crash computer
-            nItems = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
-            if nItems > 1000000: # dr: improve this
-                raise RainetException( "AnalysisStrategy.filter_PRI: intended query may use prohibitive amounts of system memory. Quitting..")
-            else:
-                queryText = "query( ProteinRNAInteractionCatRAPID ).all()"
- 
-        interactions = eval('self.sql_session.' +  queryText)
+            queryText = "query( ProteinRNAInteractionCatRAPID.transcriptID, ProteinRNAInteractionCatRAPID.peptideID, ProteinRNAInteractionCatRAPID.proteinID, ProteinRNAInteractionCatRAPID.interactionScore )"
+  
+        interactions = eval('self.sql_session.' +  queryText + ".all()")
+
+        # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
+
 
         #===================================================================          
         # Filter for interactions between selected RNAs and proteins
