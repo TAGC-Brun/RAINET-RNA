@@ -1,7 +1,10 @@
 
 import os
-#import pandas as pd
+import shutil
 import numpy as np
+import pylab
+import pandas as pd
+
 
 from sqlalchemy import or_, and_, distinct
 
@@ -214,7 +217,7 @@ class AnalysisStrategy(ExecutionStrategy):
         # Perform analysis
         #===================================================================
 
-        Timer.get_instance().step( "Produced interaction report.." )        
+        Timer.get_instance().step( "Producing interaction report.." )        
 
         self.interaction_report()
 
@@ -223,6 +226,7 @@ class AnalysisStrategy(ExecutionStrategy):
         # self.enrichement_analysis()
         
         if self.writeReportFile:
+            Timer.get_instance().step( "Writing report.." )
             self.write_report()
 
         Timer.get_instance().stop_chrono( "Analysis Finished!")
@@ -637,7 +641,6 @@ class AnalysisStrategy(ExecutionStrategy):
 
         outHandlerScore = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_SCORES )
         outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS )
-
         
         # Get biotypes of lncRNAs plus mRNA
         wantedBiotypes = DataConstants.RNA_LNCRNA_BIOTYPE[:]
@@ -773,6 +776,14 @@ class AnalysisStrategy(ExecutionStrategy):
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
     def write_report(self):
         
+        # At this point all files should be written to file and R job can use large amounts of memory
+        # Here we can delete the data manager python objects to save memory
+        DataManager.get_instance().delete_data(AnalysisStrategy.RNA_ALL_KW)
+        DataManager.get_instance().delete_data(AnalysisStrategy.PROT_ALL_KW)
+        DataManager.get_instance().delete_data(AnalysisStrategy.RNA_FILTER_KW)
+        DataManager.get_instance().delete_data(AnalysisStrategy.PROT_FILTER_KW)
+        DataManager.get_instance().delete_data(AnalysisStrategy.PRI_FILTER_KW)
+
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
                  "; Rscript %s %s %s %s %s %s %s %s %s" % \
@@ -787,10 +798,14 @@ class AnalysisStrategy(ExecutionStrategy):
                      AnalysisStrategy.REPORT_INTERACTION_SCORES,
                      AnalysisStrategy.REPORT_INTERACTION_PARTNERS
                      )
-
+                #--max-mem-size=2000M
   
         returnCode = SubprocessUtil.run_command( command)
         if returnCode:
             raise RainetException(" AnalysisStrategy.write_report : external command with return code:" + str( returnCode) )
+        else:
+            # the filename of the produce report file using R's knit2pdf is always 
+            reportFile = AnalysisStrategy.R_SWEAVE_FILE.replace(".Rnw",".pdf")
+            shutil.copy( reportFile, self.outputFolderReport)
 
 
