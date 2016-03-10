@@ -68,4 +68,7 @@ plt3 <- ggplot( proportion, aes(x = variable, y = value)) +
   xlab( "Biotype") +
   ylab( "Percentage after interaction filter")
 
-grid.arrange( plt1, plt2, plt3)
+print (plt1)
+print (plt2)
+print (plt3)
+#grid.arrange( plt1, plt2, plt3)
