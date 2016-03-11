@@ -53,9 +53,9 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 class AnalysisStrategyUnittest(unittest.TestCase):
 
     # Constants with default paramters        
-    TOTAL_RNAS = 200
+    TOTAL_RNAS = 125 #200 total of all biotypes, 125 with used biotypes
     TOTAL_PROTS = 200
-    TOTAL_PRIS = 54
+    TOTAL_PRIS = 27 #54 total of all biotypes, 27 with used biotypes
     TOTAL_PRIS_LINC_FILT = 2
         
     # #
@@ -73,9 +73,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, DB_PATH)
         optionManager.set_option(OptionConstants.OPTION_SPECIES, "human")
         optionManager.set_option(OptionConstants.OPTION_OUTPUT_FOLDER, "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/" )
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, OptionConstants.DEFAULT_BIOTYPE)
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstants.DEFAULT_INTERACTION_SCORE)
-        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, OptionConstants.DEFAULT_LNCRNA_BIOTYPES)
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, OptionConstants.DEFAULT_RNA_BIOTYPES)
         optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstants.DEFAULT_GENCODE)
         
         # Set the level of verbosity
@@ -116,6 +115,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         Prots = DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW)
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
 
+        print (len(RNAs),len(Prots),len(PRIs))
+
         self.assertTrue(len(RNAs) == AnalysisStrategyUnittest.TOTAL_RNAS, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(Prots) == AnalysisStrategyUnittest.TOTAL_PROTS, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS, "asserting if number of objects retrieved is correct") 
@@ -128,7 +129,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         print "| test_RNA_filter_one | "
         
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "MRNA")
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "protein_coding")
           
         self.strategy.execute()
   
@@ -146,31 +147,19 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         print "| test_RNA_filter_two | "
         
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
-        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "antisense,lincRNA")
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         self.strategy.execute()
   
-        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+        lincRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
           
-        self.assertTrue(len(lncRNAs) == 18, "asserting if number of objects retrieved is correct") 
+        self.assertTrue(len(lincRNAs) == 9, "asserting if number of objects retrieved is correct") 
     
-        for lncRNA in lncRNAs:       
-            self.assertTrue(isinstance(lncRNA, LncRNA), "check if the lncRNA is instance of LncRNA table/class")
+        for lincRNA in lincRNAs:       
+            self.assertTrue(isinstance(lincRNA, LncRNA), "check if the lncRNA is instance of LncRNA table/class")
   
-    # #
-    # Test default lncRNA subtype option
-    def test_RNA_filter_three(self):
-  
-        print "| test_RNA_filter_three | "
-  
-        optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
-        self.strategy.execute()
-  
-        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
-        response = self.sql_session.query(LncRNA).all()
+        response = self.sql_session.query( LncRNA).filter( LncRNA.transcriptBiotype == "lincRNA" ).all()
           
-        self.assertTrue(len(lncRNAs) == len(response), "asserting if number of objects in lncRNA default (off) option is same as querying directly lncRNA table") 
+        self.assertTrue(len(lincRNAs) == len(response), "asserting if number of objects in lncRNA default (off) option is same as querying directly lncRNA table") 
     
   
     # #
@@ -180,13 +169,12 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         print "| test_RNA_filter_four | "
    
         optionManager = OptionManager.get_instance()
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, "1")
         self.strategy.execute()
    
-        lncRNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
-           
-        self.assertTrue(len(lncRNAs) == 19, "asserting if number of objects in being both lncRNA and gencode is correct") 
+        RNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
+        
+        self.assertTrue(len(RNAs) == 69, "asserting if number of objects in being both lncRNA and gencode is correct") 
   
   
     # # 
@@ -201,7 +189,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
            
-        self.assertTrue(len(PRIs) == 18, "asserting if number of interactions above certain interaction score is correct") 
+        self.assertTrue(len(PRIs) == 10, "asserting if number of interactions above certain interaction score is correct") 
   
   
     # #
@@ -212,8 +200,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
-        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "lincRNA")
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
         self.strategy.execute()
    
@@ -221,24 +208,25 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
 
-    # #
-    # Test function to create report files with default parameters
-    # @unittest.skip("skipping")
-    def test_report_one(self):
-
-        print "| test_report_one | "
-
-        self.strategy.execute()
-
-        # assert report files on filtering steps, if before and after filter have the same values
-        for report in [ AnalysisStrategy.REPORT_RNA_NUMBERS, AnalysisStrategy.REPORT_INTERACTION_NUMBERS]:
-            with open( self.outputFolder + report, "r") as out:
-                header = out.readline()
-                lineOne = out.readline().strip().split("\t")
-                lineTwo = out.readline().strip().split("\t")
-                self.assertTrue(lineOne[1:] == lineTwo[1:], "assert that values before and after filter are the same with default parameters")
-
-        # TODO: test for expression data
+#     # #
+#     # Test function to create report files with default parameters
+#     # @unittest.skip("skipping")
+#     def test_report_one(self):
+# 
+#         print "| test_report_one | "
+# 
+#         self.strategy.execute()
+# 
+#         # assert report files on filtering steps, if before and after filter have the same values
+#         for report in [ AnalysisStrategy.REPORT_RNA_NUMBERS, AnalysisStrategy.REPORT_INTERACTION_NUMBERS]:
+#             with open( self.outputFolder + report, "r") as out:
+#                 header = out.readline()
+#                 lineOne = out.readline().strip().split("\t")
+#                 lineTwo = out.readline().strip().split("\t")
+#                 print (lineOne,lineTwo)
+#                 self.assertTrue(lineOne[1:] == lineTwo[1:], "assert that values before and after filter are the same with default parameters")
+# 
+#         # TODO: test for expression data
 
 
     # #
@@ -249,8 +237,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
-        optionManager.set_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE, "LncRNA")
-        optionManager.set_option(OptionConstants.OPTION_LNCRNA_BIOTYPES, "lincRNA")
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
 
         self.strategy.execute()
@@ -258,15 +245,14 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         # RNA numbers report
         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS)
                 
-        self.assertTrue( table["Gene"][0] == 198, "assert if number of Genes before filter is correct")
-        self.assertTrue( table["Gene"][1] == 8, "assert if number of Genes after filter is correct")        
-        self.assertTrue( table["RNA"][0] == AnalysisStrategyUnittest.TOTAL_RNAS,
-                          "assert if number of total RNAs before filter matches same value as other test")
+        self.assertTrue( table["Total_Genes"][0] == 198, "assert if number of Genes before filter is correct")
+        self.assertTrue( table["Total_Genes"][1] == 8, "assert if number of Genes after filter is correct")        
 
         # Interaction numbers report
         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_NUMBERS)
+
         
-        self.assertTrue( table["Total_interactions"][0] == AnalysisStrategyUnittest.TOTAL_PRIS,
+        self.assertTrue( table["Total_interactions"][0] == 54,
                           "assert if number of total PRI before filter matches same value as other test")
         
         self.assertTrue( table["Total_interactions"][1] == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT,
@@ -304,27 +290,32 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         for report in reportConstants:
             with open(report, "r") as out:                
                 with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
+                    print self.expectedFolder
                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
 
     def test_sweaving(self):
- 
+  
         print "| test_sweaving | "
-
+ 
         # overwrite switch to write report file
         self.strategy.writeReportFile = 1
-                   
+                    
         self.strategy.execute()
+
+#     def test_extra(self):
+#         
+#         self.strategy.execute()
 
  
     # #
     # Runs after each test
     def tearDown(self):
-        
+         
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
-        
+         
       
-     
-    
+
+

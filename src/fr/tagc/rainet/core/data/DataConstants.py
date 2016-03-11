@@ -234,8 +234,11 @@ RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","
 RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
 RNA_COMMENT_CHAR = "#"
 
-RNA_MRNA_BIOTYPE = {"protein_coding"}
+# RNA types which will reflect the different RNA subtables
+RNA_BROAD_TYPES = ["MRNA", "OtherRNA", "LncRNA"]
 
+# MRNA biotypes: all mRNAs are defined as protein_coding. However, not all protein_coding are necessarily mRNAs.
+RNA_MRNA_BIOTYPE = ["protein_coding"]
 # LncRNA biotypes: Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
 RNA_LNCRNA_BIOTYPE = ["3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC"]
 

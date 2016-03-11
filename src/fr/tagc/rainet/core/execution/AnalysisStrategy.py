@@ -2,7 +2,6 @@
 import os
 import shutil
 import numpy as np
-import pylab
 import pandas as pd
 
 
@@ -116,8 +115,7 @@ class AnalysisStrategy(ExecutionStrategy):
         self.species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
         self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER)
         self.minimumInteractionScore =  OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE)
-        self.transcriptBiotype = OptionManager.get_instance().get_option(OptionConstants.OPTION_TRANSCRIPT_BIOTYPE)
-        self.lncRNABiotypes = OptionManager.get_instance().get_option(OptionConstants.OPTION_LNCRNA_BIOTYPES)
+        self.RNABiotypes = OptionManager.get_instance().get_option(OptionConstants.OPTION_RNA_BIOTYPES)
         self.gencode = OptionManager.get_instance().get_option(OptionConstants.OPTION_GENCODE)
         self.expressionValueCutoff = OptionManager.get_instance().get_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF)
 
@@ -126,8 +124,7 @@ class AnalysisStrategy(ExecutionStrategy):
                           OptionConstants.OPTION_SPECIES : self.species,
                           OptionConstants.OPTION_OUTPUT_FOLDER : self.outputFolder,
                           OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE : self.minimumInteractionScore,
-                          OptionConstants.OPTION_TRANSCRIPT_BIOTYPE : self.transcriptBiotype,
-                          OptionConstants.OPTION_LNCRNA_BIOTYPES : self.lncRNABiotypes,
+                          OptionConstants.OPTION_RNA_BIOTYPES : self.RNABiotypes,
                           OptionConstants.OPTION_GENCODE : self.gencode,
                           OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF : self.expressionValueCutoff
                         }
@@ -151,18 +148,12 @@ class AnalysisStrategy(ExecutionStrategy):
             except TypeError:
                 raise RainetException( "AnalysisStrategy.execute: Provided minimum interaction score is not a float.")
 
-        # Check if transcript biotype is correct
-        if self.transcriptBiotype not in OptionConstants.TRANSCRIPT_BIOTYPES:
-            raise RainetException( "AnalysisStrategy.execute: Provided transcript biotype is not allowed: "+str(self.transcriptBiotype))
-
         # Process and check provided list of lncRNA subtypes
-        if self.lncRNABiotypes != OptionConstants.DEFAULT_LNCRNA_BIOTYPES:
-            bioTypeStr = ""
-            for subtype in self.lncRNABiotypes.split(","):
-                if subtype not in OptionConstants.LNCRNA_BIOTYPES:
-                    raise RainetException( "AnalysisStrategy.execute: Provided lncRNA biotype is not allowed: "+str(subtype))              
-                bioTypeStr+='"'+subtype+'",'
-            self.lncRNABiotypes = bioTypeStr[:-1] # taking out last comma
+        if self.RNABiotypes != OptionConstants.DEFAULT_RNA_BIOTYPES:
+            self.RNABiotypes = self.RNABiotypes.split(",")
+            for subtype in self.RNABiotypes:
+                if subtype not in OptionConstants.RNA_BIOTYPES:
+                    raise RainetException( "AnalysisStrategy.execute: Provided RNA biotype is not allowed: "+str(subtype))              
 
         # Check if gencode argument is correct
         try:
@@ -246,15 +237,11 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().store_data(AnalysisStrategy.RNA_ALL_KW, allRNAs)
 
         #===================================================================              
-        # Filter transcripts based on biotype or Filter LncRNAs based on wanted subtypes (if lncRNA biotype chosen)
+        # Filter transcripts based on chosen biotypes
         #===================================================================
-        if self.transcriptBiotype == OptionConstants.BIOTYPE_LNCRNA and self.lncRNABiotypes != OptionConstants.DEFAULT_LNCRNA_BIOTYPES:       
-            queryText = "query(" + self.transcriptBiotype + ".transcriptID).filter(" + self.transcriptBiotype + ".transcriptBiotype.in_([" + self.lncRNABiotypes + "])).all() "
-        else:
-            queryText = "query(" + self.transcriptBiotype + ".transcriptID).all()"
+        queryResult = self.sql_session.query( RNA.transcriptID).filter( RNA.transcriptBiotype.in_( self.RNABiotypes)).all()
 
-        filterRNA1 = eval('self.sql_session.' +  queryText)
-        filterRNA1 = {str(item.transcriptID) for item in filterRNA1}
+        filterRNA1 = {str(item.transcriptID) for item in queryResult}
 
         #===================================================================
         # Filter transcripts based on gencode_basic presence
@@ -323,7 +310,6 @@ class AnalysisStrategy(ExecutionStrategy):
         selectedRNAs = { str( item.transcriptID) for item in DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW) }
         selectedProteins = { str( item.uniprotAC) for item in DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW) } 
 
-
         #===================================================================         
         # Filter interactions based on minimumInteractionScore
         #===================================================================                 
@@ -337,7 +323,6 @@ class AnalysisStrategy(ExecutionStrategy):
 
         # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
 
-
         #===================================================================          
         # Filter for interactions between selected RNAs and proteins
         #===================================================================         
@@ -345,8 +330,7 @@ class AnalysisStrategy(ExecutionStrategy):
         for inter in interactions:
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
- 
- 
+   
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
         #=================================================================== 
@@ -387,7 +371,6 @@ class AnalysisStrategy(ExecutionStrategy):
 #                 queryText = "query( RNATissueExpression.expressionValue ).filter( and_( RNATissueExpression.transcriptID == mRNAID, RNATissueExpression.tissueName == tissue)).first()"
 #                 protExpressionVal = float( eval( 'self.sql_session.' +  queryText)[0])
 #                 print (protExpressionVal)
-
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
@@ -434,45 +417,52 @@ class AnalysisStrategy(ExecutionStrategy):
         
         # Write header
         outHandler.write( "Data\t" +
-                          "Gene\t" +
-                           "\t".join( OptionConstants.TRANSCRIPT_BIOTYPES) + "\t" +
-                           "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
+                          "Total_Genes\t" +
+                          "Total_RNAs\t" +
+                           "\t".join( DataConstants.RNA_BROAD_TYPES) + "\t" +
+                           "\t".join( OptionConstants.RNA_BIOTYPES) + "\n")
+
+        # #
+        # Get / initialise data
 
         # Get filtered and unfiltered RNAs
         filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
         allRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_ALL_KW)
 
-        # Get their types
-        allRNATypes = [ rna.type for rna in allRNAs]
-        filteredRNATypes = [ rna.type for rna in filteredRNAs]
+        # Get RNA broad types
+        allRNABroadTypes = [ rna.type for rna in allRNAs]
+        filteredRNABroadTypes = [ rna.type for rna in filteredRNAs]
 
-        allLncRNATypes = [ rna.transcriptBiotype for rna in allRNAs if rna.type == OptionConstants.BIOTYPE_LNCRNA]
-        filteredLncRNATypes = [ rna.transcriptBiotype for rna in filteredRNAs if rna.type == OptionConstants.BIOTYPE_LNCRNA]
+        # Get RNA biotypes 
+        allRNABiotypes = [ rna.transcriptBiotype for rna in allRNAs if rna.transcriptBiotype in OptionConstants.RNA_BIOTYPES]
+        filteredRNABiotypes = [ rna.transcriptBiotype for rna in filteredRNAs if rna.transcriptBiotype in OptionConstants.RNA_BIOTYPES]
 
+        # Get numbers of genes
         allGenes = { rna.geneID for rna in allRNAs}
         filteredGenes = { rna.geneID for rna in filteredRNAs}
 
-        # # Report numbers before and after filtering        
+        # #
+        # Report numbers before and after filtering        
         beforeFilterText = "Before_RNA_filter"
         afterFilterText = "After_RNA_filter"
 
-        # Number of unique gene IDs
+        # Total number of unique gene IDs
         beforeFilterText+= "\t%i" % len( allGenes)
         afterFilterText+= "\t%i" % len( filteredGenes)      
+
+        # Total number of RNAs (of any type)
+        beforeFilterText+= "\t%i" % len( allRNAs)
+        afterFilterText+= "\t%i" % len( filteredRNAs)
+        
+        # Numbers of broad RNA types
+        for rnaType in DataConstants.RNA_BROAD_TYPES:
+                beforeFilterText+= "\t%i" % allRNABroadTypes.count( rnaType)
+                afterFilterText+= "\t%i" % filteredRNABroadTypes.count( rnaType)
         
         # RNA biotypes
-        for biotype in OptionConstants.TRANSCRIPT_BIOTYPES:
-            if biotype != OptionConstants.DEFAULT_BIOTYPE:
-                beforeFilterText+= "\t%i" % allRNATypes.count( biotype)
-                afterFilterText+= "\t%i" % filteredRNATypes.count( biotype)
-            else:
-                beforeFilterText+= "\t%i" % len( allRNAs)
-                afterFilterText+= "\t%i" % len( filteredRNAs)
-        
-        # LncRNA biotypes
-        for lncBiotype in OptionConstants.LNCRNA_BIOTYPES:
-            beforeFilterText+=  "\t%i" % allLncRNATypes.count( lncBiotype)
-            afterFilterText+=  "\t%i" % filteredLncRNATypes.count( lncBiotype)
+        for biotype in OptionConstants.RNA_BIOTYPES:
+            beforeFilterText+=  "\t%i" % allRNABiotypes.count( biotype)
+            afterFilterText+=  "\t%i" % filteredRNABiotypes.count( biotype)
 
         outHandler.write( beforeFilterText+"\n"+afterFilterText+"\n")
         outHandler.close()
@@ -480,19 +470,21 @@ class AnalysisStrategy(ExecutionStrategy):
         #===================================================================    
         # Interactions numbers report
         #
-        # Note1: interactions filtering is applied after RNA and protein filterings
-        #        'Before filtering' = before interactions filtering, but after RNA and protein filters
-        #        'After filtering' = after interactions filtering AND after RNA and protein filters
+        # Note1: interactions filtering is applied after RNA and protein filtering
         #        Therefore, 'filtering'-named objects refer to the interaction filter
         #
-        # Note2: the protein-RNA interactions are a natural filter, even with default parameters,
-        #        not all RNA's / proteins will be interacting (e.g. they lack interaction data)
+        # Note2: the protein-RNA interactions are a 'natural filter' of RNAs/Proteins, even without score filter,
+        #        since not all RNA's / proteins will be interacting (e.g. they lack interaction data)
+        #
+        # Note3: reporting only for the argument-selected RNA biotypes
         #=================================================================== 
 
         Timer.get_instance().step( "after_filter_report : producing interaction numbers files" )   
 
         #
-        # File with number of interactions and numbers of proteins and RNAs involved, before and after filter
+        # File with number of interactions and numbers of proteins and RNAs involved, before and after INTERACTION filter
+        #        'Before filtering' = before interactions filtering, but after RNA and protein filters
+        #        'After filtering' = after interactions filtering AND after RNA and protein filters
         #
 
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_NUMBERS )
@@ -500,30 +492,56 @@ class AnalysisStrategy(ExecutionStrategy):
         # Write header
         outHandler.write( "Data\t" +
                           "Total_interactions\t" +
-                          "Proteins\t" +
-                          "RNAs\t" +
-                          "LncRNAs\t" +                          
-                           "\t".join( OptionConstants.LNCRNA_BIOTYPES) + "\n")
+                          "Total_proteins\t" +
+                          "Total_RNAs\t" +
+                           "\t".join( self.RNABiotypes) + "\n")
+
+        # #
+        # Get / initialise data
 
         # Get filtered interactions
         filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+        filteredProts = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW)
 
         # Get count of filtered and unfiltered interactions
         # Note: opposed to filtered interactions, it may not be possible to retrieve all interaction objects due to computational constraints
+        # disregard the meaning of "transcriptID" this is simply to speed-up query
+        allInteractionsCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).count() 
         filteredInteractionsCount = len( filteredInteractions)
-        allInteractionsCount = self.sql_session.query( ProteinRNAInteractionCatRAPID ).count()
         
-        # Lists of IDs for the filtered interactions
-        setRNAs = {inter.transcriptID for inter in filteredInteractions}
-        setProteins = {inter.proteinID for inter in filteredInteractions}
-        
-        # Counts for proteins and RNAs with interactions, before and after filtering
-        allDistinctTxCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).distinct().count()
-        allDistinctProtCount = self.sql_session.query( ProteinRNAInteractionCatRAPID.proteinID ).distinct().count()
-        filteredDistinctTxCount = len( setRNAs)
-        filteredDistinctProtCount = len( setProteins)
+        # Counts for proteins and RNAs, before interaction filtering
+        allDistinctTxCount = len( filteredRNAs)
+        allDistinctProtCount = len( filteredProts)
 
-        # # Report numbers before and after filtering        
+        # Counts for proteins and RNAs, after filtering (i.e. with interactions)
+        # Lists of IDs for the filtered interactions
+        interactingRNAs = {inter.transcriptID for inter in filteredInteractions}
+        interactingProteins = {inter.proteinID for inter in filteredInteractions}
+
+        filteredDistinctTxCount = len( interactingRNAs)
+        filteredDistinctProtCount = len( interactingProteins)
+
+        # Get numbers of RNAs in interactions by biotype
+        filteredRNABioypesCounts = {} # key -> transcriptBiotype, value -> number of interacting RNAs with that transcriptBiotype
+        filteredInteractingRNAs = {} # key -> transcriptID of interacting RNA, value -> RNA object
+        # Get values for filtered interactions
+        for rna in filteredRNAs: # filtered RNAs is list of RNAs after RNA filter (not related to interactions filter)
+            # if the RNA is in the set of interacting RNAs
+            if rna.transcriptID in interactingRNAs:
+                if rna.transcriptBiotype not in filteredRNABioypesCounts:
+                    filteredRNABioypesCounts[ rna.transcriptBiotype] = 0
+                filteredRNABioypesCounts[ rna.transcriptBiotype]+= 1
+
+                # if interacting RNA biotype is in list wanted biotypes
+                if rna.transcriptBiotype in self.RNABiotypes: 
+                    if rna.transcriptID not in filteredInteractingRNAs:
+                        filteredInteractingRNAs[ rna.transcriptID] = rna
+                    else:
+                        RainetException( "AnalysisStrategy.after_filter_report : abnormal duplicate transcript ID: " +  rna.transcriptID)
+
+        # #
+        # Report numbers before and after filtering        
         beforeFilterText = "Before_interactions_filter"
         afterFilterText = "After_interactions_filter"
 
@@ -539,60 +557,17 @@ class AnalysisStrategy(ExecutionStrategy):
         beforeFilterText+= "\t%i" % allDistinctTxCount
         afterFilterText+= "\t%i" % filteredDistinctTxCount
 
-        # numbers of lncRNAs in interactions, and their subtypes
-        filteredRNATypesCounts = {} # key -> transcriptBiotype, value -> number of interacting RNAs with that transcriptBiotype
-        filteredInteractingLncRNAs = {} # key -> transcriptID of interacting lncRNA, value -> RNA object
-        # Get values for filtered interactions
-        for rna in filteredRNAs: # filtered RNAs is list of RNAs after RNA filter (not related to interactions filter)
-            # if the RNA is in the set of interacting RNAs
-            if rna.transcriptID in setRNAs:
-                if rna.transcriptBiotype not in filteredRNATypesCounts:
-                    filteredRNATypesCounts[ rna.transcriptBiotype] = 0
-                filteredRNATypesCounts[ rna.transcriptBiotype]+= 1
-
-                # if interacting RNA is a lncRNA
-                if rna.transcriptBiotype in OptionConstants.LNCRNA_BIOTYPES: 
-                    if rna.transcriptID not in filteredInteractingLncRNAs:
-                        filteredInteractingLncRNAs[ rna.transcriptID] = rna
-                    else:
-                        RainetException( "AnalysisStrategy.after_filter_report : abnormal duplicate transcript ID: " +  rna.transcriptID)
-
-        # numbers of lncRNAs           
-        # query number of lncRNAs that are interacting             
-        allInteractingLncRNACount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).filter( \
-                                                            and_(ProteinRNAInteractionCatRAPID.transcriptID == RNA.transcriptID,
-                                                            RNA.type == OptionConstants.BIOTYPE_LNCRNA ) ).distinct().count()
-
-        #  "Number of all lncRNAs must be less or equal to total number of all RNAs."
-        assert allInteractingLncRNACount <= len(allRNAs)
-                
-        # "Number of filtered lncRNAs must be less or equal to total number of filtered RNAs."
-        assert len(filteredInteractingLncRNAs) <= len(filteredRNAs)
-
-        beforeFilterText+= "\t%i" % allInteractingLncRNACount
-        afterFilterText+= "\t%i" % len( filteredInteractingLncRNAs)
-
-        # numbers for each subtype of lncRNAs
-        for lncBiotype in OptionConstants.LNCRNA_BIOTYPES:
+        # numbers for each biotype of RNAs
+        for biotype in self.RNABiotypes:
             # before filter
-            # query for all interactions in PRI table for numbers of RNAs with specific biotype
-            allRNACount = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).filter( \
-                                                  and_(ProteinRNAInteractionCatRAPID.transcriptID == RNA.transcriptID, 
-                                                  RNA.transcriptBiotype == lncBiotype ) ).distinct().count()
+            allRNACount = filteredRNABiotypes.count( biotype)
 
-            # Note: a "count" query will give 0 and not None if nothing found            
-                 
             # after filter
-            if lncBiotype in filteredRNATypesCounts:
-                filteredRNACount = filteredRNATypesCounts[ lncBiotype]
+            # if biotype was not initialised in the counts item, attribute value 0
+            if biotype in filteredRNABioypesCounts:
+                filteredRNACount = filteredRNABioypesCounts[ biotype]
             else:
                 filteredRNACount = 0
-
-            # "Number of interacting lncRNAs of a subtype must be less or equal to number of interacting lncRNAs."            
-            assert allRNACount <= allInteractingLncRNACount
-
-            # "Number of filtered interacting lncRNAs of a subtype must be less or equal to number of filtered interacting lncRNAs."
-            assert filteredRNACount <= filteredInteractingLncRNAs
 
             beforeFilterText+= "\t%i" % allRNACount
             afterFilterText+= "\t%i" % filteredRNACount
@@ -804,7 +779,8 @@ class AnalysisStrategy(ExecutionStrategy):
         if returnCode:
             raise RainetException(" AnalysisStrategy.write_report : external command with return code:" + str( returnCode) )
         else:
-            # the filename of the produce report file using R's knit2pdf is always 
+            # copy pdf report to output folder
+            # the filename of the produce report file using R's knit2pdf is always the same name but pdf extension
             reportFile = AnalysisStrategy.R_SWEAVE_FILE.replace(".Rnw",".pdf")
             shutil.copy( reportFile, self.outputFolderReport)
 
