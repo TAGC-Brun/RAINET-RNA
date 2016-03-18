@@ -55,8 +55,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Constants with default paramters        
     TOTAL_RNAS = 125 #200 total of all biotypes, 125 with used biotypes
     TOTAL_PROTS = 200
-    TOTAL_PRIS = 27 #54 total of all biotypes, 27 with used biotypes
-    TOTAL_PRIS_LINC_FILT = 2
+    TOTAL_PRIS = 24 #54 total of all biotypes, 27 with used biotypes, 24 when removing peptide redundancy
+    TOTAL_PRIS_LINC_FILT = 1
         
     # #
     # Runs before each test
@@ -116,6 +116,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
 
         print (len(RNAs),len(Prots),len(PRIs))
+
+        print (PRIs)
 
         self.assertTrue(len(RNAs) == AnalysisStrategyUnittest.TOTAL_RNAS, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(Prots) == AnalysisStrategyUnittest.TOTAL_PROTS, "asserting if number of objects retrieved is correct") 
@@ -188,8 +190,14 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-           
-        self.assertTrue(len(PRIs) == 10, "asserting if number of interactions above certain interaction score is correct") 
+  
+        print (PRIs)
+        
+        print (len(PRIs))
+        
+        # Regarding peptide redundancy filter, there is two of such cases in test database, one is misc_RNA (is always filtered) and the other is lincRNA, so only one peptide (interaction) is removed
+        
+        self.assertTrue(len(PRIs) == 9, "asserting if number of interactions above certain interaction score is correct") 
   
   
     # #
@@ -205,6 +213,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        
+        print (PRIs)
    
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
 
@@ -311,7 +321,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # #
     # Runs after each test
     def tearDown(self):
-         
+          
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)

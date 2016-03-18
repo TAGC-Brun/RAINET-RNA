@@ -4,6 +4,7 @@ import shutil
 import numpy as np
 import pandas as pd
 
+import cPickle as pickle
 
 from sqlalchemy import or_, and_, distinct
 
@@ -323,6 +324,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
         # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
 
+
         #===================================================================          
         # Filter for interactions between selected RNAs and proteins
         #===================================================================         
@@ -330,11 +332,47 @@ class AnalysisStrategy(ExecutionStrategy):
         for inter in interactions:
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
-   
+
+
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
         #=================================================================== 
-        # TODO: first we need to decide on a rule for this filtering. Pick highest interaction score?
+        # Reminder: original protein-RNA interaction file contains interactions on transcript-peptide level.
+        # We want to have interactions on transcript-protein level. A protein can have several peptide isoforms.
+        # Here we retain only one interaction per transcript-protein pair, the one with highest score or
+        # the peptide ID with smaller number in case of score equality.
+
+        # build dictionary where key is transcript+protein IDs, and values the possible different isoforms
+        pairs = {}
+        for inter in selectedInteractions:
+            pair = str(inter.transcriptID) + "|" + str(inter.proteinID)
+            if pair not in pairs:
+                pairs[ pair] = []
+            pairs[ pair].append( inter)
+
+        # store only interaction between one transcript and protein, by selecting the peptide which had higher interaction score
+        nonRedundantInteractions = []
+        for pair in pairs:
+
+            maxScore = float( "-inf")
+            maxPeptide = ""
+
+            # sort by smaller number on peptide ID (second item on list), choose final peptide ID by score or smaller ID number
+            for peptide in sorted( pairs[ pair]):
+                                
+                score = float( peptide.interactionScore)
+                
+                if score > maxScore:
+                    maxScore = score
+                    maxPeptide = peptide
+
+            if maxPeptide == "":
+                raise RainetException( "AnalysisStrategy.filter_PRI : cannot determine maximum interaction score.")
+            
+            nonRedundantInteractions.append( peptide)
+            
+        del pairs
+        selectedInteractions = nonRedundantInteractions
 
 
         #===================================================================    
@@ -581,7 +619,6 @@ class AnalysisStrategy(ExecutionStrategy):
     # Produce output files that will be used for a pdf report
     def interaction_report(self):
 
-
         # Get filtered interactions
         filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
         
@@ -618,10 +655,11 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS )
         
         # Get biotypes of lncRNAs plus mRNA
+        ### 11-03-2016: probably need to change this to self.RNABiotypes
         wantedBiotypes = DataConstants.RNA_LNCRNA_BIOTYPE[:]
         for item in DataConstants.RNA_MRNA_BIOTYPE:
             mRNABiotype = item
-        wantedBiotypes.append( mRNABiotype )
+        wantedBiotypes.append( mRNABiotype)
 
         # Data for lncRNAs subtypes and mRNA
         # Note: this excludes biotypes such as misc_RNA and others, therefore some interactions will be excluded in this step.
@@ -647,6 +685,23 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandlerScore.close()
         outHandlerPartners.close()
 
+
+#         ### EXPLORING
+# 
+#         for biotype in sorted( wantedBiotypes):
+#             if biotype in interactionsPerBiotype and len( interactionsPerBiotype[ biotype]) > 0:
+#                 for txID in interactionsPerBiotype[ biotype]:
+#                     termsDistribution = {}
+#                     for protID in interactionsPerBiotype[ biotype][ txID]:
+#                         terms = self.sql_session.query( ProteinGOAnnotation.geneOntology_id).filter( ProteinGOAnnotation.protein_id == protID).all()
+#                         for term in terms:
+#                             term = str( term)
+#                             if term not in termsDistribution:
+#                                 termsDistribution[ term] = 0
+#                             termsDistribution[ term]+= 1
+#                     
+#                     counts = termsDistribution.values()
+#                     print ( txID, max( counts) / float(sum( counts)) )
 
 
     # #
