@@ -76,6 +76,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, OptionConstants.DEFAULT_INTERACTION_SCORE)
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, OptionConstants.DEFAULT_RNA_BIOTYPES)
         optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstants.DEFAULT_GENCODE)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF)
+
         
         # Set the level of verbosity
         Logger.get_instance().set_level(OptionManager.get_instance().get_option(OptionConstants.OPTION_VERBOSITY))
@@ -269,13 +271,13 @@ class AnalysisStrategyUnittest(unittest.TestCase):
                           "assert if number of total PRI after filter matches same value as other test")
 
         # Interaction scores report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_SCORES, header = None, sep = ",", skip_blank_lines = True)
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
                 
         self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
         self.assertTrue( table[1][5] == 28.16, "assert if last value of lincRNA score is correct")
 
         # Interaction partners report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS, header = None, sep = ",", skip_blank_lines = True)
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
 
         self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
         self.assertTrue( table[1][5] == 1, "assert if number of protein partners is correct")
@@ -303,6 +305,14 @@ class AnalysisStrategyUnittest(unittest.TestCase):
                     print self.expectedFolder
                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
+        # Update helper:
+        # 1) comment out "tearDown" function
+        # 2) run the "test_default_params" function only
+        # 3) manually check if the files are ok
+        # 4) copy the test results files to expected folder: 
+        # cp -r /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/ /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected
+        # 5) uncomment "tearDown" and rerun all tests
+
 
     def test_sweaving(self):
   
@@ -321,11 +331,11 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # #
     # Runs after each test
     def tearDown(self):
-          
+            
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
-         
+          
       
 
 

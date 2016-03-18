@@ -1,10 +1,9 @@
 
 import os
 import shutil
-import numpy as np
-import pandas as pd
-
-import cPickle as pickle
+# import numpy as np
+# import pandas as pd
+# import cPickle as pickle
 
 from sqlalchemy import or_, and_, distinct
 
@@ -70,12 +69,14 @@ class AnalysisStrategy(ExecutionStrategy):
     # Data Manager Keywords
     #===================================================================
 
-    RNA_ALL_KW = "allRNAs"
-    PROT_ALL_KW = "allProteins"
+    RNA_ALL_KW = "allRNAs" # Stores all RNA table objects
+    PROT_ALL_KW = "allProteins" # Stores all Protein table objects
 
-    RNA_FILTER_KW = "selectedRNAs"
-    PROT_FILTER_KW = "selectedProteins"
-    PRI_FILTER_KW = "selectedInteractions"
+    RNA_FILTER_KW = "selectedRNAs" # Stores RNA objects after RNA filter
+    PROT_FILTER_KW = "selectedProteins" # Stores Protein objects after Protein filter
+    PRI_FILTER_KW = "selectedInteractions" # Stores Interaction objects after Interaction filter
+
+    PRI_TISSUES_KW = "interactingTissues" # Stores custom dictionary containing tissues where interaction has been found after interaction filtering
 
     #===================================================================
     # Report files constants       
@@ -94,8 +95,9 @@ class AnalysisStrategy(ExecutionStrategy):
     REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
 
     # Interaction report
-    REPORT_INTERACTION_SCORES = "interaction_scores.tsv"
-    REPORT_INTERACTION_PARTNERS = "interaction_partners.tsv"
+    REPORT_INTERACTION_SCORES_BIOTYPE = "interaction_scores_biotype.tsv"
+    REPORT_INTERACTION_PARTNERS_BIOTYPE = "interaction_partners_biotype.tsv"
+    REPORT_ALL_INTERACTIONS_SCORES = "all_interaction_scores.tsv"
 
 
     def __init__(self):  
@@ -322,8 +324,9 @@ class AnalysisStrategy(ExecutionStrategy):
   
         interactions = eval('self.sql_session.' +  queryText + ".all()")
 
-        # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
+        print ("Finished minimum interaction score filter:",len(interactions))
 
+        # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
 
         #===================================================================          
         # Filter for interactions between selected RNAs and proteins
@@ -333,6 +336,7 @@ class AnalysisStrategy(ExecutionStrategy):
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
 
+        print ("Finished interacting RNA / protein filter:",len(selectedInteractions))
 
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
@@ -374,43 +378,108 @@ class AnalysisStrategy(ExecutionStrategy):
         del pairs
         selectedInteractions = nonRedundantInteractions
 
+        print ("Finished peptide redudancy filter:",len(selectedInteractions))
+
 
         #===================================================================    
         # Filter interactions based on RNA and Protein (mRNA) expression
         #=================================================================== 
-        # TODO: first we need to know which expression data we have
-# 
-#         # Get list of tissues for looking over their expression values on each transcript
-#         tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
-# 
-#         for inter in selectedInteractions:
-# 
-#             print inter.transcriptID, inter.proteinID
-# 
-#             # Search mRNA that produces interacting protein
-#             mRNAs = self.sql_session.query( MRNA.transcriptID ).filter( MRNA.proteinID == inter.proteinID).all()
-# 
-#             # if no corresponding mRNA found, counts as if it was not expressed
-#             if len(mRNAs) == 0 or mRNAs == None:
-#                 continue
-# 
-#             # problem 0: my test set does not contain example of interacting protein associated with a mRNA            
-#             # problem 1: there can be several mRNAs for the same protein ID, use them all ? Write down well how we dealt with this
-#             
-#             for tissue in tissues:
-#                 print inter.transcriptID, inter.proteinID, tissue
-#  
-#                 # Get RNA transcript expression in the specific tissue
-#                 queryText = "query( RNATissueExpression.expressionValue ).filter( and_( RNATissueExpression.transcriptID == inter.transcriptID, RNATissueExpression.tissueName == tissue)).first()"
-#                 txExpressionVal = float( eval( 'self.sql_session.' +  queryText)[0])
-#                 print (txExpressionVal)
-#                 
-#                 # Get the Protein expression, using its mRNA
-#                 queryText = "query( RNATissueExpression.expressionValue ).filter( and_( RNATissueExpression.transcriptID == mRNAID, RNATissueExpression.tissueName == tissue)).first()"
-#                 protExpressionVal = float( eval( 'self.sql_session.' +  queryText)[0])
-#                 print (protExpressionVal)
+ 
+        if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:
+  
+            # List will contain expression-filtered set of interactions
+            expressedInteractions = []
+     
+            # Dictionary which will contain tissues where interaction was found to be present
+            expressedInteractionsTissues = {} # key -> transcriptID|proteinID (pair), value -> set of tissues
+        
+            # Get list of tissues for looking over their expression values on each transcript
+            tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
+     
+            # Get list of transcripts with expression data, for speed purposes
+            transcriptsWithExpression = { str( tx[0]) for tx in self.sql_session.query( RNATissueExpression.transcriptID ).distinct().all() }
+            
+            count = 0
+            # loop over the ongoing filtered interactions
+            for inter in selectedInteractions:
+                
+                count+= 1
+                if count % 100 == 0:
+                    print ("Processed",count)
+                    
+                # skip transcripts with no expression
+                if inter.transcriptID not in transcriptsWithExpression:
+                    continue
+     
+                # Search mRNA that produces interacting protein
+                mRNAs = [ str( mRNA[0]) for mRNA in self.sql_session.query( MRNA.transcriptID ).filter( MRNA.proteinID == inter.proteinID).all() ]
+     
+                # if no corresponding mRNA found, counts as if it was not expressed
+                if len(mRNAs) == 0 or mRNAs == None:
+                    continue
+    
+                # variable which stores set of tissues where both partners of pair are expressed 
+                setOfInteractingTissues = set()
+    
+                # Get RNA transcript expression for all tissues
+                RNATissueExpressions = {}
+                queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == inter.transcriptID).all()"
+                queryResult = eval( 'self.sql_session.' +  queryText)
+                if queryResult != None and len(queryResult) != 0:
+                    for tiss in queryResult:     
+                        txExpressionVal = float( tiss[0])
+                        tissueName = str( tiss[1])
+                        RNATissueExpressions[ tissueName] = txExpressionVal                   
+                else:
+                    raise RainetException( "AnalysisStrategy.filter_PRI : RNA expression query failed.")
+     
+                # Get Protein expression for all tissues
+                # there can be several mRNAs for the same protein ID, here we use them all to have set of interacting tissues
+                # we only required that at least one of the mRNAs producing the protein is present with the other RNA (e.g. lncRNA)   
+                for mRNAID in mRNAs:
+    
+                    # skip transcripts with no expression      
+                    if mRNAID not in transcriptsWithExpression:
+                        continue
+    
+                    MRNATissueExpressions = {}
+                         
+                    # Get the Protein expression, using its mRNA
+                    queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == mRNAID).all()"
+                    queryResult = eval( 'self.sql_session.' +  queryText)
+                    
+                    if queryResult != None and len(queryResult) != 0:
+                        for tiss in queryResult:     
+                            txExpressionVal = float( tiss[0])
+                            tissueName = str( tiss[1])
+                            MRNATissueExpressions[ tissueName] = txExpressionVal                   
+                    else:
+                        raise RainetException( "AnalysisStrategy.filter_PRI : mRNA expression query failed.")
+    
+                    for tissue in tissues:
+                        txExpressionVal = RNATissueExpressions[ tissue]
+                        protExpressionVal = MRNATissueExpressions[ tissue]
+    
+                        if txExpressionVal >= self.expressionValueCutoff and protExpressionVal >= self.expressionValueCutoff:
+                            setOfInteractingTissues.add( tissue)
+    
+                # For a protein-RNA pair, retain interaction only if protein-RNA are present in at least one tissue
+                if len( setOfInteractingTissues) > 0: # cutoff of minimum number of tissues can be changed here
+                    expressedInteractions.append( inter)
+                    pair = inter.transcriptID + "|" + inter.proteinID
+                    expressedInteractionsTissues[ pair] = setOfInteractingTissues
+                    
+            selectedInteractions = expressedInteractions
+    
+            print ("Finished expression filter:",len(selectedInteractions))
+    
+            DataManager.get_instance().store_data(AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
+            del expressedInteractions
+            del expressedInteractionsTissues
+
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+
 
 
     # #
@@ -619,6 +688,10 @@ class AnalysisStrategy(ExecutionStrategy):
     # Produce output files that will be used for a pdf report
     def interaction_report(self):
 
+        #===================================================================    
+        # Initialization
+        #=================================================================== 
+
         # Get filtered interactions
         filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
         
@@ -646,14 +719,15 @@ class AnalysisStrategy(ExecutionStrategy):
             
             interactionsPerBiotype[ biotype][ txID][ protID] = interScore       
 
-        #
+        #===================================================================    
         # File with interaction scores for each subclass of lncRNAs
         #        
         # E.g. biotype\tlist_of_with_scores
+        #=================================================================== 
 
-        outHandlerScore = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_SCORES )
-        outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS )
-        
+        outHandlerScore = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE )
+        outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE )
+                
         # Get biotypes of lncRNAs plus mRNA
         ### 11-03-2016: probably need to change this to self.RNABiotypes
         wantedBiotypes = DataConstants.RNA_LNCRNA_BIOTYPE[:]
@@ -678,30 +752,40 @@ class AnalysisStrategy(ExecutionStrategy):
             else:
                 textScore+= ",NA"
                 textPartners+= ",NA"
-            
+                        
             outHandlerScore.write( textScore + "\n")
             outHandlerPartners.write( textPartners + "\n")
 
         outHandlerScore.close()
         outHandlerPartners.close()
 
+        #=================================================================== 
+        # File with interaction scores for each protein
+        # 
+        # E.g. transcriptID\tproteinID\tinteractionScore
+        #=================================================================== 
 
-#         ### EXPLORING
+        # IF THIS IS FOR A HEATMAP, OUTPUT FILE SHOULD BE IN MATRIX FORMAT
+        # RNAs Prot1 Prot2
+        # RNA1 41    23
+        # RNA2 32    43
+
+#         
+#         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_ALL_INTERACTIONS_SCORES )
 # 
-#         for biotype in sorted( wantedBiotypes):
-#             if biotype in interactionsPerBiotype and len( interactionsPerBiotype[ biotype]) > 0:
-#                 for txID in interactionsPerBiotype[ biotype]:
-#                     termsDistribution = {}
-#                     for protID in interactionsPerBiotype[ biotype][ txID]:
-#                         terms = self.sql_session.query( ProteinGOAnnotation.geneOntology_id).filter( ProteinGOAnnotation.protein_id == protID).all()
-#                         for term in terms:
-#                             term = str( term)
-#                             if term not in termsDistribution:
-#                                 termsDistribution[ term] = 0
-#                             termsDistribution[ term]+= 1
-#                     
-#                     counts = termsDistribution.values()
-#                     print ( txID, max( counts) / float(sum( counts)) )
+#         outHandler.write( "transcriptID\tproteinID\tinteractionScore\n")
+# 
+#         
+# 
+#         for inter in filteredInteractions:
+#             txID = str( inter.transcriptID)
+#             protID = str( inter.proteinID)
+#             interScore = float( inter.interactionScore)
+# 
+#             outHandler.write( "%s\t%s\t%.2f\n" % ( txID, protID, interScore))
+# 
+#         outHandler.close()
+
 
 
     # #
@@ -710,13 +794,9 @@ class AnalysisStrategy(ExecutionStrategy):
     def expression_report(self):
         
         #===================================================================    
-        # RNA expression report
+        # File with average expression (among tissues) for each transcript, discrimination of RNA types and lncRNA subtypes
         #=================================================================== 
  
-        #
-        # File with average expression (among tissues) for each transcript, discrimination of RNA types and lncRNA subtypes
-        #
-
         filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
  
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION )
@@ -750,9 +830,9 @@ class AnalysisStrategy(ExecutionStrategy):
  
         outHandler.close()
  
-        #
+        #===================================================================    
         # File with percentage of transcript with expression data, discrimination of RNA types and lncRNA subtypes
-        #
+        #=================================================================== 
  
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE )
  
@@ -770,12 +850,24 @@ class AnalysisStrategy(ExecutionStrategy):
          
         outHandler.close()
 
+
+        #=================================================================== 
+        # File with number of tissues where both partners of pair expressed
+        # 
+        # E.g. transcriptID\tproteinID\tnumber_tissues
+        #=================================================================== 
+
+        interactionTissues = DataManager.get_instance().get_data( AnalysisStrategy.PRI_TISSUES_KW)
+
+        #TODO: think if this is interesting to see
+
         
     def enrichement_analysis(self):
         pass
         # TODO: see below
 #  
 #         # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
+#         # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
 #          
 #         # 1) for each KEGG pathway, count how many proteins in it
 #         keggFrequencies = {}
@@ -825,8 +917,8 @@ class AnalysisStrategy(ExecutionStrategy):
                      AnalysisStrategy.PARAMETERS_LOG, 
                      AnalysisStrategy.REPORT_RNA_NUMBERS,
                      AnalysisStrategy.REPORT_INTERACTION_NUMBERS,                     
-                     AnalysisStrategy.REPORT_INTERACTION_SCORES,
-                     AnalysisStrategy.REPORT_INTERACTION_PARTNERS
+                     AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE,
+                     AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE
                      )
                 #--max-mem-size=2000M
   
