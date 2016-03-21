@@ -203,7 +203,9 @@ class AnalysisStrategy(ExecutionStrategy):
          
         self.filter_PRI()
 
-        Timer.get_instance().step( "Produced after filter report.." )        
+        self.filter_PRI_expression()
+
+        Timer.get_instance().step( "Producing filter report.." )        
 
         self.after_filter_report()
 
@@ -380,6 +382,18 @@ class AnalysisStrategy(ExecutionStrategy):
 
         print ("Finished peptide redudancy filter:",len(selectedInteractions))
 
+        DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+
+
+
+    # #
+    # Filter protein-RNA interactions by member co-existence
+    #
+    # Stores final list of interactions on DataManager 
+    def filter_PRI_expression(self):
+
+        # Get filtered interactions
+        selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
 
         #===================================================================    
         # Filter interactions based on RNA and Protein (mRNA) expression
@@ -479,7 +493,6 @@ class AnalysisStrategy(ExecutionStrategy):
 
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
-
 
 
     # #

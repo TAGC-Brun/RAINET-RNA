@@ -117,10 +117,6 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         Prots = DataManager.get_instance().get_data(AnalysisStrategy.PROT_FILTER_KW)
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
 
-        print (len(RNAs),len(Prots),len(PRIs))
-
-        print (PRIs)
-
         self.assertTrue(len(RNAs) == AnalysisStrategyUnittest.TOTAL_RNAS, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(Prots) == AnalysisStrategyUnittest.TOTAL_PROTS, "asserting if number of objects retrieved is correct") 
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS, "asserting if number of objects retrieved is correct") 
@@ -177,8 +173,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
    
         RNAs = DataManager.get_instance().get_data(AnalysisStrategy.RNA_FILTER_KW)
-        
-        self.assertTrue(len(RNAs) == 69, "asserting if number of objects in being both lncRNA and gencode is correct") 
+                
+        self.assertTrue(len(RNAs) == 70, "asserting if number of object with gencode is correct") 
   
   
     # # 
@@ -192,10 +188,6 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-  
-        print (PRIs)
-        
-        print (len(PRIs))
         
         # Regarding peptide redundancy filter, there is two of such cases in test database, one is misc_RNA (is always filtered) and the other is lincRNA, so only one peptide (interaction) is removed
         
@@ -215,10 +207,35 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-        
-        print (PRIs)
-   
+                   
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
+
+
+    # #
+    # Test PRI expression filter
+    def test_PRI_filter_three(self):
+   
+        print "| test_PRI_filter_three | "
+   
+        optionManager = OptionManager.get_instance()        
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
+        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
+        optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 2)
+
+        self.strategy.execute()
+
+        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+                                      
+        self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
+   
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 200)
+        self.strategy.execute()
+
+        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+
+        self.assertTrue(len(PRIs) == 0, "asserting if PRI is filtered with expression filter ") 
+
 
 #     # #
 #     # Test function to create report files with default parameters
@@ -302,7 +319,6 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         for report in reportConstants:
             with open(report, "r") as out:                
                 with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
-                    print self.expectedFolder
                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
         # Update helper:
@@ -322,6 +338,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.writeReportFile = 1
                     
         self.strategy.execute()
+
 
 #     def test_extra(self):
 #         
