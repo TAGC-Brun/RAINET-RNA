@@ -5,8 +5,8 @@ library(RColorBrewer)
 require(grid)
 require(gridExtra)
 
-#inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/real/Report/rna_numbers.tsv"
 inputFile = paste( output_folder, report_rna_numbers, sep = "/")
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/rna_numbers.tsv"
 
 print (paste("INPUT FILE:",inputFile) )
 
@@ -54,7 +54,7 @@ plt2 <- ggplot( broadCat, aes(x = "", y = value, fill = variable))  +
 
 
 # pie plot for categories of lncRNAs
-lncRNABiotypes <- c("X3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","processed_transcript","sense_intronic","sense_overlapping","TEC")
+lncRNABiotypes <- c("protein_coding","X3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","processed_transcript","sense_intronic","sense_overlapping","TEC")
 specCat <- afterFilt[ afterFilt$variable %in% lncRNABiotypes,]
 
 # Bar plot for numbers of items before and after filter
@@ -73,3 +73,5 @@ plt3 <- ggplot( specCat, aes(x = "", y = value, fill = variable))  +
   geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), label = value), size=5)
 
 grid.arrange( plt2, plt3)
+
+
