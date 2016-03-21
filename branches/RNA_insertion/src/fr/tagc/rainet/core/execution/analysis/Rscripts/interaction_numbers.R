@@ -27,7 +27,7 @@ plt1 <- ggplot( totalInteractions, aes(x = variable, y = value, fill = Data)) +
   geom_bar( stat = "identity", position=position_dodge()) + #aes(colour = Data)
   coord_flip() + 
   theme_minimal() +
-  geom_text(aes(label = value), hjust = 0.5, size = 4, position = position_dodge( width=1)) +
+  geom_text(aes(label = value, y = mean(value)), hjust = 0.5, size = 4, position = position_dodge( width=1)) +
   scale_fill_discrete( breaks = factor(totalInteractions$Data, levels = rev(levels(totalInteractions$Data)))) +
   xlab( "Number of interactions") +
   ylab( "Frequency")
@@ -45,30 +45,27 @@ plt2 <- ggplot( rnaNumbers, aes(x = variable, y = value, fill = Data)) +
   geom_bar( stat = "identity", position=position_dodge()) + #aes(colour = Data)
   coord_flip() + 
   theme_minimal() +
-  geom_text(aes(label = value), hjust = 0.5, size = 4, position = position_dodge( width=1)) +
+  geom_text(aes(label = value, y = mean(value)), hjust = 0.5, size = 4, position = position_dodge( width=1)) +
   scale_fill_discrete( breaks = factor(rnaNumbers$Data, levels = rev(levels(rnaNumbers$Data)))) +
   xlab( "Biotype") +
   ylab( "Frequency")
 
 
-# Percentages plot
-
-proportion <- inputData[2,2:ncol(inputData)]*100.0 / inputData[1,2:ncol(inputData)]
-proportion <- melt(proportion)
-
-proportion$variable <- factor(proportion$variable, levels = rev(levels(proportion$variable)))
-
-# Bar plot for numbers of items before and after filter
-plt3 <- ggplot( proportion, aes(x = variable, y = value)) + 
-  geom_bar( stat = "identity", position=position_dodge(), fill = "red") +
-  coord_flip() + 
-  geom_text( aes( label = round(value,2) ) ) + #, hjust = -0.5, size = 4, position = position_dodge( width=1), color = "white") +
-  theme_minimal() +
-  ylim(c(0.0,100.0)) + 
-  xlab( "Biotype") +
-  ylab( "Percentage after interaction filter")
-
-print (plt1)
-print (plt2)
-print (plt3)
+# # Percentages plot
+# 
+# proportion <- inputData[2,2:ncol(inputData)]*100.0 / inputData[1,2:ncol(inputData)]
+# proportion <- melt(proportion)
+# 
+# proportion$variable <- factor(proportion$variable, levels = rev(levels(proportion$variable)))
+# 
+# # Bar plot for numbers of items before and after filter
+# plt3 <- ggplot( proportion, aes(x = variable, y = value)) + 
+#   geom_bar( stat = "identity", position=position_dodge(), fill = "red") +
+#   coord_flip() + 
+#   geom_text( aes( label = round(value,2), y = mean(value) ) ) + #, hjust = -0.5, size = 4, position = position_dodge( width=1), color = "white") +
+#   theme_minimal() +
+#   ylim(c(0.0,100.0)) + 
+#   xlab( "Biotype") +
+#   ylab( "Percentage after interaction filter")
+# 
 #grid.arrange( plt1, plt2, plt3)
