@@ -41,8 +41,9 @@ from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 #===============================================================================
 # Processing notes:
 # 
-# Assuming that NPInter file has RNA as moleculeA and partner as moleculeB
-#
+# - If reading catRAPID fragments, we retain RNA-protein interaction if at least one of the fragments passes the score cutoffs
+# - Assuming that NPInter file has RNA as moleculeA and partner as moleculeB (the case for all examples I picked so far)
+# - Running various parameters at: /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/knownScaffoldValidation
 #===============================================================================
 
 
@@ -52,7 +53,7 @@ class KnownScaffoldValidation( object ):
     MOLECULEBTYPE = "protein"
     HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
 
-    def __init__(self, catRAPIDFile, npinterFile, wantedRNAFile, rainetDB, outputFolder, discriminativePowerCutoff, interactionStrengthCutoff):
+    def __init__(self, catRAPIDFile, npinterFile, wantedRNAFile, rainetDB, outputFolder, discriminativePowerCutoff, interactionStrengthCutoff, topProportion):
 
         self.catRAPIDFile = catRAPIDFile
         self.npinterFile = npinterFile
@@ -61,6 +62,7 @@ class KnownScaffoldValidation( object ):
         self.outputFolder = outputFolder
         self.discriminativePowerCutoff = discriminativePowerCutoff
         self.interactionStrengthCutoff = interactionStrengthCutoff
+        self.topProportion = topProportion
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -111,6 +113,16 @@ class KnownScaffoldValidation( object ):
 
         # store names of catRAPID proteins not present in RAINET
         missingProteins = set()
+
+        headValue = int( "%i" % (len( filteredTable) * self.topProportion ) )
+        
+        # if the topProportion option was used, sort table and get only the top scores
+        if len(filteredTable) != headValue:
+        
+            # Sort first by interaction strength and then by discriminative power, higher to lower
+            sortedTable = filteredTable.sort_values([3, 2], ascending=[False, False])
+    
+            filteredTable = sortedTable.head(headValue)
 
         #===================================================================
         # Get set of interacting proteins  
@@ -308,6 +320,7 @@ if __name__ == "__main__":
         # optional args
         parser.add_argument('--discriminativePowerCutoff', metavar='DiscriminativePowerCutoff', default = 0.75, type=float, help='catRAPID Minimum Disciminative power cutoff')
         parser.add_argument('--interactionStrengthCutoff', metavar='InteractionStrengthCutoff', default = 0.5, type=float, help='catRAPID Interaction Strength cutoff')
+        parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
         
         #display help when misusage
         if len(sys.argv) < 5: 
@@ -319,7 +332,7 @@ if __name__ == "__main__":
         # Initialise class
         run = KnownScaffoldValidation( args.catRAPIDFile, args.npinterFile, args.wantedRNAFile, args.rainetDB, 
                                        args.outputFolder, args.discriminativePowerCutoff,
-                                        args.interactionStrengthCutoff )
+                                       args.interactionStrengthCutoff, args.topProportion )
 
         #===============================================================================
         # Run analysis / processing
@@ -336,53 +349,6 @@ if __name__ == "__main__":
 
         # Read NPInter
         NPInterInteractingProteins = run.read_NPInter_file()
-
-
-#         #===============================================================================
-#         # Fisher exact test
-#         #===============================================================================
-#         # #        
-#         # Create contingency table
-#         # Note: test is: Are catRAPID interacting proteins (i.e. passing the filters) enriched for proteins present in NPInter interactions?
-#   
-#         catRAPIDInteractingSet = set( catRAPIDInteractingProteins.keys())
-#          
-#         catRAPIDNonInteractingSet = set( catRAPIDNonInteractingProteins.keys())
-#  
-#         assert (len( catRAPIDInteractingSet.intersection( catRAPIDNonInteractingSet) ) == 0)
-#   
-#         # Note: background is set of proteins in catRAPID, either interacting or not       
-#         backgroundSet = catRAPIDInteractingSet.union( catRAPIDNonInteractingSet)
-#  
-#         # NPInter interacting set is the proteins interacting in NPInter that are in the background
-#         NPInterInteractingSet = set( NPInterInteractingProteins.keys()).intersection( backgroundSet)
-#  
-#         # NPInter non interacting set is the proteins in the background not in NPInter
-#         NPInterNonInteractingSet = backgroundSet - NPInterInteractingSet
-#  
-#         assert ( len( NPInterInteractingSet) + len( NPInterNonInteractingSet)  == len( backgroundSet))
-#  
-#         print (len( catRAPIDInteractingSet), len( catRAPIDNonInteractingSet), len( NPInterInteractingSet), len( NPInterNonInteractingSet), len( backgroundSet) )
-#          
-#         # catRAPID interacting proteins in NPInter set
-#         catRAPIDIntNPInter = catRAPIDInteractingSet.intersection( NPInterInteractingSet)
-#         # catRAPID interacting proteins not in NPInter set
-#         catRAPIDIntNotNPInter = catRAPIDInteractingSet.intersection( NPInterNonInteractingSet)
-#         # catRAPID non-interacting proteins in NPInter set
-#         catRAPIDNotIntNPInter = catRAPIDNonInteractingSet.intersection( NPInterInteractingSet)
-#         # catRAPID non-interacting proteins not in NPInter set
-#         catRAPIDNotIntNotNPInter = catRAPIDNonInteractingSet.intersection( NPInterNonInteractingSet)
-#          
-#         assert (len( catRAPIDIntNPInter) + len( catRAPIDNotIntNPInter) == len( NPInterInteractingSet))        
-#         assert (len( catRAPIDIntNotNPInter) + len( catRAPIDNotIntNotNPInter) == len( NPInterNonInteractingSet))
-#  
-#         print (len( catRAPIDIntNPInter), len( catRAPIDIntNotNPInter), len( catRAPIDNotIntNPInter), len( catRAPIDNotIntNotNPInter))
-#          
-#         # contingency table as bi-dimensional list 
-#         contingencyTable = [ [ len( catRAPIDIntNPInter), len( catRAPIDIntNotNPInter)], [ len( catRAPIDNotIntNPInter), len( catRAPIDNotIntNotNPInter)] ]
-#  
-#         run.fisher_exact_test( contingencyTable)
-
 
         #===============================================================================
         # Hypergeometric test
@@ -488,3 +454,49 @@ if __name__ == "__main__":
 # # 
 #         # Summary: DF loc: df.loc[row,column] xy coordinates. Can use list of items to retrieve smaller DataFrame: df.loc[[0,1],[1,2]]. Cannot use slices
 #         #          DF indexing: df[col][num] yx coordinates. Can use slices: df[1][1:3]
+
+
+#         #===============================================================================
+#         # Fisher exact test
+#         #===============================================================================
+#         # #        
+#         # Create contingency table
+#         # Note: test is: Are catRAPID interacting proteins (i.e. passing the filters) enriched for proteins present in NPInter interactions?
+#   
+#         catRAPIDInteractingSet = set( catRAPIDInteractingProteins.keys())
+#          
+#         catRAPIDNonInteractingSet = set( catRAPIDNonInteractingProteins.keys())
+#  
+#         assert (len( catRAPIDInteractingSet.intersection( catRAPIDNonInteractingSet) ) == 0)
+#   
+#         # Note: background is set of proteins in catRAPID, either interacting or not       
+#         backgroundSet = catRAPIDInteractingSet.union( catRAPIDNonInteractingSet)
+#  
+#         # NPInter interacting set is the proteins interacting in NPInter that are in the background
+#         NPInterInteractingSet = set( NPInterInteractingProteins.keys()).intersection( backgroundSet)
+#  
+#         # NPInter non interacting set is the proteins in the background not in NPInter
+#         NPInterNonInteractingSet = backgroundSet - NPInterInteractingSet
+#  
+#         assert ( len( NPInterInteractingSet) + len( NPInterNonInteractingSet)  == len( backgroundSet))
+#  
+#         print (len( catRAPIDInteractingSet), len( catRAPIDNonInteractingSet), len( NPInterInteractingSet), len( NPInterNonInteractingSet), len( backgroundSet) )
+#          
+#         # catRAPID interacting proteins in NPInter set
+#         catRAPIDIntNPInter = catRAPIDInteractingSet.intersection( NPInterInteractingSet)
+#         # catRAPID interacting proteins not in NPInter set
+#         catRAPIDIntNotNPInter = catRAPIDInteractingSet.intersection( NPInterNonInteractingSet)
+#         # catRAPID non-interacting proteins in NPInter set
+#         catRAPIDNotIntNPInter = catRAPIDNonInteractingSet.intersection( NPInterInteractingSet)
+#         # catRAPID non-interacting proteins not in NPInter set
+#         catRAPIDNotIntNotNPInter = catRAPIDNonInteractingSet.intersection( NPInterNonInteractingSet)
+#          
+#         assert (len( catRAPIDIntNPInter) + len( catRAPIDNotIntNPInter) == len( NPInterInteractingSet))        
+#         assert (len( catRAPIDIntNotNPInter) + len( catRAPIDNotIntNotNPInter) == len( NPInterNonInteractingSet))
+#  
+#         print (len( catRAPIDIntNPInter), len( catRAPIDIntNotNPInter), len( catRAPIDNotIntNPInter), len( catRAPIDNotIntNotNPInter))
+#          
+#         # contingency table as bi-dimensional list 
+#         contingencyTable = [ [ len( catRAPIDIntNPInter), len( catRAPIDIntNotNPInter)], [ len( catRAPIDNotIntNPInter), len( catRAPIDNotIntNotNPInter)] ]
+#  
+#         run.fisher_exact_test( contingencyTable)
