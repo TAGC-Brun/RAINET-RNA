@@ -80,10 +80,11 @@ class KnownScaffoldValidation( object ):
         
         proteinsInRainet = { str(prot[0]) for prot in query}
 
+#        return proteinsInRainet, {}
         # produce dictionary where key is xref ID and value the uniprotAC
         query = self.sql_session.query( ProteinCrossReference.protein_id, ProteinCrossReference.crossReferenceID ).all()
         xrefDict = { str(prot[1]) : str(prot[0]) for prot in query } # dict comprehension
-      
+       
         return proteinsInRainet, xrefDict
 
     # #
@@ -100,6 +101,23 @@ class KnownScaffoldValidation( object ):
         print "read_catRAPID_file: Starting number of interactions:",len(table)               
 #         print table.head(5)
         
+        #===================================================================
+        # retrieve list of Z-scores per target before any filtering
+        #===================================================================
+        zscoreDict = {}
+        for index, row in table.iterrows():
+            # split different protein IDs and transcript
+            spl = row[0].split("|")
+            uniprotAC = spl[1]
+            
+            zscore = row[1]
+
+            if uniprotAC not in zscoreDict:
+                zscoreDict[uniprotAC] = float("-inf")
+            # since there are a score for each RNA fragment, store only the maximum z-score among fragments
+            if zscore > zscoreDict[uniprotAC]:
+                zscoreDict[uniprotAC] = zscore
+                
         #===================================================================
         # Filter for discriminative power
         #===================================================================
@@ -143,7 +161,6 @@ class KnownScaffoldValidation( object ):
             if uniprotAC in self.proteinsInRainet:
                 if uniprotAC not in interactingProts:
                     interactingProts[uniprotAC] = 0
-                    
                 interactingProts[uniprotAC] += 1
             else:
                 # this can be as proteinAC was deprecated etc
@@ -181,7 +198,7 @@ class KnownScaffoldValidation( object ):
         print "read_catRAPID_file: Total number of interacting proteins:",len(interactingProts)
         print "read_catRAPID_file: Total number of non-interacting proteins:",len(setOfNonInteractingProts)
         
-        return interactingProts, setOfNonInteractingProts
+        return interactingProts, setOfNonInteractingProts, zscoreDict
 
 
     # #
@@ -385,7 +402,7 @@ if __name__ == "__main__":
         Timer.get_instance().step( "reading catRAPID file..")    
         
         # Read CatRAPID
-        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins = run.read_catRAPID_file()        
+        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins, zscoreDict = run.read_catRAPID_file()        
 
         # Read NPInter or given list of proteins
         
@@ -393,6 +410,23 @@ if __name__ == "__main__":
             experimentallyValidatedProteins = run.read_NPInter_file()
         else:
             experimentallyValidatedProteins = run.read_manual_list_file()
+
+        #===============================================================================
+        # Create plot of Z-score with annotation of experimentallyValidatedProteins
+        #===============================================================================
+        # Note: that currently Z-scores are being picked up before any filtering
+        
+        outFile = open(run.outputFolder + "/" + run.catRAPIDFile.split("/")[-1]+"_zcores.tsv", "w")
+
+        outFile.write("uniprotac\tcatrapid_zscore\tin_validated_set\n")        
+        for prot in zscoreDict:
+            outFile.write("%s\t%s\t%s\n" % (prot,zscoreDict[prot],prot in experimentallyValidatedProteins ) )
+        
+        outFile.close()
+        
+        #command = "Rscript %s %s %s %s %s" % ( KnownScaffoldValidation.HYPERGEOMETRIC_TEST_SCRIPT, x, m, n, k)    
+        #result = SubprocessUtil.run_command( command, return_stdout = 1, verbose = 0)
+
 
 
         #===============================================================================
