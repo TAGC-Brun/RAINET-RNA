@@ -52,8 +52,9 @@ class KnownScaffoldValidation( object ):
     SPECIES = "Homo sapiens"
     MOLECULEBTYPE = "protein"
     HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
+    DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/plot_distribution.R"
 
-    def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, discriminativePowerCutoff, interactionStrengthCutoff, topProportion, npinter):
+    def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, discriminativePowerCutoff, zscoreCutoff, topProportion, npinter):
 
         self.catRAPIDFile = catRAPIDFile
         self.validatedFile = validatedFile
@@ -61,7 +62,7 @@ class KnownScaffoldValidation( object ):
         self.rainetDB = rainetDB
         self.outputFolder = outputFolder
         self.discriminativePowerCutoff = discriminativePowerCutoff
-        self.interactionStrengthCutoff = interactionStrengthCutoff
+        self.zscoreCutoff = zscoreCutoff
         self.topProportion = topProportion
         self.npinter = npinter
 
@@ -124,11 +125,30 @@ class KnownScaffoldValidation( object ):
         filteredTable = table.loc[table.loc[:,2] > self.discriminativePowerCutoff,:]
         print "read_catRAPID_file: Number interactions after discriminative power filter:",len(filteredTable)
 
+#         #===================================================================
+#         # Filter for interaction strength
+#         #===================================================================
+#         filteredTable = filteredTable.loc[filteredTable.loc[:,3] > self.zscoreCutoff,:]
+#         print "read_catRAPID_file: Number interactions after interaction strength filter:",len(filteredTable)
+# 
+#         # store names of catRAPID proteins not present in RAINET
+#         missingProteins = set()
+# 
+#         headValue = int( "%i" % (len( filteredTable) * self.topProportion ) )
+#         
+#         # if the topProportion option was used, sort table and get only the top scores
+#         if len(filteredTable) != headValue:
+#         
+#             # Sort first by interaction strength and then by discriminative power, higher to lower
+#             sortedTable = filteredTable.sort_values([3, 2], ascending=[False, False])
+#     
+#             filteredTable = sortedTable.head(headValue)
+
         #===================================================================
-        # Filter for interaction strength
+        # Filter for Z-score 
         #===================================================================
-        filteredTable = filteredTable.loc[filteredTable.loc[:,3] > self.interactionStrengthCutoff,:]
-        print "read_catRAPID_file: Number interactions after interaction strength filter:",len(filteredTable)
+        filteredTable = filteredTable.loc[filteredTable.loc[:,1] > self.zscoreCutoff,:]
+        print "read_catRAPID_file: Number interactions after zscore filter:",len(filteredTable)
 
         # store names of catRAPID proteins not present in RAINET
         missingProteins = set()
@@ -138,8 +158,8 @@ class KnownScaffoldValidation( object ):
         # if the topProportion option was used, sort table and get only the top scores
         if len(filteredTable) != headValue:
         
-            # Sort first by interaction strength and then by discriminative power, higher to lower
-            sortedTable = filteredTable.sort_values([3, 2], ascending=[False, False])
+            # Sort first by zscore and then by discriminative power, higher to lower
+            sortedTable = filteredTable.sort_values([1, 2], ascending=[False, False])
     
             filteredTable = sortedTable.head(headValue)
 
@@ -303,8 +323,6 @@ class KnownScaffoldValidation( object ):
         
         print "read_NPInter_file: Total number of interacting proteins:",len(interactingProts)
 
-        print interactingProts
-
         return interactingProts
  
 
@@ -375,7 +393,7 @@ if __name__ == "__main__":
         
         # optional args
         parser.add_argument('--discriminativePowerCutoff', metavar='DiscriminativePowerCutoff', default = 0.75, type=float, help='catRAPID Minimum Disciminative power cutoff')
-        parser.add_argument('--interactionStrengthCutoff', metavar='InteractionStrengthCutoff', default = 0.5, type=float, help='catRAPID Interaction Strength cutoff')
+        parser.add_argument('--zscoreCutoff', metavar='zscoreCutoff', default = 0, type=float, help='catRAPID Zscore cutoff')
         parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
         parser.add_argument('--npinter', metavar='npinter', default = 1, type=int, help='Whether validatedFile is NPInter file or simple list of proteins')
         
@@ -389,7 +407,7 @@ if __name__ == "__main__":
         # Initialise class
         run = KnownScaffoldValidation( args.catRAPIDFile, args.validatedFile, args.wantedRNAFile, args.rainetDB, 
                                        args.outputFolder, args.discriminativePowerCutoff,
-                                       args.interactionStrengthCutoff, args.topProportion, args.npinter )
+                                       args.zscoreCutoff, args.topProportion, args.npinter )
 
         #===============================================================================
         # Run analysis / processing
@@ -424,9 +442,9 @@ if __name__ == "__main__":
         
         outFile.close()
         
-        #command = "Rscript %s %s %s %s %s" % ( KnownScaffoldValidation.HYPERGEOMETRIC_TEST_SCRIPT, x, m, n, k)    
-        #result = SubprocessUtil.run_command( command, return_stdout = 1, verbose = 0)
-
+        # Run R command for creating image
+        command = "Rscript %s %s" % ( KnownScaffoldValidation.DISTRIBUTION_SCRIPT, outFile.name)
+        result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
         #===============================================================================
