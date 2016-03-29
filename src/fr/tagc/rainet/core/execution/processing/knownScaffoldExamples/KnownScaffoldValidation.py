@@ -103,7 +103,7 @@ class KnownScaffoldValidation( object ):
 #         print table.head(5)
         
         #===================================================================
-        # retrieve list of Z-scores per target before any filtering
+        # retrieve list of Z-scores per target before any filtering, use maximum score
         #===================================================================
         zscoreDict = {}
         for index, row in table.iterrows():
@@ -111,7 +111,7 @@ class KnownScaffoldValidation( object ):
             spl = row[0].split("|")
             uniprotAC = spl[1]
             
-            zscore = row[1]
+            zscore = row[1] # zscore -> row[1], disc power -> row[2]
 
             if uniprotAC not in zscoreDict:
                 zscoreDict[uniprotAC] = float("-inf")
@@ -427,7 +427,7 @@ if __name__ == "__main__":
         if run.npinter:
             experimentallyValidatedProteins = run.read_NPInter_file()
         else:
-            experimentallyValidatedProteins = run.read_manual_list_file()
+            experimentallyValidatedProteins = run.read_manual_list_file()        
 
         #===============================================================================
         # Create plot of Z-score with annotation of experimentallyValidatedProteins
@@ -471,7 +471,11 @@ if __name__ == "__main__":
 
         NPInterInteractingSet = set( experimentallyValidatedProteins.keys()).intersection( backgroundSet )               
         notInNPInter = backgroundSet - NPInterInteractingSet
-        
+
+        print ("Experimentally validated Interacting set")
+        for key in NPInterInteractingSet:
+            print key
+
         catRAPIDIntNPInter = catRAPIDInteractingSet.intersection( NPInterInteractingSet)
 
         # white = success
