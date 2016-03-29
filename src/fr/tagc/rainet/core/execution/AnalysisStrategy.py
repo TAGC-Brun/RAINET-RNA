@@ -420,43 +420,55 @@ class AnalysisStrategy(ExecutionStrategy):
           
             # Get list of tissues for looking over their expression values on each transcript
             tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
-     
-            # Get list of transcripts with expression data, for speed purposes
-            transcriptsWithExpression = { str( tx[0]) for tx in self.sql_session.query( RNATissueExpression.transcriptID ).distinct().all() }
+
+            # Map mRNA to protein ID
+            # Search mRNA that produces interacting protein
+            mRNAMap = self.sql_session.query( MRNA.transcriptID, MRNA.proteinID ).all()
+            mRNADict = {} # key -> protein ID, val -> list of mRNAs encoding protein
+            for items in mRNAMap:
+                txID, protID = str( items[0]), str( items[1])
+                if protID != "None":
+                    if protID not in mRNADict:
+                        mRNADict[ protID] = []
+                    mRNADict[ protID].append( txID)
+
+            # Map expression per tissue to transcript ID           
+            expressionMap = self.sql_session.query( RNATissueExpression.transcriptID, RNATissueExpression.expressionValue, RNATissueExpression.tissueName).all()
+            expressionDict = {} # key -> transcript ID, value -> list of pairs of expression value and tissue name
+            for items in expressionMap:
+                txID, expr, tissName = str( items[0]), float( items[1]), str( items[2])
+                if txID not in expressionDict:
+                    expressionDict[ txID] = []
+                expressionDict[ txID].append( (expr, tissName) )
             
             count = 0
             # loop over the ongoing filtered interactions
             for inter in selectedInteractions:
                 
                 count+= 1
-                if count % 1000 == 0:
+                if count % 100000 == 0:
                     print ("Processed",count)
                     
                 # skip transcripts with no expression
-                if inter.transcriptID not in transcriptsWithExpression:
+                if inter.transcriptID not in expressionDict:
                     continue
      
+                # skip protein with no mRNAs in database
+                if inter.proteinID not in mRNADict:
+                    continue
+
                 # Search mRNA that produces interacting protein
-                mRNAs = [ str( mRNA[0]) for mRNA in self.sql_session.query( MRNA.transcriptID ).filter( MRNA.proteinID == inter.proteinID).all() ]
-     
-                # if no corresponding mRNA found, counts as if it was not expressed
-                if len(mRNAs) == 0 or mRNAs == None:
-                    continue
+                mRNAs = mRNADict[ inter.proteinID]
     
                 # variable which stores set of tissues where both partners of pair are expressed 
                 setOfInteractingTissues = set()
     
                 # Get RNA transcript expression for all tissues
                 RNATissueExpressions = {}
-                queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == inter.transcriptID).all()"
-                queryResult = eval( 'self.sql_session.' +  queryText)
-                if queryResult != None and len( queryResult) != 0:
-                    for tiss in queryResult:     
-                        txExpressionVal = float( tiss[0])
-                        tissueName = str( tiss[1])
-                        RNATissueExpressions[ tissueName] = txExpressionVal                   
-                else:
-                    raise RainetException( "AnalysisStrategy.filter_PRI : RNA expression query failed.")
+                for tiss in expressionDict[ inter.transcriptID]:     
+                    txExpressionVal = float( tiss[0])
+                    tissueName = str( tiss[1])
+                    RNATissueExpressions[ tissueName] = txExpressionVal                   
      
                 # Get Protein expression for all tissues
                 # there can be several mRNAs for the same protein ID, here we use them all to have set of interacting tissues
@@ -464,22 +476,16 @@ class AnalysisStrategy(ExecutionStrategy):
                 for mRNAID in mRNAs:
     
                     # skip transcripts with no expression      
-                    if mRNAID not in transcriptsWithExpression:
+                    if mRNAID not in expressionDict:
                         continue
     
                     MRNATissueExpressions = {}
                          
                     # Get the Protein expression, using its mRNA
-                    queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == mRNAID).all()"
-                    queryResult = eval( 'self.sql_session.' +  queryText)
-                    
-                    if queryResult != None and len( queryResult) != 0:
-                        for tiss in queryResult:     
-                            txExpressionVal = float( tiss[0])
-                            tissueName = str( tiss[1])
-                            MRNATissueExpressions[ tissueName] = txExpressionVal                   
-                    else:
-                        raise RainetException( "AnalysisStrategy.filter_PRI : mRNA expression query failed.")
+                    for tiss in expressionDict[ mRNAID]:     
+                        txExpressionVal = float( tiss[0])
+                        tissueName = str( tiss[1])
+                        MRNATissueExpressions[ tissueName] = txExpressionVal                   
     
                     for tissue in tissues:
                         txExpressionVal = RNATissueExpressions[ tissue]
