@@ -58,7 +58,6 @@ from fr.tagc.rainet.core.util import Constants
 # This class define the Strategy to produce analysis on the given database and parameters
 class AnalysisStrategy(ExecutionStrategy):
 
-
     #===============================================================================
     #
     # Analysis strategy Constants
@@ -66,7 +65,7 @@ class AnalysisStrategy(ExecutionStrategy):
     #===============================================================================
 
     #===================================================================
-    # Data Manager Keywords
+    # Data Manager object Keywords
     #===================================================================
 
     RNA_ALL_KW = "allRNAs" # Stores all RNA table objects
@@ -90,19 +89,23 @@ class AnalysisStrategy(ExecutionStrategy):
     # After filter report
     PARAMETERS_LOG = "parameters.log"
     REPORT_RNA_NUMBERS = "rna_numbers.tsv"
+    REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
+
+    # Expression report
     REPORT_RNA_EXPRESSION = "rna_expression.tsv"
     REPORT_RNA_EXPRESSION_DATA_PRESENCE = "rna_expression_data_presence.tsv"
-    REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
+    REPORT_TISSUES_WHERE_EXPRESSED = "interactions_tissues_where_expressed.tsv"
 
     # Interaction report
     REPORT_INTERACTION_SCORES_BIOTYPE = "interaction_scores_biotype.tsv"
     REPORT_INTERACTION_PARTNERS_BIOTYPE = "interaction_partners_biotype.tsv"
-    REPORT_ALL_INTERACTIONS_SCORES = "all_interaction_scores.tsv"
+    REPORT_INTERACTIONS_SCORE_MATRIX = "interaction_score_matrix.tsv"
+
 
 
     def __init__(self):  
         
-        # Switch for write external report file      
+        # Switch for writing of external report file      
         self.writeReportFile = 1
 
 
@@ -191,33 +194,41 @@ class AnalysisStrategy(ExecutionStrategy):
         # Apply filterings
         #===================================================================
 
-        Timer.get_instance().step( "Filtered RNAs.." )        
+        Timer.get_instance().step( "Filtering RNAs.." )        
 
         self.filter_RNA()
  
-        Timer.get_instance().step( "Filtered Protein.." )        
+        Timer.get_instance().step( "Filtering Proteins.." )        
          
         self.filter_protein()
  
-        Timer.get_instance().step( "Filtered Interactions.." )        
+        Timer.get_instance().step( "Filtering Interactions.." )        
          
         self.filter_PRI()
+ 
+        Timer.get_instance().step( "Filtering Interactions by expression.." )        
 
         self.filter_PRI_expression()
+
+        #===================================================================
+        # Produce reports
+        #===================================================================
 
         Timer.get_instance().step( "Producing filter report.." )        
 
         self.after_filter_report()
 
-        #===================================================================
-        # Perform analysis
-        #===================================================================
+        Timer.get_instance().step( "Producing expression report.." )        
+
+        self.expression_report()
 
         Timer.get_instance().step( "Producing interaction report.." )        
 
         self.interaction_report()
 
-        # self.expression_report()
+        #===================================================================
+        # Perform analysis
+        #===================================================================
         
         # self.enrichement_analysis()
         
@@ -380,10 +391,9 @@ class AnalysisStrategy(ExecutionStrategy):
         del pairs
         selectedInteractions = nonRedundantInteractions
 
-        print ("Finished peptide redudancy filter:",len(selectedInteractions))
+        print ("Finished peptide redundancy filter:",len(selectedInteractions))
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
-
 
 
     # #
@@ -398,15 +408,16 @@ class AnalysisStrategy(ExecutionStrategy):
         #===================================================================    
         # Filter interactions based on RNA and Protein (mRNA) expression
         #=================================================================== 
+
+        # List will contain expression-filtered set of interactions
+        expressedInteractions = []
  
+        # Dictionary which will contain tissues where interaction was found to be present
+        expressedInteractionsTissues = {} # key -> transcriptID|proteinID (pair), value -> set of tissues
+ 
+        # checking if filtering option is on or off
         if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:
-  
-            # List will contain expression-filtered set of interactions
-            expressedInteractions = []
-     
-            # Dictionary which will contain tissues where interaction was found to be present
-            expressedInteractionsTissues = {} # key -> transcriptID|proteinID (pair), value -> set of tissues
-        
+          
             # Get list of tissues for looking over their expression values on each transcript
             tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
      
@@ -418,7 +429,7 @@ class AnalysisStrategy(ExecutionStrategy):
             for inter in selectedInteractions:
                 
                 count+= 1
-                if count % 100 == 0:
+                if count % 1000 == 0:
                     print ("Processed",count)
                     
                 # skip transcripts with no expression
@@ -439,7 +450,7 @@ class AnalysisStrategy(ExecutionStrategy):
                 RNATissueExpressions = {}
                 queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == inter.transcriptID).all()"
                 queryResult = eval( 'self.sql_session.' +  queryText)
-                if queryResult != None and len(queryResult) != 0:
+                if queryResult != None and len( queryResult) != 0:
                     for tiss in queryResult:     
                         txExpressionVal = float( tiss[0])
                         tissueName = str( tiss[1])
@@ -462,7 +473,7 @@ class AnalysisStrategy(ExecutionStrategy):
                     queryText = "query( RNATissueExpression.expressionValue, RNATissueExpression.tissueName ).filter( RNATissueExpression.transcriptID == mRNAID).all()"
                     queryResult = eval( 'self.sql_session.' +  queryText)
                     
-                    if queryResult != None and len(queryResult) != 0:
+                    if queryResult != None and len( queryResult) != 0:
                         for tiss in queryResult:     
                             txExpressionVal = float( tiss[0])
                             tissueName = str( tiss[1])
@@ -485,14 +496,13 @@ class AnalysisStrategy(ExecutionStrategy):
                     
             selectedInteractions = expressedInteractions
     
-            print ("Finished expression filter:",len(selectedInteractions))
+            print ("Finished expression filter:", len( selectedInteractions))
     
-            DataManager.get_instance().store_data(AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
-            del expressedInteractions
-            del expressedInteractionsTissues
 
-
-        DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+        DataManager.get_instance().store_data( AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
+        DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+        del expressedInteractions
+        del expressedInteractionsTissues
 
 
     # #
@@ -509,7 +519,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
         outHandler.write( "Argument\tValue\n")
         for argName in sorted( self.arguments):
-            argValue = self.arguments[argName]
+            argValue = self.arguments[ argName]
             Logger.get_instance().info( "%s:\t%s" % ( argName, argValue) ) 
             outHandler.write( "%s:\t%s\n" % ( argName, argValue) )
         outHandler.close()
@@ -527,9 +537,9 @@ class AnalysisStrategy(ExecutionStrategy):
         # 'After filtering' = after RNA filter, but before interactions filter
         #=================================================================== 
 
-        #
+        #===================================================================    
         # File with number of RNAs types and lncRNA subtypes, before and after filter
-        #
+        #=================================================================== 
 
         Timer.get_instance().step( "after_filter_report : producing RNA numbers files" )   
 
@@ -597,15 +607,17 @@ class AnalysisStrategy(ExecutionStrategy):
         #        since not all RNA's / proteins will be interacting (e.g. they lack interaction data)
         #
         # Note3: reporting only for the argument-selected RNA biotypes
+        #
+        # Note4:
+        #        'Before filtering' = before interactions filtering, but after RNA and protein filters
+        #        'After filtering' = after interactions filtering AND after RNA and protein filters
         #=================================================================== 
 
         Timer.get_instance().step( "after_filter_report : producing interaction numbers files" )   
 
-        #
+        #===================================================================    
         # File with number of interactions and numbers of proteins and RNAs involved, before and after INTERACTION filter
-        #        'Before filtering' = before interactions filtering, but after RNA and protein filters
-        #        'After filtering' = after interactions filtering AND after RNA and protein filters
-        #
+        #=================================================================== 
 
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_NUMBERS )
 
@@ -734,6 +746,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
         #===================================================================    
         # File with interaction scores for each subclass of lncRNAs
+        # File number of interaction partners for each subclass of lncRNAs
         #        
         # E.g. biotype\tlist_of_with_scores
         #=================================================================== 
@@ -773,9 +786,8 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandlerPartners.close()
 
         #=================================================================== 
-        # File with interaction scores for each protein
+        # File with interaction scores for each protein-RNA pair, matrix format
         # 
-        # E.g. transcriptID\tproteinID\tinteractionScore
         #=================================================================== 
 
         # IF THIS IS FOR A HEATMAP, OUTPUT FILE SHOULD BE IN MATRIX FORMAT
@@ -783,10 +795,49 @@ class AnalysisStrategy(ExecutionStrategy):
         # RNA1 41    23
         # RNA2 32    43
 
-#         
-#         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_ALL_INTERACTIONS_SCORES )
-# 
-#         outHandler.write( "transcriptID\tproteinID\tinteractionScore\n")
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTIONS_SCORE_MATRIX )
+
+        # create datastructures with all proteins, RNAs and scores of pairs 
+        setInteractingRNAs = set()
+        setInteractingProts = set()
+        dictPairs = {}
+        for inter in filteredInteractions:
+            txID = str( inter.transcriptID)
+            protID = str( inter.proteinID)
+            interScore = float( inter.interactionScore)
+            pair = txID + "|" + protID
+            if pair not in dictPairs:
+                dictPairs[pair] = interScore
+            else:
+                raise RainetException("interaction_report: duplicate interaction", pair)
+
+            setInteractingRNAs.add( txID)
+            setInteractingProts.add( protID)
+
+        sortedSetInteractingProts = sorted( setInteractingProts)
+        sortedSetInteractingRNAs = sorted( setInteractingRNAs)
+
+        # write header with protein IDs
+        outHandler.write( "RNAs")
+        for prot in sortedSetInteractingProts:
+            outHandler.write( "\t%s" % prot )
+        outHandler.write( "\n")
+            
+        # write bulk of file, one row per rna, one column per protein
+        for rna in sortedSetInteractingRNAs:
+            text = rna
+            for prot in sortedSetInteractingProts:
+                tag = rna + "|" + prot
+                if tag in dictPairs:
+                    score = dictPairs[tag]
+                else:
+                    score = "NA"
+                text+= "\t%s" % score 
+            text+= "\n"
+            outHandler.write( text)
+        outHandler.close()
+        
+##TODO:
 # 
 #         
 # 
@@ -798,7 +849,6 @@ class AnalysisStrategy(ExecutionStrategy):
 #             outHandler.write( "%s\t%s\t%.2f\n" % ( txID, protID, interScore))
 # 
 #         outHandler.close()
-
 
 
     # #
@@ -858,7 +908,7 @@ class AnalysisStrategy(ExecutionStrategy):
             if withExpression > 0:
                 perc = "%.2f%%" % (withExpression*100.0 / (withoutExpression+withExpression) )
             else:
-                perc = "NA"
+                perc = "%.2f%%" % (0.0)
             outHandler.write("%s\t%i\t%i\t%s\n" % ( subtype, withExpression, withoutExpression, perc) )
          
         outHandler.close()
@@ -867,12 +917,18 @@ class AnalysisStrategy(ExecutionStrategy):
         #=================================================================== 
         # File with number of tissues where both partners of pair expressed
         # 
-        # E.g. transcriptID\tproteinID\tnumber_tissues
+        # E.g. transcriptID_proteinID\tnumber_tissues\tlist_of_tissues
         #=================================================================== 
-
+ 
         interactionTissues = DataManager.get_instance().get_data( AnalysisStrategy.PRI_TISSUES_KW)
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_TISSUES_WHERE_EXPRESSED )
 
-        #TODO: think if this is interesting to see
+        outHandler.write("interaction\tnumber_of_tissues\tlist_of_tissues\n")
+ 
+        for inter in interactionTissues:
+            outHandler.write("%s\t%s\t%s\n" % (str(inter) , len(interactionTissues[ inter]), ",".join( interactionTissues[ inter]) ) )
+ 
+        outHandler.close()
 
         
     def enrichement_analysis(self):
@@ -918,10 +974,11 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().delete_data(AnalysisStrategy.RNA_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PROT_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PRI_FILTER_KW)
+        DataManager.get_instance().delete_data(AnalysisStrategy.PRI_TISSUES_KW)
 
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \
-                 "; Rscript %s %s %s %s %s %s %s %s %s" % \
+                 "; Rscript %s %s %s %s %s %s %s %s %s %s %s %s" % \
                  ( 
                      AnalysisStrategy.R_MAIN_SCRIPT, 
                      AnalysisStrategy.R_WORKING_DIR, 
@@ -929,12 +986,15 @@ class AnalysisStrategy(ExecutionStrategy):
                      self.outputFolderReport,
                      AnalysisStrategy.PARAMETERS_LOG, 
                      AnalysisStrategy.REPORT_RNA_NUMBERS,
+                     AnalysisStrategy.REPORT_RNA_EXPRESSION,
+                     AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE,
+                     AnalysisStrategy.REPORT_TISSUES_WHERE_EXPRESSED,
                      AnalysisStrategy.REPORT_INTERACTION_NUMBERS,                     
                      AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE,
                      AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE
                      )
                 #--max-mem-size=2000M
-  
+    
         returnCode = SubprocessUtil.run_command( command)
         if returnCode:
             raise RainetException(" AnalysisStrategy.write_report : external command with return code:" + str( returnCode) )
