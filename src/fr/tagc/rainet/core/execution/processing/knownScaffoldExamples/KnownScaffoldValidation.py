@@ -54,7 +54,8 @@ class KnownScaffoldValidation( object ):
     HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
     DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/plot_distribution.R"
 
-    def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, discriminativePowerCutoff, zscoreCutoff, topProportion, npinter):
+    def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, 
+                 discriminativePowerCutoff, zscoreCutoff, topProportion, npinter, columnForPlot):
 
         self.catRAPIDFile = catRAPIDFile
         self.validatedFile = validatedFile
@@ -65,6 +66,7 @@ class KnownScaffoldValidation( object ):
         self.zscoreCutoff = zscoreCutoff
         self.topProportion = topProportion
         self.npinter = npinter
+        self.columnForPlot = columnForPlot
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -103,21 +105,22 @@ class KnownScaffoldValidation( object ):
 #         print table.head(5)
         
         #===================================================================
-        # retrieve list of Z-scores per target before any filtering, use maximum score
+        # retrieve list of scores per target before any filtering, use maximum score between fragments
         #===================================================================
-        zscoreDict = {}
+        
+        scoreDict = {}
         for index, row in table.iterrows():
             # split different protein IDs and transcript
             spl = row[0].split("|")
             uniprotAC = spl[1]
             
-            zscore = row[1] # zscore -> row[1], disc power -> row[2]
-
-            if uniprotAC not in zscoreDict:
-                zscoreDict[uniprotAC] = float("-inf")
+            score = row[self.columnForPlot] 
+        
+            if uniprotAC not in scoreDict:
+                scoreDict[uniprotAC] = float("-inf")
             # since there are a score for each RNA fragment, store only the maximum z-score among fragments
-            if zscore > zscoreDict[uniprotAC]:
-                zscoreDict[uniprotAC] = zscore
+            if score > scoreDict[uniprotAC]:
+                scoreDict[uniprotAC] = score
                 
         #===================================================================
         # Filter for discriminative power
@@ -218,7 +221,7 @@ class KnownScaffoldValidation( object ):
         print "read_catRAPID_file: Total number of interacting proteins:",len(interactingProts)
         print "read_catRAPID_file: Total number of non-interacting proteins:",len(setOfNonInteractingProts)
         
-        return interactingProts, setOfNonInteractingProts, zscoreDict
+        return interactingProts, setOfNonInteractingProts, scoreDict
 
 
     # #
@@ -396,10 +399,7 @@ if __name__ == "__main__":
         parser.add_argument('--zscoreCutoff', metavar='zscoreCutoff', default = 0, type=float, help='catRAPID Zscore cutoff')
         parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
         parser.add_argument('--npinter', metavar='npinter', default = 1, type=int, help='Whether validatedFile is NPInter file or simple list of proteins')
-        
-        #display help when misusage
-        if len(sys.argv) < 5: 
-            parser.print_help()
+        parser.add_argument('--columnForPlot', metavar='columnForPlot', default = 1, choices=[1,2,3], type=int, help='Which column to use for plotting distribution (e.g. 1 for Zscore, 2 for discriminative power)')
     
         #gets the arguments
         args = parser.parse_args( ) 
@@ -407,20 +407,19 @@ if __name__ == "__main__":
         # Initialise class
         run = KnownScaffoldValidation( args.catRAPIDFile, args.validatedFile, args.wantedRNAFile, args.rainetDB, 
                                        args.outputFolder, args.discriminativePowerCutoff,
-                                       args.zscoreCutoff, args.topProportion, args.npinter )
+                                       args.zscoreCutoff, args.topProportion, args.npinter, args.columnForPlot )
 
         #===============================================================================
         # Run analysis / processing
         #===============================================================================
          
- 
         # Start chrono
         Timer.get_instance().start_chrono()
  
         Timer.get_instance().step( "reading catRAPID file..")    
         
         # Read CatRAPID
-        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins, zscoreDict = run.read_catRAPID_file()        
+        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins, scoreDict = run.read_catRAPID_file()        
 
         # Read NPInter or given list of proteins
         
@@ -430,15 +429,15 @@ if __name__ == "__main__":
             experimentallyValidatedProteins = run.read_manual_list_file()        
 
         #===============================================================================
-        # Create plot of Z-score with annotation of experimentallyValidatedProteins
+        # Create plot of score with annotation of experimentallyValidatedProteins
         #===============================================================================
-        # Note: that currently Z-scores are being picked up before any filtering
+        # Note: that currently scores are being picked up before any filtering
         
-        outFile = open(run.outputFolder + "/" + run.catRAPIDFile.split("/")[-1]+"_zcores.tsv", "w")
+        outFile = open(run.outputFolder + "/" + run.catRAPIDFile.split("/")[-1]+"_scores.tsv", "w")
 
-        outFile.write("uniprotac\tcatrapid_zscore\tin_validated_set\n")        
-        for prot in zscoreDict:
-            outFile.write("%s\t%s\t%s\n" % (prot,zscoreDict[prot],prot in experimentallyValidatedProteins ) )
+        outFile.write("uniprotac\tcatrapid_score\tin_validated_set\n")        
+        for prot in scoreDict:
+            outFile.write("%s\t%s\t%s\n" % (prot,scoreDict[prot],prot in experimentallyValidatedProteins ) )
         
         outFile.close()
         
