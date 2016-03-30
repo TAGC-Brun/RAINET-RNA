@@ -120,6 +120,16 @@ class KnownScaffoldValidation( object ):
             # since there are a score for each RNA fragment, store only the maximum z-score among fragments
             if score > scoreDict[uniprotAC]:
                 scoreDict[uniprotAC] = score
+
+#         # new code for calculating average instead of max
+#             if uniprotAC not in scoreDict:
+#                 scoreDict[uniprotAC] = []
+#             scoreDict[uniprotAC].append( score)
+# 
+#         for prot in scoreDict:
+#             # calculate average
+#             scoreDict[ prot] = sum( scoreDict[ prot]) / float( len( scoreDict[ prot]))
+
                 
         #===================================================================
         # Filter for discriminative power
