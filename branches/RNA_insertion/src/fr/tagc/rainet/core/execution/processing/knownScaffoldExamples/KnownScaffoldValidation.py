@@ -32,9 +32,9 @@ from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 # General plan:
 # 
 # To be run for each RNA of interest:
-# - Read supposed interacting proteins from NPInter database file.
-# - Match those proteins to RAINET database using external Refs
-# - Read catRAPID omics/fragments file, apply interaction cutoff, retrieve list of proteins (uniprotAC/ID) that are in RAINET database, 
+# - Read supposed interacting proteins from NPInter database file or manual list
+# - Match those proteins to uniprotAC using RAINET database (if needed)
+# - Read catRAPID omics/fragments file, apply interaction cutoff 
 # - Perform enrichment analysis 
 #===============================================================================
 
@@ -83,7 +83,6 @@ class KnownScaffoldValidation( object ):
         
         proteinsInRainet = { str(prot[0]) for prot in query}
 
-#        return proteinsInRainet, {}
         # produce dictionary where key is xref ID and value the uniprotAC
         query = self.sql_session.query( ProteinCrossReference.protein_id, ProteinCrossReference.crossReferenceID ).all()
         xrefDict = { str(prot[1]) : str(prot[0]) for prot in query } # dict comprehension
@@ -181,14 +180,19 @@ class KnownScaffoldValidation( object ):
             spl = inter.split("|")
             uniprotAC = spl[1]
             
-            if uniprotAC in self.proteinsInRainet:
-                if uniprotAC not in interactingProts:
-                    interactingProts[uniprotAC] = 0
-                interactingProts[uniprotAC] += 1
-            else:
-                # this can be as proteinAC was deprecated etc
-                # print "read_catRAPID_file: ProteinID not found in RAINET database", uniprotAC
-                missingProteins.add( uniprotAC)
+            if uniprotAC not in interactingProts:
+                interactingProts[uniprotAC] = 0
+            interactingProts[uniprotAC] += 1
+            
+            # If one wants to filter out proteins not in RAINET
+#             if uniprotAC in self.proteinsInRainet:
+#                 if uniprotAC not in interactingProts:
+#                     interactingProts[uniprotAC] = 0
+#                 interactingProts[uniprotAC] += 1
+#             else:
+#                 # this can be as proteinAC was deprecated etc
+#                 # print "read_catRAPID_file: ProteinID not found in RAINET database", uniprotAC
+#                 missingProteins.add( uniprotAC)
 
         #===================================================================
         # Get set of non-interacting proteins  
@@ -204,20 +208,25 @@ class KnownScaffoldValidation( object ):
             # split different protein IDs and transcript
             spl = inter.split("|")
             uniprotAC = spl[1]
-            
-            if uniprotAC in self.proteinsInRainet:
-                # check if not tagged as interacting
-                if uniprotAC not in interactingProts:
-                    if uniprotAC not in setOfNonInteractingProts:
-                        setOfNonInteractingProts[uniprotAC] = 0                    
-                    setOfNonInteractingProts[uniprotAC] += 1
-            else:
-                # this can be as proteinAC was deprecated etc
-                # print "read_catRAPID_file: ProteinID not found in RAINET database", uniprotAC
-                missingProteins.add( uniprotAC)
 
-        print "read_catRAPID_file: Total number of proteins in catRAPID file not present in RAINET DB:",len(missingProteins)
+            if uniprotAC not in interactingProts:
+                if uniprotAC not in setOfNonInteractingProts:
+                    setOfNonInteractingProts[uniprotAC] = 0                    
+                setOfNonInteractingProts[uniprotAC] += 1
 
+#             if uniprotAC in self.proteinsInRainet:
+#                 # check if not tagged as interacting
+#                 if uniprotAC not in interactingProts:
+#                     if uniprotAC not in setOfNonInteractingProts:
+#                         setOfNonInteractingProts[uniprotAC] = 0                    
+#                     setOfNonInteractingProts[uniprotAC] += 1
+#             else:
+#                 # this can be as proteinAC was deprecated etc
+#                 # print "read_catRAPID_file: ProteinID not found in RAINET database", uniprotAC
+#                 missingProteins.add( uniprotAC)
+
+        #print "read_catRAPID_file: Total number of proteins in catRAPID file not present in RAINET DB:",len(missingProteins)
+        print "read_catRAPID_file: Total number of proteins in catRAPID file:",len(interactingProts)+len(setOfNonInteractingProts)
         print "read_catRAPID_file: Total number of interacting proteins:",len(interactingProts)
         print "read_catRAPID_file: Total number of non-interacting proteins:",len(setOfNonInteractingProts)
         
@@ -300,30 +309,21 @@ class KnownScaffoldValidation( object ):
             proteinID = tup[1]
             
             if proteinDB == "UniProt":
-#                 query = self.sql_session.query( Protein ).filter( Protein.uniprotAC == proteinID).all()            
-#                 if len(query) > 0:
-                if proteinID in self.proteinsInRainet:
-                    if proteinID not in interactingProts:
-                        interactingProts[proteinID] = 0
-                    interactingProts[proteinID] += 1                    
-                else:
+                if proteinID not in self.proteinsInRainet:
                     # for example this can be protein that belongs to mouse. The previous species filter was relative to the RNA
-                    print "read_NPInter_file: ProteinID not found in RAINET database:", proteinID
+                    print "read_NPInter_file: ProteinID not found in RAINET database. Using original proteinID: ", proteinID
             else:
                 # If database is different than Uniprot, try find uniprotAC using CrossReferences table                
                 # lookup ID in crossreferences table and switch to uniprotAC
                 if proteinID in self.xrefDict:
                     proteinID = self.xrefDict[proteinID]
-#                 query = self.sql_session.query( ProteinCrossReference.protein_id ).filter( and_(ProteinCrossReference.sourceDB == proteinDB, ProteinCrossReference.crossReferenceID == proteinID) ).all()
-#                 if len(query) > 0:
-#                     # pick first Uniprot ID
-#                     proteinID = query[0][0]
-                    if proteinID not in interactingProts:
-                        interactingProts[proteinID] = 0
-                    interactingProts[proteinID] += 1   
                 else:
-                    print "read_NPInter_file: ProteinID not found in RAINET database. Using external source DB:", proteinID, proteinDB                
-        
+                    print "read_NPInter_file: ProteinID not found in RAINET database, using external source DB. Using original proteinID", proteinID, proteinDB
+                             
+            if proteinID not in interactingProts:
+                interactingProts[proteinID] = 0
+            interactingProts[proteinID] += 1
+
         print "read_NPInter_file: Total number of interacting proteins:",len(interactingProts)
 
         return interactingProts
@@ -356,9 +356,9 @@ class KnownScaffoldValidation( object ):
                     if ID in self.xrefDict:
                         proteinID = self.xrefDict[ID]
                     else:
-                        print "read_manual_list_file: ProteinID not found in RAINET database.", ID
-                        continue
-
+                        print "read_manual_list_file: ProteinID not found in RAINET database. Using original ID:", ID
+                        proteinID = ID
+                        # continue
 
             if proteinID not in interactingProts:
                 interactingProts[proteinID] = 0
