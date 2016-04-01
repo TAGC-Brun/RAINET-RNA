@@ -297,7 +297,7 @@ class NPInterPredictionValidation( object ):
                     # for example this can be protein that belongs to mouse. The previous species filter was relative to the RNA
                     # print "read_NPInter_file: ProteinID not found in RAINET database. Using original proteinID: ", proteinID
                     pass
-                pair = ensemblID + "|" + protID
+                pair = ensemblID + "|" + proteinID
                 if pair not in interactingPairs:
                     interactingPairs[ pair] = 0
                 interactingPairs[ pair] += 1
@@ -312,13 +312,14 @@ class NPInterPredictionValidation( object ):
                         if pair not in interactingPairs:
                             interactingPairs[ pair] = 0
                         interactingPairs[ pair] += 1
-
  
         print "read_NPInter_file: Total number of interacting proteins:",len(interactingPairs)
  
         return interactingPairs
 
 
+    # #
+    # Read catRAPID file, match peptide IDs to protein IDs, retrieve scores.
     def read_catrapid_file(self):
 
 
