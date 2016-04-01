@@ -76,11 +76,21 @@ class NPInterPredictionValidation( object ):
 
         # produce dictionary where key is xref ID and value the uniprotAC
         query = self.sql_session.query( ProteinCrossReference.protein_id, ProteinCrossReference.crossReferenceID ).all()
-        xrefDict = { str(prot[1]) : str(prot[0]) for prot in query } # dict comprehension
 
-        # What I should do is to build a xref dict with "SourceDB" as Key for RefSeq and UniGene, where an entry points to list of uniprotACs
+        xrefDict = { str(prot[1]) : str(prot[0]) for prot in query } # dict comprehension
         
-        return uniprotACs, xrefDict
+        protCrossReference = {} # key -> refseq ID, val -> ensembl ID
+        
+        for uniprotID, externalID in query:
+            
+            if externalID.startswith("NM_"):
+                externalID = externalID.split(".")[0] # NM_001244871.1 to NM_001244871
+            if externalID not in protCrossReference:
+                protCrossReference[ externalID] = set()
+                
+            protCrossReference[ externalID].add( str( uniprotID))
+
+        return uniprotACs, protCrossReference
 
 
     # #
@@ -213,7 +223,7 @@ class NPInterPredictionValidation( object ):
         # Note: NPInter uses NONCODE database for transcript IDs, but in fact uses their Gene IDs, not the transcript IDs
            
         #===================================================================
-        # read NPInter file using header line 
+        # Read NPInter file using header line 
         #===================================================================
         table = pd.read_table( self.npinterFile, header = 0, sep = "\t", skip_blank_lines = True)
 
@@ -222,11 +232,12 @@ class NPInterPredictionValidation( object ):
         filteredTable = table.copy()
          
         #===================================================================
-        # further filtering on NPInter data
+        # Further filtering on NPInter data
         #===================================================================
         # Note: assuming that moleculeB is always the molecule interacting with the RNA
          
-        # filter by interaction molecule type ( moleculeBtype must be "protein")
+        # filter by interaction class / type # interactions should be direct / physical
+        # filteredTable = filteredTable.loc[filteredTable["tag"].str.contains( NPInterPredictionValidation.TAG)]
         filteredTable = filteredTable.loc[filteredTable["tag"] == NPInterPredictionValidation.TAG]
          
         # species must be "Homo sapiens"
@@ -276,29 +287,32 @@ class NPInterPredictionValidation( object ):
             proteinDB = tup[1]
             proteinID = tup[2]
 
-            # map protein ID             
-            if proteinDB == "UniProt":
-                if proteinID not in self.uniprotACs:
-                    # for example this can be protein that belongs to mouse. The previous species filter was relative to the RNA
-                    pass
-                    # print "read_NPInter_file: ProteinID not found in RAINET database. Using original proteinID: ", proteinID
-            else:
-                # If database is different than Uniprot, try find uniprotAC using CrossReferences table                
-                # lookup ID in crossreferences table and switch to uniprotAC
-                if proteinID in self.xrefDict:
-                    proteinID = self.xrefDict[ proteinID]
-                else:
-                    #print "read_NPInter_file: ProteinID not found in RAINET database, using external source DB: ",proteinID, proteinDB
-                    continue
-
             if type( proteinID) == float:
                 # numpy nan
                 continue
 
-            pair = ensemblID + "|" + proteinID
-            if pair not in interactingPairs:
-                interactingPairs[ pair] = 0
-            interactingPairs[ pair] += 1
+            # map protein ID             
+            if proteinDB == "UniProt":
+                if proteinID not in self.uniprotACs:
+                    # for example this can be protein that belongs to mouse. The previous species filter was relative to the RNA
+                    # print "read_NPInter_file: ProteinID not found in RAINET database. Using original proteinID: ", proteinID
+                    pass
+                pair = ensemblID + "|" + protID
+                if pair not in interactingPairs:
+                    interactingPairs[ pair] = 0
+                interactingPairs[ pair] += 1
+            else:
+                # If database is different than Uniprot, try find uniprotAC using CrossReferences table                
+                # lookup ID in crossreferences table and switch to uniprotAC
+                if proteinID in self.xrefDict:
+                    proteinIDs = self.xrefDict[ proteinID]
+                    # proteinID can be a set of IDs if using cross references
+                    for protID in proteinIDs:
+                        pair = ensemblID + "|" + protID
+                        if pair not in interactingPairs:
+                            interactingPairs[ pair] = 0
+                        interactingPairs[ pair] += 1
+
  
         print "read_NPInter_file: Total number of interacting proteins:",len(interactingPairs)
  
@@ -313,7 +327,7 @@ class NPInterPredictionValidation( object ):
         #e.g. 1       1       ENSP00000269701_ENST00000456726 -266.23 0.986
 
         peptideIDNotFound = set()
-
+        
         with open( self.catrapidFile, "r") as f:
             for line in f:
                 spl = line.split( "\t")
@@ -325,6 +339,11 @@ class NPInterPredictionValidation( object ):
 
                 if peptideID in self.xrefDict:
                     proteinID = self.xrefDict[ peptideID]
+                    if len( proteinID) == 1:
+                        #proteinID = next( iter( proteinID))
+                        proteinID, = proteinID # unpacking set
+                    else:
+                        raise RainetException( "ENSP should point to a single UniProtID: " + line)                        
                 else:
                     #print "read_catrapid_file: PeptideID not found in RAINET database: ", peptideID 
                     peptideIDNotFound.add( peptideID)
@@ -338,9 +357,8 @@ class NPInterPredictionValidation( object ):
                 if intScore > interactingPairs[ pair]:
                     interactingPairs[ pair] = intScore
 
-        print "Number of peptideIDs not found in RAINET DB: ", len(peptideIDNotFound)
-
-        print "Number of protein-RNA pairs in catRAPID: ", len(interactingPairs)
+        print "read_catrapid_file: Number of peptideIDs not found in RAINET DB: ", len(peptideIDNotFound) # for old catRAPID dataset, 243 is expected
+        print "read_catrapid_file: Number of protein-RNA pairs in catRAPID: ", len(interactingPairs)
 
         return interactingPairs
 
@@ -402,22 +420,26 @@ if __name__ == "__main__":
 
         catrapidPairs = run.read_catrapid_file()
 
-#         countYes = 0
-#         countNo = 0
-#         countYesSum = 0
-#         countNoSum = 0
-#         for pair in catrapidPairs:
-#             if pair in npinterPairs:
-#                 countYes+=1
-#                 countYesSum+= catrapidPairs[ pair]
-#             else:
-#                 countNo+=1
-#                 countNoSum+= catrapidPairs[ pair]
-# 
-#         print countYes, countNo
-#         print countYesSum, countNoSum
-#         print countYesSum / float( countYes), countNoSum / float( countNo)
+        # Quick stats on the data
+        countYes = 0
+        countNo = 0
+        countYesSum = 0
+        countNoSum = 0
+        for pair in catrapidPairs:
+            if pair in npinterPairs:
+                countYes+=1
+                countYesSum+= catrapidPairs[ pair]
+            else:
+                countNo+=1
+                countNoSum+= catrapidPairs[ pair]
+ 
+        print "True: %s\tFalse: %s" % ( countYes, countNo)
+        print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
+        print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
 
+        Timer.get_instance().step( "Writing output file..")    
+
+        # Write file for R processing
         outFile = open(run.outputFolder + "/scores.tsv", "w")
 
         outFile.write("pairID\tcatrapid_score\tin_validated_set\n")        
@@ -426,7 +448,7 @@ if __name__ == "__main__":
         
         outFile.close()
         
-        # # Run R command for creating image
+        # # Run R command to create figure
         # command = "Rscript %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name)
         # result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
