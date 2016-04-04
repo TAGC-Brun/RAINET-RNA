@@ -34,7 +34,9 @@ $script $catrapid_folder/ENST00000483525_SAMMSON.tsv /home/diogo/Documents/RAINE
 
 list_file="NORAD_keywords.tsv"
 
-$script $catrapid_folder/ENST00000565493_NORAD.tsv /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/knownScaffoldValidation/manualLists/NORAD_paper_table_s1.txt fakeFile $rainet_db $out_folder$scoreColumn --npinter 0 --columnForPlot $scoreColumn
+$script $catrapid_folder/ENST00000565493_NORAD.tsv /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/knownScaffoldValidation/manualLists/NORAD_paper_table_s1_sense_only.txt fakeFile $rainet_db $out_folder$scoreColumn --npinter 0 --columnForPlot $scoreColumn --searchSpace /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/knownScaffoldValidation/manualLists/NORAD_paper_table_s1.txt
+
+#exit
 
 #### NEAT1 ####
 
