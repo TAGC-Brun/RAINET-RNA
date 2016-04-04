@@ -53,9 +53,11 @@ class KnownScaffoldValidation( object ):
     MOLECULEBTYPE = "protein"
     HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
     DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/plot_distribution.R"
+    CATRAPID_ZS_MEAN = 23.25
+    CATRAPID_ZS_STD = 37.90
 
     def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, 
-                 discriminativePowerCutoff, zscoreCutoff, topProportion, npinter, columnForPlot, searchSpaceFile):
+                 discriminativePowerCutoff, zscoreCutoff, topProportion, npinter, columnForPlot, searchSpaceFile, zscoreToPropensity):
 
         self.catRAPIDFile = catRAPIDFile
         self.validatedFile = validatedFile
@@ -68,6 +70,7 @@ class KnownScaffoldValidation( object ):
         self.npinter = npinter
         self.columnForPlot = columnForPlot
         self.searchSpaceFile = searchSpaceFile
+        self.zscoreToPropensity = zscoreToPropensity
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -378,10 +381,16 @@ class KnownScaffoldValidation( object ):
         print "read_manual_list_file: Total number of interacting proteins:",len( interactingProts)
         
         return interactingProts
-    
-    
 
-        
+    # #
+    # Convert the zscore value to interaction propensity
+    def convertToPropensity(self, score):
+        # catRAPID FAQ: http://s.tartaglialab.com/static_files/shared/faqs.html
+        # "Propensity normalised with mean and standard deviation of all fragments. 
+        # In the catRAPID omics module, the Z-score is normalized using mean = 23.25 and standard deviation = 37.90 that were calculated on two reference sets. "
+        # Z-score = (x - mean) / std , therefore: x = std * z-score + mean
+        return score * KnownScaffoldValidation.CATRAPID_ZS_STD + KnownScaffoldValidation.CATRAPID_ZS_MEAN
+    
 
 if __name__ == "__main__":
     
@@ -412,6 +421,7 @@ if __name__ == "__main__":
         parser.add_argument('--npinter', metavar='npinter', default = 1, type=int, help='Whether validatedFile is NPInter file or simple list of proteins')
         parser.add_argument('--columnForPlot', metavar='columnForPlot', default = 1, choices=[1,2,3], type=int, help='Which column to use for plotting distribution (e.g. 1 for Zscore, 2 for discriminative power)')
         parser.add_argument('--searchSpaceFile', metavar='searchSpaceFile', default = "", type=str, help='File with list of protein uniprotAC to use as search space. Final output will only contain overlap of catRAPID predictions and the proteins in this file.')
+        parser.add_argument('--zscoreToPropensity', metavar='zscoreToPropensity', default = 1, type=int, help='Whether to convert Z-score values from input to Interaction propensity, based on static values from catRAPID FAQ.')
 
     
         #gets the arguments
@@ -419,8 +429,8 @@ if __name__ == "__main__":
 
         # Initialise class
         run = KnownScaffoldValidation( args.catRAPIDFile, args.validatedFile, args.wantedRNAFile, args.rainetDB, 
-                                       args.outputFolder, args.discriminativePowerCutoff,
-                                       args.zscoreCutoff, args.topProportion, args.npinter, args.columnForPlot, args.searchSpaceFile )
+                                       args.outputFolder, args.discriminativePowerCutoff, args.zscoreCutoff, args.topProportion,
+                                       args.npinter, args.columnForPlot, args.searchSpaceFile, args.zscoreToPropensity )
 
         #===============================================================================
         # Run analysis / processing
@@ -444,7 +454,7 @@ if __name__ == "__main__":
         #===============================================================================
         # Create plot of score with annotation of experimentallyValidatedProteins
         #===============================================================================
-        # Note: that currently scores are being picked up before any filtering
+        # Note: that currently scores are being picked up before any score filtering
         
         if run.searchSpaceFile != "":
             with open(run.searchSpaceFile,"r") as f:
@@ -459,8 +469,14 @@ if __name__ == "__main__":
 
         outFile.write("uniprotac\tcatrapid_score\tin_validated_set\n")        
         for prot in scoreDict:
+            # Only write to file if protein in given search space (if option provided)
             if prot in searchSpace:
-                outFile.write("%s\t%s\t%s\n" % (prot,scoreDict[prot],prot in experimentallyValidatedProteins ) )
+                score = scoreDict[ prot]
+                # convert z-score to interaction propensity (if option provided)
+                if run.zscoreToPropensity:
+                    score = run.convertToPropensity( score)
+
+                outFile.write( "%s\t%s\t%s\n" % ( prot, score, prot in experimentallyValidatedProteins ) )
         
         outFile.close()
         
