@@ -55,7 +55,7 @@ class KnownScaffoldValidation( object ):
     DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/plot_distribution.R"
 
     def __init__(self, catRAPIDFile, validatedFile, wantedRNAFile, rainetDB, outputFolder, 
-                 discriminativePowerCutoff, zscoreCutoff, topProportion, npinter, columnForPlot):
+                 discriminativePowerCutoff, zscoreCutoff, topProportion, npinter, columnForPlot, searchSpaceFile):
 
         self.catRAPIDFile = catRAPIDFile
         self.validatedFile = validatedFile
@@ -67,6 +67,7 @@ class KnownScaffoldValidation( object ):
         self.topProportion = topProportion
         self.npinter = npinter
         self.columnForPlot = columnForPlot
+        self.searchSpaceFile = searchSpaceFile
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -410,6 +411,8 @@ if __name__ == "__main__":
         parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
         parser.add_argument('--npinter', metavar='npinter', default = 1, type=int, help='Whether validatedFile is NPInter file or simple list of proteins')
         parser.add_argument('--columnForPlot', metavar='columnForPlot', default = 1, choices=[1,2,3], type=int, help='Which column to use for plotting distribution (e.g. 1 for Zscore, 2 for discriminative power)')
+        parser.add_argument('--searchSpaceFile', metavar='searchSpaceFile', default = "", type=str, help='File with list of protein uniprotAC to use as search space. Final output will only contain overlap of catRAPID predictions and the proteins in this file.')
+
     
         #gets the arguments
         args = parser.parse_args( ) 
@@ -417,7 +420,7 @@ if __name__ == "__main__":
         # Initialise class
         run = KnownScaffoldValidation( args.catRAPIDFile, args.validatedFile, args.wantedRNAFile, args.rainetDB, 
                                        args.outputFolder, args.discriminativePowerCutoff,
-                                       args.zscoreCutoff, args.topProportion, args.npinter, args.columnForPlot )
+                                       args.zscoreCutoff, args.topProportion, args.npinter, args.columnForPlot, args.searchSpaceFile )
 
         #===============================================================================
         # Run analysis / processing
@@ -443,11 +446,21 @@ if __name__ == "__main__":
         #===============================================================================
         # Note: that currently scores are being picked up before any filtering
         
+        if run.searchSpaceFile != "":
+            with open(run.searchSpaceFile,"r") as f:
+                searchSpace = { line.strip() for line in f}
+        else:
+            searchSpace = set( scoreDict.keys())
+            assert len( searchSpace.intersection( set(scoreDict.keys())) ) == len( scoreDict)
+
+        print "Length of search space:", len(searchSpace)
+        
         outFile = open(run.outputFolder + "/" + run.catRAPIDFile.split("/")[-1]+"_scores.tsv", "w")
 
         outFile.write("uniprotac\tcatrapid_score\tin_validated_set\n")        
         for prot in scoreDict:
-            outFile.write("%s\t%s\t%s\n" % (prot,scoreDict[prot],prot in experimentallyValidatedProteins ) )
+            if prot in searchSpace:
+                outFile.write("%s\t%s\t%s\n" % (prot,scoreDict[prot],prot in experimentallyValidatedProteins ) )
         
         outFile.close()
         
