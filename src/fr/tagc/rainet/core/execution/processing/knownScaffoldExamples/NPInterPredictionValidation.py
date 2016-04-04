@@ -50,7 +50,7 @@ class NPInterPredictionValidation( object ):
     SPECIES = "Homo sapiens"
     TAG = "ncRNA-protein binding"
     MOLECULEADATABASE = "NONCODE"
-    DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/plot_distribution.R"
+    DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/NPInter_stats.R"
     
     def __init__(self, catrapidFile, npinterFile, noncodeTx2noncodeGene, noncode2ensembl, rainetDB, outputFolder):
 
@@ -232,7 +232,7 @@ class NPInterPredictionValidation( object ):
         filteredTable = table.copy()
          
         #===================================================================
-        # Further filtering on NPInter data
+        # Field filtering on NPInter data
         #===================================================================
         # Note: assuming that moleculeB is always the molecule interacting with the RNA
          
@@ -328,6 +328,7 @@ class NPInterPredictionValidation( object ):
         #e.g. 1       1       ENSP00000269701_ENST00000456726 -266.23 0.986
 
         peptideIDNotFound = set()
+        proteinSet = set()
         
         with open( self.catrapidFile, "r") as f:
             for line in f:
@@ -352,14 +353,17 @@ class NPInterPredictionValidation( object ):
 
                 pair = transcriptID + "|" + proteinID
 
+                proteinSet.add(proteinID)
+
                 # add pair to interacting pairs and keep the maximum interaction score
                 if pair not in interactingPairs:
                     interactingPairs[ pair] = float("-inf")
                 if intScore > interactingPairs[ pair]:
                     interactingPairs[ pair] = intScore
 
-        print "read_catrapid_file: Number of peptideIDs not found in RAINET DB: ", len(peptideIDNotFound) # for old catRAPID dataset, 243 is expected
-        print "read_catrapid_file: Number of protein-RNA pairs in catRAPID: ", len(interactingPairs)
+        print "read_catrapid_file: Number of peptideIDs not found in RAINET DB: ", len( peptideIDNotFound) # for old catRAPID dataset, 243 is expected
+        print "read_catrapid_file: Number of proteins: ", len( proteinSet)
+        print "read_catrapid_file: Number of protein-RNA pairs in catRAPID: ", len( interactingPairs)
 
         return interactingPairs
 
@@ -421,6 +425,7 @@ if __name__ == "__main__":
 
         catrapidPairs = run.read_catrapid_file()
 
+        # #
         # Quick stats on the data
         countYes = 0
         countNo = 0
@@ -440,18 +445,22 @@ if __name__ == "__main__":
 
         Timer.get_instance().step( "Writing output file..")    
 
+        # #
         # Write file for R processing
         outFile = open(run.outputFolder + "/scores.tsv", "w")
+        outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
+        
+        # array of 1s and 0s, whether pair in npInter or not
+        inValidated = [1 if pair in npinterPairs else 0 for pair in catrapidPairs]
 
-        outFile.write("pairID\tcatrapid_score\tin_validated_set\n")        
-        for pair in catrapidPairs:
-            outFile.write("%s\t%s\t%s\n" % (pair, catrapidPairs[ pair], pair in npinterPairs ) )
+        for i, pair in enumerate(catrapidPairs):
+            outFile.write("%s\t%s\t%s\n" % (pair, catrapidPairs[ pair], inValidated[ i]) )
         
         outFile.close()
         
         # # Run R command to create figure
-        # command = "Rscript %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name)
-        # result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
+        command = "Rscript %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name)
+        result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
     # Use RainetException to catch errors
