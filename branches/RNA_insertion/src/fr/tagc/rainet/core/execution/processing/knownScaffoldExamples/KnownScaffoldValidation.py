@@ -108,32 +108,37 @@ class KnownScaffoldValidation( object ):
 #         print table.head(5)
         
         #===================================================================
-        # retrieve list of scores per target before any filtering, use maximum score between fragments
+        # retrieve list of scores per target before any filtering, use maximum and mean score between fragments
         #===================================================================
         
         scoreDict = {}
+        scoreDictMean = {}
         for index, row in table.iterrows():
             # split different protein IDs and transcript
             spl = row[0].split("|")
             uniprotAC = spl[1]
-            
+
             score = row[self.columnForPlot] 
+            
+            # convert z-score to interaction propensity (if option provided)
+            if self.zscoreToPropensity:
+                score = self.convertToPropensity( score)
         
+            # pick the maximum
             if uniprotAC not in scoreDict:
                 scoreDict[uniprotAC] = float("-inf")
             # since there are a score for each RNA fragment, store only the maximum z-score among fragments
             if score > scoreDict[uniprotAC]:
                 scoreDict[uniprotAC] = score
 
-#         # new code for calculating average instead of max
-#             if uniprotAC not in scoreDict:
-#                 scoreDict[uniprotAC] = []
-#             scoreDict[uniprotAC].append( score)
-# 
-#         for prot in scoreDict:
-#             # calculate average
-#             scoreDict[ prot] = sum( scoreDict[ prot]) / float( len( scoreDict[ prot]))
-
+            # to calculate average instead of max
+            if uniprotAC not in scoreDictMean:
+                scoreDictMean[uniprotAC] = []
+            scoreDictMean[uniprotAC].append( score)
+ 
+        for prot in scoreDictMean:
+            # calculate average
+            scoreDictMean[ prot] = sum( scoreDictMean[ prot]) / float( len( scoreDictMean[ prot]))
                 
         #===================================================================
         # Filter for discriminative power
@@ -244,7 +249,7 @@ class KnownScaffoldValidation( object ):
         print "read_catRAPID_file: Total number of interacting proteins:",len(interactingProts)
         print "read_catRAPID_file: Total number of non-interacting proteins:",len(setOfNonInteractingProts)
         
-        return interactingProts, setOfNonInteractingProts, scoreDict
+        return interactingProts, setOfNonInteractingProts, scoreDict, scoreDictMean
 
 
     # #
@@ -415,9 +420,9 @@ if __name__ == "__main__":
                              help='Folder where to write output files.')
         
         # optional args
-        parser.add_argument('--discriminativePowerCutoff', metavar='DiscriminativePowerCutoff', default = 0.75, type=float, help='catRAPID Minimum Disciminative power cutoff')
-        parser.add_argument('--zscoreCutoff', metavar='zscoreCutoff', default = 0, type=float, help='catRAPID Zscore cutoff')
-        parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
+        parser.add_argument('--discriminativePowerCutoff', metavar='DiscriminativePowerCutoff', default = 0.75, type=float, help='Applied for hypergeometric test. catRAPID Minimum Disciminative power cutoff')
+        parser.add_argument('--zscoreCutoff', metavar='zscoreCutoff', default = 0, type=float, help='Applied for hypergeometric test. catRAPID Zscore cutoff')
+        parser.add_argument('--topProportion', metavar='topProportion', default = 1, type=float, help='Applied for hypergeometric test. Use float values from 0 to 1. After applying discriminativePower and interactionStrength filters, retrieve given top percent of entries, sorted by interactionStrength and discriminativePower')
         parser.add_argument('--npinter', metavar='npinter', default = 1, type=int, help='Whether validatedFile is NPInter file or simple list of proteins')
         parser.add_argument('--columnForPlot', metavar='columnForPlot', default = 1, choices=[1,2,3], type=int, help='Which column to use for plotting distribution (e.g. 1 for Zscore, 2 for discriminative power)')
         parser.add_argument('--searchSpaceFile', metavar='searchSpaceFile', default = "", type=str, help='File with list of protein uniprotAC to use as search space. Final output will only contain overlap of catRAPID predictions and the proteins in this file.')
@@ -442,7 +447,7 @@ if __name__ == "__main__":
         Timer.get_instance().step( "reading catRAPID file..")    
         
         # Read CatRAPID
-        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins, scoreDict = run.read_catRAPID_file()        
+        catRAPIDInteractingProteins, catRAPIDNonInteractingProteins, scoreDict, scoreDictMean = run.read_catRAPID_file()        
 
         # Read NPInter or given list of proteins
         
@@ -467,16 +472,11 @@ if __name__ == "__main__":
         
         outFile = open(run.outputFolder + "/" + run.catRAPIDFile.split("/")[-1]+"_scores.tsv", "w")
 
-        outFile.write("uniprotac\tcatrapid_score\tin_validated_set\n")        
+        outFile.write("uniprotac\tcatrapid_score\tcatrapid_score_mean\tin_validated_set\n")        
         for prot in scoreDict:
             # Only write to file if protein in given search space (if option provided)
             if prot in searchSpace:
-                score = scoreDict[ prot]
-                # convert z-score to interaction propensity (if option provided)
-                if run.zscoreToPropensity:
-                    score = run.convertToPropensity( score)
-
-                outFile.write( "%s\t%s\t%s\n" % ( prot, score, prot in experimentallyValidatedProteins ) )
+                outFile.write( "%s\t%s\t%s\t%s\n" % ( prot, scoreDict[ prot], scoreDictMean[ prot], prot in experimentallyValidatedProteins ) )
         
         outFile.close()
         
