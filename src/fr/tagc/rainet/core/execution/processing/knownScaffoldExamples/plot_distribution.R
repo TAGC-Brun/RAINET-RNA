@@ -60,9 +60,6 @@ plt2 = ROC( form = in_validated_set ~ catrapid_score, data = dataset, plot="ROC"
 calcThreshold <- function(response, predict) {
   r <- pROC::roc(response, predict)
   r$thresholds[which.max(r$sensitivities + r$specificities)]
-#   print (r$thresholds[which.max(r$specificities)] )
-#   print (r$thresholds[which.max(r$sensitivities)] )
-#   print (coords(roc=r, x = "local maximas", ret='threshold') )
   }
 # annotate with the catRAPID cutoff point / threshold
 text(0.8,0.4, paste("Opt cutoff:", calcThreshold(dataset$in_validated_set, dataset$catrapid_score), sep = " " ) )
