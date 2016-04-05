@@ -70,21 +70,21 @@ class NPInterPredictionValidation( object ):
     # Use RAINET DB to retrieve Protein cross references
     def proteins_in_rainet(self):
         
-        query = self.sql_session.query( Protein.uniprotAC ).all()
-        
+        # Query all UniProtAC in database
+        query = self.sql_session.query( Protein.uniprotAC ).all()        
         uniprotACs = { str(prot[0]) for prot in query}
 
+        # # Get external references
         # produce dictionary where key is xref ID and value the uniprotAC
+        # Note: an external ID can point to several uniprot IDs        
         query = self.sql_session.query( ProteinCrossReference.protein_id, ProteinCrossReference.crossReferenceID ).all()
 
-        xrefDict = { str(prot[1]) : str(prot[0]) for prot in query } # dict comprehension
-        
-        protCrossReference = {} # key -> refseq ID, val -> ensembl ID
-        
-        for uniprotID, externalID in query:
-            
+        protCrossReference = {} # key -> external ID, val -> set of uniprotACs        
+        for uniprotID, externalID in query:     
+            # There is a significant amount of RefSeq IDs being used in our input file, however these have to be processed       
             if externalID.startswith("NM_"):
                 externalID = externalID.split(".")[0] # NM_001244871.1 to NM_001244871
+
             if externalID not in protCrossReference:
                 protCrossReference[ externalID] = set()
                 
@@ -101,6 +101,7 @@ class NPInterPredictionValidation( object ):
         query = self.sql_session.query( RNACrossReference.transcriptID, RNACrossReference.crossReferenceID ).filter( RNACrossReference.sourceDB == 'refseq_ncrna').all()
         
         rnaCrossReference = {} # key -> refseq ID, val -> ensembl ID
+        # Note: an external ID can point to several ensembl IDs        
         
         for ensemblID, refseqID in query:
             if refseqID not in rnaCrossReference:
@@ -109,6 +110,7 @@ class NPInterPredictionValidation( object ):
             rnaCrossReference[ refseqID].append( ensemblID)
 
         return rnaCrossReference
+
               
     # #
     # Read the NONCODE ID conversion files
@@ -267,7 +269,7 @@ class NPInterPredictionValidation( object ):
                 #print row["moleculeAID"]
             else:
                 # some IDs are not found in mapping file.
-                # in fact, always that NPInter file uses NONCODE transcript ID, these are not present in NONCODE mapping file.
+                # in fact, always that NPInter file uses NONCODE transcript ID (instead of NONCODE gene ID), these are not present in NONCODE mapping file.
                 pass
 #                 if "HSAT" in noncodeID:
 #                     print noncodeID
@@ -372,7 +374,7 @@ if __name__ == "__main__":
     
     try:
         # Create Logger instance by using the first log action.
-        Logger.get_instance().info( "KnownScaffoldValidation : Starting..." )
+        Logger.get_instance().info( "NPInterPredictionValidation : Starting..." )
 
         #===============================================================================
         # Get input arguments, initialise class
@@ -447,14 +449,14 @@ if __name__ == "__main__":
 
         # #
         # Write file for R processing
-        outFile = open(run.outputFolder + "/scores.tsv", "w")
+        outFile = open( run.outputFolder + "/scores.tsv", "w")
         outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
         
         # array of 1s and 0s, whether pair in npInter or not
-        inValidated = [1 if pair in npinterPairs else 0 for pair in catrapidPairs]
+        inValidated = [ 1 if pair in npinterPairs else 0 for pair in catrapidPairs]
 
-        for i, pair in enumerate(catrapidPairs):
-            outFile.write("%s\t%s\t%s\n" % (pair, catrapidPairs[ pair], inValidated[ i]) )
+        for i, pair in enumerate( catrapidPairs):
+            outFile.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i]) )
         
         outFile.close()
         
