@@ -98,10 +98,35 @@ sd(aurocs)
 png(filename=paste(inputFile,".png",sep=""))
 dev.off()
 
-# 
-# roc.perf = performance(p, measure = "tpr", x.measure = "fpr")
-# plot(roc.perf)
-# abline(a=0, b= 1)
-# 
-# cost = performance(p, "cost", cost.fp = 100000000, cost.fn = 1)
-# p@cutoffs[[1]][which.min(cost@y.values[[1]])]
+
+### Getting max sensitivity OR max specificity
+
+r <- pROC::roc(datasetSample$in_validated_set, datasetSample$catrapid_score)
+#r$thresholds[which.max(r$sensitivities + r$specificities)]
+
+#Note: -inf will always give max sensitivities
+# one option is to set a "cost" using ROCR, other is to look for local maximas
+r$thresholds[which.max(r$sensitivities)]
+r$thresholds[which.max(r$specificities)]
+
+# # local maximas
+
+r$thresholds
+print (coords(roc=r, x = "local maximas", ret='threshold') )
+
+# # cost option
+pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
+
+# increasing cost of false negatives, i.e. get cutoff where no false negative is allowed
+cost = performance(pred, "cost", cost.fp = 1, cost.fn = 10000000)
+pred@cutoffs[[1]][which.min(cost@y.values[[1]])]
+pred@fn[[1]][which.min(cost@y.values[[1]])]
+pred@fp[[1]][which.min(cost@y.values[[1]])]
+
+# increasing cost of false positives, i.e. get cutoff where no false positive is allowed
+cost = performance(pred, "cost", cost.fp = 10000000, cost.fn = 1)
+pred@cutoffs[[1]][which.min(cost@y.values[[1]])]
+pred@fn[[1]][which.min(cost@y.values[[1]])]
+pred@fp[[1]][which.min(cost@y.values[[1]])]
+
+
