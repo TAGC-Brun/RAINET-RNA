@@ -108,7 +108,7 @@ class KnownScaffoldValidation( object ):
 #         print table.head(5)
         
         #===================================================================
-        # retrieve list of scores per target before any filtering, use maximum and mean score between fragments
+        # retrieve list of scores per target before any filtering, get maximum or mean score between fragments
         #===================================================================
         
         scoreDict = {}
@@ -117,7 +117,6 @@ class KnownScaffoldValidation( object ):
             # split different protein IDs and transcript
             spl = row[0].split("|")
             uniprotAC = spl[1]
-
             score = row[self.columnForPlot] 
             
             # convert z-score to interaction propensity (if option provided)
@@ -135,9 +134,9 @@ class KnownScaffoldValidation( object ):
             if uniprotAC not in scoreDictMean:
                 scoreDictMean[uniprotAC] = []
             scoreDictMean[uniprotAC].append( score)
- 
+
+        # actually calculate mean score
         for prot in scoreDictMean:
-            # calculate average
             scoreDictMean[ prot] = sum( scoreDictMean[ prot]) / float( len( scoreDictMean[ prot]))
                 
         #===================================================================
