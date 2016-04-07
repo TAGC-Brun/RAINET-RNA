@@ -17,6 +17,8 @@ topProportion='1'
 scoreColumn=1
 
 
+mkdir $out_folder$scoreColumn
+
 #### SAMMSON ####
 
 list_file="SAMMSON_keywords.tsv"
