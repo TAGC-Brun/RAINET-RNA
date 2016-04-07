@@ -97,9 +97,9 @@ for (i in seq(1, repetitions)){
 }
 
 # Mean cutoff and std of randomisations
-paste("Mean cutoff:",mean(cutoffs),"std:",sd(cutoffs))
+paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
 # Mean auc and std of randomisations
-paste("Mean auroc:",mean(aurocs),"std:",sd(aurocs))
+paste("Mean auroc:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
 
 ###################################### 
 # FDR curves
@@ -155,12 +155,14 @@ validated = dataset[dataset$in_validated_set == 1,]
 nonValidated = dataset[dataset$in_validated_set == 0]
 
 repetitions = 10
-sampleSize = 1000 # how many negatives becoming positives
+sampleSize = nrow(validated) # how many negatives becoming positives
 
 cutoffs = c()
 aurocs = c()
 
 for (i in seq(1, repetitions)){
+  
+  print(paste("Repetition:",i) )
   
   # randomly pick indexes from negatives of where to make change
   indexesToChange = sample( nrow(nonValidated), sampleSize )
@@ -192,15 +194,16 @@ for (i in seq(1, repetitions)){
   aurocs = c(aurocs, auc@y.values[[1]])
   
 }
+# Add the original (before noise introduced) line
+pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+perf = performance(pred, measure = "tpr", x.measure = "fpr")
+plot(perf, lwd = 3, lty=1, col= "black",main="", add=TRUE)
+
 
 # Mean cutoff and std of randomisations
-paste("Mean cutoff:",mean(cutoffs),"std:",sd(cutoffs))
+paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
 # Mean auc and std of randomisations
-paste("Mean auroc:",mean(aurocs),"std:",sd(aurocs))
-
-
-
-
+paste("Mean auroc:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
 
 
 
