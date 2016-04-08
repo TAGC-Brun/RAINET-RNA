@@ -9,10 +9,15 @@ library(ROCR)
 
 args <- commandArgs(TRUE)
 # Test if we have enough arguments
-if( length(args) != 1){
+if( length(args) != 2){
   stop("Rscript: Bad argument number")
 }
 inputFile = args[1]
+outFolder = args[2]
+
+# outFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/goldenSet"
+
+setwd(outFolder)
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/test_scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/scores.tsv"
@@ -71,14 +76,14 @@ text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
 colours = rainbow(5)
 
 # Cutoff cost analysis. Augmenting weight of sensitivity
-print ("cost cutoff sens spec")
+print ("cost cutoff sens 1-spec")
 for (cost in seq(1,5)){
   calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
   cutoff = perf@alpha.values[[1]][calc]
   sens = perf@y.values[[1]][calc]
-  spec = perf@x.values[[1]][calc]
+  spec = 1-perf@x.values[[1]][calc]
   print (paste(cost, cutoff , sens, spec) )
-  points(x = spec, y = sens, col = colours[cost], pch = 16)
+  points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
 }
 legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
 
@@ -144,7 +149,7 @@ text(0.7,0.0, aucText )
 
 # parameters
 repetitions = 5
-sampleSize = nrow(validated) # how many negatives becoming positives
+sampleSize = nrow(validated) #/10 # how many negatives becoming positives
 
 cutoffs = c()
 aurocs = c()
