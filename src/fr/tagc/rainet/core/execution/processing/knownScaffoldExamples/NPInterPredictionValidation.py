@@ -461,7 +461,7 @@ if __name__ == "__main__":
         outFile.close()
         
         # # Run R command to create figure
-        command = "Rscript %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name)
+        command = "Rscript %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, run.outputFolder)
         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
