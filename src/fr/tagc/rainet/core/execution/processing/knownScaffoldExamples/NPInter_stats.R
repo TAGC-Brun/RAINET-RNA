@@ -5,7 +5,6 @@ require(grid)
 require(gridExtra)
 library(data.table)
 library(Epi)
-#library(pROC)
 library(ROCR)
 
 args <- commandArgs(TRUE)
@@ -14,7 +13,6 @@ if( length(args) != 1){
   stop("Rscript: Bad argument number")
 }
 inputFile = args[1]
-
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/test_scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/scores.tsv"
@@ -28,39 +26,73 @@ nonValidated = dataset[dataset$in_validated_set == 0]
 
 ###################################### 
 ###################################### 
-### Plot catRAPID scores distributions in and outside NPInter 
+#### Whole dataset 
 ###################################### 
 ###################################### 
 
+###################################### 
+# Plot catRAPID scores distributions in and outside NPInter 
+###################################### 
+
 # testing difference of distributions (Kolmogorow-Smirnov  )
-print (ks.test(validated$catrapid_score, nonValidated$catrapid_score, alternative = c("two.sided")) )
+ksTestWhole = ks.test(validated$catrapid_score, nonValidated$catrapid_score, alternative = c("two.sided"))
 
 plt0 <- ggplot(dataset, aes(x=catrapid_score, colour = as.factor(in_validated_set))) + 
   geom_density() + 
   theme_minimal() +
   xlab( "Score") +
   ylab( "Density") +
-  annotate("text",  x=Inf, y = Inf, label = paste("# True: ",nrow(validated),"\n# False: ",nrow(dataset)-nrow(validated)), vjust=1, hjust=1)
+  annotate("text",  x=Inf, y = Inf, label = paste("# True: ",nrow(validated),"\n# False: ",nrow(dataset)-nrow(validated)), vjust=1, hjust=1) +
+  annotate("text",  x=Inf, y = 0, label = paste("KS test p-val: ", round(ksTestWhole$p.value,2)), vjust=1, hjust=1)
 plt0
 
+###################################### 
+# ROC curve 
+###################################### 
+
+# Use ROCR
+pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+
+perf = performance(pred, measure = "tpr", x.measure = "fpr")
+
+# ROC curve with ROCR package (fast)
+plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of whole dataset")
+abline(a = 0, b = 1, col = "gray60")
+
+# AUC
+auc = performance(pred, measure = "auc")
+text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
+
+# Optimal cutoff / cutpoint, best sensitivity and best specificity
+cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+cutoff
+text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
+
+colours = rainbow(5)
+
+# Cutoff cost analysis. Augmenting weight of sensitivity
+print ("cost cutoff sens spec")
+for (cost in seq(1,5)){
+  calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
+  cutoff = perf@alpha.values[[1]][calc]
+  sens = perf@y.values[[1]][calc]
+  spec = perf@x.values[[1]][calc]
+  print (paste(cost, cutoff , sens, spec) )
+  points(x = spec, y = sens, col = colours[cost], pch = 16)
+}
+legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
+
 
 ###################################### 
 ###################################### 
-### ROC / cutoff analysis
+#### Random subsamples 
 ###################################### 
 ###################################### 
-
-###################################### 
-###################################### 
-## Random subsamples 
-###################################### 
-###################################### 
-
 # Approach: Sub-sampling the non-validated dataset to match length of validated dataset, and keeping the validated dataset as it is
 
+# parameters
 repetitions = 100
 nsubsample = nrow(validated)
-print (nsubsample)
 
 colours = sample(colours(), repetitions)
 
@@ -70,22 +102,19 @@ kss = c()
 
 # Create ROC plots and other metrics
 for (i in seq(1, repetitions)){
+  # create subsample of non-validated set
   nonValidatedSample = nonValidated[sample( nrow(nonValidated), nsubsample ), ]
   datasetSample = rbind(nonValidatedSample, validated) 
   
-  #   # Kolmogorow-Smirnov  
-  #   ks = ks.test(validated$catrapid_score, nonValidatedSample$catrapid_score, alternative = c("two.sided"))$p.value
-  #   kss = c(kss, ks)
-  
-  # ROC using ROCR
+  # ROC using ROCR on subsample
   pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
   perf = performance(pred, measure = "tpr", x.measure = "fpr")
   if (i == 1){
-    plot(perf, lty=5, col= colours[i],main="", ylab = "Sensitivity", xlab = "1-Specificity")
+    plot(perf, lty=5, col= colours[i], ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of randomised set")
   }else{
     plot(perf, lty=5, col= colours[i],main="", add=TRUE)
   }
-
+  
   # Optimal cutoff / cutpoint
   cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
   cutoffs = c(cutoffs, cutoff)
@@ -93,68 +122,28 @@ for (i in seq(1, repetitions)){
   # AUROC
   auc = performance(pred, measure = "auc")
   aurocs = c(aurocs, auc@y.values[[1]])
-  
 }
 
 # Mean cutoff and std of randomisations
-paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
+cutoffText = paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
 # Mean auc and std of randomisations
-paste("Mean auroc:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
+aucText = paste("Mean AUC:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
 
-###################################### 
-# FDR curves
-###################################### 
-# Note: I'm in fact resampling, not using the same samples in previous plot.
-# Problem is that I cannot store "plot" to a variable, and so, inside a loop I can only add data to one plot
-# I tried storing FDR prediction results in a vector and then loop them to create new plot but does not work
-# I cannot use performance objects to ggplots, I would have to create new data structure for ggplots
-# I could potentially store the sampling data and loop them
-for (i in seq(1, repetitions)){
-  nonValidatedSample = nonValidated[sample( nrow(nonValidated), nsubsample ), ]
-  datasetSample = rbind(nonValidatedSample, validated) 
-  
-  pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
-  perf = performance(pred, measure = "pcfall")
-  if (i == 1){
-    plot(perf, lty=5, col= colours[i],main="",ylab = "False discovery rate FP/(TP+FP)", xlim = c(min(dataset$catrapid_score),max(dataset$catrapid_score)), ylim = c(0,1))
-  }else{
-    plot(perf, lty=5, col= colours[i],main="", add=TRUE)
-  }
-}
-abline(v = mean(cutoffs))
+## adding more info to the plot
+abline(a = 0, b = 1, col = "gray60")
+text(0.7,0.3, paste("Subsample size:", nsubsample) )
+text(0.7,0.2, paste("Number randomisations:", repetitions) )
+text(0.7,0.1, cutoffText )
+text(0.7,0.0, aucText )
 
-
-###################################### 
-###################################### 
-#### Whole dataset 
-###################################### 
-###################################### 
-
-pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
-
-# ROC curve with ROCR package (fast)
-plot(performance(pred, measure = "tpr", x.measure = "fpr"))
-
-# Sensitivity plot
-plot(performance(pred, measure = "sens"))
-
-# Specificity plot
-plot(performance(pred, measure = "spec"))
-
-# False discovery rate on whole dataset
-#pcfall: Prediction-conditioned fallout. P(Y = - | Yhat = +). Estimated as: FP/(TP+FP).
-plot(performance(pred, measure = "pcfall"), ylab = "False discovery rate FP/(TP+FP)", ylim = c(0,1))
 
 ###################################### 
 # Adding noise to dataset (missing information / stability analysis) 
 ###################################### 
 # How does the ROC behave if I introduce some previously negatives as being positives
 
-# Separate validated from non-validated 
-validated = dataset[dataset$in_validated_set == 1,]
-nonValidated = dataset[dataset$in_validated_set == 0]
-
-repetitions = 10
+# parameters
+repetitions = 5
 sampleSize = nrow(validated) # how many negatives becoming positives
 
 cutoffs = c()
@@ -166,13 +155,13 @@ for (i in seq(1, repetitions)){
   
   # randomly pick indexes from negatives of where to make change
   indexesToChange = sample( nrow(nonValidated), sampleSize )
-
+  
   # create new copy of nonValidated, which will be modified
   copyNonValidated = nonValidated
   
   # now the non validated set will contain some validated items
   copyNonValidated$in_validated_set[indexesToChange] = 1
-
+  
   # join 'non'-validated and validated
   datasetSample = rbind(validated,copyNonValidated) 
   
@@ -180,7 +169,7 @@ for (i in seq(1, repetitions)){
   pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
   perf = performance(pred, measure = "tpr", x.measure = "fpr")
   if (i == 1){
-    plot(perf, lty=5, col= colours[i],main="", ylab = "Sensitivity", xlab = "1-Specificity")
+    plot(perf, lty=5, col= colours[i], ylab = "Sensitivity", xlab = "1-Specificity", main = "ROC curve, noise addition")
   }else{
     plot(perf, lty=5, col= colours[i],main="", add=TRUE)
   }
@@ -194,23 +183,30 @@ for (i in seq(1, repetitions)){
   aurocs = c(aurocs, auc@y.values[[1]])
   
 }
-# Add the original (before noise introduced) line
+# Add the original (before noise introduced) ROC line
 pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
 perf = performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf, lwd = 3, lty=1, col= "black",main="", add=TRUE)
 
-
 # Mean cutoff and std of randomisations
-paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
+cutoffText = paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
 # Mean auc and std of randomisations
-paste("Mean auroc:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
+aucText = paste("Mean AUC:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
+
+## adding more info to the plot
+abline(a = 0, b = 1, col = "gray60")
+text(0.7,0.3, paste("# Noise items:", sampleSize) )
+text(0.7,0.2, paste("Number randomisations:", repetitions) )
+text(0.7,0.1, cutoffText )
+text(0.7,0.0, aucText )
 
 
-
+###################################### 
+### Testing
+###################################### 
 
 # png(filename=paste(inputFile,".png",sep=""))
 # dev.off()
-
 
 # ### Getting max sensitivity OR max specificity
 # 
@@ -279,3 +275,58 @@ paste("Mean auroc:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
 # plt1 = ROC( form = in_validated_set ~ catrapid_score, data = dataset, plot="ROC", main="ROC curve", MI=TRUE, MX=TRUE, PV=TRUE) 
 # # Calculate cutoff maximizing sensitivity and specificity
 # print (calcThreshold(dataset$in_validated_set, dataset$catrapid_score))
+
+
+# # False discovery rate on whole dataset
+# #pcfall: Prediction-conditioned fallout. P(Y = - | Yhat = +). Estimated as: FP/(TP+FP).
+# fdr = performance(pred, measure = "pcfall")
+# plot(fdr, ylab = "False discovery rate FP/(TP+FP)", ylim = c(0,1))
+# #perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]] + (1-fdr@y.values[[1]]) ) ] 
+
+
+#cutoffsFDR = c()
+
+#   # optimal cutoff taking into account also fdr
+#   fdr = performance(pred, measure = "pcfall")
+#   cutoffFDR = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]] + (1-fdr@y.values[[1]]) ) ]  
+#   # cutoff with just FDR: fdr@x.values[[1]][which.max(1-fdr@y.values[[1]])]
+#   cutoffsFDR = c(cutoffsFDR, cutoffFDR)
+
+
+# # Mean cutoff and std of randomisations + FDR
+# paste("Mean cutoff w/ FDR:",round(mean(cutoffsFDR),2),"std:",round(sd(cutoffsFDR),2))
+
+
+# # Sensitivity plot
+# plot(performance(pred, measure = "sens"))
+# 
+# # Specificity plot
+# plot(performance(pred, measure = "spec"))
+
+# ###################################### 
+# # FDR curves
+# ###################################### 
+# # Note: I'm in fact resampling, not using the same samples in previous plot.
+# # Problem is that I cannot store "plot" to a variable, and so, inside a loop I can only add data to one plot
+# # I tried storing FDR prediction results in a vector and then loop them to create new plot but does not work
+# # I cannot use performance objects to ggplots, I would have to create new data structure for ggplots
+# # I could potentially store the sampling data and loop them
+# for (i in seq(1, repetitions)){
+#   nonValidatedSample = nonValidated[sample( nrow(nonValidated), nsubsample ), ]
+#   datasetSample = rbind(nonValidatedSample, validated) 
+#   
+#   pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
+#   perf = performance(pred, measure = "pcfall")
+#   if (i == 1){
+#     plot(perf, lty=5, col= colours[i],main="",ylab = "False discovery rate FP/(TP+FP)", xlim = c(min(dataset$catrapid_score),max(dataset$catrapid_score)), ylim = c(0,1))
+#   }else{
+#     plot(perf, lty=5, col= colours[i],main="", add=TRUE)
+#   }
+# }
+# abline(v = mean(cutoffs))
+
+#library(pROC)
+
+#   # Kolmogorow-Smirnov  
+#   ks = ks.test(validated$catrapid_score, nonValidatedSample$catrapid_score, alternative = c("two.sided"))$p.value
+#   kss = c(kss, ks)
