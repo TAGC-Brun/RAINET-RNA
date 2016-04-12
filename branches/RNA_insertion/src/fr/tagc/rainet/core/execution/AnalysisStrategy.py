@@ -72,9 +72,10 @@ class AnalysisStrategy(ExecutionStrategy):
     PROT_ALL_KW = "allProteins" # Stores all Protein table objects
 
     RNA_FILTER_KW = "selectedRNAs" # Stores RNA objects after RNA filter
+    RNA_FILTER_KEY_KW = "selectedRNAsKey" # Stores RNA objects with RNA ID as key
     PROT_FILTER_KW = "selectedProteins" # Stores Protein objects after Protein filter
+    PROT_FILTER_KEY_KW = "selectedProteinsKey" # Stores Protein objects with Protein ID as key
     PRI_FILTER_KW = "selectedInteractions" # Stores Interaction objects after Interaction filter
-
     PRI_TISSUES_KW = "interactingTissues" # Stores custom dictionary containing tissues where interaction has been found after interaction filtering
 
     #===================================================================
@@ -100,7 +101,6 @@ class AnalysisStrategy(ExecutionStrategy):
     REPORT_INTERACTION_SCORES_BIOTYPE = "interaction_scores_biotype.tsv"
     REPORT_INTERACTION_PARTNERS_BIOTYPE = "interaction_partners_biotype.tsv"
     REPORT_INTERACTIONS_SCORE_MATRIX = "interaction_score_matrix.tsv"
-
 
 
     def __init__(self):  
@@ -281,6 +281,11 @@ class AnalysisStrategy(ExecutionStrategy):
 
         DataManager.get_instance().store_data(AnalysisStrategy.RNA_FILTER_KW, selectedRNAs)
 
+        # Store actual RNA objects into another dictionary
+        DataManager.get_instance().store_data( AnalysisStrategy.RNA_FILTER_KEY_KW, selectedRNAs)
+        # Convert format
+        DataManager.get_instance().query_to_object_dict( AnalysisStrategy.RNA_FILTER_KEY_KW, "transcriptID")
+
         #===================================================================
         # Filter transcripts belonging to same gene
         # 09-Mar-2016 : perhaps this filter does not have to be applied
@@ -303,13 +308,14 @@ class AnalysisStrategy(ExecutionStrategy):
         # Get all Protein objects
         #===================================================================        
 
-        allProts = "query( Protein ).all()"
-        DataManager.get_instance().store_data(AnalysisStrategy.PROT_ALL_KW, allProts)
+        DataManager.get_instance().perform_query(AnalysisStrategy.PROT_FILTER_KW, "query( Protein ).all()") 
 
-        # TODO: potential filterings on the protein level
-        selectedProts = allProts # to be changed according to filtering
+        selectedProts = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW)
 
-        DataManager.get_instance().perform_query(AnalysisStrategy.PROT_FILTER_KW, selectedProts) 
+        # Store actual objects into another dictionary where key is Protein ID
+        DataManager.get_instance().store_data( AnalysisStrategy.PROT_FILTER_KEY_KW, selectedProts)
+        # Convert format
+        DataManager.get_instance().query_to_object_dict( AnalysisStrategy.PROT_FILTER_KEY_KW, "uniprotAC")
 
 
     # #
@@ -337,7 +343,7 @@ class AnalysisStrategy(ExecutionStrategy):
   
         interactions = eval('self.sql_session.' +  queryText + ".all()")
 
-        print ("Finished minimum interaction score filter:",len(interactions))
+        print "Finished minimum interaction score filter:",len(interactions)
 
         # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
 
@@ -349,7 +355,7 @@ class AnalysisStrategy(ExecutionStrategy):
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
 
-        print ("Finished interacting RNA / protein filter:",len(selectedInteractions))
+        print "Finished interacting RNA / protein filter:",len(selectedInteractions)
 
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
@@ -391,7 +397,7 @@ class AnalysisStrategy(ExecutionStrategy):
         del pairs
         selectedInteractions = nonRedundantInteractions
 
-        print ("Finished peptide redundancy filter:",len(selectedInteractions))
+        print "Finished peptide redundancy filter:",len(selectedInteractions)
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
@@ -505,12 +511,17 @@ class AnalysisStrategy(ExecutionStrategy):
             print ("Finished expression filter:", len( selectedInteractions))
     
 
+        #===================================================================    
+        # Store datasets
+        #=================================================================== 
+
+        # Store interaction information
         DataManager.get_instance().store_data( AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
         DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
         del expressedInteractions
         del expressedInteractionsTissues
 
-
+            
     # #
     # Write output file with the parameters used
     def write_parameter_log(self):
@@ -761,7 +772,6 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandlerPartners = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE )
                 
         # Get biotypes of lncRNAs plus mRNA
-        ### 11-03-2016: probably need to change this to self.RNABiotypes
         wantedBiotypes = DataConstants.RNA_LNCRNA_BIOTYPE[:]
         for item in DataConstants.RNA_MRNA_BIOTYPE:
             mRNABiotype = item
@@ -793,17 +803,15 @@ class AnalysisStrategy(ExecutionStrategy):
 
         #=================================================================== 
         # File with interaction scores for each protein-RNA pair, matrix format
-        # 
         #=================================================================== 
-
-        # IF THIS IS FOR A HEATMAP, OUTPUT FILE SHOULD BE IN MATRIX FORMAT
+        # E.g.
         # RNAs Prot1 Prot2
-        # RNA1 41    23
-        # RNA2 32    43
+        # RNA1 10.4    NA
+        # RNA2 32.6    -34.5
 
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_INTERACTIONS_SCORE_MATRIX )
 
-        # create datastructures with all proteins, RNAs and scores of pairs 
+        # create data structures with all proteins, RNAs and scores of pairs 
         setInteractingRNAs = set()
         setInteractingProts = set()
         dictPairs = {}
@@ -820,6 +828,7 @@ class AnalysisStrategy(ExecutionStrategy):
             setInteractingRNAs.add( txID)
             setInteractingProts.add( protID)
 
+        # use sorting to keep headers in place
         sortedSetInteractingProts = sorted( setInteractingProts)
         sortedSetInteractingRNAs = sorted( setInteractingRNAs)
 
@@ -841,21 +850,9 @@ class AnalysisStrategy(ExecutionStrategy):
                 text+= "\t%s" % score 
             text+= "\n"
             outHandler.write( text)
+
         outHandler.close()
         
-##TODO:
-# 
-#         
-# 
-#         for inter in filteredInteractions:
-#             txID = str( inter.transcriptID)
-#             protID = str( inter.proteinID)
-#             interScore = float( inter.interactionScore)
-# 
-#             outHandler.write( "%s\t%s\t%.2f\n" % ( txID, protID, interScore))
-# 
-#         outHandler.close()
-
 
     # #
     # Retrieve statistics for the expression data used.
@@ -940,27 +937,33 @@ class AnalysisStrategy(ExecutionStrategy):
     def enrichement_analysis(self):
         pass
         # TODO: see below
-#  
-#         # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
-#         # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
-#          
-#         # 1) for each KEGG pathway, count how many proteins in it
-#         keggFrequencies = {}
-#         keggPathways = self.sql_session.query( KEGGPathway ).all()
-#         for pathway in keggPathways:
-#             keggFrequencies[pathway.keggID] = self.sql_session.query( ProteinKEGGAnnotation ).filter( ProteinKEGGAnnotation.keggPathway_id == pathway.keggID ).count()
-#         
-#         # 2) for each interacting RNA, retrieve kegg pathways of proteins it interacts with
-#         interactions = DataManager.get_instance().get_data(DataConstants.PRI_FILTER_KW)
+  
+        # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
+        # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
+          
+        # 1) for each KEGG pathway, count how many proteins in it
+        keggFrequencies = {}
+        keggPathways = self.sql_session.query( KEGGPathway ).all()
+        for pathway in keggPathways:
+            keggFrequencies[pathway.keggID] = self.sql_session.query( ProteinKEGGAnnotation ).filter( ProteinKEGGAnnotation.keggPathway_id == pathway.keggID ).distinct().count()
 
+        print keggFrequencies
+                 
+        # Retrieve interacting objects
+        selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
+        rnaObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
+        protObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
+ 
+        interRNAIDs = {inter.transcriptID for inter in selectedInteractions}
+        interProtIDs = {inter.proteinID for inter in selectedInteractions}
+ 
+        for rnaID in interRNAIDs:
+            rnaObj = rnaObjects[ rnaID]
+            print rnaObj
 
-#         # Get protein IDs and transcript IDs present in filtered interactions
-#         for inter in selectedInteractions:
-#             print (inter.transcriptID,inter.proteinID)
-#              
-#             prot = self.sql_session.query( Protein ).filter( Protein.uniprotAC == inter.proteinID ).all()
-#  
-#             rna = self.sql_session.query( RNA ).filter( RNA.transcriptID == inter.transcriptID ).all()
+        for protID in interProtIDs:
+            protObj = protObjects[ protID]             
+            print protObj
 
 
     def hypergeometric_test(self):
@@ -976,7 +979,6 @@ class AnalysisStrategy(ExecutionStrategy):
         # At this point all files should be written to file and R job can use large amounts of memory
         # Here we can delete the data manager python objects to save memory
         DataManager.get_instance().delete_data(AnalysisStrategy.RNA_ALL_KW)
-        DataManager.get_instance().delete_data(AnalysisStrategy.PROT_ALL_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.RNA_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PROT_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PRI_FILTER_KW)
