@@ -31,6 +31,7 @@ EXAMPLE_MRNA_TABLE_COLUMNS = {
                     "transcriptStrand": -1,
                     "chromosomeName": "13",
                     "percentageGCContent": 32.94,
+                    "description" : "periostin, osteoblast specific factor [Source:HGNC Symbol;Acc:HGNC:16953]",
                     "type": "MRNA"
                     }
 EXAMPLE_MRNA_XREFS = {
