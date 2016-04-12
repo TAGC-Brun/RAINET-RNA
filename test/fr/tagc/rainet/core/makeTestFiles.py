@@ -585,7 +585,7 @@ def make_tx_expression(testing_RNAs):
 if FORCE_CREATION:
     make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt", OUTPUT_FOLDER+"/sampled_item_list/","testing_proteins_list.txt")
 testingProteins = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_proteins_list.txt")
-  
+   
 make_protein_uniprot_definition(testingProteins)
 proteinXref = make_protein_cross_references(testingProteins)
 make_protein_isoforms(testingProteins)
@@ -593,7 +593,7 @@ make_gene_ontology_annotation(testingProteins)
 make_reactome_pathway_annotation(testingProteins)
 make_interactome_definition(testingProteins,proteinXref)
 make_interactome_network_definition(testingProteins,proteinXref)
-   
+    
 #===============================================================================
 # RNA and PRI
 #===============================================================================
@@ -605,7 +605,7 @@ make_RNA_definition(testingRNAs)
 make_RNA_cross_references(testingRNAs)
 make_PRI_catRAPID(testingRNAs,testingProteins,proteinXref)
 make_tx_expression(testingRNAs)
-
+ 
 # Copy remaining (unchanged) files
 copy_files(REMAINING_FILES,INPUT_FOLDER+"PROTEIN/",OUTPUT_FOLDER+"PROTEIN/")
 #===============================================================================

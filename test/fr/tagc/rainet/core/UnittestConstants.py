@@ -13,7 +13,7 @@ DB_PATH = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rain
 #=======================================================================
 
 TOTAL_NUMBER_TABLES = 31
-TOTAL_COLUMNS_IN_RNA_TABLE = 15
+TOTAL_COLUMNS_IN_RNA_TABLE = 16
 TOTAL_COLUMNS_IN_RNAXREF_TABLE = 3
 EXAMPLE_MRNA = "ENST00000379749"
 EXAMPLE_MRNA_TABLE_COLUMNS = {
