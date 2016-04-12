@@ -364,7 +364,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # #
     # Runs after each test
     def tearDown(self):
-                 
+                  
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
