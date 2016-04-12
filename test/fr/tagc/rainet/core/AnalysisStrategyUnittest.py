@@ -354,9 +354,12 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.execute()
 
 
-#     def test_extra(self):
-#         
-#         self.strategy.execute()
+    def test_extra(self):
+
+        self.strategy.execute()
+         
+        self.strategy.enrichement_analysis()
+
 
     # #
     # Runs after each test
