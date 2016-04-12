@@ -294,6 +294,10 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue( table[1][5] == 28.16, "assert if last value of lincRNA score is correct")
 
         # Interaction partners report
+        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTIONS_SCORE_MATRIX, header = None, sep = "\t", skip_blank_lines = True)
+        self.assertTrue( float(table[1][1]) == 28.16, "assert interaction value is correct")
+
+        # Interaction partners report
         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
 
         self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
@@ -308,6 +312,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_EXPRESSION, header = None, sep = "\t", skip_blank_lines = True)    
         #2  ENST00000426044  LncRNA            lincRNA            0.89, calculated using SQLLite and excel
         self.assertTrue( table[3][2] == "0.89","asserting if average expression value for given RNA is correct")
+
+
 
 
 
@@ -352,12 +358,10 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 #         
 #         self.strategy.execute()
 
-
- 
     # #
     # Runs after each test
     def tearDown(self):
-               
+                 
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
