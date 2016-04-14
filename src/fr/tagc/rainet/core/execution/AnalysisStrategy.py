@@ -4,6 +4,7 @@ import shutil
 # import numpy as np
 # import pandas as pd
 # import cPickle as pickle
+from scipy import stats
 
 from sqlalchemy import or_, and_, distinct
 from sqlalchemy.inspection import inspect    
@@ -99,6 +100,8 @@ class AnalysisStrategy(ExecutionStrategy):
     R_WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/"
     R_MAIN_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.R"
     R_SWEAVE_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.Rnw"
+
+    HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
     
     # After filter report
     PARAMETERS_LOG = "parameters.log"
@@ -117,8 +120,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # Annotation report
     REPORT_PROT_PER_ANNOTATION = "prot_per_annotation.tsv"
-    REPORT_ANNOTATION_MATRIX = "annotation_matrix.tsv"
-
+    REPORT_ANNOTATION_PER_PROT = "annotation_per_prot.tsv"
 
     def __init__(self):  
         
@@ -995,14 +997,14 @@ class AnalysisStrategy(ExecutionStrategy):
         # Retrieve interacting objects
         #=================================================================== 
 
-        # before interaction filter
+        # proteins before interaction filter
         allProteinsWithInteractionData = DataManager.get_instance().get_data( AnalysisStrategy.PRI_PROT_ALL_KW)
-        allTranscriptsWithInteractionData = DataManager.get_instance().get_data( AnalysisStrategy.PRI_RNA_ALL_KW)
+        # allTranscriptsWithInteractionData = DataManager.get_instance().get_data( AnalysisStrategy.PRI_RNA_ALL_KW)
 
-        # after interaction filter
+        # interactions after interaction filter
         selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
 
-        interRNAObjects = DataManager.get_instance().get_data( AnalysisStrategy.PRI_RNA_ALL_KW)
+        # proteins after interaciton filter
         interProtObjects = DataManager.get_instance().get_data( AnalysisStrategy.PRI_PROT_FILTER_KW)
 
         #===================================================================   
@@ -1012,6 +1014,8 @@ class AnalysisStrategy(ExecutionStrategy):
         # Note: assuming there is only one primary key in base annotation table 
             
         # Define wanted tables
+        
+        # TODO: put annotation tables as system argument
         
 #         tableNameBase = "KEGGPathway"
 #         tableNameAnnotation = "ProteinKEGGAnnotation"
@@ -1032,6 +1036,10 @@ class AnalysisStrategy(ExecutionStrategy):
         # query table containing all annotation mappings of pathway-protein
         proteinAnnotations = eval( "self.sql_session.query( " + tableNameAnnotation +" ).all()")
 
+        #===================================================================   
+        # Process annotations
+        #=================================================================== 
+        
         pathwayAnnotDict = {} # key -> pathway id, value -> list of proteins IDs
         protAnnotDict = {} # key -> protein id, value -> list of pathway IDs
 
@@ -1041,7 +1049,8 @@ class AnalysisStrategy(ExecutionStrategy):
         for annot in proteinAnnotations:
             pathID = str( eval( "annot." + primaryKeys[ 0] ) )
             protID = str( eval( "annot." + primaryKeys[ 1] ) )
-            
+
+            # populate dictionaries containing proteins with interaction data (even if below cutoff)
             if protID in allProteinsWithInteractionData:
                 if pathID not in pathwayAnnotWithInteractionDataDict:
                     pathwayAnnotWithInteractionDataDict[ pathID] = []
@@ -1053,7 +1062,8 @@ class AnalysisStrategy(ExecutionStrategy):
                     protAnnotWithInteractionDataDict[ protID].append( pathID)
                 else:
                     raise RainetException( "AnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
-            
+
+            # populate dictionaries containing all proteins         
             if pathID not in pathwayAnnotDict:
                 pathwayAnnotDict[ pathID] = []
             pathwayAnnotDict[ pathID].append( protID)
@@ -1064,6 +1074,7 @@ class AnalysisStrategy(ExecutionStrategy):
                 protAnnotDict[ protID].append( pathID)
             else:
                 raise RainetException( "AnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
+
 
         # Note: the protein-pathway annotation table will only contain proteins and pathways which have any annotation
         # add here the pathways which did not have any protein annotation   
@@ -1093,7 +1104,8 @@ class AnalysisStrategy(ExecutionStrategy):
         #===================================================================   
         # File with proteins per pathway
         #=================================================================== 
-        
+        # Note: not all proteins with interaction have annotation, and vice versa
+
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_PROT_PER_ANNOTATION )
  
         # Write header
@@ -1112,120 +1124,118 @@ class AnalysisStrategy(ExecutionStrategy):
          
         outHandler.close()
 
-#         #===================================================================   
-#         # File with matrix of presence in pathway per interacting protein
-#         #=================================================================== 
-#         # E.g.
-#         # Prots Path1 Path2
-#         # prot1 1    0
-#         # prot2 1    1
-#         
-#         # Note: Interacting proteins only
-#         
-#         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_ANNOTATION_MATRIX )
-# 
-#         # use sorting to keep headers in place
-#         sortedPathwayAnnotDict = sorted( pathwayAnnotDict)
-#         sortedInterProtObjects = sorted( interProtObjects)
-#  
-#         # write header with pathway IDs
-#         outHandler.write( "Prots")
-#         for pathID in sortedPathwayAnnotDict:
-#             outHandler.write( "\t%s" % pathID )
-#         outHandler.write( "\n")
-# 
-#         # write 1 if protein in pathway, 0 if not
-#         for protID in sortedInterProtObjects:
-#             text = ""
-#             for pathID in sortedPathwayAnnotDict:   
-#                 annotBool = 0
-#                 # first check if protein has any annotation
-#                 if protID in protAnnotDict: 
-#                     # second check if protein has this annotation       
-#                     if pathID in protAnnotDict[ protID]:
-#                         annotBool = 1
-#                 
-#                 text+= "\t" + str( annotBool)
-# 
-#             outHandler.write( "%s%s\n" % ( protID, text ) )
-#         
-#         outHandler.close()
+        #===================================================================   
+        # File with pathway per protein
+        #===================================================================          
+
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_ANNOTATION_PER_PROT )
+ 
+        # Write header
+        outHandler.write("uniprotAC\twith_interaction_data\ttotal_annotations\tlist_of_annotations\n") 
+ 
+        for protID in protAnnotDict:
+            
+            withInteraction = 0
+            if protID in interProtObjects:
+                withInteraction = 1
+
+            annot = protAnnotDict[ protID]
+                        
+            outHandler.write( "%s\t%s\t%s\t%s\n" % ( protID, withInteraction, len( annot), ",".join( annot) ) )
+         
+        outHandler.close()
 
 
         #### TESTING / EXPLORATORY ####
-
+ 
         # writing file with one line per RNA - module pair, if interactions are existing
-
+ 
         outFile = open("/home/diogo/testing/networkModules/networkModules.tsv","w")
-
+ 
         outFile.write("transcriptID\tannotID\tnumber_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\tlist_proteinIDs\n")
-
+ 
         # For each RNA, store all proteins it interacts with and their annotations
-        rnaInteractions = {} # Key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs
-        
+        rnaInteractions = {} # Key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs (after filtering)
+        totalRNAInteractionsDict = {} # Key -> transcript ID, value -> list of prot IDs (after filtering)       
         for inter in selectedInteractions:
             txID = str( inter.transcriptID)
             protID = str( inter.proteinID)
-
+ 
             if txID not in rnaInteractions:
                 rnaInteractions[ txID] = {}
-            
+                totalRNAInteractionsDict[ txID] = []
+            totalRNAInteractionsDict[ txID].append( protID)
+             
             # only store info of proteins that have annotation information
             if protID in protAnnotDict: 
                 for annot in protAnnotDict[ protID]:
-                    
                     if annot not in rnaInteractions[ txID]:
                         rnaInteractions[ txID][ annot] = []
-                        
                     rnaInteractions[ txID][ annot].append( protID)
-
+ 
         for rnaID in rnaInteractions:
-            totAnnotatedInteractions = sum( [ len( rnaInteractions[ rnaID][ annotID]) for annotID in rnaInteractions[ rnaID] ] ) 
+#            totAnnotatedInteractions = sum( [ len( rnaInteractions[ rnaID][ annotID]) for annotID in rnaInteractions[ rnaID] ] ) 
+            totRNAInteractions = len( totalRNAInteractionsDict[ rnaID]) 
+            
             for annotID in rnaInteractions[ rnaID]:
-                protList = rnaInteractions[ rnaID][ annotID]
                 
-                outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( rnaID, annotID, len( protList), ",".join( protList), totAnnotatedInteractions ) )
-                # I should add here or somewhere the total interactions below cutoff (i.e. total proteins with catRAPID predictions minus total totAnnotatedInteractions
+                # TODO: add cutoff as argument or something???
+                
+                if len( pathwayAnnotDict[ annotID]) < 5: # TO REMOVE
+                    continue
+                
+                protList = rnaInteractions[ rnaID][ annotID]
+                possibleProtList = pathwayAnnotWithInteractionDataDict[ annotID]
+                 
+                assert ( len( protList) <= len( possibleProtList) )
+
+                print ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ) ) 
+                 
+                outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\n" % ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ) ) )
+ 
+                # note: test for each RNA - annotation pair. 
+                x = len( protList) # white balls drawn ( proteins with current annotation in filtered interactions)
+                m = len( possibleProtList) # total white balls ( proteins with the current annotation)
+                n = len( interProtObjects) - m # total black balls (all the proteins used in catRAPID)
+                k = totRNAInteractions # total number of draws ( proteins in filtered interactions)
+ 
+                assert ( m + n >= k) # number of draws should be less than total number of balls
+ 
+                self.hypergeometric_test(x, m, n, k)
+
 
         outFile.close()
 
         
     def enrichement_analysis(self):
         pass
-        # TODO: see below
-  
-#         # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
-#         # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
-#           
-#         # 1) for each KEGG pathway, count how many proteins in it
-#         keggFrequencies = {}
-#         keggPathways = self.sql_session.query( KEGGPathway ).all()
-#         for pathway in keggPathways:
-#             keggFrequencies[pathway.keggID] = self.sql_session.query( ProteinKEGGAnnotation ).filter( ProteinKEGGAnnotation.keggPathway_id == pathway.keggID ).distinct().count()
-# 
-#         print keggFrequencies
-#                  
-#         # Retrieve interacting objects
-#         selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
-#         rnaObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
-#         protObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
-#  
-#         interRNAIDs = {inter.transcriptID for inter in selectedInteractions}
-#         interProtIDs = {inter.proteinID for inter in selectedInteractions}
-#  
-#         for rnaID in interRNAIDs:
-#             rnaObj = rnaObjects[ rnaID]
-#             print rnaObj
-# 
-#         for protID in interProtIDs:
-#             protObj = protObjects[ protID]             
-#             print protObj
 
 
-    def hypergeometric_test(self):
+    def hypergeometric_test(self, x, m, n, k):
         pass
-        # TODO: see below
+        # TODO: try using python test
         #scipy.stats.hypergeom.cdf(x, M, n, N, loc=0)
+
+        print (stats.hypergeom.sf( x, m+n, m, k) )
+
+        print ("Hypergeometric_test p-value:\t%s\n" % stats.hypergeom.sf( x, m+n, m, k) )
+
+        # Run hypergeometric test externally in R and get result
+        command = "Rscript %s %s %s %s %s" % ( AnalysisStrategy.HYPERGEOMETRIC_TEST_SCRIPT, x, m, n, k)
+     
+        result = SubprocessUtil.run_command( command, return_stdout = 1, verbose = 0)
+        print ("x: %i\tm: %i\tn: %i\tk: %i" % (x,m,n,k) )
+        print ( "Hypergeometric_test p-value:\t%s\n" % result )         
+
+        # x, q vector of quantiles representing the number of white balls drawn
+        # without replacement from an urn which contains both black and white
+        # balls.
+        # 
+        # m the number of white balls in the urn.
+        # 
+        # n the number of black balls in the urn.
+        # 
+        # k the number of balls drawn from the urn.
 
 
     # #
