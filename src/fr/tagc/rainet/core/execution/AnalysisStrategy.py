@@ -6,6 +6,7 @@ import shutil
 # import cPickle as pickle
 
 from sqlalchemy import or_, and_, distinct
+from sqlalchemy.inspection import inspect    
 
 from fr.tagc.rainet.core.execution.ExecutionStrategy import ExecutionStrategy
 from fr.tagc.rainet.core.util.option.OptionManager import OptionManager
@@ -68,15 +69,27 @@ class AnalysisStrategy(ExecutionStrategy):
     # Data Manager object Keywords
     #===================================================================
 
+    # all Protein / RNA in their respective tables
     RNA_ALL_KW = "allRNAs" # Stores all RNA table objects
     PROT_ALL_KW = "allProteins" # Stores all Protein table objects
 
-    RNA_FILTER_KW = "selectedRNAs" # Stores RNA objects after RNA filter
-    RNA_FILTER_KEY_KW = "selectedRNAsKey" # Stores RNA objects with RNA ID as key
-    PROT_FILTER_KW = "selectedProteins" # Stores Protein objects after Protein filter
-    PROT_FILTER_KEY_KW = "selectedProteinsKey" # Stores Protein objects with Protein ID as key
+    # Protein / RNA after their respective filters
+    RNA_FILTER_KW = "selectedRNAs" # Stores list of RNA objects after RNA filter
+    RNA_FILTER_KEY_KW = "selectedRNAsKey" # Stores dictionary of RNA objects with RNA ID as key
+    PROT_FILTER_KW = "selectedProteins" # Stores list of Protein objects after Protein filter
+    PROT_FILTER_KEY_KW = "selectedProteinsKey" # Stores dictionary of Protein objects with Protein ID as key
+
+    # Protein / RNA with interaction data, before interaction filterings
+    PRI_PROT_ALL_KW = "allProteinsInInteractionTable" # Stores all Protein IDs with interaction data (before cutoff)
+    PRI_RNA_ALL_KW = "allRNAInInteractionTable" # Stores all RNA IDs with interaction data (before cutoff)
+
+    # Interaction objects after filtering
     PRI_FILTER_KW = "selectedInteractions" # Stores Interaction objects after Interaction filter
     PRI_TISSUES_KW = "interactingTissues" # Stores custom dictionary containing tissues where interaction has been found after interaction filtering
+
+    # Protein / RNA with interaction data, after interaction filterings
+    PRI_PROT_FILTER_KW = "filteredInteractingProteins" # Stores all Protein Objects in interactions, after all filters
+    PRI_RNA_FILTER_KW = "filteredInteractingRNAs" # Stores all RNA Objects in interactions, after all filters
 
     #===================================================================
     # Report files constants       
@@ -101,6 +114,10 @@ class AnalysisStrategy(ExecutionStrategy):
     REPORT_INTERACTION_SCORES_BIOTYPE = "interaction_scores_biotype.tsv"
     REPORT_INTERACTION_PARTNERS_BIOTYPE = "interaction_partners_biotype.tsv"
     REPORT_INTERACTIONS_SCORE_MATRIX = "interaction_score_matrix.tsv"
+
+    # Annotation report
+    REPORT_PROT_PER_ANNOTATION = "prot_per_annotation.tsv"
+    REPORT_ANNOTATION_MATRIX = "annotation_matrix.tsv"
 
 
     def __init__(self):  
@@ -214,6 +231,10 @@ class AnalysisStrategy(ExecutionStrategy):
         # Produce reports
         #===================================================================
 
+        Timer.get_instance().step( "Producing annotation report.." )        
+
+        self.annotation_report() # change place of running this function
+
         Timer.get_instance().step( "Producing filter report.." )        
 
         self.after_filter_report()
@@ -295,6 +316,8 @@ class AnalysisStrategy(ExecutionStrategy):
         # - based on length
         # - based on expression
 
+        Logger.get_instance().info( "filter_RNA : Finished RNA filter: " + str( len( selectedRNAs)) )
+
 
     # #
     # Filter protein models    
@@ -317,6 +340,8 @@ class AnalysisStrategy(ExecutionStrategy):
         # Convert format
         DataManager.get_instance().query_to_object_dict( AnalysisStrategy.PROT_FILTER_KEY_KW, "uniprotAC")
 
+        Logger.get_instance().info( "filter_protein : Finished Protein filter: " + str( len( selectedProts)) )
+
 
     # #
     # Filter protein-RNA interactions
@@ -332,6 +357,19 @@ class AnalysisStrategy(ExecutionStrategy):
         selectedRNAs = { str( item.transcriptID) for item in DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW) }
         selectedProteins = { str( item.uniprotAC) for item in DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW) } 
 
+        #===================================================================
+        # Total number of distinct proteins and RNAs, regardless of interaction scores (needed for some calculations)
+        #===================================================================    
+        # Note: the ProteinRNAInteractionCatRAPID table only contains proteins and RNAs that exist in the Protein or RNA tables
+        allProteinsWithInteractionData = self.sql_session.query( ProteinRNAInteractionCatRAPID.proteinID ).distinct().all()       
+        allProteinsWithInteractionData = { str( protID[ 0]) for protID in allProteinsWithInteractionData}
+
+        allTranscriptsWithInteractionData = self.sql_session.query( ProteinRNAInteractionCatRAPID.transcriptID ).distinct().all()       
+        allTranscriptsWithInteractionData = { str( txID[ 0]) for txID in allTranscriptsWithInteractionData}
+
+        DataManager.get_instance().store_data(AnalysisStrategy.PRI_PROT_ALL_KW, allProteinsWithInteractionData)
+        DataManager.get_instance().store_data(AnalysisStrategy.PRI_RNA_ALL_KW, allTranscriptsWithInteractionData)
+
         #===================================================================         
         # Filter interactions based on minimumInteractionScore
         #===================================================================                 
@@ -343,7 +381,7 @@ class AnalysisStrategy(ExecutionStrategy):
   
         interactions = eval('self.sql_session.' +  queryText + ".all()")
 
-        print "Finished minimum interaction score filter:",len(interactions)
+        Logger.get_instance().info( "filter_PRI : Finished minimum interaction score filter: " + str( len( interactions)) )
 
         # Note: due to memory usage constraints, the interaction objects are not stored but instead all they attributes are stored as a tuple
 
@@ -355,7 +393,7 @@ class AnalysisStrategy(ExecutionStrategy):
             if inter.transcriptID in selectedRNAs and inter.proteinID in selectedProteins:
                 selectedInteractions.append(inter)
 
-        print "Finished interacting RNA / protein filter:",len(selectedInteractions)
+        Logger.get_instance().info( "filter_PRI : Finished interacting RNA / protein filter: " + str( len( selectedInteractions)) )
 
         #===================================================================    
         # Filter interactions based on peptide IDs corresponding to same protein
@@ -397,7 +435,7 @@ class AnalysisStrategy(ExecutionStrategy):
         del pairs
         selectedInteractions = nonRedundantInteractions
 
-        print "Finished peptide redundancy filter:",len(selectedInteractions)
+        Logger.get_instance().info( "filter_PRI : Finished peptide redundancy filter: " + str( len( selectedInteractions )) )
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
@@ -453,7 +491,7 @@ class AnalysisStrategy(ExecutionStrategy):
                 
                 count+= 1
                 if count % 100000 == 0:
-                    print ("Processed",count)
+                    Logger.get_instance().info( "filter_PRI_expression : Processed interactions.. " + str( count) )
                     
                 # skip transcripts with no expression
                 if inter.transcriptID not in expressionDict:
@@ -508,8 +546,7 @@ class AnalysisStrategy(ExecutionStrategy):
                     
             selectedInteractions = expressedInteractions
     
-            print ("Finished expression filter:", len( selectedInteractions))
-    
+            Logger.get_instance().info("filter_PRI_expression : Finished expression filter: " + str( len( selectedInteractions)) )    
 
         #===================================================================    
         # Store datasets
@@ -520,6 +557,19 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
         del expressedInteractions
         del expressedInteractionsTissues
+
+        # Store interacting RNA and protein object after all filters
+        interRNAIDs = { str( inter.transcriptID) for inter in selectedInteractions}
+        interProtIDs = { str( inter.proteinID) for inter in selectedInteractions}
+
+        rnaObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
+        protObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
+  
+        interRNAObjects = { rnaID : rnaObjects[ rnaID] for rnaID in interRNAIDs }
+        interProtObjects = { protID : protObjects[ protID] for protID in interProtIDs }
+
+        DataManager.get_instance().store_data( AnalysisStrategy.PRI_RNA_ALL_KW, interRNAObjects)
+        DataManager.get_instance().store_data( AnalysisStrategy.PRI_PROT_FILTER_KW, interProtObjects)
 
             
     # #
@@ -933,37 +983,243 @@ class AnalysisStrategy(ExecutionStrategy):
  
         outHandler.close()
 
+
+    # #
+    # Retrieve statistics for the protein annotation data used.
+    # Produce output files that will be used for a pdf report
+    def annotation_report(self):
+        
+        # to be run after interaction filtering
+
+        #=================================================================== 
+        # Retrieve interacting objects
+        #=================================================================== 
+
+        # before interaction filter
+        allProteinsWithInteractionData = DataManager.get_instance().get_data( AnalysisStrategy.PRI_PROT_ALL_KW)
+        allTranscriptsWithInteractionData = DataManager.get_instance().get_data( AnalysisStrategy.PRI_RNA_ALL_KW)
+
+        # after interaction filter
+        selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
+
+        interRNAObjects = DataManager.get_instance().get_data( AnalysisStrategy.PRI_RNA_ALL_KW)
+        interProtObjects = DataManager.get_instance().get_data( AnalysisStrategy.PRI_PROT_FILTER_KW)
+
+        #===================================================================   
+        # Retrieve annotations
+        #=================================================================== 
+        # Note: assuming there is two primary keys in annotation table, first pathway ID, then protein ID
+        # Note: assuming there is only one primary key in base annotation table 
+            
+        # Define wanted tables
+        
+#         tableNameBase = "KEGGPathway"
+#         tableNameAnnotation = "ProteinKEGGAnnotation"
+
+        tableNameBase = "NetworkModule"
+        tableNameAnnotation = "ProteinNetworkModule"
+
+#         tableNameBase = "ReactomePathway"
+#         tableNameAnnotation = "ProteinReactomeAnnotation"
+        
+        # Get table primary key names 
+        primaryKeys = eval( "inspect( " + tableNameAnnotation + ").primary_key") 
+        # e.g. change from ProteinKEGGAnnotation.keggPathway_id to keggPathway_id
+        primaryKeys = [ str(pk).replace( tableNameAnnotation, "")[ 1:] for pk in primaryKeys]
+        
+        # query table containing all pathway/module descriptions
+        baseAnnotations = eval( "self.sql_session.query( " + tableNameBase +" ).all()")
+        # query table containing all annotation mappings of pathway-protein
+        proteinAnnotations = eval( "self.sql_session.query( " + tableNameAnnotation +" ).all()")
+
+        pathwayAnnotDict = {} # key -> pathway id, value -> list of proteins IDs
+        protAnnotDict = {} # key -> protein id, value -> list of pathway IDs
+
+        pathwayAnnotWithInteractionDataDict = {} # key -> pathway id, value -> list of proteins IDs with interaction data
+        protAnnotWithInteractionDataDict = {} # key -> protein id (if with interaction data), value -> list of pathway IDs
+
+        for annot in proteinAnnotations:
+            pathID = str( eval( "annot." + primaryKeys[ 0] ) )
+            protID = str( eval( "annot." + primaryKeys[ 1] ) )
+            
+            if protID in allProteinsWithInteractionData:
+                if pathID not in pathwayAnnotWithInteractionDataDict:
+                    pathwayAnnotWithInteractionDataDict[ pathID] = []
+                pathwayAnnotWithInteractionDataDict[ pathID].append( protID)
+                
+                if protID not in protAnnotWithInteractionDataDict:
+                    protAnnotWithInteractionDataDict[ protID] = []
+                if pathID not in protAnnotWithInteractionDataDict[ protID]:
+                    protAnnotWithInteractionDataDict[ protID].append( pathID)
+                else:
+                    raise RainetException( "AnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
+            
+            if pathID not in pathwayAnnotDict:
+                pathwayAnnotDict[ pathID] = []
+            pathwayAnnotDict[ pathID].append( protID)
+            
+            if protID not in protAnnotDict:
+                protAnnotDict[ protID] = []
+            if pathID not in protAnnotDict[ protID]:
+                protAnnotDict[ protID].append( pathID)
+            else:
+                raise RainetException( "AnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
+
+        # Note: the protein-pathway annotation table will only contain proteins and pathways which have any annotation
+        # add here the pathways which did not have any protein annotation   
+        # get primary key of base pathway table 
+        baseAnnotationsPK = eval( "inspect( " + tableNameBase + ").primary_key") 
+        # e.g. from ReactomePathway.reactomeID to reactomeID
+        baseAnnotationsPK = str( baseAnnotationsPK[ 0]).replace( tableNameBase, "")[ 1:]
+
+        for pathway in baseAnnotations:
+            pathID = str( eval ( "pathway." + baseAnnotationsPK ) )
+            if pathID not in pathwayAnnotDict:
+                pathwayAnnotDict[ pathID] = []
+            if pathID not in pathwayAnnotWithInteractionDataDict:
+                pathwayAnnotWithInteractionDataDict[ pathID] = []
+
+        assert ( len( pathwayAnnotDict) == len( pathwayAnnotWithInteractionDataDict) )
+
+#         print ( len( pathwayAnnotDict)) # 300. Put this in unittest?
+#         print ( len( protAnnotDict))
+        
+#         print pathwayAnnotDict
+#         print pathwayAnnotWithInteractionDataDict
+# 
+#         print protAnnotDict
+#         print protAnnotWithInteractionDataDict
+        
+        #===================================================================   
+        # File with proteins per pathway
+        #=================================================================== 
+        
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_PROT_PER_ANNOTATION )
+ 
+        # Write header
+        outHandler.write("annotationID\ttotal_prot_in_pathway\ttotal_prot_with_interaction_data\ttotal_prot_with_any_passing_interaction\n") 
+ 
+        for pathID in pathwayAnnotDict:
+
+            annot = pathwayAnnotDict[ pathID]
+            annotWithInteractionData = pathwayAnnotWithInteractionDataDict[ pathID]
+
+            interactingProts = [prot for prot in annot if prot in interProtObjects ]
+
+            assert ( len( interactingProts) <= len( annotWithInteractionData))
+            
+            outHandler.write( "%s\t%s\t%s\t%s\n" % ( pathID, len( annot), len( annotWithInteractionData), len( interactingProts)) )
+         
+        outHandler.close()
+
+#         #===================================================================   
+#         # File with matrix of presence in pathway per interacting protein
+#         #=================================================================== 
+#         # E.g.
+#         # Prots Path1 Path2
+#         # prot1 1    0
+#         # prot2 1    1
+#         
+#         # Note: Interacting proteins only
+#         
+#         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_ANNOTATION_MATRIX )
+# 
+#         # use sorting to keep headers in place
+#         sortedPathwayAnnotDict = sorted( pathwayAnnotDict)
+#         sortedInterProtObjects = sorted( interProtObjects)
+#  
+#         # write header with pathway IDs
+#         outHandler.write( "Prots")
+#         for pathID in sortedPathwayAnnotDict:
+#             outHandler.write( "\t%s" % pathID )
+#         outHandler.write( "\n")
+# 
+#         # write 1 if protein in pathway, 0 if not
+#         for protID in sortedInterProtObjects:
+#             text = ""
+#             for pathID in sortedPathwayAnnotDict:   
+#                 annotBool = 0
+#                 # first check if protein has any annotation
+#                 if protID in protAnnotDict: 
+#                     # second check if protein has this annotation       
+#                     if pathID in protAnnotDict[ protID]:
+#                         annotBool = 1
+#                 
+#                 text+= "\t" + str( annotBool)
+# 
+#             outHandler.write( "%s%s\n" % ( protID, text ) )
+#         
+#         outHandler.close()
+
+
+        #### TESTING / EXPLORATORY ####
+
+        # writing file with one line per RNA - module pair, if interactions are existing
+
+        outFile = open("/home/diogo/testing/networkModules/networkModules.tsv","w")
+
+        outFile.write("transcriptID\tannotID\tnumber_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\tlist_proteinIDs\n")
+
+        # For each RNA, store all proteins it interacts with and their annotations
+        rnaInteractions = {} # Key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs
+        
+        for inter in selectedInteractions:
+            txID = str( inter.transcriptID)
+            protID = str( inter.proteinID)
+
+            if txID not in rnaInteractions:
+                rnaInteractions[ txID] = {}
+            
+            # only store info of proteins that have annotation information
+            if protID in protAnnotDict: 
+                for annot in protAnnotDict[ protID]:
+                    
+                    if annot not in rnaInteractions[ txID]:
+                        rnaInteractions[ txID][ annot] = []
+                        
+                    rnaInteractions[ txID][ annot].append( protID)
+
+        for rnaID in rnaInteractions:
+            totAnnotatedInteractions = sum( [ len( rnaInteractions[ rnaID][ annotID]) for annotID in rnaInteractions[ rnaID] ] ) 
+            for annotID in rnaInteractions[ rnaID]:
+                protList = rnaInteractions[ rnaID][ annotID]
+                
+                outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( rnaID, annotID, len( protList), ",".join( protList), totAnnotatedInteractions ) )
+                # I should add here or somewhere the total interactions below cutoff (i.e. total proteins with catRAPID predictions minus total totAnnotatedInteractions
+
+        outFile.close()
+
         
     def enrichement_analysis(self):
         pass
         # TODO: see below
   
-        # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
-        # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
-          
-        # 1) for each KEGG pathway, count how many proteins in it
-        keggFrequencies = {}
-        keggPathways = self.sql_session.query( KEGGPathway ).all()
-        for pathway in keggPathways:
-            keggFrequencies[pathway.keggID] = self.sql_session.query( ProteinKEGGAnnotation ).filter( ProteinKEGGAnnotation.keggPathway_id == pathway.keggID ).distinct().count()
-
-        print keggFrequencies
-                 
-        # Retrieve interacting objects
-        selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
-        rnaObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
-        protObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
- 
-        interRNAIDs = {inter.transcriptID for inter in selectedInteractions}
-        interProtIDs = {inter.proteinID for inter in selectedInteractions}
- 
-        for rnaID in interRNAIDs:
-            rnaObj = rnaObjects[ rnaID]
-            print rnaObj
-
-        for protID in interProtIDs:
-            protObj = protObjects[ protID]             
-            print protObj
+#         # Approach: For each interacting RNA, does it target significantly more proteins in same KEGG pathway
+#         # this is wrong because not all KEGG proteins are RBPs, and our interaction space is only for RBPs
+#           
+#         # 1) for each KEGG pathway, count how many proteins in it
+#         keggFrequencies = {}
+#         keggPathways = self.sql_session.query( KEGGPathway ).all()
+#         for pathway in keggPathways:
+#             keggFrequencies[pathway.keggID] = self.sql_session.query( ProteinKEGGAnnotation ).filter( ProteinKEGGAnnotation.keggPathway_id == pathway.keggID ).distinct().count()
+# 
+#         print keggFrequencies
+#                  
+#         # Retrieve interacting objects
+#         selectedInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
+#         rnaObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
+#         protObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
+#  
+#         interRNAIDs = {inter.transcriptID for inter in selectedInteractions}
+#         interProtIDs = {inter.proteinID for inter in selectedInteractions}
+#  
+#         for rnaID in interRNAIDs:
+#             rnaObj = rnaObjects[ rnaID]
+#             print rnaObj
+# 
+#         for protID in interProtIDs:
+#             protObj = protObjects[ protID]             
+#             print protObj
 
 
     def hypergeometric_test(self):
