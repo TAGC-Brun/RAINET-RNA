@@ -100,8 +100,6 @@ class AnalysisStrategy(ExecutionStrategy):
     R_WORKING_DIR = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/"
     R_MAIN_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.R"
     R_SWEAVE_FILE = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/analysis_strategy_report.Rnw"
-
-    HYPERGEOMETRIC_TEST_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/hypergeometric_test.R"
     
     # After filter report
     PARAMETERS_LOG = "parameters.log"
@@ -235,7 +233,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
         Timer.get_instance().step( "Producing annotation report.." )        
 
-        self.annotation_report() # change place of running this function
+        self.annotation_report() # change place of running this function, because it uses after interaction data it should after filter report
 
         Timer.get_instance().step( "Producing filter report.." )        
 
@@ -1173,25 +1171,23 @@ class AnalysisStrategy(ExecutionStrategy):
                         rnaInteractions[ txID][ annot] = []
                     rnaInteractions[ txID][ annot].append( protID)
  
-        for rnaID in rnaInteractions:
+ 
+        print "RNAs with interactions:", len( rnaInteractions)
+ 
+        for rnaID in sorted( rnaInteractions):
 #            totAnnotatedInteractions = sum( [ len( rnaInteractions[ rnaID][ annotID]) for annotID in rnaInteractions[ rnaID] ] ) 
             totRNAInteractions = len( totalRNAInteractionsDict[ rnaID]) 
             
-            for annotID in rnaInteractions[ rnaID]:
+            for annotID in sorted( rnaInteractions[ rnaID]):
                 
-                # TODO: add cutoff as argument or something???
-                
-                if len( pathwayAnnotDict[ annotID]) < 5: # TO REMOVE
-                    continue
+#                 # TODO: add minimum number of RBPs cutoff as argument or something???                
+#                 if len( pathwayAnnotDict[ annotID]) < 4: # TO REMOVE
+#                     continue
                 
                 protList = rnaInteractions[ rnaID][ annotID]
                 possibleProtList = pathwayAnnotWithInteractionDataDict[ annotID]
                  
                 assert ( len( protList) <= len( possibleProtList) )
-
-                print ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ) ) 
-                 
-                outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\n" % ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ) ) )
  
                 # note: test for each RNA - annotation pair. 
                 x = len( protList) # white balls drawn ( proteins with current annotation in filtered interactions)
@@ -1201,8 +1197,11 @@ class AnalysisStrategy(ExecutionStrategy):
  
                 assert ( m + n >= k) # number of draws should be less than total number of balls
  
-                self.hypergeometric_test(x, m, n, k)
+                hyperResult = self.hypergeometric_test(x, m, n, k)
 
+                #print ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ) ) 
+                 
+                outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % ( rnaID, annotID, len( protList), len( possibleProtList), totRNAInteractions, ",".join( sorted(protList) ), hyperResult ) )
 
         outFile.close()
 
@@ -1211,21 +1210,9 @@ class AnalysisStrategy(ExecutionStrategy):
         pass
 
 
+    # #
+    # Run hypergeometric test
     def hypergeometric_test(self, x, m, n, k):
-        pass
-        # TODO: try using python test
-        #scipy.stats.hypergeom.cdf(x, M, n, N, loc=0)
-
-        print (stats.hypergeom.sf( x, m+n, m, k) )
-
-        print ("Hypergeometric_test p-value:\t%s\n" % stats.hypergeom.sf( x, m+n, m, k) )
-
-        # Run hypergeometric test externally in R and get result
-        command = "Rscript %s %s %s %s %s" % ( AnalysisStrategy.HYPERGEOMETRIC_TEST_SCRIPT, x, m, n, k)
-     
-        result = SubprocessUtil.run_command( command, return_stdout = 1, verbose = 0)
-        print ("x: %i\tm: %i\tn: %i\tk: %i" % (x,m,n,k) )
-        print ( "Hypergeometric_test p-value:\t%s\n" % result )         
 
         # x, q vector of quantiles representing the number of white balls drawn
         # without replacement from an urn which contains both black and white
@@ -1236,6 +1223,14 @@ class AnalysisStrategy(ExecutionStrategy):
         # n the number of black balls in the urn.
         # 
         # k the number of balls drawn from the urn.
+
+        # stats.hypergeome.sf gives the same result as R phyper
+        testResult = stats.hypergeom.sf( x, m+n, m, k)
+
+        # print ("x: %i\tm: %i\tn: %i\tk: %i" % (x,m,n,k) )
+        # print ("Hypergeometric_test p-value:\t%.3f\n" % testResult )
+
+        return testResult
 
 
     # #
