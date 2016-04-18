@@ -9,11 +9,12 @@ library(ROCR)
 
 args <- commandArgs(TRUE)
 # Test if we have enough arguments
-if( length(args) != 2){
+if( length(args) != 3){
   stop("Rscript: Bad argument number")
 }
 inputFile = args[1]
-outFolder = args[2]
+inputFile2 = args[2]
+outFolder = args[3]
 
 # outFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/goldenSet"
 
@@ -204,6 +205,34 @@ text(0.7,0.3, paste("# Noise items:", sampleSize) )
 text(0.7,0.2, paste("Number randomisations:", repetitions) )
 text(0.7,0.1, cutoffText )
 text(0.7,0.0, aucText )
+
+
+###################################### 
+# Read type of methodology used in NPInter 
+###################################### 
+
+dataset <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+plt1 <- ggplot( dataset, aes(x = method)) + 
+  geom_histogram(binwidth = 1, fill="black", colour="black") + 
+  theme_minimal() +
+  coord_flip() +
+  xlab( "Experiment method" ) +
+  ylab( "Interaction count")
+plt1
+
+# calculate mean score for each method
+agg = aggregate( dataset$catrapid_score, list(dataset$method), mean)
+colnames(agg) = c("method","catrapid_score")
+
+plt2 <- ggplot( agg, aes(x = method, y = catrapid_score) ) + 
+  geom_bar(stat = "identity") + 
+  coord_flip() +
+  ylab( "mean catrapid score") +
+  theme_minimal()
+plt2
+
+grid.arrange( plt1, plt2)
 
 
 ###################################### 
