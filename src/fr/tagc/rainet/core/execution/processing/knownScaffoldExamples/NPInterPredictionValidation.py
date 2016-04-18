@@ -283,6 +283,9 @@ class NPInterPredictionValidation( object ):
         # and to be coherent/fair between catRAPID and NPInter predictions
  
         interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> count of interactions
+        
+        setOfRNAs = set()
+        setOfProts = set()
  
         for tup in wantedLines: #[noncodeID, protDB, protID]
             ensemblID = tup[0]
@@ -303,6 +306,8 @@ class NPInterPredictionValidation( object ):
                 if pair not in interactingPairs:
                     interactingPairs[ pair] = 0
                 interactingPairs[ pair] += 1
+                setOfRNAs.add( ensemblID)
+                setOfProts.add( proteinID)
             else:
                 # If database is different than Uniprot, try find uniprotAC using CrossReferences table                
                 # lookup ID in crossreferences table and switch to uniprotAC
@@ -314,8 +319,12 @@ class NPInterPredictionValidation( object ):
                         if pair not in interactingPairs:
                             interactingPairs[ pair] = 0
                         interactingPairs[ pair] += 1
+                        setOfRNAs.add( ensemblID)
+                        setOfProts.add( protID)
  
-        print "read_NPInter_file: Total number of interacting proteins:",len(interactingPairs)
+        print "read_NPInter_file: Total number of interacting pairs:",len(interactingPairs)
+        print "read_NPInter_file: Total number of interacting RNAs:",len(setOfRNAs)
+        print "read_NPInter_file: Total number of interacting proteins:",len(setOfProts)
  
         return interactingPairs
 
