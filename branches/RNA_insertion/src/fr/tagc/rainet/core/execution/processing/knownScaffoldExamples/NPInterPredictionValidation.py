@@ -263,9 +263,10 @@ class NPInterPredictionValidation( object ):
             if noncodeID in self.conversionDict:            
                 protDB = row["moleculeBdatabase"]
                 protID = row["moleculeBID"]
+                experiment = row["experiment"]
                 
                 for ensemblID in self.conversionDict[ noncodeID]:
-                    wantedLines.append( [ensemblID, protDB, protID])
+                    wantedLines.append( [ensemblID, protDB, protID, experiment])
                 #print row["moleculeAID"]
             else:
                 # some IDs are not found in mapping file.
@@ -275,6 +276,7 @@ class NPInterPredictionValidation( object ):
 #                     print noncodeID
 
         print "read_NPInter_file: Number of interactions after RNA processing: ", len(wantedLines)
+
         
         #===================================================================
         # Retrieve set of interacting proteins
@@ -283,7 +285,6 @@ class NPInterPredictionValidation( object ):
         # and to be coherent/fair between catRAPID and NPInter predictions
  
         interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> count of interactions
-        
         setOfRNAs = set()
         setOfProts = set()
  
@@ -291,6 +292,15 @@ class NPInterPredictionValidation( object ):
             ensemblID = tup[0]
             proteinDB = tup[1]
             proteinID = tup[2]
+
+            # Get experiment/ method type used
+            try:
+                experiments = set(tup[3].split(";") ) #e.g. RIP;PAR-CLIP;RNA interference
+                # exclude entries where there is several methods for same interaction (for simplicity)
+                if len( experiments) > 1:
+                    experiments = set(["NULL"])
+            except AttributeError:
+                experiments = set(["NULL"])
 
             if type( proteinID) == float:
                 # numpy nan
@@ -304,8 +314,8 @@ class NPInterPredictionValidation( object ):
                     pass
                 pair = ensemblID + "|" + proteinID
                 if pair not in interactingPairs:
-                    interactingPairs[ pair] = 0
-                interactingPairs[ pair] += 1
+                    interactingPairs[ pair] = set()
+                interactingPairs[ pair].update( experiments )
                 setOfRNAs.add( ensemblID)
                 setOfProts.add( proteinID)
             else:
@@ -317,15 +327,15 @@ class NPInterPredictionValidation( object ):
                     for protID in proteinIDs:
                         pair = ensemblID + "|" + protID
                         if pair not in interactingPairs:
-                            interactingPairs[ pair] = 0
-                        interactingPairs[ pair] += 1
+                            interactingPairs[ pair] = set()
+                        interactingPairs[ pair].update( experiments )
                         setOfRNAs.add( ensemblID)
                         setOfProts.add( protID)
  
         print "read_NPInter_file: Total number of interacting pairs:",len(interactingPairs)
         print "read_NPInter_file: Total number of interacting RNAs:",len(setOfRNAs)
         print "read_NPInter_file: Total number of interacting proteins:",len(setOfProts)
- 
+  
         return interactingPairs
 
 
@@ -438,6 +448,8 @@ if __name__ == "__main__":
 
         # #
         # Quick stats on the data
+        outFileMethod = open( run.outputFolder + "/methodology_used.tsv", "w")
+        outFileMethod.write( "pairID\tcatrapid_score\tmethod\n")
         countYes = 0
         countNo = 0
         countYesSum = 0
@@ -446,6 +458,8 @@ if __name__ == "__main__":
             if pair in npinterPairs:
                 countYes+=1
                 countYesSum+= catrapidPairs[ pair]
+                for method in npinterPairs[ pair]:
+                    outFileMethod.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], method) )
             else:
                 countNo+=1
                 countNoSum+= catrapidPairs[ pair]
@@ -453,6 +467,8 @@ if __name__ == "__main__":
         print "True: %s\tFalse: %s" % ( countYes, countNo)
         print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
         print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
+        
+        outFileMethod.close()
 
         Timer.get_instance().step( "Writing output file..")    
 
@@ -470,7 +486,7 @@ if __name__ == "__main__":
         outFile.close()
         
         # # Run R command to create figure
-        command = "Rscript %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, run.outputFolder)
+        command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
