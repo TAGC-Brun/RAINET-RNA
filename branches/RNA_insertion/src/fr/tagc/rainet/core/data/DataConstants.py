@@ -230,8 +230,8 @@ RNA_DEFINITION_PROPERTY = "RNA_DEFINITION"
 
 RNA_CLASS = "RNA"
 
-RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
-RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content"]
+RNA_HEADERS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content","description","external_gene_name","external_gene_source","external_transcript_name","external_transcript_source_name"]
+RNA_PARAMS = ["transcript_ID","parent_gene","peptide_ID","transcript_biotype","transcript_length","transcript_source","transcript_status","transcript_tsl","transcript_gencode_basic","transcript_start","transcript_end","transcript_strand","chromosome_name","percentage_GC_content","description","external_gene_name","external_gene_source","external_transcript_name","external_transcript_source_name"]
 RNA_COMMENT_CHAR = "#"
 
 # RNA types which will reflect the different RNA subtables

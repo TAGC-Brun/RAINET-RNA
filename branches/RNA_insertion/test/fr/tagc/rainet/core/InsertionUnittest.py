@@ -87,7 +87,8 @@ class InsertionUnittest(unittest.TestCase):
                         "asserting that number of attributes corresponds to number of attributes in SQL table.")
 
         #For a given RNA, see if all values are correct. Note that this also checks if items are string, integer etc
-        for var in definedVars:            
+        for var in definedVars:        
+            print var    
             value = eval("response."+var)
             self.assertTrue(value == EXAMPLE_MRNA_TABLE_COLUMNS[var], "asserting number of columns in RNA table is correct")
     
