@@ -22,7 +22,7 @@ setwd(outFolder)
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/test_scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/scores_all_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions_at_least_2_methods/scores.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -219,7 +219,6 @@ plt1 <- ggplot( dataset, aes(x = method)) +
   coord_flip() +
   xlab( "Experiment method" ) +
   ylab( "Interaction count")
-plt1
 
 # calculate mean score for each method
 agg = aggregate( dataset$catrapid_score, list(dataset$method), mean)
@@ -230,7 +229,6 @@ plt2 <- ggplot( agg, aes(x = method, y = catrapid_score) ) +
   coord_flip() +
   ylab( "mean catrapid score") +
   theme_minimal()
-plt2
 
 grid.arrange( plt1, plt2)
 

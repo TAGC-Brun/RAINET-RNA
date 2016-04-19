@@ -481,6 +481,19 @@ if __name__ == "__main__":
         inValidated = [ 1 if pair in npinterPairs else 0 for pair in catrapidPairs]
 
         for i, pair in enumerate( catrapidPairs):
+
+#             # ad-hoc NPInter method filtering..
+#             boo = 1
+#             if inValidated[ i]:
+#                 boo = 0
+# #                 for method in npinterPairs[ pair]:
+# #                     #if "CLIP" in method: # if "PAR-CLIP" in method or "iCLIP" in method or "CLIP-seq" in method:
+# #                         boo = 0
+#                 if len( npinterPairs[ pair]) > 1:
+#                     boo = 1
+#                 if boo == 0:
+#                     inValidated[ i] = 0
+
             outFile.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i]) )
         
         outFile.close()
