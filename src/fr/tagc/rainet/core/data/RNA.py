@@ -51,6 +51,14 @@ class RNA( Base ):
     percentageGCContent = Column ( Float )
     # The description of the RNA
     description = Column ( String )
+    # External gene name 
+    externalGeneName = Column ( String )
+    # External gene name source
+    externalGeneSource = Column( String )
+    # External transcript name
+    externalTranscriptName = Column( String )
+    # External transcript source name
+    externalTranscriptSourceName = Column( String )
 
     # The list of RNA cross references
     crossReferences = relationship( 'RNACrossReference', backref = 'RNA' )
@@ -84,7 +92,10 @@ class RNA( Base ):
     # @param transcript_strand: Integer - The genomic strandness of transcript
     # @param chromosome_name: String - The chromosome name of transcript
     # @param percentage_GC_content: Float - The percentage of GC content in transcript
-    def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content, description):
+    def __init__( self, transcript_ID, gene_ID, peptide_ID, transcript_biotype, transcript_length, transcript_source, transcript_status, 
+                  transcript_tsl, transcript_gencode_basic, transcript_start, transcript_end, transcript_strand, chromosome_name, percentage_GC_content,
+                   description, external_gene_name, external_gene_source, external_transcript_name, external_transcript_source_name):
+
 
         sql_session = SQLManager.get_instance().get_session()
 
@@ -163,6 +174,12 @@ class RNA( Base ):
             raise RainetException( "RNA.__init__ : The value of GC content percentage end is not a float: " + str( percentage_GC_content ), ve )
 
         myRNA.description = description
+    
+        # gene and transcript name attributes
+        myRNA.externalGeneName = external_gene_name
+        myRNA.externalGeneSource = external_gene_source
+        myRNA.externalTranscriptName = external_transcript_name
+        myRNA.externalTranscriptSourceName = external_transcript_source_name
         
         #=======================================================================
         # Build the Gene objects related to the RNA
