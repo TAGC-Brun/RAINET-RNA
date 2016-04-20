@@ -9,4 +9,5 @@ wget http://www.bioinfo.org/NPInter/datadownload/interaction_NPInter%5Bv3.0%5D.t
 #Dataset with more confident interactions: golden_set_NPInter[v3.0].txt.tar.gz
 wget http://www.bioinfo.org/NPInter/datadownload/golden_set_NPInter%5Bv3.0%5D.txt.tar.gz
 
+Locally stored @diogo-tower: /home/diogo/Documents/RAINET_data/NPInter
 

@@ -10,3 +10,4 @@ Files downloaded:
 -	GTEx_Analysis_v6_RNA-seq_Flux1.6_transcript_rpkm.txt.gz 
 Note: to download the file, we need to create a simple account.
 
+Locally stored @diogo-tower: /home/diogo/Documents/RAINET_data/GTEx
