@@ -35,7 +35,11 @@ RNA_ATTRIBUTES = c(
   "strand",
   "chromosome_name",
   "percentage_gc_content",
-  "description"
+  "description",
+  "external_gene_name",
+  "external_gene_source",
+  "external_transcript_name",
+  "external_transcript_source_name"
 )
 
 RNA_CROSS_REFERENCE_ATTRIBUTES =  c(
