@@ -220,3 +220,65 @@ text(0.7,0.2, paste("Number randomisations:", repetitions) )
 text(0.7,0.1, cutoffText )
 text(0.7,0.0, aucText )
 
+
+###################################### 
+###################################### 
+# StarBase + NPInter
+###################################### 
+###################################### 
+
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores.tsv"
+inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
+
+dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+nrow(dataset1[dataset1$in_validated_set == 1])
+nrow(dataset2[dataset2$in_validated_set == 1])
+
+# new dataset
+dataset <- dataset2
+
+## merge the in validated from both files
+if (nrow(dataset1) == nrow(dataset2)){
+  
+  #check which indexes of dataset1 are true
+  indexesToChange = which(dataset1$in_validated_set == 1)
+
+  # change de items on dataset 2 to be true if they are in dataset1
+  dataset$in_validated_set[indexesToChange] = 1
+}
+
+nrow(dataset[dataset$in_validated_set == 1])
+
+# Use ROCR
+pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+
+perf = performance(pred, measure = "tpr", x.measure = "fpr")
+
+# ROC curve with ROCR package (fast)
+plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of whole dataset")
+abline(a = 0, b = 1, col = "gray60")
+
+auc = performance(pred, measure = "auc")
+text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
+
+# Optimal cutoff / cutpoint, best sensitivity and best specificity
+cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+cutoff
+text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
+
+colours = rainbow(5)
+
+# Cutoff cost analysis. Augmenting weight of sensitivity
+print ("cost cutoff sens 1-spec")
+for (cost in seq(1,5)){
+  calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
+  cutoff = perf@alpha.values[[1]][calc]
+  sens = perf@y.values[[1]][calc]
+  spec = 1-perf@x.values[[1]][calc]
+  print (paste(cost, cutoff , sens, spec) )
+  points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
+}
+legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
+
