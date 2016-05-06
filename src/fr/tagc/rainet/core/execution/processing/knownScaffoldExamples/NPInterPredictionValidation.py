@@ -49,6 +49,7 @@ class NPInterPredictionValidation( object ):
     # Class constants
     SPECIES = "Homo sapiens"
     TAG = "ncRNA-protein binding"
+    INTERACTION_LEVEL = "RNA-Protein"
     MOLECULEADATABASE = "NONCODE"
     DISTRIBUTION_SCRIPT = "/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/processing/knownScaffoldExamples/NPInter_stats.R"
     
@@ -232,23 +233,26 @@ class NPInterPredictionValidation( object ):
         print "read_NPInter_file: Number interactions before any filter:",len(table)
  
         filteredTable = table.copy()
-         
+          
         #===================================================================
         # Field filtering on NPInter data
         #===================================================================
         # Note: assuming that moleculeB is always the molecule interacting with the RNA
-         
+          
         # filter by interaction class / type # interactions should be direct / physical
         # filteredTable = filteredTable.loc[filteredTable["tag"].str.contains( NPInterPredictionValidation.TAG)]
         filteredTable = filteredTable.loc[filteredTable["tag"] == NPInterPredictionValidation.TAG]
-         
+          
         # species must be "Homo sapiens"
         # Note: the species tag seems to be respective of the RNA (or moleculeA), the moleculeB may still be from other species
         filteredTable = filteredTable.loc[filteredTable["species"] == NPInterPredictionValidation.SPECIES] 
-
+ 
+        # InteractionLevel must be "RNA-Protein" # this will be present in all cases where tag is ncRNA-Protein binding
+        filteredTable = filteredTable.loc[filteredTable["InteractionLevel"] == NPInterPredictionValidation.INTERACTION_LEVEL] 
+ 
         # moleculeAdatabase must be "NONCODE"
         filteredTable = filteredTable.loc[filteredTable["moleculeAdatabase"] == NPInterPredictionValidation.MOLECULEADATABASE] 
-
+ 
         print "read_NPInter_file: Number interactions after molecule database, type and species filter:",len(filteredTable)
 
         #===================================================================
@@ -257,7 +261,7 @@ class NPInterPredictionValidation( object ):
 
         wantedLines = []
 
-        for index, row in table.iterrows():
+        for index, row in filteredTable.iterrows(): # 06-Mai-2016 this was: for index, row in table.iterrows():
             noncodeID = str(row["moleculeAID"])
                     
             if noncodeID in self.conversionDict:            
@@ -498,9 +502,9 @@ if __name__ == "__main__":
         
         outFile.close()
         
-        # # Run R command to create figure
-        command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
-        result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
+#         # # Run R command to create figure
+#         command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
+#         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
     # Use RainetException to catch errors
