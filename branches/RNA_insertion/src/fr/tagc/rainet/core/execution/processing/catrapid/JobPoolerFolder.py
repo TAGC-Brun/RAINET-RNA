@@ -11,15 +11,14 @@ from multiprocessing import Pool
 DESC_COMMENT = "Script to run jobs in a thread pool. Processes wanted command for each folder in input folder."
 #===============================================================================
 
-
 # #
 # Function to be run for each parallel job. 
 # This method must be unbound (e.g. not inside a class)
-# Normally only one argument supported.
-# @param argString : string containing several arguments separated by "|"
+# Normally only one argument supported, here we split a string to harbour several arguments
+# @param argString : string containing several arguments separated by "||"
 def run_command_list_args( argString):
     
-    argList = argString.split( "|")
+    argList = argString.split( "||")
     
     #bash runlibrary.both.sh prot/prot.lib rna/rna.lib 0 >log.out 2>log.err
     
@@ -50,7 +49,7 @@ class JobPoolerFolder( object):
         foldersToProcess = sorted( glob.glob( self.inputFolder + "/*") )
         
         # add script path before each folder, separeted by "|"
-        runList = [ "|".join( [folder, self.commandString] ) for folder in foldersToProcess]
+        runList = [ "||".join( [folder, self.commandString] ) for folder in foldersToProcess]
         
         # initialise pool    
         pool = Pool( self.numThreads)
