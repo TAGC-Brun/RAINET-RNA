@@ -21,8 +21,9 @@ def run_command_list_args( argString):
     argList = argString.split( "||")
         
     cmd = "cd %s; %s" % ( argList[0], argList[1]) 
-    # TODO: use subprocess? get logging , perhaps use my function
+    # TODO: use subprocess? SubprocessUtil.run_command( command)
     os.system( cmd)
+
     return cmd
  
 class JobPoolerFolder( object):
