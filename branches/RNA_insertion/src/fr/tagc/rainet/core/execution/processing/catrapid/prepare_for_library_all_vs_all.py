@@ -131,7 +131,7 @@ if __name__ == "__main__":
                          help='Number of Proteins to be batched on each process.')
     parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
     parser.add_argument('catRAPIDTemplate', metavar='catRAPIDTemplate', type=str,
-                         help='Template folder for with catRAPID library all vs all code.')    
+                         help='Template folder for with catRAPID library all vs all code. This should be the folder the script "run.library.both.sh".')    
     
 
     #gets the arguments
