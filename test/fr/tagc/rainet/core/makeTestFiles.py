@@ -476,62 +476,34 @@ def make_RNA_cross_references(testing_RNAs):
     outHandler.close()
 
 
-def make_PRI_catRAPID(testing_RNAs, testing_proteins, protein_xref):
+def make_PRI_catRAPID(testing_RNAs, testing_proteins):
 
     #===============================================================================
-    # File: outFile_T-T.2825-7004.sorted.txt ; PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION
+    # File: catRAPID_interactions.txt ; PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION
     #===============================================================================
 
-    #NOTE: this file may contain millions of lines. Use of grep to be faster
-    
-    # Example
-    # 1       1       ENSP00000269701_ENST00000456726 -266.23 0.986
-    # 2       0.99999994945998        ENSP00000244230_ENST00000436616 -254.95 0.242
-    
     print("make_PRI_catRAPID..")
     
-    inFile = INPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
-    outFile = OUTPUT_FOLDER+"/RNA/outFile_T-T.2825-7004.sorted.txt"
-     
+    inFile = INPUT_FOLDER+"/RNA/catRAPID_interactions_test.txt"
+    outFile = OUTPUT_FOLDER+"/RNA/catRAPID_interactions_test.txt"
+
+    # Example
+    # sp|Q96DC8|ECHD3_HUMAN ENST00000579524   -12.33  0.10    0.00
+    # sp|P10645|CMGA_HUMAN ENST00000516610    10.66   0.32    0.00
+    # protein and rna separated by " ", other values separated by "\t"
+    
     outHandler = open(outFile,"w")
-      
-    #because interaction file uses ENSP IDs, get all such IDs
-    enspRefs = [xref for xref in protein_xref if xref.startswith("ENSP") ]
-     
-    ##Note: doing grep becomes very slow for >100 proteins/RNAs
-#     #Produce file with list of patterns for grep    
-#     tmpFile = OUTPUT_FOLDER+"RNA/pri_patterns.tmp"
-#     tmpHandler = open(tmpFile,"w")
-#     
-#     for RNA in testing_RNAs:
-#         for protein in enspRefs:
-#             key = protein+"_"+RNA
-#             tmpHandler.write(key+"\n")
-# 
-#     tmpHandler.close()
-# 
-#     #make a single grep for several patterns    
-#     cmd = "grep -f %s %s" % (tmpFile,inFile)
-#     out = run_process(cmd)
-#     if len(out) > 1:
-#         outHandler.write(out+"\n")
-# 
-# 
-#     outHandler.close()
-# 
-#     os.remove(tmpFile)
-
-
-    #Produce file with list of patterns for grep    
+           
     patterns = set()
     for RNA in testing_RNAs:
-        for protein in enspRefs:
+        for protein in testing_proteins:
             key = protein+"_"+RNA
             patterns.add(key)
 
     inHandler = open(inFile,"r")
     for line in inHandler:
-        pair = line.split("\t")[2]
+        spl = line.split(" ")
+        pair = spl[0].split("|")[1]+"_"+spl[1].split("\t")[0]
         if pair in patterns:
             outHandler.write(line)
 
@@ -585,7 +557,7 @@ def make_tx_expression(testing_RNAs):
 if FORCE_CREATION:
     make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"PROTEIN/human_uniprot_protein_list.txt", OUTPUT_FOLDER+"/sampled_item_list/","testing_proteins_list.txt")
 testingProteins = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_proteins_list.txt")
-   
+    
 make_protein_uniprot_definition(testingProteins)
 proteinXref = make_protein_cross_references(testingProteins)
 make_protein_isoforms(testingProteins)
@@ -593,17 +565,17 @@ make_gene_ontology_annotation(testingProteins)
 make_reactome_pathway_annotation(testingProteins)
 make_interactome_definition(testingProteins,proteinXref)
 make_interactome_network_definition(testingProteins,proteinXref)
-    
+     
 #===============================================================================
 # RNA and PRI
 #===============================================================================
 if FORCE_CREATION:
     make_sample(SAMPLE_NUMBER, INPUT_FOLDER+"RNA/RNA_ATTRIBUTES.tsv", OUTPUT_FOLDER+"/sampled_item_list/","testing_RNA_list.txt")
 testingRNAs = list_getter(SAMPLE_NUMBER,OUTPUT_FOLDER+"/sampled_item_list/testing_RNA_list.txt")
- 
+  
 make_RNA_definition(testingRNAs)
 make_RNA_cross_references(testingRNAs)
-make_PRI_catRAPID(testingRNAs,testingProteins,proteinXref)
+make_PRI_catRAPID(testingRNAs,testingProteins)
 make_tx_expression(testingRNAs)
  
 # Copy remaining (unchanged) files
