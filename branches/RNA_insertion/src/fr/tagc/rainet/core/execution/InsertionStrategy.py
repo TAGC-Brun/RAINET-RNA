@@ -236,8 +236,8 @@ class InsertionStrategy( ExecutionStrategy ):
             Timer.get_instance().stop_chrono( "ERROR : Data insertion FAILED" )
             return
 
-#         # Report on potential missing data
-#         self.check_missing_data()
+        # Report on potential missing data
+        self.check_missing_data()
 
         
         # Stop the chrono      
@@ -451,18 +451,17 @@ class InsertionStrategy( ExecutionStrategy ):
                     sql_session.add( db_status )
                 SQLManager.get_instance().commit()
 
-#     #
-#     # Report on data that failed to be inserted in the database
-#     def check_missing_data(self):
-#  
-#         Logger.get_instance().info("\nReport on number of input entries that failed to be inserted:")
-# 
-#         # Report on failed insertions during Protein-RNA interaction insertion
-#         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of protein IDs that failed to be found in database: " + 
-#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW) ) ) )
-#         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of transcript IDs that failed to be found in database: " + 
-#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) ) ) )
-
+    #
+    # Report on data that failed to be inserted in the database
+    def check_missing_data(self):
+  
+        Logger.get_instance().info("\nReport on number of input entries that failed to be inserted:")
+ 
+        # Report on failed insertions during Protein-RNA interaction insertion
+        Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of protein IDs that failed to be found in database: " + 
+                    str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW) ) ) )
+        Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of transcript IDs that failed to be found in database: " + 
+                    str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) ) ) )
 
 
     def check_database_tables(self):
