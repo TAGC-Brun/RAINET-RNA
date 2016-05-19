@@ -196,6 +196,17 @@ class InsertionStrategy( ExecutionStrategy ):
             # Format query into dict data structure
             DataManager.get_instance().query_to_object_dict( DataConstants.RNA_ALL_KW, "transcriptID")
 
+            # Make query of all Protein IDs (uniprotAC) to speed up insertion
+            DataManager.get_instance().perform_query( DataConstants.PROT_ALL_KW, "query( Protein ).all()") 
+            # Format query into dict data structure
+            DataManager.get_instance().query_to_object_dict( DataConstants.PROT_ALL_KW, "uniprotAC")
+
+            # Initialize data items to store missing interactions
+            if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
+                DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
+            if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW not in DataManager.get_instance().data:
+                DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW,[])
+
             # Parse the ProteinRNAInteractionCatRAPID file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
@@ -216,6 +227,7 @@ class InsertionStrategy( ExecutionStrategy ):
 
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
+            DataManager.get_instance().delete_data(DataConstants.PROT_ALL_KW)
 
             
             
@@ -447,7 +459,7 @@ class InsertionStrategy( ExecutionStrategy ):
 # 
 #         # Report on failed insertions during Protein-RNA interaction insertion
 #         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of protein IDs that failed to be found in database: " + 
-#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW) ) ) )
+#                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW) ) ) )
 #         Logger.get_instance().info("During ProteinRNAInteractionCatRAPID insertion: Number of transcript IDs that failed to be found in database: " + 
 #                     str(len(DataManager.get_instance().get_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW) ) ) )
 

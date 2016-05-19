@@ -31,17 +31,12 @@ import sys
 class ProteinRNAInteractionCatRAPID( Base ):
     __tablename__ = 'ProteinRNAInteractionCatRAPID'
 
-
     # The RNA transcript ID, Ensembl ENST
     transcriptID = Column( String, ForeignKey( 'RNA.transcriptID'), primary_key=True)
     # The Protein Uniprot_ac ID
     proteinID = Column( String, ForeignKey( 'Protein.uniprotAC'), primary_key=True)
-    # The ENSEMBL ENSP peptide ID
-    peptideID = Column( String, primary_key=True )
     # The interaction score / interaction propensity from catRAPID prediction
     interactionScore = Column( Float )
-    # The discriminative power from catRAPID prediction #note: this value is not yet present in testing file
-    discriminativePower = Column( Float )
     
     proteins = relationship( "Protein" )
 
@@ -55,27 +50,24 @@ class ProteinRNAInteractionCatRAPID( Base ):
 
         from fr.tagc.rainet.core.util.data.DataManager import DataManager
 
-        sql_session = SQLManager.get_instance().get_session()
         dt_manager = DataManager.get_instance()
-
-        # Initialize data items to store missing interactions
-        if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in dt_manager.data:
-            dt_manager.store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
-        if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW not in dt_manager.data:
-            dt_manager.store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW,[])
-            
+    
         #=======================================================================
         # Parse interactors
         #
-        # note: in the initial catRAPID input, both interactors are in the same TSV column. E.g.  ENSP00000320917_ENST00000389594
-        # Peptide is always on left side, RNA in the right side. IDs should not contain "_".
-        # Assumption that there only one interaction between each peptide-RNA pair
+        # Example
+        # sp|Q96DC8|ECHD3_HUMAN ENST00000579524   -12.33  0.10    0.00
+        # sp|P10645|CMGA_HUMAN ENST00000516610    10.66   0.32    0.00
+        # protein and rna separated by " ", other values separated by "\t"
+        # 
+        # Protein is always on left side, RNA in the right side.
+        # Assumption that there only one interaction between each Protein-RNA pair
         #=======================================================================
 
-        spl = interactors.split("_")
+        spl = interactors.split(" ")
         if len(spl) == 2:
-            peptide_id = spl[0]
-            transcript_id = spl[1]
+            protein_id = spl[0].split( "|")[1]+"_"
+            transcript_id = spl[1].split( "\t")[0]
         else:
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The interactor string could not be parsed: " + str( interactors ))
 
@@ -88,24 +80,19 @@ class ProteinRNAInteractionCatRAPID( Base ):
         except ValueError as ve:
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The value of interaction score is not a float: " + str( interaction_score ), ve )
 
-        #Store peptide_id so that we can retrace the isoform used in catRAPID
-        self.peptideID = peptide_id
-
         #=======================================================================
         # Query Protein uniprot_ac using cross references
-        # From Cross ref ID, search primary ID using cross reference DataManager item created during insertion
-        # Note: assuming that if uniprot_ac exists in protein cross reference table it will also exist in protein table.
         #=======================================================================
  
-        proteinXrefs = dt_manager.get_data( DataConstants.PROTEIN_ENSP_XREF_KW)
+        protein_list = dt_manager.get_data( DataConstants.PROT_ALL_KW)
 
-        if peptide_id in proteinXrefs:
-            self.proteinID = proteinXrefs[ peptide_id][0]
+        if protein_id in protein_list:
+            self.proteinID = protein_id
         else:
-#            raise RainetException( "ProteinRNAInteractionCatRAPID.init : No Protein object while using cross references for peptide_id = " + peptide_id)
-            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Peptide ID not found, will skip interaction:\t" + str( peptide_id) )
-            # Store missing peptide ID in a list
-            dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW].append( peptide_id)
+#            raise RainetException( "ProteinRNAInteractionCatRAPID.init : No Protein object while using cross references for protein_id = " + protein_id)
+            Logger.get_instance().warning( "\nProteinRNAInteractionCatRAPID.init : Protein ID not found, will skip interaction:\t" + str( protein_id) )
+            # Store missing Protein ID in a list
+            dt_manager.data[ DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW].append( protein_id)
             raise NotRequiredInstantiationException( "ProteinRNAInteractionCatRAPID.init : No Protein found, instance will not be created.")
  
         #=======================================================================
