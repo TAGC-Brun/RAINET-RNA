@@ -1,9 +1,6 @@
-import sys
 import os
-import shutil
 import argparse
 import glob
-import numpy as np
 
 #===============================================================================
 # Started 13-May-2016 
