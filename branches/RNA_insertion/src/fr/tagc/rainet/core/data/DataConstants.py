@@ -243,7 +243,7 @@ RNA_MRNA_BIOTYPE = ["protein_coding"]
 RNA_LNCRNA_BIOTYPE = ["3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC"]
 
 RNA_ALL_KW = "allRNAs"
-
+PROT_ALL_KW = "allProts"
 PROTEIN_ENSP_XREF_DB = "Ensembl_PRO"
 PROTEIN_ENSP_XREF_KW = "ProteinEnsemblPROCrossReference"
 
@@ -276,7 +276,7 @@ PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS = ["interactors", "interactionScore", "
 PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS = ["interactors", "interactionScore"]
 PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 
-PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PEP_KW = "peptides_not_found"
+PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW = "Proteins_not_found"
 PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW = "RNAs_not_found"
 
 #===============================================================================
