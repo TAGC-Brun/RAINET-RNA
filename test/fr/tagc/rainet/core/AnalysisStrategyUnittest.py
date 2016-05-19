@@ -358,16 +358,17 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 
         self.strategy.execute()
          
-        self.strategy.enrichement_analysis()
+        # self.strategy.annotation_report()
+        # self.strategy.enrichement_analysis()
 
 
-    # #
-    # Runs after each test
-    def tearDown(self):
-                  
-        # Wipe output folder
-        cmd = "rm %s/*" % self.outputFolder
-        os.system(cmd)
+#     # #
+#     # Runs after each test
+#     def tearDown(self):
+#                   
+#         # Wipe output folder
+#         cmd = "rm %s/*" % self.outputFolder
+#         os.system(cmd)
           
       
 
