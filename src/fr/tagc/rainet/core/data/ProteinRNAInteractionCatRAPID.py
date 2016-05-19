@@ -66,7 +66,7 @@ class ProteinRNAInteractionCatRAPID( Base ):
 
         spl = interactors.split(" ")
         if len(spl) == 2:
-            protein_id = spl[0].split( "|")[1]+"_"
+            protein_id = spl[0].split( "|")[1]
             transcript_id = spl[1].split( "\t")[0]
         else:
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The interactor string could not be parsed: " + str( interactors ))
@@ -81,7 +81,8 @@ class ProteinRNAInteractionCatRAPID( Base ):
             raise RainetException( "ProteinRNAInteractionCatRAPID.__init__ : The value of interaction score is not a float: " + str( interaction_score ), ve )
 
         #=======================================================================
-        # Query Protein uniprot_ac using cross references
+        # Query Protein object
+        # See if Protein with given protein_id exists in database
         #=======================================================================
  
         protein_list = dt_manager.get_data( DataConstants.PROT_ALL_KW)
