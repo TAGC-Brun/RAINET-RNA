@@ -28,7 +28,6 @@ class SQLManager(object) :
         self.DBPath = None
         self.session = None
 
-
     # # 
     # Returns the current SQLAlchemy session if it exists or create a new one
     # if no previous session was opened
@@ -38,7 +37,7 @@ class SQLManager(object) :
 
         if(self.session == None):
             # Create engine to dedicated database
-            engine = create_engine(SQLConstants.PATH_SQLALCHEMY_SQLITE + self.DBPath)
+            engine = self.create_engine( self.DBPath)
 
             # Open the DB session
             session = sessionmaker()
@@ -128,7 +127,7 @@ class SQLManager(object) :
             self.remove_database_file(path)
 
         # Create engine to dedicated database
-        engine = create_engine(SQLConstants.PATH_SQLALCHEMY_SQLITE + path)
+        engine = self.create_engine( path)
 
         # Open the DB session
         session = sessionmaker()
@@ -205,8 +204,28 @@ class SQLManager(object) :
     def get_engine(self):
 
         if self.DBPath != None:
-            engine = create_engine(SQLConstants.PATH_SQLALCHEMY_SQLITE + self.DBPath)
+            engine = self.create_engine( self.DBPath)
             return engine
         
         return None
         
+    # #
+    # Creates and returns the SQLAlchemy engine of the DB
+    # 
+    # @return the SQLAlchemy engine of the DB
+    def create_engine(self, sqlitepath = None):
+
+        if SQLConstants.DB_TYPE == SQLConstants.DB_TYPE_SQLITE:
+            if sqlitepath != None:
+                engine = create_engine(SQLConstants.PATH_SQLALCHEMY_SQLITE + sqlitepath)
+                return engine
+            else:
+                return None
+        
+        if SQLConstants.DB_TYPE == SQLConstants.DB_TYPE_MYSQL:
+            engine = create_engine(SQLConstants.PATH_SQLALCHEMY_MYSQL)
+            return engine
+
+        raise RainetException("SQLManger.create_engine: the database type is not correct: " + SQLConstants.DB_TYPE)
+
+
