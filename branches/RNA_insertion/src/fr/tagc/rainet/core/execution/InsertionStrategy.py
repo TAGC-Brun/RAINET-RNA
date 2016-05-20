@@ -212,7 +212,6 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
- 
 
             #===================================================================
             # RNA TISSUE EXPRESSION
