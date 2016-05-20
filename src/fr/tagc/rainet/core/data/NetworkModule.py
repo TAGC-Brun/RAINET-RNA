@@ -15,7 +15,7 @@ class NetworkModule ( Base ):
     # The module ID
     moduleID = Column( String, primary_key = True )
     # The origin PartitionAnalysis
-    partitionAnalysis_id = Column(String, ForeignKey('PartitionAnalysis.analysisName'))
+    partitionAnalysis_id = Column( String, ForeignKey('PartitionAnalysis.analysisName'))
     # Define the N-to-N relationship between NetworkModule and Protein
     associatedProteins = relationship('Protein', secondary=ProteinNetworkModule.__table__, backref="networkModules")
     # The list of module annotations

@@ -15,7 +15,7 @@ class ProteinIsoform( Base):
     __tablename__ = 'ProteinIsoform'
     
     # The base Protein
-    protein_id = Column(String, ForeignKey('Protein.uniprotAC'))
+    protein_id = Column( String, ForeignKey('Protein.uniprotAC'))
     # The synonym symbol
     isoformUniprotAC = Column( String)
     # The indication if isoform is a canonical one or an alternative one

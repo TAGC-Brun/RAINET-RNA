@@ -12,7 +12,7 @@ class GeneSymbol( Base):
     __tablename__ = 'GeneSymbol'
     
     # The base Protein
-    protein_id = Column(String, ForeignKey('Protein.uniprotAC'))
+    protein_id = Column( String, ForeignKey('Protein.uniprotAC'))
     # The synonym symbol
     uniprotGeneSymbol = Column( String)
     # Define the Composite PrimaryKey
