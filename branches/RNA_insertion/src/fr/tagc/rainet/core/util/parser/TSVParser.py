@@ -76,6 +76,7 @@ class TSVParser(object):
         line = input_file.readline()
         counter = 0
         while line != None and line != '':
+            
             # Ignore the empty and comment lines
             if line != '' and not line.startswith( comment_symbol):
                 line_value_list = line.split( "\t")
@@ -107,7 +108,7 @@ class TSVParser(object):
             line = input_file.readline()
 
             
-            #dr testing
+            # Counter for large files, commits into database after 100000 lines
             counter += 1
             if counter % 100000 == 0:
                 Logger.get_instance().info( "TSVParser.parse_file : %s Read %i lines.." % (file_path,counter) )
