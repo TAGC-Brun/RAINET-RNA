@@ -395,47 +395,47 @@ class AnalysisStrategy(ExecutionStrategy):
 
         Logger.get_instance().info( "filter_PRI : Finished interacting RNA / protein filter: " + str( len( selectedInteractions)) )
 
-        #===================================================================    
-        # Filter interactions based on peptide IDs corresponding to same protein
-        #=================================================================== 
-        # Reminder: original protein-RNA interaction file contains interactions on transcript-peptide level.
-        # We want to have interactions on transcript-protein level. A protein can have several peptide isoforms.
-        # Here we retain only one interaction per transcript-protein pair, the one with highest score or
-        # the peptide ID with smaller number in case of score equality.
-
-        # build dictionary where key is transcript+protein IDs, and values the possible different isoforms
-        pairs = {}
-        for inter in selectedInteractions:
-            pair = str(inter.transcriptID) + "|" + str(inter.proteinID)
-            if pair not in pairs:
-                pairs[ pair] = []
-            pairs[ pair].append( inter)
-
-        # store only interaction between one transcript and protein, by selecting the peptide which had higher interaction score
-        nonRedundantInteractions = []
-        for pair in pairs:
-
-            maxScore = float( "-inf")
-            maxPeptide = ""
-
-            # sort by smaller number on peptide ID (second item on list), choose final peptide ID by score or smaller ID number
-            for peptide in sorted( pairs[ pair]):
-                                
-                score = float( peptide.interactionScore)
-                
-                if score > maxScore:
-                    maxScore = score
-                    maxPeptide = peptide
-
-            if maxPeptide == "":
-                raise RainetException( "AnalysisStrategy.filter_PRI : cannot determine maximum interaction score.")
-            
-            nonRedundantInteractions.append( peptide)
-            
-        del pairs
-        selectedInteractions = nonRedundantInteractions
-
-        Logger.get_instance().info( "filter_PRI : Finished peptide redundancy filter: " + str( len( selectedInteractions )) )
+#         #===================================================================    
+#         # Filter interactions based on peptide IDs corresponding to same protein
+#         #=================================================================== 
+#         # Reminder: original protein-RNA interaction file contains interactions on transcript-peptide level.
+#         # We want to have interactions on transcript-protein level. A protein can have several peptide isoforms.
+#         # Here we retain only one interaction per transcript-protein pair, the one with highest score or
+#         # the peptide ID with smaller number in case of score equality.
+# 
+#         # build dictionary where key is transcript+protein IDs, and values the possible different isoforms
+#         pairs = {}
+#         for inter in selectedInteractions:
+#             pair = str(inter.transcriptID) + "|" + str(inter.proteinID)
+#             if pair not in pairs:
+#                 pairs[ pair] = []
+#             pairs[ pair].append( inter)
+# 
+#         # store only interaction between one transcript and protein, by selecting the peptide which had higher interaction score
+#         nonRedundantInteractions = []
+#         for pair in pairs:
+# 
+#             maxScore = float( "-inf")
+#             maxPeptide = ""
+# 
+#             # sort by smaller number on peptide ID (second item on list), choose final peptide ID by score or smaller ID number
+#             for peptide in sorted( pairs[ pair]):
+#                                 
+#                 score = float( peptide.interactionScore)
+#                 
+#                 if score > maxScore:
+#                     maxScore = score
+#                     maxPeptide = peptide
+# 
+#             if maxPeptide == "":
+#                 raise RainetException( "AnalysisStrategy.filter_PRI : cannot determine maximum interaction score.")
+#             
+#             nonRedundantInteractions.append( peptide)
+#             
+#         del pairs
+#         selectedInteractions = nonRedundantInteractions
+# 
+#         Logger.get_instance().info( "filter_PRI : Finished peptide redundancy filter: " + str( len( selectedInteractions )) )
 
         DataManager.get_instance().store_data(AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
