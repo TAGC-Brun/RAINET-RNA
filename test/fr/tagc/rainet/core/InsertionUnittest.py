@@ -88,7 +88,6 @@ class InsertionUnittest(unittest.TestCase):
 
         #For a given RNA, see if all values are correct. Note that this also checks if items are string, integer etc
         for var in definedVars:        
-            print var    
             value = eval("response."+var)
             self.assertTrue(value == EXAMPLE_MRNA_TABLE_COLUMNS[var], "asserting number of columns in RNA table is correct")
     
@@ -123,6 +122,8 @@ class InsertionUnittest(unittest.TestCase):
 
         response = self.sql_session.query( ProteinRNAInteractionCatRAPID ).filter(ProteinRNAInteractionCatRAPID.transcriptID == EXAMPLE_PRI_RNA).all()
         
+        self.assertTrue(len( response) > 0, "query should return a result" )
+        
         for line in response:
             
             self.assertTrue(line.peptideID in EXAMPLE_PRI_RNA_INTERACTIONS, "asserting that correct interaction exists")
@@ -141,6 +142,9 @@ class InsertionUnittest(unittest.TestCase):
     def testRNATissueExpression(self):
 
         response = self.sql_session.query( RNATissueExpression ).filter(RNATissueExpression.transcriptID == EXAMPLE_MRNA).all()
+
+        self.assertTrue(len( response) > 0, "query should return a result" )
+        
         tissues = self.sql_session.query( Tissue.tissueName ).all()
         
         tissues = [tiss[0] for tiss in tissues]
