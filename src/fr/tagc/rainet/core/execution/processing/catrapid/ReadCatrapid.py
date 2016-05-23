@@ -24,6 +24,9 @@ SCRIPT_NAME = "ReadCatrapid.py"
 
 class ReadCatrapid(object):
     
+    STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
+    PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
+    
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, batch_size):
 
         self.catRAPIDFile = catrapid_file
@@ -37,7 +40,7 @@ class ReadCatrapid(object):
     # @return set of interacting pairs we want to keep, empty if no file given
     def read_interaction_filter_file(self):
         
-        if run.interactionFilterFile != "":
+        if self.interactionFilterFile != "":
             with open( self.interactionFilterFile, "r") as inFile:        
                 wantedPairs = { "_".join( line.strip().split("\t")) for line in inFile}
     
@@ -64,6 +67,12 @@ class ReadCatrapid(object):
         #=======================================================================
         # initialising
         #=======================================================================
+
+        # process interactionCutoff attribute
+        if self.interactionCutoff == "OFF":
+            self.interactionCutoff = float( "-inf")
+        else:
+            self.interactionCutoff = float( self.interactionCutoff)
 
         # check if we need to filter by wanted pairs
         if len( wanted_pairs) > 0:
@@ -97,11 +106,13 @@ class ReadCatrapid(object):
                     # print len( interactionText), sys.getsizeof( interactionText) / 1000000.0 
 
                     # dump dictionaries into files
-                    with open( self.outputFolder + "/storedInteractions_" + str( outFileCount) + ".tsv", "w") as outFile:
+                    with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                         outFile.write( interactionText)
                     interactionText = ""
                     
                     outFileCount += 1
+
+                lineCount += 1 # this has to be before the 'continues'
                     
                 spl = line.split(" ")
                 
@@ -111,7 +122,7 @@ class ReadCatrapid(object):
                 score = float( spl2[1])
                 
                 pair = "_".join( [protID, rnaID])
-                
+                                
                 # filter by score
                 if score < self.interactionCutoff: 
                     continue
@@ -130,20 +141,27 @@ class ReadCatrapid(object):
  
                 proteinInteractions[ protID] += score
                 proteinInteractionsCounter[ protID] += 1
- 
-                lineCount += 1
+
 
             # write remaining interactions into file
-            with open( self.outputFolder + "/storedInteractions_" + str( outFileCount) + ".tsv", "w") as outFile:
+            with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                 outFile.write( interactionText)
 
-            with open( self.outputFolder + "/proteinInteractions.tsv", "w") as outFile:
+            # write file and dictionary with mean interaction score per protein
+            proteinInteractionsMean = {} # key -> protein ID, value -> mean score
+            with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
                 for prot in proteinInteractions:
+                    # sum of scores divided by frequency
                     mean = proteinInteractions[ prot] / float( proteinInteractionsCounter[ prot])
+                    proteinInteractionsMean[ prot] = mean
                     outFile.write( "%s\t%s\n" % (prot, mean) )
 
 
         print "read_catrapid_file: read %s lines.." % lineCount
+
+        assert len( proteinInteractions) == len( proteinInteractionsCounter) == len( proteinInteractionsMean)
+
+        return proteinInteractionsMean, proteinInteractionsCounter
 
 
 if __name__ == "__main__":
@@ -171,12 +189,6 @@ if __name__ == "__main__":
 
     #gets the arguments
     args = parser.parse_args( ) 
-
-    # process interactionCutoff attribute
-    if args.interactionCutoff == "OFF":
-        args.interactionCutoff = float( "-inf")
-    else:
-        args.interactionCutoff = float( args.interactionCutoff)
 
     # init
     run = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, args.batchSize)
