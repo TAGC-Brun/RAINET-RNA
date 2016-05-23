@@ -150,12 +150,12 @@ class ReadCatrapid(object):
             # write file and dictionary with mean interaction score per protein
             proteinInteractionsMean = {} # key -> protein ID, value -> mean score
             with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
+                outFile.write("uniprotac\tmean_score\n")
                 for prot in proteinInteractions:
-                    # sum of scores divided by frequency
+                    # mean calculated by sum of scores divided by frequency
                     mean = proteinInteractions[ prot] / float( proteinInteractionsCounter[ prot])
                     proteinInteractionsMean[ prot] = mean
                     outFile.write( "%s\t%s\n" % (prot, mean) )
-
 
         print "read_catrapid_file: read %s lines.." % lineCount
 
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                          help='Output file from catRAPID library all vs all.')
     parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
     parser.add_argument('--interactionCutoff', metavar='interactionCutoff', type=str,
-                         default = 15, help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
+                         default = "OFF", help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
     parser.add_argument('--interactionFilterFile', metavar='interactionFilterFile', type=str,
                          default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
