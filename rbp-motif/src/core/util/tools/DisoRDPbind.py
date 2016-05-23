@@ -41,7 +41,7 @@ class DisoRDPbind():
                 string = ''
                 string += line[1:]
             else:
-                Logger.get_instance().info( ' Check this line : ' +line)
+                Logger.get_instance().warning( ' Check this line : ' +line)
 
 
         text_file.append(string)        
@@ -68,7 +68,7 @@ class DisoRDPbind():
     #    - dictionary containing the output informations
     #
     @staticmethod
-    def fraction_calculation(protein_output, binding_partner, num_aa=10):
+    def fraction_calculation(protein_output, binding_partner=1, num_aa=10):
         
         # the protein output is split in lines
         protein_lines = protein_output.split('\n')
@@ -89,7 +89,7 @@ class DisoRDPbind():
         aminoacid = [letter.upper() for letter in sequence]
         length_seq = len(sequence)
         
-        Logger.get_instance().info( ' Creation of a dictionary containing the DisoRDPbind analysis \
+        Logger.get_instance().debug( ' Creation of a dictionary containing the DisoRDPbind analysis \
 informations of protein ' + protname )
         
         # this vector represent the position of sequence
@@ -212,7 +212,7 @@ informations of protein ' + protname )
     #     string 2 : pritein_name, N, Start, End, Length_region
     #
     @staticmethod
-    def disordp_string_info(protein_output, binding_partner, num_aa):
+    def disordp_string_info(protein_output, binding_partner=1, num_aa=10):
         
         
         # This line call the previously method in order to find the ones region
@@ -256,7 +256,7 @@ informations of protein ' + protname )
         return string_file
 
 
-    # make_disorbd_file
+    # make_disordp_file
     # -----------------------------
     # 
     # This method carries out the previously methods for the protein contained in a DisoRDPbind
@@ -273,7 +273,7 @@ informations of protein ' + protname )
     #
 
     @staticmethod
-    def make_disorbd_file(input_path, output_path, binding_partner, num_aa, dataset_type):
+    def make_disordp_file(input_path, output_path, binding_partner, num_aa, dataset_type):
         
         
         # initialization of file names
@@ -303,7 +303,7 @@ informations of protein ' + protname )
         for n, output in enumerate(protein_output_list):
             if 'WARNING:' in output:
                 prot = output.split('\n')[0]
-                Logger.get_instance().info( str(n+1) + "\n This protein contains >=10000 residues\
+                Logger.get_instance().warning( str(n+1) + "\n This protein contains >=10000 residues\
  (DisoRBDbind cannot predict the proteins with size >=10000) " + prot)
             else:
                 Logger.get_instance().info( str(n+1))

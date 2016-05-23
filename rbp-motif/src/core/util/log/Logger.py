@@ -37,8 +37,8 @@ class Logger(object):
         ('%(asctime)s :: %(levelname)s :: %(message)s')
 
         # création d'un handler qui va rediriger une écriture du log vers
-        # un fichier en mode 'append', avec 1 backup et une taille max de 50Mo
-        self.fileHandler = RotatingFileHandler(Constants.PATH_LOG, 'a', 50000000, 1)
+        # un fichier en mode 'append', avec 100 backup et une taille max de 50Mo
+        self.fileHandler = RotatingFileHandler(Constants.PATH_LOG, 'a', 50000000, 100)
 
         # Set level on DEBUG
         # créé précédement et on ajoute ce handler au logger

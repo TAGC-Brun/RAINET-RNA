@@ -11,7 +11,8 @@ from core.util.option import OptionConstants
 from core.util import Constants
 from core.util.parsing.FileParser import FileParser
 from core.util.parsing.TableWrapper import TableWrapper
-
+from subprocess import CalledProcessError
+from core.util.exception.RbpmotifException import RbpmotifException
 
 
 
@@ -83,18 +84,23 @@ class Iupred():
         # Description of execution
         Logger.get_instance().info( 'Starting of Iupred Analyisis')
         
-        list_file = subp.check_output(['ls', input_folder])
-        list_file = list_file.split('\n')
-        if '' in list_file:
-            list_file.remove('')
-        for fastafile in list_file:
-            prot = fastafile.split('.fasta')[0]
-            Logger.get_instance().info('Iupred Analysis : ' + prot)
-            file_input = input_folder + fastafile
-            # IUPred tool
-            I = Iupred(output_path)
-            I.iupred_analysis(file_input, prot)
-                
+        try:
+            list_file = subp.check_output(['ls', input_folder])
+            list_file = list_file.split('\n')
+            if '' in list_file:
+                list_file.remove('')
+            for fastafile in list_file:
+                prot = fastafile.split('.fasta')[0]
+                Logger.get_instance().info('Iupred Analysis : ' + prot)
+                file_input = input_folder + fastafile
+                # IUPred tool
+                I = Iupred(output_path)
+                I.iupred_analysis(file_input, prot)
+        except CalledProcessError as cpe:
+            Logger.get_instance().error( 'Iupred.global_anchor_analysis: Unable to execute listing of files in '+ input_folder)
+            raise RbpmotifException( 'Iupred.global_anchor_analysis: Unable to execute listing of files in '+ input_folder, cpe)
+        
+                    
                 
         Logger.get_instance().info( " End of Iupred Analysis")
     
@@ -118,7 +124,7 @@ class Iupred():
     @staticmethod
     def iupred_info(input_file, prot_id, threshold, num_aa=10):
         
-        Logger.get_instance().info( ' Creation of a dictionary containing the iupred analysis \
+        Logger.get_instance().debug( ' Creation of a dictionary containing the iupred analysis \
 informations of protein ' + prot_id + '. The threshold adopted is: ' + str(threshold))
         
         # Initialization of a dictionary that will contain the output informations
@@ -276,7 +282,7 @@ informations of protein ' + prot_id + '. The threshold adopted is: ' + str(thres
         
         
         
-        row_file_2 = out_th1["iupred_table"]
+        row_file_2 = out_th1["iupred table"]
         if row_file_2 != []:
             lines_file_2 = ['\t'.join(line) for line in row_file_2]        
             string_file_2 = '\n'.join(lines_file_2)
@@ -288,7 +294,7 @@ informations of protein ' + prot_id + '. The threshold adopted is: ' + str(thres
            
         
         
-        row_file_3 = out_th2["iupred_table"]
+        row_file_3 = out_th2["iupred table"]
         if row_file_3 != []:
             lines_file_3 = ['\t'.join(line) for line in row_file_3]        
             string_file_3 = '\n'.join(lines_file_3)

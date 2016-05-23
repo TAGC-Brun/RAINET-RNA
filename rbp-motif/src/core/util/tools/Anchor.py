@@ -12,7 +12,7 @@ from core.util.option import OptionConstants
 from core.util.parsing.FileParser import FileParser
 from core.util.parsing.TableWrapper import TableWrapper
 from subprocess import CalledProcessError
-
+from core.util.exception.RbpmotifException import RbpmotifException
 
     
 
@@ -168,9 +168,9 @@ class Anchor():
     #    - dictionary: containing anchor informations
     #
     @staticmethod
-    def anchor_info(input_file, prot_id, num_aa=6):
+    def anchor_info(input_file, prot_id, num_aa=10):
         
-        Logger.get_instance().info( ' Creation of a dictionary containing the dictionary analysis \
+        Logger.get_instance().debug( ' Creation of a dictionary containing the dictionary analysis \
 informations of protein ' + prot_id ) 
         
         
@@ -403,12 +403,11 @@ informations of protein ' + prot_id )
         file_1.close()
         file_2.close()
             
-  
+'''  
 if __name__ == '__main__':
     
     OptionManager.get_instance().initialize()
-    
-    Anchor.global_anchor_analysis(OptionManager.get_instance().get_option( OptionConstants.OPTION_FILENAME),
-                                OptionManager.get_instance().get_option( OptionConstants.OPTION_INPUT_PATH),
-                                OptionManager.get_instance().get_option( OptionConstants.OPTION_OUTPUT_PATH))
 
+    A = Anchor(output_path)
+    A.anchor_analysis(filename, OptionManager.get_instance().get_option(OptionConstants.OPTION_FILENAME), prot)
+'''

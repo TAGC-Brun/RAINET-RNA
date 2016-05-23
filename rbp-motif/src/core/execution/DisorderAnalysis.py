@@ -3,7 +3,7 @@
 # ===========================================================================================
 
 
-# Starting files and condictions
+# Starting files and conditions
 #    - fasta file containing the proteins sequences of a certain dataset
 #    - Anchor and Iupred tools must be installed in local
 #    - motifs list to provide to Anchor tool
@@ -192,7 +192,7 @@ class DisorderAnalysis():
         
         
         
-        DisoRDPbind.make_disorbd_file(self.input_file, self.ouput_path, int(self.binding_partner), int(self.num_aa_diso), self.dataset_type)
+        DisoRDPbind.make_disordp_file(self.input_file, self.ouput_path, int(self.binding_partner), int(self.num_aa_diso), self.dataset_type)
         
         Timer.get_instance().step(" End of DisoRDPbind output analysis")
         
@@ -218,44 +218,81 @@ class DisorderAnalysis():
         self.path_input_anchor_file = self.path_home +  PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_ANCHOR_FILE_PROPERTY, True)
         self.path_input_iupred_file = self.path_home +  PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_IUPRED_FILE_PROPERTY, True)
         self.path_input_disordp_file = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_DISORDP_FILE_PROPERTY, True)
+        self.path_input_reg_anchor = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_REG_ANCHOR_FILE_PROPERTY, True)
+        self.path_input_reg_iupred_1 = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_REG_IUPRED_1_FILE_PROPERTY, True)
+        self.path_input_reg_iupred_2 = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_REG_IUPRED_2_FILE_PROPERTY, True)
+        self.path_input_reg_diso = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_REG_DISO_FILE_PROPERTY, True)
         self.input_files = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_INPUT_DIR_FILE_PROPERTY, True)
         self.list_namefiles = PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_LIST_NAMEFILE_PROPERTY, True)
         self.path_output_dir = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_OUTPUT_DIR_PROPERTY, True)
+        self.path_output_dir_diso = self.path_home + PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_OUTPUT_DIR_DISO_PROPERTY, True)
         
         # This parameter represents the column of protein id in the classification files
         #
-        # In RNA target files the column of protein id is the 2 ( that is 1 for python)
-        # In Domain Class files the column of protein id is the 1 (that is 0 for python)
+        # In Domain Class  files the column of protein id is the 2 ( that is 1 for python)
+        # In RNA target files the column of protein id is the 1 (that is 0 for python)
         #
         
-        self.protein_column =  PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_PROTEIN_LIST_COLUMN_PROPERTY, True)
+        #self.protein_column_rna =  PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_PROTEIN_LIST_COLUMN_RNA_PROPERTY, True)
+        self.protein_column_class =  PropertyManager.get_instance().get_property( DataConstants.SPECIFIC_PROTEIN_LIST_COLUMN_CLASS_PROPERTY, True)
         
-        anchor_table = FileParser.make_table(self.path_input_anchor_file, skip=1)
-        iupred_table = FileParser.make_table(self.path_input_iupred_file, skip=1)
-        disordp_table = FileParser.make_table(self.path_input_disordp_file, skip=1)
+        # region file
+        anchor_table = FileParser.make_table(self.path_input_reg_anchor, skip=1)
+        iupred_table_1 = FileParser.make_table(self.path_input_reg_iupred_1, skip=1)
+        iupred_table_2 = FileParser.make_table(self.path_input_reg_iupred_2, skip=1)
+        disordp_table = FileParser.make_table(self.path_input_reg_diso, skip=1)
+        
+        # table file (fraction)
+        anchor_t = FileParser.make_table(self.path_input_anchor_file, skip=1)
+        iupred_t = FileParser.make_table(self.path_input_iupred_file, skip=1)
+        disordp_t = FileParser.make_table(self.path_input_disordp_file, skip=1)
         
         list_filenames = self.list_namefiles.split(',')
         
         for filename in list_filenames:
             feature = filename.split('.')[0]
             table_domain = FileParser.make_table(self.input_files + str(filename))
-            list_prot = TableWrapper.get_column(table_domain,int(self.protein_column))
+            list_prot = TableWrapper.get_column(table_domain,int(self.protein_column_class))
             prot_id_anchor = TableWrapper.get_column(anchor_table, 0)
-            prot_id_iupred = TableWrapper.get_column(iupred_table, 0)
+            prot_id_iupred_1 = TableWrapper.get_column(iupred_table_1, 0)
+            prot_id_iupred_2 = TableWrapper.get_column(iupred_table_2, 0)
             prot_id_disordp = TableWrapper.get_column(disordp_table, 0)
+            
+            prot_id_anchor_t = TableWrapper.get_column(anchor_t, 0)
+            prot_id_iupred_t = TableWrapper.get_column(iupred_t, 0)
+            prot_id_disordp_t = TableWrapper.get_column(disordp_t, 0)
+            
+            # region file
             new_table_anchor = [line for n, line in enumerate(anchor_table) if prot_id_anchor[n] in list_prot]
-            new_table_iupred = [line for n, line in enumerate(iupred_table) if prot_id_iupred[n] in list_prot]
+            new_table_iupred_1 = [line for n, line in enumerate(iupred_table_1) if prot_id_iupred_1[n] in list_prot]
+            new_table_iupred_2 = [line for n, line in enumerate(iupred_table_2) if prot_id_iupred_2[n] in list_prot]
             new_table_disordp = [line for n, line in enumerate(disordp_table) if prot_id_disordp[n] in list_prot]
-            anchor_output_file_path = self.path_output_dir + feature + '_AnchorTable.txt'
-            iupred_output_file_path = self.path_output_dir + feature + '_IUPredTable.txt'
-            disordp_output_file_path = self.path_output_dir + feature + '_DisoRDPTable.txt'
+            anchor_output_file_path = self.path_output_dir + feature + '_AnchorRegion.txt'
+            iupred1_output_file_path = self.path_output_dir + feature + '_IUPredRegion_0.4.txt'
+            iupred2_output_file_path = self.path_output_dir + feature + '_IUPredRegion_0.5.txt'
+            disordp_output_file_path = self.path_output_dir_diso + feature + '_DisoRDPRegion.txt'
+            
+            # Table file (fraction)
+            new_table_a = [line for n, line in enumerate(anchor_t) if prot_id_anchor_t[n] in list_prot]
+            new_table_i = [line for n, line in enumerate(iupred_t) if prot_id_iupred_t[n] in list_prot]
+            new_table_d = [line for n, line in enumerate(disordp_t) if prot_id_disordp_t[n] in list_prot]
+            anchor_output_table = self.path_output_dir + feature + '_AnchorTable.txt'
+            iupred_output_table = self.path_output_dir + feature + '_IUPredTable_0.4_0.5.txt'
+            disordp_output_table = self.path_output_dir_diso + feature + '_DisoRDPTable.txt'
             
             
+            # file writing
+            
+            # Region file
             FileWriter.write_table(anchor_output_file_path, new_table_anchor)
-            FileWriter.write_table(iupred_output_file_path, new_table_iupred)
+            FileWriter.write_table(iupred1_output_file_path, new_table_iupred_1)
+            FileWriter.write_table(iupred2_output_file_path, new_table_iupred_2)
             FileWriter.write_table(disordp_output_file_path, new_table_disordp)
-
-        
+            
+            # Table file
+            FileWriter.write_table(anchor_output_table, new_table_a)
+            FileWriter.write_table(iupred_output_table, new_table_i)
+            FileWriter.write_table(disordp_output_table, new_table_d)
         
         Timer.get_instance().step(" End of tools analysis for specific protein ")
 
@@ -274,14 +311,14 @@ class DisorderAnalysis():
         Timer.get_instance().start_chrono()
         Logger.get_instance().info("Start of Disorder Analysis.....\n ")
            
-        D = DisorderAnalysis()
-        #D.change_header()
-        #D.split_dataset()
-        #D.anchor_analysis()
-        #D.iupred_analysis()
-        #D.analysis_tools_output()
-        #D.disordpbind_analysis()
-        #D.particular_analysis()
+        disorder = DisorderAnalysis()
+        #disorder.change_header()
+        #disorder.split_dataset()
+        #disorder.anchor_analysis()
+        #disorder.iupred_analysis()
+        #disorder.analysis_tools_output()
+        #disorder.disordpbind_analysis()
+        #disorder.particular_analysis()
             
         Timer.get_instance().stop_chrono(' End of Disorder Analysis')
         
@@ -291,8 +328,7 @@ class DisorderAnalysis():
 if __name__ == '__main__':
     
     OptionManager.get_instance().initialize()
-    
-    # Retrieve the MakeDatasetRbp properties
+
     PropertyManager.get_instance().read_properties( OptionManager.get_instance().get_option( OptionConstants.OPTION_DISORDER_ANALYSIS_PATH, True))
     
     DisorderAnalysis.whole_procedure()

@@ -43,7 +43,7 @@ class Uniprot():
     # get_sequence
     # ----------------
     #
-    # This method gets the sequences of query protein
+    # This method gets the sequences of a query protein
     # format_out = True --> string fasta format
     # format_out != True --> sequence in string 
     #

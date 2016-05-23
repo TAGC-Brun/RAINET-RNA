@@ -11,7 +11,15 @@ import time
 
 class Web():    
     
-    # This function access to specific site 
+    # openurl
+    # -------------------------
+    #     
+    # This function access to specific site in a monitored way
+    # Arguments:
+    #    - url
+    #    - text = True --> returns the url page in string format
+    #    - text = False --> returns the url page in page format
+    #
     @staticmethod
     def openurl(url, text=True):
         connected = False
