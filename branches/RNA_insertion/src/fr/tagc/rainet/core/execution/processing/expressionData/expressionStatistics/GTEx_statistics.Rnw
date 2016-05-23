@@ -44,7 +44,7 @@ file with the attribute SMTSD (the more-specific tissue terms, e.g. brain breakd
 @
 
 We can see that number of samples per tissue is highly variable. Perhaps this should be considered in the further analysis. Furthermore, some tissues contain only a limited number of samples. \par
-We decided to exclude tissues with less than 30 samples (i.e. we excluded the four bottom tissues in the above plot).
+We decided to exclude tissues with less than 30 samples (i.e. we excluded the four tissues with least number of samples).
 
 \section{Expression variability per tissue}
 
