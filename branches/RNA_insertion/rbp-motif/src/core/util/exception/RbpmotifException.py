@@ -1,5 +1,4 @@
 
-import traceback
 
 ##
 # Generic exception used to identify catched and raised exceptions and errors from Rbpmotif code

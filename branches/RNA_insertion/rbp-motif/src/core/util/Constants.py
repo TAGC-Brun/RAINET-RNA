@@ -4,7 +4,7 @@ import os
 
 
 PATH_HOME = os.path.expanduser('~')
-PATH_LOG = os.path.expanduser('~') + '/workspace/tagc-rainet/rbp-motif/output/RBP_motif.log'
+PATH_LOG = os.path.expanduser('~') + '/workspace/tagc-rainet/rbp-motif/output/log_file/RBP_motif.log'
 PATH_ANCHOR = os.environ.get('ANCHOR_PATH')
 PATH_IUPRED = os.environ.get('IUPred_PATH')
 
@@ -25,8 +25,8 @@ MODE_ERROR = "error"
 MODE_CRITICAL = "critical"
 MODE_FATAL = "fatal"
 VERBOSITY_LEVELS = [ MODE_DEBUG, MODE_INFO, MODE_WARNING, MODE_ERROR, MODE_CRITICAL, MODE_FATAL]
-# 
-# LOG_MODE_DEBUG = ['d', 'debug']
+
+#LOG_MODE_DEBUG = ['d', 'debug']
 # LOG_MODE_INFO = ['i', 'info']
 # LOG_MODE_WARNING = ['w', 'warning']
 # LOG_MODE_ERROR = ['e', 'error']
@@ -93,5 +93,57 @@ WEB_CONNECTION_CONSTANT = 5
 BINDING_PARTNER = {1:'RNA-binding residues', 2:'DNA-binding residues', 3:'protein-binding residues'}
 
 
+# ===============================================================================
+# ClassificationNewDataset
+# ===============================================================================
 
+DOMAIN_CLASSICAL = 'Classical'
+DOMAIN_NONCLASSICAL = 'Non-classical'
+DOMAIN_UNKNOWN = 'Unclassified'
+DOMAIN_NONE = 'No-domains'
+DOMAIN_OTHER = 'Other-Domain'
+DOMAIN_COMMA = ','
+
+
+
+#=================================================================================
+# OverlapMotifsRegion
+#================================================================================
+
+ELM_FILE = 'FMotifs_'
+EXTENSION_TXT_FILE = '.txt'
+IUPRED_PRED_FILE = 'IUPred_'
+ANCHOR_PRED_FILE = "Pred_"
+THRESHOLD_LOW = 0.4
+THRESHOLD_HIGH = 0.5
+OVERLAP_YES = 'Y'
+OVERLAP_NO = 'N'
+KEY_IUPRED = "iupred table"
+KEY_ANCHOR = "anchor table"
+KEY_DISORDP = "DisoRDPbind table"
+
+#=================================================================================
+# GlobalOVerlapMotifsRegion
+#=================================================================================
+
+IUPRED_TOOL = 'IUPRED'
+ANCHOR_TOOL = 'ANCHOR'
+DISORDP_TOOL = 'DISORDP'
+DICT_FILE_OUTPUT  = {'IUPRED': ('SLimIUPred_Overlap_','SLimDomainIUPred_Overlap_'), 'ANCHOR': ('SLimANCHOR_Overlap_','SLimDomainANCHOR_Overlap_'),
+                     'DISORDP':('SLimDisoRDP_Overlap_', 'SLimDomainDisoRDP_Overlap')}
+
+MOTIFS_THRESHOLD_1 = 0.4
+MOTIFS_THRESHOLD_2 = 0.5
+
+SLIM_NAME = 'SLiM NAME'
+SLIM_REGION_COUNTER = 'SLiM Region Number'
+START_SLIM_REGION = 'Start'
+END_SLIM_REGION = 'End'
+TOOLNAME = 'Prediction Tool'
+TOOLNAME_REGION_COUNTER = 'Tool Region Number'
+START_TOOL_REGION = 'Start'
+END_TOOL_REGION = 'End'
+OVERLAP_OUTCOME = 'Overlap Outcome'
+OVERLAP_LENGTH = 'Overlap Length'
+ 
 

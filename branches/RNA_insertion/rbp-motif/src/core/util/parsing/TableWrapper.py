@@ -35,10 +35,9 @@ class TableWrapper():
                 Logger.get_instance().error(" TableWrapper.get_column : start index can't be greater than end index\n")
                 raise ParsingFileException(" TableWrapper.get_column : start index can't be greater than end index\n")
             else:
-                Logger.get_instance().info(" TableWrapper.get_column : start and end indexes are correct\n" +'start: '+str(start)+ ', end: '+str(end))
+                Logger.get_instance().debug(" TableWrapper.get_column : start and end indexes are correct\n" +'start: '+str(start)+ ', end: '+str(end))
         elif start != None and end == None:
-            Logger.get_instance().error(" TableWrapper.get_column : start index is greater than table length\n")
-            raise ParsingFileException(" TableWrapper.get_column : start index is greater than table length\n")
+            Logger.get_instance().debug(" TableWrapper.get_column : start and end indexes are correct\n" +'start: '+str(start)+ ', end: '+str(end))
 
         # in according to combination of index, start and end indexes the method returns 
         # a specific column
@@ -194,6 +193,6 @@ class TableWrapper():
     #The default column of sorting is the first one (index = 0)
     #
     @staticmethod
-    def sort_table(table, col=0): 
-        return sorted(table, key=operator.itemgetter(col), reverse=True)
+    def sort_table(table, col=0, kind=True): 
+        return sorted(table, key=operator.itemgetter(col), reverse=kind)
 

@@ -46,6 +46,7 @@ from core.util.file.FileUtils import FileUtils
 from core.util.parsing.FileParser import FileParser
 from core.util.parsing.TableWrapper import TableWrapper
 from core.util.file.FileWriter import FileWriter
+from core.util.log.Logger import Logger
 
 
 
@@ -91,26 +92,26 @@ class ClassificationNewDataset():
         putative_rna_target = []
         rbpdb_target = [] 
         for n, gene_id in enumerate(gene_seq):
-            print gene_id
+            Logger.get_instance().info( gene_id)
             ind_gene_id = gene_info.index(gene_id)
             # if the gene have at least one Y in this array can be considered to have mRNA target
             if 'Y' in mrna[ind_gene_id]:
                 rna_target = 'mRNA'
-                print 'The putative Rna target of this gene is ' +  rna_target
+                Logger.get_instance().info( 'The putative Rna target of this gene is ' +  rna_target)
                 putative_rna_target.append([gene_id, prot_seq[n], rna_target])
             elif 'N' in mrna[ind_gene_id]:
                 # if the gene attend in rnacompete means that the RNA target is unkown
                 if 'N' in rbpdb[ind_gene_id] and 'Y' in rnacompete[ind_gene_id]:
                     rna_target = 'unknown'
-                    print 'The putative Rna target of this gene is ' +  rna_target
+                    Logger.get_instance().info( 'The putative Rna target of this gene is ' +  rna_target)
                     putative_rna_target.append([gene_id, prot_seq[n], rna_target])
                 # if the gene attend in rbpdb means just it is a RBP protein (no information about RNA target)
                 elif 'Y' in rbpdb[ind_gene_id] and 'N' in rnacompete[ind_gene_id]:
                     rna_target = 'RBPDB'
-                    print 'The gene is in ' +  rna_target
+                    Logger.get_instance().info( 'The gene is in ' +  rna_target)
                     rbpdb_target.append([gene_id, prot_seq[n], rna_target])
             else:
-                print ' Check this line' + info_table[ind_gene_id]
+                Logger.get_instance().info( ' Check this line' + info_table[ind_gene_id])
                 
         
         
@@ -155,13 +156,13 @@ class ClassificationNewDataset():
         putative_rna_target = []
         type_rna_target = []
         for n, prot in enumerate(prot_seq):
-            print prot
+            Logger.get_instance().info( prot)
             index_prot = prot_info.index(prot)
             rna_target = putative_rna[index_prot]
             row = [gene_seq[n], prot_seq[n], rna_target]
             type_rna_target.append(rna_target)
             putative_rna_target.append(row)
-            print " The putative rna target is " + rna_target
+            Logger.get_instance().info( " The putative rna target is " + rna_target)
             
 
             
@@ -263,7 +264,7 @@ class ClassificationNewDataset():
         count_classical = 0
         count_nonclassic = 0
         count_unclissified = 0
-        count_any_class = 0
+        count_other_class = 0
         count_no_domain = 0
         new_table_jprot = []
         for i, gene in enumerate(genes_jprot):
@@ -274,7 +275,7 @@ class ClassificationNewDataset():
             string_domains = ''
             # If the protein hasn't any domain, add static 'no-domains' information
             if domain_column_jprot[i] == '.':
-                string_domains += 'No-domains,'
+                string_domains += Constants.DOMAIN_NONE + Constants.DOMAIN_COMMA
                 count_no_domain += 1
             # If the protein contains some domains checks the class and 
             # makes a string containing the class domains separated by a comma
@@ -284,31 +285,31 @@ class ClassificationNewDataset():
                     print type_domain
                     if type_domain in dict_type_domain:
                         class_domain = dict_type_domain[type_domain][0]
-                        if class_domain == 'Classical':
-                            string_domains += 'Classical,'
+                        if class_domain == Constants.DOMAIN_CLASSICAL:
+                            string_domains += Constants.DOMAIN_CLASSICAL + Constants.DOMAIN_COMMA
                             count_classical += 1
-                        elif class_domain == 'Non-classical':
-                            string_domains += 'Non-classical,'
+                        elif class_domain == Constants.DOMAIN_NONCLASSICAL:
+                            string_domains += Constants.DOMAIN_NONCLASSICAL + Constants.DOMAIN_COMMA
                             count_nonclassic += 1
-                        elif class_domain == 'Unclassified':
-                            string_domains += 'Unclassified,'
+                        elif class_domain == Constants.DOMAIN_UNKNOWN:
+                            string_domains += Constants.DOMAIN_UNKNOWN + Constants.DOMAIN_COMMA
                             count_unclissified += 1
                     elif type_domain not in dict_type_domain:
-                        string_domains += 'Other-Domain,'
-                        count_any_class += 1                        
+                        string_domains += Constants.DOMAIN_OTHER + Constants.DOMAIN_COMMA
+                        count_other_class += 1                        
                     else:
-                        print 'unexpected case', type_domain
+                        Logger.get_instance().info( 'unexpected case', type_domain)
             # -1 allows to delete the last comma in string
             row.append(string_domains[0:len(string_domains)-1])
             new_table_jprot.append(row)
                     
         
         # print of proteins number for each domain class
-        print count_classical
-        print count_nonclassic
-        print count_unclissified
-        print count_any_class
-        print count_no_domain
+        Logger.get_instance().info( str(count_classical))
+        Logger.get_instance().info(str(count_nonclassic))
+        Logger.get_instance().info(str(count_unclissified))
+        Logger.get_instance().info(str(count_other_class))
+        Logger.get_instance().info(str(count_no_domain))
             
         self.path_ouput_file_jprot = self.path_home + PropertyManager.get_instance().get_property( DataConstants.DOMAIN_FINAL_TABLE_JPROT_PROPERTY, True)
         FileWriter.write_table(self.path_ouput_file_jprot, new_table_jprot)
@@ -345,7 +346,7 @@ class ClassificationNewDataset():
         count_classical = 0
         count_nonclassic = 0
         count_unclissified = 0
-        count_any_class = 0
+        count_other_class = 0
         count_no_domain = 0
         new_table_nrgenetics = []
         for i, gene in enumerate(genes_nrgenetics):
@@ -356,7 +357,7 @@ class ClassificationNewDataset():
             string_pfamid = ''
             # If the protein hasn't any domain, add static 'no-domains' information
             if domain_column_nrgenetics[i] == '.':
-                string_domains += 'No-domains  '
+                string_domains += Constants.DOMAIN_NONE + Constants.DOMAIN_COMMA
                 string_pfamid += '.,'
                 count_no_domain += 1
             # If the protein contains some domains checks the class and 
@@ -376,18 +377,18 @@ class ClassificationNewDataset():
                     print type_domain
                     if type_domain in dict_type_domain:
                         class_domain = dict_type_domain[type_domain][0]
-                        if class_domain == 'Classical':
-                            string_domains += 'Classical,'
+                        if class_domain == Constants.DOMAIN_CLASSICAL:
+                            string_domains += Constants.DOMAIN_CLASSICAL + Constants.DOMAIN_COMMA
                             count_classical += 1
-                        elif class_domain == 'Non-classical':
-                            string_domains += 'Non-classical,'
+                        elif class_domain == Constants.DOMAIN_NONCLASSICAL:
+                            string_domains += Constants.DOMAIN_NONCLASSICAL + Constants.DOMAIN_COMMA
                             count_nonclassic += 1
-                        elif class_domain == 'Unclassified':
-                            string_domains += 'Unclassified,'
+                        elif class_domain ==  Constants.DOMAIN_UNKNOWN:
+                            string_domains += Constants.DOMAIN_UNKNOWN + Constants.DOMAIN_COMMA
                             count_unclissified += 1
                     elif type_domain not in dict_type_domain:
-                        string_domains += 'Other-Domain,'
-                        count_any_class += 1                        
+                        string_domains += Constants.DOMAIN_OTHER + Constants.DOMAIN_COMMA
+                        count_other_class += 1                        
                     else:
                         print 'unexpected case', type_domain
             row.append(string_pfamid[0:len(string_pfamid)-1])
@@ -395,15 +396,14 @@ class ClassificationNewDataset():
             new_table_nrgenetics.append(row)
             
             
-            
+
         # print of proteins number for each domain class
-           
-        print count_classical
-        print count_nonclassic
-        print count_unclissified
-        print count_any_class
-        print count_no_domain
-            
+        Logger.get_instance().info( str(count_classical))
+        Logger.get_instance().info(str(count_nonclassic))
+        Logger.get_instance().info(str(count_unclissified))
+        Logger.get_instance().info(str(count_other_class))
+        Logger.get_instance().info(str(count_no_domain))
+              
         
         
         self.path_ouput_file_nrgenetics = self.path_home + PropertyManager.get_instance().get_property( DataConstants.DOMAIN_FINAL_TABLE_NATREVGENETICS, True)
@@ -427,8 +427,8 @@ class ClassificationNewDataset():
         final_table.append(title)
         # table construction 
         for n, gene in enumerate(gene_seq):
-            print n+1
-            print gene
+            Logger.get_instance().info(str(n+1))
+            Logger.get_instance().info(gene)
             # if gene is in jprot and in nrgenetics
             if gene in genes_jprot and gene in genes_nrgenetics:
                 count_n += 1
@@ -449,7 +449,7 @@ class ClassificationNewDataset():
                 row.append(prot_seq[n])
             # if the gene is not in both dataset: Error
             else:
-                print 'Error',  gene, prot_seq[n]
+                Logger.get_instance().info( 'Error'+  gene+ prot_seq[n])
             final_table.append(row)
             
         
@@ -473,7 +473,7 @@ class ClassificationNewDataset():
         classical = []
         nonclassical = []
         unclissified = []
-        anyclass = []
+        otherclass = []
         nodomain = []
 
         # there are several combinations of class domain in a protein
@@ -481,15 +481,15 @@ class ClassificationNewDataset():
         for n, domain in enumerate(class_domain):
             diff_domain = domain.split(',')
             for item in diff_domain:
-                if item == 'Classical':
+                if item == Constants.DOMAIN_CLASSICAL:
                     classical.append(prot_name[n])
-                elif item == 'Non-classical':
+                elif item == Constants.DOMAIN_NONCLASSICAL:
                     nonclassical.append(prot_name[n])
-                elif item == 'Unclassified':
+                elif item == Constants.DOMAIN_UNKNOWN:
                     unclissified.append(prot_name[n])
-                elif item == 'Other-Domain':
-                    anyclass.append(prot_name[n])
-                elif item == 'No-domains':
+                elif item == Constants.DOMAIN_OTHER:
+                    otherclass.append(prot_name[n])
+                elif item == Constants.DOMAIN_NONE:
                     nodomain.append(prot_name[n])
                 else:
                     # many others

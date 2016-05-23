@@ -3,6 +3,8 @@
 # ================================================================================
 
 
+# Starting file
+# list of genes
 
 
 from core.util import Constants
@@ -144,7 +146,7 @@ two file have been generated one with longest sequences and the other one contai
         
         
         # Extraction of genes form headers line
-        # This vector contains double gene because the file contains some isoform of the same gene
+        # This vector contains double gene because the file contains some isoforms of the same gene
         
         gene_isoform = []
         for header in self.headers:
@@ -152,14 +154,19 @@ two file have been generated one with longest sequences and the other one contai
             gene_isoform.append(gene)
         
         # gene set creation  
-        unique_gene = set(gene_isoform)
+        unique_gene = []
+        for gene in gene_isoform:
+            if gene not in unique_gene:
+                unique_gene.append(gene)
+        
+
         
         # This for loop flows on the unique gene 
         # 
         random_header = []
         old_num_isoform = 0
         for gene in unique_gene:
-            # For each gene counts how many isoform has 
+            # For each gene counts how many isoforms has 
             num_isoform = gene_isoform.count(gene)
             item = range(0,num_isoform)
             # Select one isoform randomly
@@ -205,7 +212,7 @@ two file have been generated one with longest sequences and the other one contai
         FileParser.merge_file(self.path_file_longest, self.path_file_random, self.path_final_file)
         
         
-        Logger.get_instance().info( " The Final TFs Dataset has been created\n ")
+        Logger.get_instance().info( " The Final Proteome Dataset has been created\n ")
 
 
     # whole_procedure

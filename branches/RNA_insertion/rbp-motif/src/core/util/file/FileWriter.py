@@ -28,7 +28,10 @@ class FileWriter():
                 if type(item) != str and type(item) != int and type(item) != float:
                     length = len(item)
                     for i in range(length):
-                        outfile.write(str(item[i]) + symbol)
+                        if i < length-1:
+                            outfile.write(str(item[i]) + symbol)
+                        elif i == length-1:
+                            outfile.write(str(item[i]))                        
                     outfile.write('\n')
                 elif type(item) == str:
                     outfile.write(str(item) + '\n')
