@@ -71,8 +71,6 @@ class ReadCatrapid(object):
         else:
             filterBool = 0
 
-        storedInteractions = {} # key -> pair, value -> score
-
         # approach: initialise protein, and sum scores throughout the file, and keep count of protein occurrences, then in the end calculate mean
         proteinInteractions = {} # key -> protein ID, value -> sum of scores
         proteinInteractionsCounter = {} # key -> protein ID, value -> number of times protein appears
@@ -81,6 +79,9 @@ class ReadCatrapid(object):
         outFileCount = 1
 
         inFileName = os.path.basename( self.catRAPIDFile)
+
+        # variable which will store text to be written into files        
+        interactionText = ""
 
         #=======================================================================
         # read file
@@ -92,17 +93,16 @@ class ReadCatrapid(object):
                 if lineCount % self.batchSize == 0 and lineCount != 0:
                     Timer.get_instance().step("read_catrapid_file: reading %s lines.." % lineCount)    
 
-                    print len( storedInteractions)
+                    # print len( proteinInteractions), sys.getsizeof( proteinInteractions) / 1000000.0
+                    # print len( interactionText), sys.getsizeof( interactionText) / 1000000.0 
 
                     # dump dictionaries into files
                     with open( self.outputFolder + "/storedInteractions_" + str( outFileCount) + ".tsv", "w") as outFile:
-                        for pair in storedInteractions:
-                            outFile.write( "%s\t%s\n" % (pair, storedInteractions[ pair]) )
-                    # reset the dictionary
-                    del storedInteractions
-                    storedInteractions = {}
+                        outFile.write( interactionText)
+                    interactionText = ""
+                    
                     outFileCount += 1
-
+                    
                 spl = line.split(" ")
                 
                 protID = spl[0].split( "|")[1]
@@ -120,29 +120,28 @@ class ReadCatrapid(object):
                 if filterBool and pair not in wanted_pairs:
                     continue
 
-                storedInteractions[ pair] = score
+                # store interaction
+                interactionText += "%s\t%s\n" % (pair, score)
 
-                ## TODO: continue here
-#                 # for calculating average score per protein
-#                 if protID not in proteinInteractions:
-#                     proteinInteractions[ protID] = 0
-#                     proteinInteractionsCounter[ protID] = 0
-# 
-#                 proteinInteractions[ protID] += score
-#                 proteinInteractionsCounter[ protID] += 1
-# 
-#                 with open( self.outputFolder + "/proteinInteractions.tsv", "w") as outFile:
-#                     for prot in proteinInteractions:
-#                         mean = proteinInteractions[ prot] / float( proteinInteractionsCounter[ prot])
-#                         outFile.write( "%s\t%s\n" % (prot, mean) )
-
+                # for calculating average score per protein
+                if protID not in proteinInteractions:
+                    proteinInteractions[ protID] = 0
+                    proteinInteractionsCounter[ protID] = 0
+ 
+                proteinInteractions[ protID] += score
+                proteinInteractionsCounter[ protID] += 1
+ 
                 lineCount += 1
-
 
             # write remaining interactions into file
             with open( self.outputFolder + "/storedInteractions_" + str( outFileCount) + ".tsv", "w") as outFile:
-                for pair in storedInteractions:
-                    outFile.write( "%s\t%s\n" % (pair, storedInteractions[ pair]) )
+                outFile.write( interactionText)
+
+            with open( self.outputFolder + "/proteinInteractions.tsv", "w") as outFile:
+                for prot in proteinInteractions:
+                    mean = proteinInteractions[ prot] / float( proteinInteractionsCounter[ prot])
+                    outFile.write( "%s\t%s\n" % (prot, mean) )
+
 
         print "read_catrapid_file: read %s lines.." % lineCount
 
