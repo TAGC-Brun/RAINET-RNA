@@ -109,6 +109,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
             with open(self.expectedFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "r") as exp:
                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
+        # cp /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_output/* /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_expected/
 
     # #
     def test_read_interaction_filter_file(self):
