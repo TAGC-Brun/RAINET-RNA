@@ -52,7 +52,7 @@ plt3 <- ggplot(expression_df1, aes(x = rpkm_mean ) )  +
   geom_histogram(binwidth = 0.1, fill="white", colour="black") + 
   geom_vline(aes(xintercept = mean( rpkm_mean)),color="blue", linetype="dashed", size=1) +
   geom_vline(aes(xintercept = 0.1),color="red", linetype="dashed", size=1) +
-  labs(title="Mean transcript expression") +
+  labs(title="Mean transcript expression, including outliers") +
   labs(x="RPKM mean", y="Count") + 
   xlim(c(-0.1,XLIM_MAX)) + 
   theme_minimal()
@@ -62,7 +62,7 @@ plt4 <- ggplot(expression_df2, aes(x = rpkm_mean ) )  +
   geom_histogram(binwidth = 0.1, fill="white", colour="black") + 
   geom_vline(aes(xintercept = mean( rpkm_mean)),color="blue", linetype="dashed", size=1) +
   geom_vline(aes(xintercept = 0.1),color="red", linetype="dashed", size=1) +
-  labs(title="Mean transcript expression") +
+  labs(title="Mean transcript expression, excluding outliers") +
   labs(x="RPKM mean", y="Count") + 
   xlim(c(-0.1,XLIM_MAX)) + 
   theme_minimal()
