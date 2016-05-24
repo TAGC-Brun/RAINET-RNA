@@ -33,13 +33,14 @@ class RBPDomainScore(object):
     NO_ANNOTATION_TAG = "Non-RBP"
     SEVERAL_ANNOTATION_TAG = "several_annotations"
        
-    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple):
+    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column):
 
         self.domainAnnotationFile = domain_annotation_file
         self.catRAPIDFile = catrapid_file
         self.rainetDB = rainet_db
         self.outputFolder = output_folder
         self.maskMultiple = mask_multiple
+        self.annotationColumn = annotation_column
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -107,7 +108,12 @@ class RBPDomainScore(object):
                 line = line.strip()
                 lineCounter+=1
                 
-                geneID,pepID,pfamIDs,pfamNames,domainClass = line.split( "\t")
+                spl = line.split( "\t")
+                
+                pepID = spl[1]
+
+                # select column to use as annotation                
+                annotationItem = spl[ self.annotationColumn]
                                 
                 if not pepID.startswith("ENSP"):
                     raise RainetException("read_domain_annotation_file: Peptide ID is incorrect:", pepID)
@@ -120,20 +126,20 @@ class RBPDomainScore(object):
                     continue
 
                 # there can be several domain classes for the same protein
-                domainClasses = domainClass.split( ",")
+                annotationItems = annotationItem.split( ",")
 
-                outFile.write( "%s\t%s\t%s\n" % ( pepID, ",".join( protIDs), domainClass ))
+                outFile.write( "%s\t%s\t%s\n" % ( pepID, ",".join( protIDs), annotationItem ))
 
-                for cla in domainClasses:
+                for cla in annotationItems:
                     # there can be several protein uniprotAC for a single Ensembl peptideID
                     for protID in protIDs:
                         if protID not in proteinAnnotation:
                             proteinAnnotation[ protID] = set()
                         proteinAnnotation[ protID].add( cla)
 
-            print "number of entries read:", lineCounter
-            print "number of peptide IDs not found: ", len(notFound)
-            print "number of proteins with annotation:", len(proteinAnnotation)
+            print "read_domain_annotation_file: number of entries read:", lineCounter
+            print "read_domain_annotation_file: number of peptide IDs not found: ", len(notFound)
+            print "read_domain_annotation_file: number of proteins with annotation:", len(proteinAnnotation)
 
         outFile.close()
 
@@ -225,12 +231,14 @@ if __name__ == "__main__":
         parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
         parser.add_argument('--maskMultiple', metavar='maskMultiple', type=int, default = 1,
                              help='Whether to mask protein annotations when having more than one annotation (val = 1), or display all annotations separated by comma (val = 0). (default = 1).')
+        parser.add_argument('--annotationColumn', metavar='annotationColumn', type=int, default = 4,
+                             help='Which column in the input annotation file to process. 0-based.')
            
         #gets the arguments
         args = parser.parse_args( ) 
     
         # init
-        run = RBPDomainScore( args.domainAnnotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, args.maskMultiple)
+        run = RBPDomainScore( args.domainAnnotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, args.maskMultiple, args.annotationColumn)
     
         # get cross references from rainet DB
         Timer.get_instance().step( "Read protein cross references..")    
