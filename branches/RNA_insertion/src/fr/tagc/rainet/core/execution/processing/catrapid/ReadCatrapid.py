@@ -19,6 +19,8 @@ SCRIPT_NAME = "ReadCatrapid.py"
 #===============================================================================
 # General plan:
 # 1) Parse catRAPID interaction file
+# 2) apply interaction filters
+# 3) write filtered interaction file, and other processed data files
 #===============================================================================
 
 
@@ -27,12 +29,14 @@ class ReadCatrapid(object):
     STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     
-    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, batch_size):
+    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, batch_size):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
         self.interactionCutoff = interaction_cutoff
         self.interactionFilterFile = interaction_filter_file
+        self.rnaFilterFile = rna_filter_file
+        self.proteinFilterFile = protein_filter_file
         self.batchSize = batch_size
 
     # #
@@ -49,10 +53,37 @@ class ReadCatrapid(object):
             return wantedPairs
         else:
             return set()
-        
+
     # #
-    # Read catrapid file and write processed output to files
-    def read_catrapid_file( self, wanted_pairs):
+    # Read list of wanted rnas 
+    # @return set of rnas we want to keep, empty if no file given
+    def read_rna_filter_file(self):
+        
+        if self.rnaFilterFile != "":
+            with open( self.rnaFilterFile, "r") as inFile:        
+                wantedList = { line.strip() for line in inFile }
+            print "read_interaction_filter_file: read %s unique wanted RNAs." % len( wantedList)           
+            return wantedList
+        else:
+            return set()
+        
+
+    # #
+    # Read list of wanted proteins
+    # @return set of proteins we want to keep, empty if no file given
+    def read_protein_filter_file(self):
+        
+        if self.rnaFilterFile != "":
+            with open( self.proteinFilterFile, "r") as inFile:        
+                wantedList = { line.strip() for line in inFile }
+            print "read_interaction_filter_file: read %s unique wanted Proteins." % len( wantedList)           
+            return wantedList
+        else:
+            return set()
+ 
+    # #
+    # Read catrapid file, apply filters, and write processed output to files
+    def read_catrapid_file( self, wanted_pairs, wanted_RNAs, wanted_proteins):
 
         #=======================================================================
         # Example file
@@ -74,11 +105,16 @@ class ReadCatrapid(object):
         else:
             self.interactionCutoff = float( self.interactionCutoff)
 
-        # check if we need to filter by wanted pairs
-        if len( wanted_pairs) > 0:
-            filterBool = 1
-        else:
-            filterBool = 0
+        # check if we need to filter by wanted pairs, proteins, rnas
+        if len( wanted_pairs) > 0: interactionFilterBool = 1
+        else: interactionFilterBool = 0
+
+        if len( wanted_RNAs) > 0: rnaFilterBool = 1
+        else: rnaFilterBool = 0
+
+        if len( wanted_proteins) > 0: proteinFilterBool = 1
+        else: proteinFilterBool = 0
+
 
         # approach: initialise protein, and sum scores throughout the file, and keep count of protein occurrences, then in the end calculate mean
         proteinInteractions = {} # key -> protein ID, value -> sum of scores
@@ -127,12 +163,21 @@ class ReadCatrapid(object):
                 if score < self.interactionCutoff: 
                     continue
 
+                # if filtering by wanted RNAs and it is not present
+                if rnaFilterBool and rnaID not in wanted_RNAs:
+                    continue
+
+                # if filtering by wanted Proteins and it is not present
+                if proteinFilterBool and protID not in wanted_proteins:
+                    continue
+
                 # if filtering by wanted pairs and it is not present
-                if filterBool and pair not in wanted_pairs:
+                if interactionFilterBool and pair not in wanted_pairs:
                     continue
 
                 # store interaction
-                interactionText += "%s\t%s\n" % (pair, score)
+                #interactionText += "%s\t%s\n" % (pair, score)
+                interactionText+= line
 
                 # for calculating average score per protein
                 if protID not in proteinInteractions:
@@ -163,6 +208,18 @@ class ReadCatrapid(object):
 
         return proteinInteractionsMean, proteinInteractionsCounter
 
+    # run functions in proper order
+    def run(self):
+        
+        Timer.get_instance().step( "reading filter files..")    
+        wantedPairs = self.read_interaction_filter_file( )
+        wantedRNAs = self.read_rna_filter_file( )
+        wantedProteins = self.read_protein_filter_file( )
+    
+        Timer.get_instance().step( "reading catrapid interaction file..")    
+        self.read_catrapid_file( wantedPairs, wantedRNAs, wantedProteins)
+        
+
 
 if __name__ == "__main__":
     
@@ -184,6 +241,10 @@ if __name__ == "__main__":
                          default = "OFF", help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
     parser.add_argument('--interactionFilterFile', metavar='interactionFilterFile', type=str,
                          default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID.')
+    parser.add_argument('--rnaFilterFile', metavar='rnaFilterFile', type=str,
+                         default = "", help='File with list of RNAs we want to keep, one per line.')
+    parser.add_argument('--proteinFilterFile', metavar='proteinFilterFile', type=str,
+                         default = "", help='File with list of Proteins we want to keep, one per line.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
 
@@ -191,14 +252,9 @@ if __name__ == "__main__":
     args = parser.parse_args( ) 
 
     # init
-    run = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, args.batchSize)
+    readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, args.rnaFilterFile, args.proteinFilterFile, args.batchSize)
 
-    # read interaction filter file (if any)
-    Timer.get_instance().step( "reading interaction filter file..")    
-    wantedPairs = run.read_interaction_filter_file( )
-
-    Timer.get_instance().step( "reading catrapid interaction file..")    
-    run.read_catrapid_file( wantedPairs)
+    readCatrapid.run()
 
     # Stop the chrono      
     Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
