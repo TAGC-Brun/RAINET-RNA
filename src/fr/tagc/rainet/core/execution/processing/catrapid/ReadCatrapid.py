@@ -73,7 +73,7 @@ class ReadCatrapid(object):
     # @return set of proteins we want to keep, empty if no file given
     def read_protein_filter_file(self):
         
-        if self.rnaFilterFile != "":
+        if self.proteinFilterFile != "":
             with open( self.proteinFilterFile, "r") as inFile:        
                 wantedList = { line.strip() for line in inFile }
             print "read_interaction_filter_file: read %s unique wanted Proteins." % len( wantedList)           
