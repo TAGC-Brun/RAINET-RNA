@@ -22,14 +22,16 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         self.catRAPIDFile = "test_input/catRAPID_interactions_test.txt"
         self.outputFolder = "test_output/"
-        self.interactionCutoff = 15
+        self.interactionCutoff = "OFF"
         self.interactionFilterFile = "test_input/filter_file.txt"
+        self.rnaFilterFile = "test_input/rna_filter_file.txt"
+        self.proteinFilterFile = "test_input/protein_filter_file.txt"
         self.batchSize = 1000000
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
-        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, self.batchSize)
+        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, self.rnaFilterFile, self.proteinFilterFile, self.batchSize)
             
 
     # #
@@ -39,7 +41,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         wantedPairs = self.run.read_interaction_filter_file( )
 
-        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs)
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs, set(), set())
         
         # diogo@diogo-tower:~/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_input$ grep Q7Z419 * | grep ENST00000544329
         # catRAPID_interactions_test.txt:sp|Q7Z419|R144B_HUMAN ENST00000544329    17.96    0.47    0.00
@@ -69,7 +71,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
         # no interaction cutoff        
         self.run.interactionCutoff = "OFF"
 
-        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs)
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs, set(), set())
 
         # cut -f1 catRAPID_interactions_test.txt | cut -f2 -d"|" | sort -u | wc -l
         # 51
@@ -90,7 +92,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
         # adding interaction cut off parameter
         self.run.interactionCutoff = 200
 
-        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs)
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs, set(), set())
 
         self.assertTrue( "Q7Z419" not in proteinInteractionsCounter) 
 
@@ -120,6 +122,44 @@ class ReadCatrapidUnittest(unittest.TestCase):
         
         self.assertTrue( wantedPairs == set(['Q7Z419_ENST00000544329', 'Q7Z5L9_ENST00000544591', 'Q7Z5L9_ENST00000544329']), "asserting if object is correct") 
   
+
+    # #
+    def test_apply_filter_file(self):
+
+        print "| test_apply_filter_file | "
+
+        # RNA filter
+        wantedRNAs = self.run.read_rna_filter_file( )
+        
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), wantedRNAs, set())
+
+        # grep ENST00000544089 catRAPID_interactions_test.txt | wc -l
+        # 51
+        # grep ENST00000547795 catRAPID_interactions_test.txt | wc -l
+        # 50
+
+        self.assertTrue( sum( proteinInteractionsCounter.values()) == 101, "asserting if correct number of total interactions")
+
+        # Protein filter
+        wantedProteins = self.run.read_protein_filter_file()
+        
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), set(), wantedProteins)
+
+        # grep Q7Z5L7 catRAPID_interactions_test.txt | wc -l
+        # 2000
+        # grep Q7Z429 catRAPID_interactions_test.txt | wc -l
+        # 2000
+
+        self.assertTrue( sum( proteinInteractionsCounter.values()) == 4000, "asserting if correct number of total interactions")
+
+        # RNA and protein filter
+
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), wantedRNAs, wantedProteins)
+
+        self.assertTrue( sum( proteinInteractionsCounter.values()) == 4, "asserting if correct number of total interactions")
+
+        
+
     
 #     # #
 #     # Runs after each test
