@@ -233,6 +233,8 @@ if __name__ == "__main__":
                              help='Whether to mask protein annotations when having more than one annotation (val = 1), or display all annotations separated by comma (val = 0). (default = 1).')
         parser.add_argument('--annotationColumn', metavar='annotationColumn', type=int, default = 4,
                              help='Which column in the input annotation file to process. 0-based.')
+#         parser.add_argument('--domainRegex', metavar='domainRegex', type=str, default = "*",
+#                              help=' E.g. RRM_*, KH_*, zf-CCCH*, zf-CCHC*, S1, PWI, PUF, SAM_*.')
            
         #gets the arguments
         args = parser.parse_args( ) 
