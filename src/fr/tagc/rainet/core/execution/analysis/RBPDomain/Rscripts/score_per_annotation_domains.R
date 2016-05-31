@@ -34,9 +34,9 @@ dataset1count = count(dataset1, 'annotation')
 dataset2count = count(dataset2, 'annotation')
 
 ## normalising the two categories
-#diff = median( dataset2$score) - median( dataset1$score)
-#diff = mean( dataset2$score) - mean( dataset1$score)
-#dataset1$score = dataset1$score + diff
+#diff = median( dataset2$mean_score) - median( dataset1$mean_score)
+#diff = mean( dataset2$mean_score) - mean( dataset1$mean_score)
+#dataset1$mean_score = dataset1$mean_score + diff
 
 
 ## Identify top domains manually
@@ -62,12 +62,12 @@ table
 ####################
 
 plt1 <- ggplot(dataset1TopDomains )  +
-  geom_density(data = dataset1TopDomains, aes(x = score, colour = annotation) ) +
+  geom_density(data = dataset1TopDomains, aes(x = mean_score, colour = annotation) ) +
   ggtitle(dataset1TopDomains$type) +
   theme_minimal()
 
 plt2 <- ggplot(dataset2TopDomains )  +
-  geom_density(data = dataset2TopDomains, aes(x = score, colour = annotation)) +
+  geom_density(data = dataset2TopDomains, aes(x = mean_score, colour = annotation)) +
   theme_minimal() +
   theme(legend.position="none") +
   ggtitle(dataset2TopDomains$type)
@@ -75,7 +75,7 @@ plt2
 
 grid.arrange(plt1,plt2)
 
-plt3 <- ggplot(data = mergedDataset, aes(x = annotation, y = score, fill = type))  +
+plt3 <- ggplot(data = mergedDataset, aes(x = annotation, y = mean_score, fill = type))  +
   geom_boxplot(outlier.shape = NA, position = "dodge" ) +
   stat_summary(fun.data = give.n, geom = "text", size = 4) +
   coord_flip() + 
@@ -87,9 +87,9 @@ plt3
 ####################
 
 #test lncRNA domains
-lncRNARRM_1 = dataset1TopDomains$score[ dataset1TopDomains$annotation == "RRM_1"]
-lncRNALSM = dataset1TopDomains$score[ dataset1TopDomains$annotation == "LSM"]
-lncRNANonRBP = dataset1TopDomains$score[ dataset1TopDomains$annotation == "Non-RBP"]
+lncRNARRM_1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "RRM_1"]
+lncRNALSM = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "LSM"]
+lncRNANonRBP = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "Non-RBP"]
 summary( lncRNARRM_1)
 summary( lncRNALSM)
 summary( lncRNANonRBP)
@@ -98,9 +98,9 @@ ks.test(lncRNARRM_1, lncRNANonRBP, alternative = c("two.sided"))
 ks.test(lncRNALSM, lncRNANonRBP, alternative = c("two.sided"))
 
 #test mRNA domains
-mRNARRM_1 = dataset2TopDomains$score[ dataset2TopDomains$annotation == "RRM_1"]
-mRNALSM = dataset2TopDomains$score[ dataset2TopDomains$annotation == "LSM"]
-mRNANonRBP = dataset2TopDomains$score[ dataset2TopDomains$annotation == "Non-RBP"]
+mRNARRM_1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "RRM_1"]
+mRNALSM = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "LSM"]
+mRNANonRBP = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "Non-RBP"]
 summary( mRNARRM_1)
 summary( mRNALSM)
 summary( mRNANonRBP)
@@ -109,7 +109,42 @@ ks.test(mRNARRM_1, mRNANonRBP, alternative = c("two.sided"))
 ks.test(mRNALSM, mRNANonRBP, alternative = c("two.sided"))
 
 # this test is for normalised set
-lncRNAMH2MH1 = dataset1TopDomains$score[ dataset1TopDomains$annotation == "MH2,MH1"]
-mRNAMH2MH1 = dataset2TopDomains$score[ dataset2TopDomains$annotation == "MH2,MH1"]
+lncRNAMH2MH1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "MH2,MH1"]
+mRNAMH2MH1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "MH2,MH1"]
 ks.test(lncRNAMH2MH1, mRNAMH2MH1, alternative = c("two.sided"))
+
+####################
+## Number of RNAs above (count)
+####################
+
+inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/domains_cutoff15/annotated_interactions.tsv"
+inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/domains_cutoff50/annotated_interactions.tsv"
+
+dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+dataset1TopDomains = dataset1[ dataset1$annotation %in% wantedDomains]
+dataset2TopDomains = dataset2[ dataset2$annotation %in% wantedDomains]
+dataset1TopDomains$type = "lncRNA"
+dataset2TopDomains$type = "mRNA"
+
+plt3 <- ggplot(data = dataset1TopDomains, aes(x = annotation, y = count))  +
+  geom_boxplot(outlier.shape = NA, position = "dodge", fill = "red" ) +
+  stat_summary(fun.data = give.n, geom = "text", size = 4) +
+  ggtitle(dataset1$type) +
+  coord_flip() + 
+  theme_minimal()
+
+plt4 <- ggplot(data = dataset2TopDomains, aes(x = annotation, y = count))  +
+  geom_boxplot(outlier.shape = NA, position = "dodge", fill = "blue" ) +
+  stat_summary(fun.data = give.n, geom = "text", size = 4) +
+  ggtitle(dataset2$type) +
+  coord_flip() + 
+  theme_minimal()
+
+grid.arrange(plt3,plt4)
+
+mRNALSM_count = dataset2TopDomains$count[ dataset2TopDomains$annotation == "LSM"]
+mRNANonRBP_count = dataset2TopDomains$count[ dataset2TopDomains$annotation == "Non-RBP"]
+ks.test(mRNALSM_count, mRNANonRBP_count, alternative = c("two.sided"))
 
