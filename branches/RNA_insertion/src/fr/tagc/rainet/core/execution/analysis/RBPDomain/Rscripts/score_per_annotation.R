@@ -27,7 +27,7 @@ dataset1count = count(dataset1, 'annotation')
 dataset2count = count(dataset2, 'annotation')
 
 table = merge( dataset1count, dataset2count, by="annotation", all = TRUE, suffixes = c(".lncRNA", ".mRNA"))
-table
+grid.table(table)
 
 #cat(dataset1$uniprotac[dataset1$annotation == "Unclassified"], sep = "\n")
 #cat(dataset2$uniprotac[dataset2$annotation == "Unclassified"], sep = "\n")
@@ -43,13 +43,11 @@ plt1 <- ggplot(dataset1 )  +
   geom_density(data = dataset1, aes(x = score, colour = annotation) ) +
   ggtitle(dataset1$type) +
   theme_minimal()
-plt1
 
 plt2 <- ggplot(dataset2 )  +
   geom_density(data = dataset2, aes(x = score, colour = annotation) ) +
   ggtitle(dataset2$type) +
   theme_minimal()
-plt2
 
 grid.arrange(plt1,plt2)
 
@@ -72,11 +70,9 @@ summary( lncRNAClassical)
 summary( lncRNANonClassical)
 summary( lncRNANonRBP)
 
-lncRNAClassical_NonClassical = ks.test(lncRNAClassical, lncRNANonClassical, alternative = c("two.sided"))
-lncRNAClassical_NonClassical
+ks.test(lncRNAClassical, lncRNANonClassical, alternative = c("two.sided"))
+ks.test(lncRNAClassical, lncRNANonRBP, alternative = c("two.sided"))
 
-lncRNAClassical_NonRBP = ks.test(lncRNAClassical, lncRNANonRBP, alternative = c("two.sided"))
-lncRNAClassical_NonRBP
 
 #test lncRNA classical vs non-classical
 mRNAClassical = dataset2$score[ dataset2$annotation == "Classical"]
@@ -87,8 +83,6 @@ summary( mRNAClassical)
 summary( mRNANonClassical)
 summary( mRNANonRBP)
 
-mRNAClassical_NonClassical = ks.test(mRNAClassical, mRNANonClassical, alternative = c("two.sided"))
-mRNAClassical_NonClassical
-mRNAClassical_NonRBP = ks.test(mRNAClassical, mRNANonRBP, alternative = c("two.sided"))
-mRNAClassical_NonRBP
+ks.test(mRNAClassical, mRNANonClassical, alternative = c("two.sided"))
+ks.test(mRNAClassical, mRNANonRBP, alternative = c("two.sided"))
 
