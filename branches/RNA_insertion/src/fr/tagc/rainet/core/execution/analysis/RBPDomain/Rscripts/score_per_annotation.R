@@ -13,6 +13,11 @@ give.n <- function(x){   return(c(y = -10, label = length(x))) }
 inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/output/annotated_interactions.tsv"
 inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/output/annotated_interactions.tsv"
 
+# broad categories files # with count
+inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/cutoff15/annotated_interactions.tsv"
+inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/cutoff50/annotated_interactions.tsv"
+
+
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -40,18 +45,18 @@ grid.table(table)
 mergedDataset = rbind( dataset1, dataset2)
 
 plt1 <- ggplot(dataset1 )  +
-  geom_density(data = dataset1, aes(x = score, colour = annotation) ) +
+  geom_density(data = dataset1, aes(x = mean_score, colour = annotation) ) +
   ggtitle(dataset1$type) +
   theme_minimal()
 
 plt2 <- ggplot(dataset2 )  +
-  geom_density(data = dataset2, aes(x = score, colour = annotation) ) +
+  geom_density(data = dataset2, aes(x = mean_score, colour = annotation) ) +
   ggtitle(dataset2$type) +
   theme_minimal()
 
 grid.arrange(plt1,plt2)
 
-plt3 <- ggplot(data = mergedDataset, aes(x = annotation, y = score, fill = type))  +
+plt3 <- ggplot(data = mergedDataset, aes(x = annotation, y = mean_score, fill = type))  +
   geom_boxplot(outlier.shape = NA, position = "dodge" ) +
   stat_summary(fun.data = give.n, geom = "text", size = 4) +
   coord_flip() + 
@@ -63,9 +68,9 @@ plt3
 ####################
 
 #test lncRNA classical vs non-classical
-lncRNAClassical = dataset1$score[ dataset1$annotation == "Classical"]
-lncRNANonClassical = dataset1$score[ dataset1$annotation == "Non-classical"]
-lncRNANonRBP = dataset1$score[ dataset1$annotation == "Non-RBP"]
+lncRNAClassical = dataset1$mean_score[ dataset1$annotation == "Classical"]
+lncRNANonClassical = dataset1$mean_score[ dataset1$annotation == "Non-classical"]
+lncRNANonRBP = dataset1$mean_score[ dataset1$annotation == "Non-RBP"]
 summary( lncRNAClassical)
 summary( lncRNANonClassical)
 summary( lncRNANonRBP)
@@ -75,9 +80,9 @@ ks.test(lncRNAClassical, lncRNANonRBP, alternative = c("two.sided"))
 
 
 #test lncRNA classical vs non-classical
-mRNAClassical = dataset2$score[ dataset2$annotation == "Classical"]
-mRNANonClassical = dataset2$score[ dataset2$annotation == "Non-classical"]
-mRNANonRBP = dataset2$score[ dataset2$annotation == "Non-RBP"]
+mRNAClassical = dataset2$mean_score[ dataset2$annotation == "Classical"]
+mRNANonClassical = dataset2$mean_score[ dataset2$annotation == "Non-classical"]
+mRNANonRBP = dataset2$mean_score[ dataset2$annotation == "Non-RBP"]
 
 summary( mRNAClassical)
 summary( mRNANonClassical)

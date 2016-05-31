@@ -162,16 +162,16 @@ class RBPDomainScore(object):
         lineCount = 0
    
         outFile = open( self.outputFolder + RBPDomainScore.ANNOTATION_OUTPUT_FILE, "w")
-        # output file header
-        outFile.write( "uniprotac\tscore\tannotation\n")
           
         #=======================================================================
         # read file
         #=======================================================================
 
         with open( self.catRAPIDFile, "r") as inFile:
-            # skip header
-            inFile.readline()
+
+            # write same header as input file, adding "annotation"
+            outFile.write( inFile.readline().strip() + "\tannotation\n")
+
             for line in inFile:
                 line = line.strip()
                 lineCount += 1
@@ -187,20 +187,18 @@ class RBPDomainScore(object):
                     # if there is several annotations and we only want information for proteins with a single domain
                     if len( proteinAnnotation[ protID]) > 1 and self.maskMultiple == 1:
                         annotation = RBPDomainScore.SEVERAL_ANNOTATION_TAG
-                        outputText += "%s\t%s\t%s\n" % (protID, score, annotation)
-
                     # if wanting information for all annotations
                     elif len( proteinAnnotation[ protID]) > 0:
                         # get all annotations
-                        annotations = ",".join( list(proteinAnnotation[ protID]) )
-                        outputText =  "%s\t%s\t%s\n" % (protID, score, annotations)
+                        annotation = ",".join( list(proteinAnnotation[ protID]) )
                     else:
                         raise RainetException("read_catrapid_file: Annotation information is incorrect. ", proteinAnnotation[ protID])
                 # if there is no annotation for protein
                 else:
                     annotation = RBPDomainScore.NO_ANNOTATION_TAG
-                    outputText+= "%s\t%s\t%s\n" % (protID, score, annotation)
-                
+
+                outputText = "%s\t%s\n" % (line, annotation)
+
                 outFile.write( outputText)
     
         outFile.close()
