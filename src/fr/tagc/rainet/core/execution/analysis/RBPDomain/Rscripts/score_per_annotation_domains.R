@@ -20,12 +20,24 @@ dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset1$type = "lncRNA"
 dataset2$type = "mRNA"
 
+# dataset1Count = count(dataset1, 'annotation')
+# dataset2Count = count(dataset2, 'annotation')
+# 
+# table = merge( dataset1Count, dataset2Count, by="annotation", all = TRUE, suffixes = c(".lncRNA", ".mRNA"))
+# table
+
 ####################
 ## Domain analysis / filtering
 ####################
 
 dataset1count = count(dataset1, 'annotation')
 dataset2count = count(dataset2, 'annotation')
+
+## normalising the two categories
+#diff = median( dataset2$score) - median( dataset1$score)
+#diff = mean( dataset2$score) - mean( dataset1$score)
+#dataset1$score = dataset1$score + diff
+
 
 ## Identify top domains manually
 dataset1count[order(dataset1count$freq),]
@@ -55,9 +67,11 @@ plt1 <- ggplot(dataset1TopDomains )  +
   theme_minimal()
 
 plt2 <- ggplot(dataset2TopDomains )  +
-  geom_density(data = dataset2TopDomains, aes(x = score, colour = annotation) ) +
-  ggtitle(dataset2TopDomains$type) +
-  theme_minimal()
+  geom_density(data = dataset2TopDomains, aes(x = score, colour = annotation)) +
+  theme_minimal() +
+  theme(legend.position="none") +
+  ggtitle(dataset2TopDomains$type)
+plt2
 
 grid.arrange(plt1,plt2)
 
@@ -93,4 +107,9 @@ summary( mRNANonRBP)
 
 ks.test(mRNARRM_1, mRNANonRBP, alternative = c("two.sided"))
 ks.test(mRNALSM, mRNANonRBP, alternative = c("two.sided"))
+
+# this test is for normalised set
+lncRNAMH2MH1 = dataset1TopDomains$score[ dataset1TopDomains$annotation == "MH2,MH1"]
+mRNAMH2MH1 = dataset2TopDomains$score[ dataset2TopDomains$annotation == "MH2,MH1"]
+ks.test(lncRNAMH2MH1, mRNAMH2MH1, alternative = c("two.sided"))
 
