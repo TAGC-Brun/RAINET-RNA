@@ -187,7 +187,6 @@ class ReadCatrapid(object):
                 proteinInteractions[ protID] += score
                 proteinInteractionsCounter[ protID] += 1
 
-
             # write remaining interactions into file
             with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                 outFile.write( interactionText)
@@ -195,12 +194,13 @@ class ReadCatrapid(object):
             # write file and dictionary with mean interaction score per protein
             proteinInteractionsMean = {} # key -> protein ID, value -> mean score
             with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
-                outFile.write("uniprotac\tmean_score\n")
+                outFile.write("uniprotac\tmean_score\tcount\n")
                 for prot in proteinInteractions:
                     # mean calculated by sum of scores divided by frequency
-                    mean = proteinInteractions[ prot] / float( proteinInteractionsCounter[ prot])
+                    count = float( proteinInteractionsCounter[ prot])
+                    mean = proteinInteractions[ prot] / count
                     proteinInteractionsMean[ prot] = mean
-                    outFile.write( "%s\t%s\n" % (prot, mean) )
+                    outFile.write( "%s\t%s\t%s\n" % (prot, mean, count) )
 
         print "read_catrapid_file: read %s lines.." % lineCount
 
