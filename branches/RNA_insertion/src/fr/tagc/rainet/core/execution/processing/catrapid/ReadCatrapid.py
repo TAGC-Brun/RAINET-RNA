@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse
+import numpy as np
 from scipy import stats
 import cPickle as pickle
 
@@ -12,7 +13,7 @@ from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 #===============================================================================
 # Started 20-May-2016 
 # Diogo Ribeiro
-DESC_COMMENT = "Script to read large catRAPID interaction files."
+DESC_COMMENT = "Script to read, filter and process large catRAPID interaction files."
 SCRIPT_NAME = "ReadCatrapid.py"
 #===============================================================================
 
@@ -29,7 +30,7 @@ class ReadCatrapid(object):
     STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     
-    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, batch_size):
+    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, batch_size, extra_metrics):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -38,6 +39,7 @@ class ReadCatrapid(object):
         self.rnaFilterFile = rna_filter_file
         self.proteinFilterFile = protein_filter_file
         self.batchSize = batch_size
+        self.extraMetrics = extra_metrics
 
     # #
     # Read list of interacting pairs
@@ -115,15 +117,15 @@ class ReadCatrapid(object):
         if len( wanted_proteins) > 0: proteinFilterBool = 1
         else: proteinFilterBool = 0
 
-
         # approach: initialise protein, and sum scores throughout the file, and keep count of protein occurrences, then in the end calculate mean
         proteinInteractions = {} # key -> protein ID, value -> sum of scores
         proteinInteractionsCounter = {} # key -> protein ID, value -> number of times protein appears
+        proteinInteractionsMean = {}
+        # approach: initialise protein, create a dictionary for each protein which contains the frequencies of each score instead of list of scores, in order to save memory
+        proteinScoreFrequencies = {} # key -> protein ID, value -> dict. key -> score, value -> frequency of score
 
         lineCount = 0
         outFileCount = 1
-
-        inFileName = os.path.basename( self.catRAPIDFile)
 
         # variable which will store text to be written into files        
         interactionText = ""
@@ -183,6 +185,13 @@ class ReadCatrapid(object):
                 if protID not in proteinInteractions:
                     proteinInteractions[ protID] = 0
                     proteinInteractionsCounter[ protID] = 0
+                    proteinScoreFrequencies[ protID] = {}
+
+                # producing dictionary with score frequencies for a protein
+                if self.extraMetrics:
+                    if score not in proteinScoreFrequencies[ protID]:
+                        proteinScoreFrequencies[ protID][ score] = 0
+                    proteinScoreFrequencies[ protID][ score] += 1
  
                 proteinInteractions[ protID] += score
                 proteinInteractionsCounter[ protID] += 1
@@ -191,22 +200,52 @@ class ReadCatrapid(object):
             with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                 outFile.write( interactionText)
 
-            # write file and dictionary with mean interaction score per protein
-            proteinInteractionsMean = {} # key -> protein ID, value -> mean score
-            with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
-                outFile.write("uniprotac\tmean_score\tcount\n")
-                for prot in proteinInteractions:
-                    # mean calculated by sum of scores divided by frequency
-                    count = float( proteinInteractionsCounter[ prot])
-                    mean = proteinInteractions[ prot] / count
-                    proteinInteractionsMean[ prot] = mean
-                    outFile.write( "%s\t%s\t%s\n" % (prot, mean, count) )
+
+            # write protein file with mean, in case no extra metrics are wanted
+            if self.extraMetrics == 0: 
+                # write file and dictionary with mean interaction score per protein
+                proteinInteractionsMean = {} # key -> protein ID, value -> mean score
+                with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
+
+                    outFile.write("uniprotac\tmean_score\tcount\n")
+                    
+                    for prot in proteinInteractions:
+                        # mean calculated by sum of scores divided by frequency
+                        count = float( proteinInteractionsCounter[ prot])
+                        mean = proteinInteractions[ prot] / count
+                        proteinInteractionsMean[ prot] = mean
+                        outFile.write( "%s\t%s\t%s\n" % (prot, mean, count) )
 
         print "read_catrapid_file: read %s lines.." % lineCount
 
-        assert len( proteinInteractions) == len( proteinInteractionsCounter) == len( proteinInteractionsMean)
+        #=======================================================================
+        # Write output file with extra metrics
+        #=======================================================================
 
+        if self.extraMetrics:
+            with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
+
+                # change header here
+                outFile.write("uniprotac\tmean_score\tmedian_score\tstd_score\tcount\n")
+
+                # calculate protein score metrics
+                for prot in proteinScoreFrequencies:
+                    # recreate all original values for a protein
+                    listOfScores = [ scoreVal for scoreVal in proteinScoreFrequencies[ prot] for i in range( proteinScoreFrequencies[ prot][ scoreVal])]
+    
+                    mean = np.mean( listOfScores)
+                    median = np.median( listOfScores)   
+                    std = np.std( listOfScores)
+                    #meanScore = sum( listOfScores) / len( listOfScores) 
+    
+                    # number of RNAs above filter
+                    count = float( proteinInteractionsCounter[ prot])
+                    
+                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, std, count) )
+
+        
         return proteinInteractionsMean, proteinInteractionsCounter
+
 
     # run functions in proper order
     def run(self):
@@ -247,12 +286,15 @@ if __name__ == "__main__":
                          default = "", help='File with list of Proteins we want to keep, one per line.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
+    parser.add_argument('--extraMetrics', metavar='extraMetrics', type=int,
+                         default = 0, help='For the average per protein file, whether to write extra metrics besides mean. This may require large amounts of memory. (~10 Gb for 100 M interactions).')   
 
     #gets the arguments
     args = parser.parse_args( ) 
 
     # init
-    readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, args.rnaFilterFile, args.proteinFilterFile, args.batchSize)
+    readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
+                                 args.rnaFilterFile, args.proteinFilterFile, args.batchSize, args.extraMetrics)
 
     readCatrapid.run()
 
