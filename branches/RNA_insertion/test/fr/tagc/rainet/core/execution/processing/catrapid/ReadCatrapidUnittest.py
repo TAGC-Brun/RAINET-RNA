@@ -27,11 +27,12 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.rnaFilterFile = "test_input/rna_filter_file.txt"
         self.proteinFilterFile = "test_input/protein_filter_file.txt"
         self.batchSize = 1000000
+        self.extraMetrics = 0
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
-        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, self.rnaFilterFile, self.proteinFilterFile, self.batchSize)
+        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, self.rnaFilterFile, self.proteinFilterFile, self.batchSize, self.extraMetrics)
             
 
     # #
@@ -160,14 +161,30 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         
 
+    # #
+    def test_extra_metrics(self):
+
+        print "| test_extra_metrics | "
+
+        # change tag to calculate extra metrics
+        self.run.extraMetrics = 1
+
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), set(), set())
+
+        with open(self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "r") as out:                
+            with open(self.expectedFolder + "/extraMetrics" + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+        # cp /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_output/* /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_expected/extraMetrics
+
     
-#     # #
-#     # Runs after each test
-#     def tearDown(self):
-#                   
-#         # Wipe output folder
-#         cmd = "rm %s/*" % self.outputFolder
-#         os.system(cmd)
+    # #
+    # Runs after each test
+    def tearDown(self):
+                   
+        # Wipe output folder
+        cmd = "rm %s/*" % self.outputFolder
+        os.system(cmd)
           
       
 
