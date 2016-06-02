@@ -30,17 +30,18 @@ class RBPDomainScore(object):
     XREF_SOURCE_DB = "Ensembl_PRO"
     UNIPROT_OUTPUT_FILE = "/proteins_uniprotac.tsv"
     ANNOTATION_OUTPUT_FILE = "/annotated_interactions.tsv"
-    NO_ANNOTATION_TAG = "Non-RBP"
-    SEVERAL_ANNOTATION_TAG = "several_annotations"
+    NO_ANNOTATION_TAG = "Non-binding"
+    SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
        
-    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column):
+    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column):
 
-        self.domainAnnotationFile = domain_annotation_file
+        self.annotationFile = domain_annotation_file
         self.catRAPIDFile = catrapid_file
         self.rainetDB = rainet_db
         self.outputFolder = output_folder
         self.maskMultiple = mask_multiple
         self.annotationColumn = annotation_column
+        self.idColumn = id_column
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -98,7 +99,7 @@ class RBPDomainScore(object):
         # read file
         #=======================================================================
 
-        with open( self.domainAnnotationFile, "r") as inFile:
+        with open( self.annotationFile, "r") as inFile:
             # skip header
             inFile.readline()
 
@@ -110,8 +111,8 @@ class RBPDomainScore(object):
                 
                 spl = line.split( "\t")
                 
-                pepID = spl[1]
-
+                pepID = spl[ self.idColumn]
+                
                 # select column to use as annotation                
                 annotationItem = spl[ self.annotationColumn]
                                 
@@ -135,6 +136,8 @@ class RBPDomainScore(object):
                     for protID in protIDs:
                         if protID not in proteinAnnotation:
                             proteinAnnotation[ protID] = set()
+#                         else:
+#                             print "read_domain_annotation_file: duplicate annotation line for same protein.", protID, line
                         proteinAnnotation[ protID].add( cla)
 
             print "read_domain_annotation_file: number of entries read:", lineCounter
@@ -221,7 +224,7 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser(description= DESC_COMMENT) 
     
         # positional args
-        parser.add_argument('domainAnnotationFile', metavar='domainAnnotationFile', type=str,
+        parser.add_argument('annotationFile', metavar='annotationFile', type=str,
                              help='TSV file with domain annotation per protein. E.g. gene id prot id pfam id domain name     domain class.')
         parser.add_argument('catRAPIDFile', metavar='catRAPIDFile', type=str,
                              help='proteinInteractions.tsv output file from ReadCatrapid.py. E.g. uniprotac\tmean_score')
@@ -231,6 +234,8 @@ if __name__ == "__main__":
                              help='Whether to mask protein annotations when having more than one annotation (val = 1), or display all annotations separated by comma (val = 0). (default = 1).')
         parser.add_argument('--annotationColumn', metavar='annotationColumn', type=int, default = 4,
                              help='Which column in the input annotation file to process. 0-based.')
+        parser.add_argument('--idColumn', metavar='idColumn', type=int, default = 1,
+                             help='Which column in the input annotation file to processed as protein ID. 0-based.')
 
 #         parser.add_argument('--domainRegex', metavar='domainRegex', type=str, default = "*",
 #                              help=' E.g. RRM_*, KH_*, zf-CCCH*, zf-CCHC*, S1, PWI, PUF, SAM_*.')
@@ -239,7 +244,8 @@ if __name__ == "__main__":
         args = parser.parse_args( ) 
     
         # init
-        run = RBPDomainScore( args.domainAnnotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, args.maskMultiple, args.annotationColumn)
+        run = RBPDomainScore( args.annotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, 
+                              args.maskMultiple, args.annotationColumn, args.idColumn)
     
         # get cross references from rainet DB
         Timer.get_instance().step( "Read protein cross references..")    
