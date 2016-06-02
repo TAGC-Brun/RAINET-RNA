@@ -13,9 +13,13 @@ give.n <- function(x){   return(c(y = -10, label = length(x))) }
 # inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TFs/annotated_interactions.tsv"
 # inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TFs/annotated_interactions.tsv"
 
-# added TFs, cutoff 50
-inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TF_cutoff15/annotated_interactions.tsv"
-inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TF_cutoff50/annotated_interactions.tsv"
+# # added TFs, cutoff 50
+# inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TF_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TF_cutoff50/annotated_interactions.tsv"
+
+# target
+inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/target_TF/annotated_interactions.tsv"
+inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/target_TF/annotated_interactions.tsv"
 
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
@@ -115,3 +119,17 @@ summary( mRNANonRBP)
 ks.test(mRNAClassical, mRNANonClassical, alternative = c("two.sided"))
 ks.test(mRNAClassical, mRNANonRBP, alternative = c("two.sided"))
 
+
+
+#### putative RNA target ####
+
+mRNAmRNA = dataset2$metricToUse[ dataset2$annotation == "mRNA"]
+mRNAsnRNA = dataset2$metricToUse[ dataset2$annotation == "snRNA"]
+mRNANonBinding = dataset2$metricToUse[ dataset2$annotation == "Non-binding"]
+
+ks.test(mRNAmRNA, mRNANonBinding, alternative = c("two.sided"))
+ks.test(mRNAsnRNA, mRNANonBinding, alternative = c("two.sided"))
+
+lncRNAsnRNA = dataset1$metricToUse[ dataset1$annotation == "snRNA"]
+lncRNANonBinding = dataset1$metricToUse[ dataset2$annotation == "Non-binding"]
+ks.test(lncRNAsnRNA, lncRNANonBinding, alternative = c("two.sided"))
