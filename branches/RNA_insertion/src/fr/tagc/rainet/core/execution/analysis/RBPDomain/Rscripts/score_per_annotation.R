@@ -13,19 +13,24 @@ give.n <- function(x){   return(c(y = -10, label = length(x))) }
 # inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TFs/annotated_interactions.tsv"
 # inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TFs/annotated_interactions.tsv"
 
-# # added TFs, cutoff 50
+# # added TFs, cutoff
 # inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TF_cutoff15/annotated_interactions.tsv"
 # inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TF_cutoff50/annotated_interactions.tsv"
+
+# # target, cutoff
+# inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/target_TF_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/target_TF_cutoff50/annotated_interactions.tsv"
 
 # target
 inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/target_TF/annotated_interactions.tsv"
 inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/target_TF/annotated_interactions.tsv"
 
+
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ## Choose here which metric to use (name of column to use)
-metricToUse = "count"
+metricToUse = "mean_score"
 
 #adding type before merging datasets
 dataset1$type = "lncRNA"
@@ -90,6 +95,7 @@ plt5 <- ggplot(data = mergedDataset, aes_string(x = "annotation", y = metricToUs
   coord_flip() + 
   theme_minimal()
 plt5
+
 
 ####################
 ## Statistical tests
