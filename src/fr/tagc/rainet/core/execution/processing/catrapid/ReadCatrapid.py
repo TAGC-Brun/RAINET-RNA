@@ -287,7 +287,7 @@ if __name__ == "__main__":
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
     parser.add_argument('--extraMetrics', metavar='extraMetrics', type=int,
-                         default = 0, help='For the average per protein file, whether to write extra metrics besides mean. This may require large amounts of memory. (~10 Gb for 100 M interactions).')   
+                         default = 0, help='For the average per protein file, whether to write extra metrics besides mean. This may require large amounts of memory. (~10 Gb for 100 M interactions, ~17Gb for 500 M).')   
 
     #gets the arguments
     args = parser.parse_args( ) 
