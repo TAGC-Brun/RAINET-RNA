@@ -28,13 +28,13 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.proteinFilterFile = "test_input/protein_filter_file.txt"
         self.writeInteractions = 1
         self.batchSize = 1000000
-        self.extraMetrics = 0
+        # self.extraMetrics = 1
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
         self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
-                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize, self.extraMetrics)
+                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize )
             
 
     # #
@@ -45,12 +45,12 @@ class ReadCatrapidUnittest(unittest.TestCase):
         wantedPairs = self.run.read_interaction_filter_file( )
 
         proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( wantedPairs, set(), set())
-        
+                
         # diogo@diogo-tower:~/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_input$ grep Q7Z419 * | grep ENST00000544329
         # catRAPID_interactions_test.txt:sp|Q7Z419|R144B_HUMAN ENST00000544329    17.96    0.47    0.00
         # filter_file.txt:Q7Z419    ENST00000544329
 
-        self.assertTrue( proteinInteractionsMean["Q7Z419"] == 17.96)
+        self.assertTrue( round(proteinInteractionsMean["Q7Z419"],1) == 18.0)
 
         ## Check if mean is well calculated
 
@@ -60,7 +60,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
         # filter_file.txt:Q7Z5L9    ENST00000544591
 
         self.assertTrue( proteinInteractionsCounter["Q7Z5L9"] == 2)
-        self.assertTrue( proteinInteractionsMean["Q7Z5L9"] == 26.43)
+        self.assertTrue( round(proteinInteractionsMean["Q7Z5L9"],1) == 26.4)
 
 
     # #
@@ -103,7 +103,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
         # there is 1 interactions above 200
 
         self.assertTrue( proteinInteractionsCounter[ "Q7Z569"] == 1) 
-        self.assertTrue( proteinInteractionsMean[ "Q7Z569"] == 258.29) 
+        self.assertTrue( round(proteinInteractionsMean[ "Q7Z569"], 1) == 258.3) 
 
         # check if output files are correct
         with open(self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + "1.tsv", "r") as out:                
@@ -183,7 +183,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
     # #
     # Runs after each test
     def tearDown(self):
-                   
+                    
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
