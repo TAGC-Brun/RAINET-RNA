@@ -30,7 +30,7 @@ class ReadCatrapid(object):
     STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     
-    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, batch_size, extra_metrics):
+    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, write_interactions, batch_size, extra_metrics):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -38,6 +38,7 @@ class ReadCatrapid(object):
         self.interactionFilterFile = interaction_filter_file
         self.rnaFilterFile = rna_filter_file
         self.proteinFilterFile = protein_filter_file
+        self.writeInteractions = write_interactions
         self.batchSize = batch_size
         self.extraMetrics = extra_metrics
 
@@ -144,8 +145,10 @@ class ReadCatrapid(object):
                     # print len( interactionText), sys.getsizeof( interactionText) / 1000000.0 
 
                     # dump dictionaries into files
-                    with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
-                        outFile.write( interactionText)
+                    if self.writeInteractions:
+                        with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
+                            outFile.write( interactionText)
+                    
                     interactionText = ""
                     
                     outFileCount += 1
@@ -196,9 +199,11 @@ class ReadCatrapid(object):
                 proteinInteractions[ protID] += score
                 proteinInteractionsCounter[ protID] += 1
 
+
             # write remaining interactions into file
-            with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
-                outFile.write( interactionText)
+            if self.writeInteractions:
+                with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
+                    outFile.write( interactionText)
 
 
             # write protein file with mean, in case no extra metrics are wanted
@@ -284,6 +289,8 @@ if __name__ == "__main__":
                          default = "", help='File with list of RNAs we want to keep, one per line.')
     parser.add_argument('--proteinFilterFile', metavar='proteinFilterFile', type=str,
                          default = "", help='File with list of Proteins we want to keep, one per line.')
+    parser.add_argument('--writeInteractions', metavar='writeInteractions', type=int,
+                         default = 1, help='Whether to write interaction file after the filters.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
     parser.add_argument('--extraMetrics', metavar='extraMetrics', type=int,
@@ -294,7 +301,7 @@ if __name__ == "__main__":
 
     # init
     readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
-                                 args.rnaFilterFile, args.proteinFilterFile, args.batchSize, args.extraMetrics)
+                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, args.extraMetrics)
 
     readCatrapid.run()
 
