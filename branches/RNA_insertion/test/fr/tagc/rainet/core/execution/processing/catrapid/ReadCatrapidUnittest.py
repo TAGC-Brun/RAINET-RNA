@@ -26,13 +26,15 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.interactionFilterFile = "test_input/filter_file.txt"
         self.rnaFilterFile = "test_input/rna_filter_file.txt"
         self.proteinFilterFile = "test_input/protein_filter_file.txt"
+        self.writeInteractions = 1
         self.batchSize = 1000000
         self.extraMetrics = 0
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
-        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, self.rnaFilterFile, self.proteinFilterFile, self.batchSize, self.extraMetrics)
+        self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
+                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize, self.extraMetrics)
             
 
     # #
