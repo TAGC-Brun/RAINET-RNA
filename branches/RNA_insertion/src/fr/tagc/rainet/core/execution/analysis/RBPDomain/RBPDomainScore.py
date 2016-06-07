@@ -14,13 +14,13 @@ from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 #===============================================================================
 # Started 22-May-2016 
 # Diogo Ribeiro
-DESC_COMMENT = "Script to attribute nucleic-acid binding domains to proteins of a processed catrapid file."
+DESC_COMMENT = "Script to attribute annotations to proteins of a processed catrapid file."
 SCRIPT_NAME = "RBPDomainScore.py"
 #===============================================================================
 
 #===============================================================================
 # General plan:
-# 1) Read file with protein domain annotation
+# 1) Read file with protein domain or other annotation
 # 2) Read processed catRAPID file, add annotation
 #===============================================================================
 
@@ -33,7 +33,7 @@ class RBPDomainScore(object):
     NO_ANNOTATION_TAG = "Non-binding"
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
        
-    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column):
+    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, extra_annotation):
 
         self.annotationFile = domain_annotation_file
         self.catRAPIDFile = catrapid_file
@@ -42,10 +42,15 @@ class RBPDomainScore(object):
         self.maskMultiple = mask_multiple
         self.annotationColumn = annotation_column
         self.idColumn = id_column
+        self.extraAnnotation = extra_annotation
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
         self.sql_session = SQLManager.get_instance().get_session()
+
+        # make output folder
+        if not os.path.exists( self.outputFolder):
+            os.mkdir( self.outputFolder)
 
 
     # #
@@ -148,6 +153,41 @@ class RBPDomainScore(object):
 
         return proteinAnnotation
 
+
+    # #
+    # Read extra list of annotations per protein uniprotac. Without using cross references.
+    # @return proteinAnnotation, with new annotations if case that input file was provided
+    # Note: currently not writing into UNIPROT_OUTPUT_FILE.
+    def read_extra_annotation_file(self, proteinAnnotation):
+
+        # check if extra annotation file provided
+        if self.extraAnnotation != "":
+            counter = 0
+            countNewProt = 0
+            with open( self.extraAnnotation, "r") as inFile:
+                for line in inFile:
+                    spl = line.strip().split("\t")
+                    uniprotac, annot = spl[0], spl[1]
+                    
+                    # add information to already existing proteins, or create new one                    
+                    if uniprotac not in proteinAnnotation:
+                        proteinAnnotation[ uniprotac] = set()
+                        countNewProt += 1
+
+                    proteinAnnotation[ uniprotac].add( annot)
+                    counter += 1
+                    
+            print "read_extra_annotation_file: number of annotations added with extra file:", counter
+            print "read_extra_annotation_file: number of new proteins added with extra file:", countNewProt
+                        
+            return proteinAnnotation
+        
+        # if no file provided return object without changes
+        else:
+            return proteinAnnotation
+
+
+
     # #
     # Read processed catRAPID file and write output, with added annotation
     def read_catrapid_file( self, proteinAnnotation):
@@ -236,7 +276,8 @@ if __name__ == "__main__":
                              help='Which column in the input annotation file to process. 0-based.')
         parser.add_argument('--idColumn', metavar='idColumn', type=int, default = 1,
                              help='Which column in the input annotation file to processed as protein ID. 0-based.')
-
+        parser.add_argument('--extraAnnotation', metavar='extraAnnotation', type=str, default = "",
+                             help='File with extended annotation. Column1: uniprotAc, Column2: annotation. No header.')
 #         parser.add_argument('--domainRegex', metavar='domainRegex', type=str, default = "*",
 #                              help=' E.g. RRM_*, KH_*, zf-CCCH*, zf-CCHC*, S1, PWI, PUF, SAM_*.')
            
@@ -245,15 +286,18 @@ if __name__ == "__main__":
     
         # init
         run = RBPDomainScore( args.annotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, 
-                              args.maskMultiple, args.annotationColumn, args.idColumn)
+                              args.maskMultiple, args.annotationColumn, args.idColumn, args.extraAnnotation)
     
         # get cross references from rainet DB
         Timer.get_instance().step( "Read protein cross references..")    
         uniprotACs, protCrossReference = run.protein_cross_references()
     
         # read domain annotations file
-        Timer.get_instance().step( "Reading protein domain annotations..")    
+        Timer.get_instance().step( "Reading protein annotations..")    
         proteinAnnotation = run.read_domain_annotation_file( protCrossReference)
+
+        # read extra annotations file, if provided
+        proteinAnnotation = run.read_extra_annotation_file( proteinAnnotation)      
 
         # read catrapid file and write output
         Timer.get_instance().step( "Reading catrapid interaction file..")    
