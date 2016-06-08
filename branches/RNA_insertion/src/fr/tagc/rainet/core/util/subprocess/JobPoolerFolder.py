@@ -20,13 +20,16 @@ def run_command_list_args( argString):
     
     argList = argString.split( "||")
         
-    cmd = "cd %s; %s" % ( argList[0], argList[1]) 
+    cmd = "sleep %s; cd %s; %s" % ( argList[0], argList[1], argList[2]) 
     # TODO: use subprocess? SubprocessUtil.run_command( command)
+    
     os.system( cmd)
 
     return cmd
  
 class JobPoolerFolder( object):
+    
+    SLEEP_TIME = 120
     
     def __init__(self, input_folder, command_string, num_threads):
 
@@ -43,8 +46,17 @@ class JobPoolerFolder( object):
         # get list of folders to be processed
         foldersToProcess = sorted( glob.glob( self.inputFolder + "/*") )
         
-        # add script path before each folder, separeted by "|"
-        runList = [ "||".join( [folder, self.commandString] ) for folder in foldersToProcess]
+        # create sleep times list
+        # purpose is to have the first jobs start at different times, so that they get initially defased.
+        sleepTimes = {}
+        for (i, folder) in enumerate( foldersToProcess ):
+            if i <= self.numThreads:
+                sleepTimes[ folder] = str( i * JobPoolerFolder.SLEEP_TIME)
+            else:
+                sleepTimes[ folder] = str( 0)
+
+        # create list of jobs, add arguments separated by "||"
+        runList = [ "||".join( [ sleepTimes[ folder], folder, self.commandString] ) for folder in foldersToProcess]
         
         # initialise pool    
         pool = Pool( self.numThreads)
