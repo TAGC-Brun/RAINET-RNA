@@ -27,6 +27,9 @@ PREPARE_FOLDER = "/prepared_folders"
 def splitFile( library_file, batch_size, output_folder):
 
     outPath = output_folder + SPLIT_FILES_FOLDER
+
+    if not os.path.exists( output_folder):
+        os.mkdir( output_folder)
     
     if not os.path.exists( outPath):
         os.mkdir( outPath)
