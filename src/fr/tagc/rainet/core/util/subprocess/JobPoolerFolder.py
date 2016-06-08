@@ -22,14 +22,14 @@ def run_command_list_args( argString):
         
     cmd = "sleep %s; cd %s; %s" % ( argList[0], argList[1], argList[2]) 
     # TODO: use subprocess? SubprocessUtil.run_command( command)
-    
+
     os.system( cmd)
 
     return cmd
  
 class JobPoolerFolder( object):
     
-    SLEEP_TIME = 120
+    SLEEP_TIME = 60
     
     def __init__(self, input_folder, command_string, num_threads):
 
@@ -44,13 +44,13 @@ class JobPoolerFolder( object):
     def parallel( self):
                 
         # get list of folders to be processed
-        foldersToProcess = sorted( glob.glob( self.inputFolder + "/*") )
+        foldersToProcess =  sorted( glob.glob( self.inputFolder + "/*"))
         
         # create sleep times list
         # purpose is to have the first jobs start at different times, so that they get initially defased.
         sleepTimes = {}
         for (i, folder) in enumerate( foldersToProcess ):
-            if i <= self.numThreads:
+            if i < self.numThreads:
                 sleepTimes[ folder] = str( i * JobPoolerFolder.SLEEP_TIME)
             else:
                 sleepTimes[ folder] = str( 0)
@@ -60,12 +60,12 @@ class JobPoolerFolder( object):
         
         # initialise pool    
         pool = Pool( self.numThreads)
-            
+             
         # note that second argument needs to be iterable, and a job will be launched for each        
-        results = pool.map( run_command_list_args, runList)
+        results = pool.map( run_command_list_args, runList, chunksize = 1)
         pool.close()
         pool.join()
-        
+         
         return results
  
 if __name__ == "__main__":
