@@ -29,15 +29,15 @@ def run_command_list_args( argString):
  
 class JobPoolerFolder( object):
     
-    SLEEP_TIME = 60
-    
-    def __init__(self, input_folder, command_string, num_threads):
+    def __init__(self, input_folder, command_string, num_threads, sleep_time):
 
         self.inputFolder = input_folder
         
         self.commandString = command_string
 
         self.numThreads = num_threads
+        
+        self.sleepTime = sleep_time
         
     # #
     # Function spawning jobs in a pool
@@ -51,7 +51,7 @@ class JobPoolerFolder( object):
         sleepTimes = {}
         for (i, folder) in enumerate( foldersToProcess ):
             if i < self.numThreads:
-                sleepTimes[ folder] = str( i * JobPoolerFolder.SLEEP_TIME)
+                sleepTimes[ folder] = str( i * self.sleepTime)
             else:
                 sleepTimes[ folder] = str( 0)
 
@@ -87,11 +87,13 @@ if __name__ == "__main__":
     parser.add_argument('numThreads', metavar='numThreads', type=int,
                          help='Number of threads to use.')
 #     parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
+    parser.add_argument('--sleepTime', metavar='sleepTime', type=int, default = 120,
+                         help='Sleep timer for the start jobs, so that jobs get dephased from each other.')
     
     #gets the arguments
     args = parser.parse_args( ) 
 
-    pooler = JobPoolerFolder( args.inputFolder, args.commandString, args.numThreads)
+    pooler = JobPoolerFolder( args.inputFolder, args.commandString, args.numThreads, args.sleepTime)
 
     results = pooler.parallel( )
     
