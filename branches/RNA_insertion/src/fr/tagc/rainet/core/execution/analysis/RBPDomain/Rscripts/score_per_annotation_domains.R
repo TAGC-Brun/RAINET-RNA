@@ -80,32 +80,47 @@ plt3
 ## Statistical tests
 ####################
 
-#test lncRNA domains
-lncRNARRM_1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "RRM_1"]
-lncRNALSM = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "LSM"]
-lncRNANonRBP = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "Non-binding"]
-summary( lncRNARRM_1)
-summary( lncRNALSM)
-summary( lncRNANonRBP)
+# #test lncRNA domains
+# lncRNARRM_1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "RRM_1"]
+# lncRNALSM = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "LSM"]
+# lncRNANonRBP = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "Non-binding"]
+# summary( lncRNARRM_1)
+# summary( lncRNALSM)
+# summary( lncRNANonRBP)
+# 
+# ks.test(lncRNARRM_1, lncRNANonRBP, alternative = c("two.sided"))
+# ks.test(lncRNALSM, lncRNANonRBP, alternative = c("two.sided"))
+# 
+# #test mRNA domains
+# mRNARRM_1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "RRM_1"]
+# mRNALSM = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "LSM"]
+# mRNANonRBP = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "Non-binding"]
+# summary( mRNARRM_1)
+# summary( mRNALSM)
+# summary( mRNANonRBP)
+# 
+# ks.test(mRNARRM_1, mRNANonRBP, alternative = c("two.sided"))
+# ks.test(mRNALSM, mRNANonRBP, alternative = c("two.sided"))
+# 
+# # this test is for normalised set
+# lncRNAMH2MH1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "MH2,MH1"]
+# mRNAMH2MH1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "MH2,MH1"]
+# ks.test(lncRNAMH2MH1, mRNAMH2MH1, alternative = c("two.sided"))
 
-ks.test(lncRNARRM_1, lncRNANonRBP, alternative = c("two.sided"))
-ks.test(lncRNALSM, lncRNANonRBP, alternative = c("two.sided"))
+#### Perform all vs all test ####
 
-#test mRNA domains
-mRNARRM_1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "RRM_1"]
-mRNALSM = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "LSM"]
-mRNANonRBP = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "Non-binding"]
-summary( mRNARRM_1)
-summary( mRNALSM)
-summary( mRNANonRBP)
+categories = unique(dataset1$annotation)
 
-ks.test(mRNARRM_1, mRNANonRBP, alternative = c("two.sided"))
-ks.test(mRNALSM, mRNANonRBP, alternative = c("two.sided"))
+for (i in categories){
+  for (j in categories)
+    if (i != j){
+      set1 = dataset1$metricToUse[ dataset1$annotation == i] 
+      set2 = dataset1$metricToUse[ dataset1$annotation == j] 
+      print(paste(i, " ", j))
+      print(paste("pval:", ks.test(set1, set2, alternative = c("two.sided"))$p.value) )
+    }
+}
 
-# this test is for normalised set
-lncRNAMH2MH1 = dataset1TopDomains$mean_score[ dataset1TopDomains$annotation == "MH2,MH1"]
-mRNAMH2MH1 = dataset2TopDomains$mean_score[ dataset2TopDomains$annotation == "MH2,MH1"]
-ks.test(lncRNAMH2MH1, mRNAMH2MH1, alternative = c("two.sided"))
 
 ####################
 ## Number of RNAs above (count)
