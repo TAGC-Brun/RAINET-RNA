@@ -36,6 +36,7 @@ class ReadCatrapid(object):
     STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
+    ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
     
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, write_interactions, batch_size):
 
@@ -138,11 +139,12 @@ class ReadCatrapid(object):
         proteinInteractionsMean = {}
         # approach2: initialise protein, create a dictionary for each protein which contains the frequencies of each score instead of list of scores, in order to save memory
         proteinScoreFrequencies = {} # key -> protein ID, value -> dict. key -> score, value -> frequency of score
+        allProtSet = set()
 
         ### RNA containers ####
         # approach: initialise RNA, create a dictionary for each RNA which contains the frequencies of each score instead of list of scores, in order to save memory
         rnaScoreFrequencies = {} # key -> RNA ID, value -> dict. key -> score, value -> frequency of score
-
+        allRNASet = set()
 
         lineCount = 0
         outFileCount = 1
@@ -184,6 +186,9 @@ class ReadCatrapid(object):
  
                 pair = "_".join( [protID, rnaID])
                            
+                allRNASet.add( rnaID)
+                allProtSet.add( protID)
+               
                 #### Apply filterings ####     
                 # filter by score
                 if score < self.interactionCutoff: 
@@ -241,19 +246,26 @@ class ReadCatrapid(object):
         with open( self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME, "w") as outFile:
             # change header here
             outFile.write("ensembl_id\tmean_score\tmedian_score\tstd_score\tcount\n")
- 
-            for rna in rnaScoreFrequencies:
-                # recreate all original values for a rna
-                listOfScores = [ scoreVal for scoreVal in rnaScoreFrequencies[ rna] for i in range( rnaScoreFrequencies[ rna][ scoreVal])]
- 
-                mean = np.mean( listOfScores)
-                median = np.median( listOfScores)   
-                std = np.std( listOfScores)
- 
-                # number of Proteins/interactions above filter
-                count = len(listOfScores)
-                 
-                outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (rna, mean, median, std, count) )
+
+            for rna in allRNASet:
+                if rna in rnaScoreFrequencies:
+                    # recreate all original values for a rna
+                    listOfScores = [ scoreVal for scoreVal in rnaScoreFrequencies[ rna] for i in range( rnaScoreFrequencies[ rna][ scoreVal])]
+     
+                    mean = np.mean( listOfScores)
+                    median = np.median( listOfScores)   
+                    std = np.std( listOfScores)    
+                    # number of Proteins/interactions above filter
+                    count = len(listOfScores)
+                    
+                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (rna, mean, median, std, count) )
+
+                else:                   
+                    outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( rna, 
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
+
+                     
 
 
         ### Protein file ###
@@ -263,21 +275,29 @@ class ReadCatrapid(object):
             outFile.write("uniprotac\tmean_score\tmedian_score\tstd_score\tcount\n")
 
             # calculate protein score metrics
-            for prot in proteinScoreFrequencies:
-                # recreate all original values for a protein
-                listOfScores = [ scoreVal for scoreVal in proteinScoreFrequencies[ prot] for i in range( proteinScoreFrequencies[ prot][ scoreVal])]
+            for prot in allProtSet:
+                if prot in proteinScoreFrequencies:
 
-                mean = np.mean( listOfScores)
-                median = np.median( listOfScores)   
-                std = np.std( listOfScores)
+                    # recreate all original values for a protein
+                    listOfScores = [ scoreVal for scoreVal in proteinScoreFrequencies[ prot] for i in range( proteinScoreFrequencies[ prot][ scoreVal])]
+    
+                    mean = np.mean( listOfScores)
+                    median = np.median( listOfScores)   
+                    std = np.std( listOfScores)
+                        
+                    # number of RNAs above filter
+                    count = len(listOfScores)
+    
+                    proteinInteractionsMean[ prot] = mean
+                    proteinInteractionsCounter[ prot] = count
                     
-                # number of RNAs above filter
-                count = len(listOfScores)
+                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, std, count) )
+    
+                else:                   
+                    outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( rna, 
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
-                proteinInteractionsMean[ prot] = mean
-                proteinInteractionsCounter[ prot] = count
-                
-                outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, std, count) )
 
 
         return proteinInteractionsMean, proteinInteractionsCounter
