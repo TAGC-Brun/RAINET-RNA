@@ -294,7 +294,7 @@ class ReadCatrapid(object):
                     outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, std, count) )
     
                 else:                   
-                    outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( rna, 
+                    outFile.write( "%s\t%s\t%s\t%s\t%s\n" % ( prot, 
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
