@@ -40,7 +40,7 @@ for line in inFile:
 
 fastaData[ID] = text #for the last iteration
 
-outFile.write( "uniprotac\ttotal_length\tlowercase\tuppercase\tperc_lower\n")
+outFile.write( "uniprotac\ttotal_length\tlowercase\tuppercase\tperc_low\n")
 
 # for each entry, calculate percentage underscore, write to file
 for ID in fastaData:
