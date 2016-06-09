@@ -10,27 +10,43 @@ library(plyr)
 give.n <- function(x){   return(c(y = -10, label = length(x))) }
 
 # # extra metrics, added TFs
-# inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TFs/annotated_interactions.tsv"
-# inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TFs/annotated_interactions.tsv"
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/broad_TFs/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/broad_TFs/annotated_interactions.tsv"
 
 # # added TFs, cutoff
-# inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/broad_TF_cutoff15/annotated_interactions.tsv"
-# inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/broad_TF_cutoff50/annotated_interactions.tsv"
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/broad_TF_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/broad_TF_cutoff50/annotated_interactions.tsv"
 
 # # target, cutoff
-# inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/target_TF_cutoff15/annotated_interactions.tsv"
-# inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/target_TF_cutoff50/annotated_interactions.tsv"
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/target_TF_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/target_TF_cutoff50/annotated_interactions.tsv"
 
-# target
-inputFile1 = "/home/diogo/testing/RBPDomainScore/lncrna/target_TF/annotated_interactions.tsv"
-inputFile2 = "/home/diogo/testing/RBPDomainScore/mrna/target_TF/annotated_interactions.tsv"
+# # target
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/target_TF/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/target_TF/annotated_interactions.tsv"
+
+# # added negatives
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/classical_negatives_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/classical_negatives_cutoff50/annotated_interactions.tsv"
+
+# # added negatives
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/classical_negatives/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/classical_negatives/annotated_interactions.tsv"
+
+# # core RBPs annot
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/core_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/core_cutoff50/annotated_interactions.tsv"
+
+# stawiski control annot
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_cutoff15/annotated_interactions.tsv"
+inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_cutoff50/annotated_interactions.tsv"
 
 
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ## Choose here which metric to use (name of column to use)
-metricToUse = "mean_score"
+metricToUse = "count"
 
 #adding type before merging datasets
 dataset1$type = "lncRNA"
@@ -97,45 +113,22 @@ plt5 <- ggplot(data = mergedDataset, aes_string(x = "annotation", y = metricToUs
 plt5
 
 
-####################
-## Statistical tests
-####################
+# ####################
+# ## Statistical tests
+# ####################
 
-#test lncRNA classical vs non-classical
-lncRNAClassical = dataset1$metricToUse[ dataset1$annotation == "Classical"]
-lncRNANonClassical = dataset1$metricToUse[ dataset1$annotation == "Non-classical"]
-lncRNANonRBP = dataset1$metricToUse[ dataset1$annotation == "Non-binding"]
-summary( lncRNAClassical)
-summary( lncRNANonClassical)
-summary( lncRNANonRBP)
+#### Perform all vs all test ####
 
-ks.test(lncRNAClassical, lncRNANonClassical, alternative = c("two.sided"))
-ks.test(lncRNAClassical, lncRNANonRBP, alternative = c("two.sided"))
+categories = unique(dataset1$annotation)
 
-
-#test lncRNA classical vs non-classical
-mRNAClassical = dataset2$metricToUse[ dataset2$annotation == "Classical"]
-mRNANonClassical = dataset2$metricToUse[ dataset2$annotation == "Non-classical"]
-mRNANonRBP = dataset2$metricToUse[ dataset2$annotation == "Non-binding"]
-
-summary( mRNAClassical)
-summary( mRNANonClassical)
-summary( mRNANonRBP)
-
-ks.test(mRNAClassical, mRNANonClassical, alternative = c("two.sided"))
-ks.test(mRNAClassical, mRNANonRBP, alternative = c("two.sided"))
+for (i in categories){
+  for (j in categories)
+    if (i != j){
+      set1 = dataset1$metricToUse[ dataset1$annotation == i] 
+      set2 = dataset1$metricToUse[ dataset1$annotation == j] 
+      print(paste(i, " ", j))
+      print(paste("pval:", ks.test(set1, set2, alternative = c("two.sided"))$p.value) )
+    }
+}
 
 
-
-#### putative RNA target ####
-
-mRNAmRNA = dataset2$metricToUse[ dataset2$annotation == "mRNA"]
-mRNAsnRNA = dataset2$metricToUse[ dataset2$annotation == "snRNA"]
-mRNANonBinding = dataset2$metricToUse[ dataset2$annotation == "Non-binding"]
-
-ks.test(mRNAmRNA, mRNANonBinding, alternative = c("two.sided"))
-ks.test(mRNAsnRNA, mRNANonBinding, alternative = c("two.sided"))
-
-lncRNAsnRNA = dataset1$metricToUse[ dataset1$annotation == "snRNA"]
-lncRNANonBinding = dataset1$metricToUse[ dataset2$annotation == "Non-binding"]
-ks.test(lncRNAsnRNA, lncRNANonBinding, alternative = c("two.sided"))
