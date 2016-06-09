@@ -18,8 +18,6 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol) {
 
   # get all different categories  
   categories = unique(dataset[[annotationCol]])
-  
-  print (categories)
 
   # loop pairs of categories
   comparisons = c()
@@ -35,11 +33,10 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol) {
 
         if (i != j && !invComparison ){
           comparison = paste(i, " vs ", j)
-          print (comparison)
           set1 = dataset[ dataset[[annotationCol]] == i][[metricToUse]]
           set2 = dataset[ dataset[[annotationCol]] == j][[metricToUse]]
-          means1 = c( means1, mean(set1))
-          means2 = c( means2, mean(set2))
+          means1 = c( means1, mean(set1, na.rm=TRUE))
+          means2 = c( means2, mean(set2, na.rm=TRUE))
           pvalue = ks.test(set1, set2, alternative = c("two.sided"))$p.value
           comparisons = c(comparisons, comparison)
           pvalues = c( pvalues, pvalue)
