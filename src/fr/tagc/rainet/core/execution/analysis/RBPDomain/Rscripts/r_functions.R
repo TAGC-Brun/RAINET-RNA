@@ -10,7 +10,7 @@ give.n <- function(x){   return(c(y = -10, label = length(x))) }
 # arg dataset : a dataframe containing at least two columns, a categorical and a numeric
 # arg metricToUse : column name of numerical data
 # arg annotationCol : column name of categorical data
-all_vs_all_tests <- function( dataset, metricToUse, annotationCol) { 
+all_vs_all_tests <- function( dataset, metricToUse, annotationCol, verbose = 1) { 
   
   # options for outputing values in scientific notation
   options( scipen = 0 )
@@ -52,5 +52,90 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol) {
 
   # create output table  
   statsDF = data.frame( comparisons, means1, means2, pvalues, correctedPvalues)
-  grid.table( statsDF)
+  if (verbose){
+    grid.table( statsDF)
+  }
+  return (statsDF)
 }
+
+
+
+
+# Function to run plots for 
+# arg dataset1 : 
+# arg dataset2 : 
+# arg annotationCol : column name of categorical data
+plot_filt_dataset <- function( dataset1, dataset2, filtAnnot) { 
+  annotCol = "with_low_complexity"
+  
+  # filter dataset by type of annotation  
+  if (filtAnnot == "*"){
+    # no filter
+    filtDataset1 = dataset1
+    filtDataset2 = dataset2 }
+  else{
+    filtDataset1 = dataset1[dataset1$annotation == filtAnnot]
+    filtDataset2 = dataset2[dataset2$annotation == filtAnnot]  }
+  
+  # separate RBPs with or without low complexity region
+  filtDataset1$with_low_complexity = filtDataset1$perc_low > 0
+  filtDataset2$with_low_complexity = filtDataset2$perc_low > 0
+  
+  # table with number of items  
+  table1 = count(filtDataset1, annotCol)
+  names(table1) = c(annotCol,filtAnnot)
+
+  # run external function for all vs all tests
+  table2 = all_vs_all_tests( filtDataset1, metricToUse1, annotCol, verbose = 0)
+  table3 = all_vs_all_tests( filtDataset2, metricToUse1, annotCol, verbose = 0)
+  
+  grid.arrange(
+    tableGrob(table1),
+    tableGrob(table2),
+    tableGrob(table3),
+    nrow=3)
+  
+  # compare distributions between values of with_low_complexity for the two given datasets 
+  plt3 <- ggplot(data = filtDataset1, aes_string(x = metricToUse1, colour = "with_low_complexity") )  +
+    geom_density( size = 1 ) +
+    ggtitle( paste(filtAnnot, filtDataset1$type) ) +
+    theme_minimal()
+  
+  plt4 <- ggplot(data = filtDataset2, aes_string(x = metricToUse1, colour = "with_low_complexity") )  +
+    geom_density( size = 1 ) +
+    ggtitle( paste(filtAnnot, filtDataset2$type) ) +
+    theme_minimal()
+  
+  grid.arrange( plt3, plt4)
+}
+
+
+
+# ##########################################################################################
+# Define a function that offers to automatically layout a list of plots in a single viewport
+multiplot <- function( plots=NULL, ncols=1, nrows) {
+  require(grid)
+  
+  numplots = length( plots)
+  if( numplots > ncols * nrows){
+    stop( "multiplot: To many plots for the numbers of rows and columns:", nrows, "*", ncols)
+  }
+  
+  # Set up the page
+  grid.newpage()
+  pushViewport(viewport( layout = grid.layout( nrows, ncols)))
+  
+  # Make each plot, in the correct location
+  col=1
+  row=1
+  for (i in 1:numplots) {
+    print(plots[[i]], vp = viewport(layout.pos.row = row,
+                                    layout.pos.col = col))
+    col = col + 1
+    if( col > ncols){
+      col = 1
+      row = row + 1
+    }
+  }
+}
+
