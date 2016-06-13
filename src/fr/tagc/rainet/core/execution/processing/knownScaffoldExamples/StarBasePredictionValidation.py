@@ -62,6 +62,10 @@ class StarBasePredictionValidation( object ):
         SQLManager.get_instance().set_DBpath(self.rainetDB)
         self.sql_session = SQLManager.get_instance().get_session()
 
+        # make output folder
+        if not os.path.exists( self.outputFolder):
+            os.mkdir( self.outputFolder)
+
 
     # #
     # Use RAINET DB to retrieve Protein cross references
@@ -315,6 +319,43 @@ class StarBasePredictionValidation( object ):
         return interactingPairs
 
 
+    # #
+    # Read catRAPID file.
+    # Updated for new catRAPID format. No need for cross references.
+    def read_catrapid_file_new(self):
+
+        # E.g.: sp|Q6P6C2|ALKB5_HUMAN ENST00000559683   47.85   0.93    0.23
+
+        interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> score
+        
+        proteinSet = set()
+        
+        with open( self.catrapidFile, "r") as f:
+            for line in f:
+                spl = line.split(" ")
+                
+                proteinID = spl[0].split( "|")[1]
+                spl2 = spl[1].split( "\t")
+                transcriptID = spl2[0]
+                intScore = float( spl2[1])
+                
+                pair = transcriptID + "|" + proteinID
+
+                proteinSet.add(proteinID)
+
+                # add pair to interacting pairs and keep the maximum interaction score
+                if pair not in interactingPairs:
+                    interactingPairs[ pair] = intScore
+                else:
+                    raise RainetException( "Repeated protein-RNA pair: " + line)
+   
+
+        print "read_catrapid_file_new: Number of proteins: ", len( proteinSet)
+        print "read_catrapid_file_new: Number of protein-RNA pairs in catRAPID: ", len( interactingPairs)
+
+        return interactingPairs
+
+
 if __name__ == "__main__":
     
     try:
@@ -340,13 +381,15 @@ if __name__ == "__main__":
         parser.add_argument('--minimumBioComplex', metavar='minimumBioComplex', default = 0, type=int, help='Minimum value of BioComplex to keep starBase interaction.')
         parser.add_argument('--minimumClipReadNumber', metavar='minimumClipReadNumber', default = 0, type=int, help='Minimum value of clipReadNum to keep starBase interaction.')
         parser.add_argument('--catRAPIDmRNA', metavar='catRAPIDmRNA', default = 0, type=int, help='Whether provided catRAPID file is mRNA or lncRNA file. Parser used is different.')
+        parser.add_argument('--newFormat', metavar='newFormat', default = 0, type=int, help='Whether provided catRAPID file is using new format (e.g. with uniprotac instead of ENSP) or not.')
 
         
         #gets the arguments
         args = parser.parse_args( ) 
 
         # Initialise class
-        run = StarBasePredictionValidation( args.catRAPIDFile, args.starBaseFile, args.starBaseProteinConversionFile, args.rainetDB, args.outputFolder, args.minimumBioComplex, args.minimumClipReadNumber)
+        run = StarBasePredictionValidation( args.catRAPIDFile, args.starBaseFile, args.starBaseProteinConversionFile, args.rainetDB, 
+                                            args.outputFolder, args.minimumBioComplex, args.minimumClipReadNumber)
 
         #===============================================================================
         # Run analysis / processing
@@ -372,7 +415,9 @@ if __name__ == "__main__":
 
         Timer.get_instance().step( "reading catRAPID file..")    
 
-        if args.catRAPIDmRNA:
+        if args.newFormat:
+            catrapidPairs = run.read_catrapid_file_new()
+        elif args.catRAPIDmRNA:
             catrapidPairs = run.read_catrapid_file_mRNA()
         else: 
             catrapidPairs = run.read_catrapid_file()
