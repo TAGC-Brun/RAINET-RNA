@@ -47,6 +47,7 @@ dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ## Choose here which metric to use (name of column to use)
 metricToUse = "count"
+annotCol = "annotation"
 
 #adding type before merging datasets
 dataset1$type = "lncRNA"
@@ -119,16 +120,7 @@ plt5
 
 #### Perform all vs all test ####
 
-categories = unique(dataset1$annotation)
-
-for (i in categories){
-  for (j in categories)
-    if (i != j){
-      set1 = dataset1$metricToUse[ dataset1$annotation == i] 
-      set2 = dataset1$metricToUse[ dataset1$annotation == j] 
-      print(paste(i, " ", j))
-      print(paste("pval:", ks.test(set1, set2, alternative = c("two.sided"))$p.value) )
-    }
-}
-
+source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
+all_vs_all_tests( dataset1, metricToUse, annotCol)
+all_vs_all_tests( dataset2, metricToUse, annotCol)
 

@@ -14,7 +14,7 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 # low complexity data for each protein
 lowComplexityData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/low_complexity/segmasker_run/perc_low_complexity.txt"
 
-# catrapid data for each protein
+# # catrapid data for each protein
 # lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_TF_cutoff15/annotated_interactions.tsv"
 # mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_TF_cutoff50/annotated_interactions.tsv"
 
@@ -23,7 +23,7 @@ lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_
 mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_TF/annotated_interactions.tsv"
 
 # Choose here which metric to use (name of column to use)
-metricToUse1 = "mean_score" # for catrapid file
+metricToUse1 = "count" # for catrapid file (mean_score, median_score, std_score, count)
 metricToUse2 = "perc_low" # for low complexity file
 annotCol = "annotation" # protein annotation/ category column
 
@@ -41,6 +41,32 @@ lowcomplexityDataset <- fread(lowComplexityData, stringsAsFactors = FALSE, heade
 #adding type to distinguish datasets
 dataset1$type = "lncRNA"
 dataset2$type = "mRNA"
+
+
+# #### TO REMOVE
+# 
+# ## protein mean score
+# mergedDataset = rbind( dataset1, dataset2)
+# 
+# # density plot by category
+# plt2 <- ggplot(data = mergedDataset, aes(x = mean_score, colour = type) )  +
+#   geom_density( size = 1 ) +
+#   theme_minimal()
+# plt2
+# 
+# # density plot by category
+# plt3 <- ggplot(data = mergedDataset[mergedDataset$annotation == "RBP"], aes(x = mean_score, colour = type) )  +
+#   geom_density( size = 1 ) +
+#   theme_minimal()
+# plt3
+# 
+# grid.arrange(plt2,plt3)
+# 
+# ## rna mean score
+# 
+# 
+# #### TO REMOVE #####
+
 
 # add low complexity data to score/annotation datasets
 dataset1 = merge(x = dataset1, y = lowcomplexityDataset, by = "uniprotac", all.x = TRUE)
@@ -93,33 +119,82 @@ grid.arrange( plt1, plt2)
 all_vs_all_tests( dataset1, metricToUse2, annotCol, verbose = 1)
 
 
+####################
+## Low complexity vs score analysis
+####################
 
-### Proteins with or without low complexity region
-
+### Compare scores of proteins with or without low complexity region
 # plots for each category/annotation of proteins
 
 filtAnnot = "*"
-plot_filt_dataset(dataset1, dataset2, filtAnnot)
+plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 
 filtAnnot = "RBP"
-plot_filt_dataset(dataset1, dataset2, filtAnnot)
+plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 
 filtAnnot = "Non-binding"
-plot_filt_dataset(dataset1, dataset2, filtAnnot)
+plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 
 filtAnnot = "Stawiski_control"
-plot_filt_dataset(dataset1, dataset2, filtAnnot)
+plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 
 
 ### Low terminus analysis
 
-plt1 <- ggplot(data = dataset1, aes(x = metricToUse1, colour = as.factor(low_terminus)) )  +
+# idea of separating lc into 3 categories: no LC, terminus LC, central LC
+
+# plot with difference LC locations
+plt1 <- ggplot(data = dataset1, aes(x = count, colour = as.factor(tag)) )  +
   geom_density( size = 1 ) +
   theme_minimal()
 plt1
 
+# all vs all tests
+grid.newpage()
+all_vs_all_tests( dataset1, "count", "tag", verbose = 1)
 
-# ###  correlation low complexity vs score
+
+## control for protein length influencing results
+# plt1 <- ggplot(data = dataset1, aes_string(x = "total_length", y = "perc_low"))  +
+#   geom_point( shape = 1, alpha=1/4 ) +
+#   geom_smooth( ) +
+#   ggtitle(dataset1$type) +
+#   theme_minimal()
+# plt1
+# 
+
+## correlation between score and % of LC
+
+dataset1Filt = dataset1[dataset1$annotation == "RBP" | dataset1$annotation == "Non-binding" | dataset1$annotation == "TF"]
+
+plt1 <- ggplot(data = dataset1Filt, aes_string(x = "perc_low", y = "count", colour = "annotation"))  +
+  geom_point( shape = 1, alpha=1/4 ) +
+  geom_smooth( ) +
+  ggtitle(dataset1$type) +
+  theme_minimal()
+plt1
+
+
+
+# # instead of using counts, use percentage of transcripts above cutoff
+# dataset1$count_perc = dataset1$count * 100 / 8052
+# dataset2$count_perc = dataset2$count * 100 / 31378
+# 
+# plt1 <- ggplot()  +
+#   geom_point(data = dataset1, aes_string(x = "count_perc", y = "mean_score"), shape = 1, alpha=1/4, colour = "blue" ) +
+#   geom_point(data = dataset2, aes_string(x = "count_perc", y = "mean_score"), shape = 1, alpha=1/4, colour = "red" ) +
+# #  coord_flip() +
+#   theme_minimal()
+# plt1
+# 
+
+
+
+
+###  correlation low complexity vs score
+# 
+# dataset1 = dataset1[dataset1$metricToUse1 != "NA"]
+# dataset1 = dataset1[dataset1$annotation == "RBP"]
 # 
 # correlation = cor(dataset1$metricToUse1, dataset1$metricToUse2, method = "spearman")
 # correlationSign = as.numeric(cor.test(dataset1$metricToUse1, dataset1$metricToUse2, method = "spearman")$p.value)
@@ -131,12 +206,13 @@ plt1
 #   geom_smooth( ) +
 #   ggtitle(dataset1$type) +
 #   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
+# #   coord_flip() +
 #   theme_minimal()
 # plt1
-# 
-# # plt1 <- ggplot(data = dataset1, aes_string(x = metricToUse1, y = metricToUse2) )  +
-# #   stat_bin2d(bins = 20) +
-# #   ggtitle(dataset1$type) +
-# #   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
-# #   theme_minimal()
-# # plt1
+
+# plt1 <- ggplot(data = dataset1, aes_string(x = metricToUse1, y = metricToUse2) )  +
+#   stat_bin2d(bins = 20) +
+#   ggtitle(dataset1$type) +
+#   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
+#   theme_minimal()
+# plt1
