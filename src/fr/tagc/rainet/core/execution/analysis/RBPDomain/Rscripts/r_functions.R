@@ -61,11 +61,12 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol, verbose = 1) 
 
 
 
-# Function to run plots for 
-# arg dataset1 : 
-# arg dataset2 : 
+# Specific function to run plots for low complexity
+# arg dataset1 : data frame, should have a column called annotation
+# arg dataset2 : data frame, should have a column called annotation
 # arg annotationCol : column name of categorical data
-plot_filt_dataset <- function( dataset1, dataset2, filtAnnot) { 
+# arg metricToUse1 : column name of numerical data
+plot_filt_dataset <- function( dataset1, dataset2, filtAnnot, metricToUse1) { 
   annotCol = "with_low_complexity"
   
   # filter dataset by type of annotation  
@@ -77,9 +78,11 @@ plot_filt_dataset <- function( dataset1, dataset2, filtAnnot) {
     filtDataset1 = dataset1[dataset1$annotation == filtAnnot]
     filtDataset2 = dataset2[dataset2$annotation == filtAnnot]  }
   
-  # separate RBPs with or without low complexity region
+#   # separate RBPs with or without low complexity region
   filtDataset1$with_low_complexity = filtDataset1$perc_low > 0
   filtDataset2$with_low_complexity = filtDataset2$perc_low > 0
+#   filtDataset1$with_low_complexity = filtDataset1$total_length > 200 #500
+#   filtDataset2$with_low_complexity = filtDataset2$total_length > 200 #500
   
   # table with number of items  
   table1 = count(filtDataset1, annotCol)
