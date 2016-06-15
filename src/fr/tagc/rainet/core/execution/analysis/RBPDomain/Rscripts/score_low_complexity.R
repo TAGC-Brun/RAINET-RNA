@@ -42,32 +42,6 @@ lowcomplexityDataset <- fread(lowComplexityData, stringsAsFactors = FALSE, heade
 dataset1$type = "lncRNA"
 dataset2$type = "mRNA"
 
-
-# #### TO REMOVE
-# 
-# ## protein mean score
-# mergedDataset = rbind( dataset1, dataset2)
-# 
-# # density plot by category
-# plt2 <- ggplot(data = mergedDataset, aes(x = mean_score, colour = type) )  +
-#   geom_density( size = 1 ) +
-#   theme_minimal()
-# plt2
-# 
-# # density plot by category
-# plt3 <- ggplot(data = mergedDataset[mergedDataset$annotation == "RBP"], aes(x = mean_score, colour = type) )  +
-#   geom_density( size = 1 ) +
-#   theme_minimal()
-# plt3
-# 
-# grid.arrange(plt2,plt3)
-# 
-# ## rna mean score
-# 
-# 
-# #### TO REMOVE #####
-
-
 # add low complexity data to score/annotation datasets
 dataset1 = merge(x = dataset1, y = lowcomplexityDataset, by = "uniprotac", all.x = TRUE)
 dataset2 = merge(x = dataset2, y = lowcomplexityDataset, by = "uniprotac", all.x = TRUE)
@@ -78,15 +52,15 @@ dataset1$metricToUse2 = dataset1[[metricToUse2]]
 dataset2$metricToUse1 = dataset2[[metricToUse1]]
 dataset2$metricToUse2 = dataset2[[metricToUse2]]
 
-# exclude small categories from analysis
-for (i in table$annotation){
-  count = (table$freq.lncRNA[table$annotation == i])  
-  if (count < MINIMUM_CATEGORY_SIZE){
-    dataset1 = dataset1[dataset1$annotation != i]
-    dataset2 = dataset2[dataset2$annotation != i]
-  }
-}
-
+# # exclude small categories from analysis
+# for (i in table$annotation){
+#   count = (table$freq.lncRNA[table$annotation == i])  
+#   if (count < MINIMUM_CATEGORY_SIZE){
+#     dataset1 = dataset1[dataset1$annotation != i]
+#     dataset2 = dataset2[dataset2$annotation != i]
+#   }
+# }
+# 
 # to confirm if both RNA datasets use same protein dataset
 #table1 = merge( count(dataset1, annotCol), count(dataset2, annotCol),all = TRUE, by=annotCol, suffixes = c(".lncRNA", ".mRNA"))
 
