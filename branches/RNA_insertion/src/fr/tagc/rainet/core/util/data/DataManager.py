@@ -34,6 +34,9 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
+from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
+from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
+
 from sqlalchemy.inspection import inspect
 import types
 
