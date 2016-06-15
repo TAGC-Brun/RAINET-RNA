@@ -279,6 +279,28 @@ PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR = "#"
 PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW = "Proteins_not_found"
 PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW = "RNAs_not_found"
 
+# Headers and Parameters for InteractingRNA
+#===============================================================================
+
+INTERACTING_RNA_DEFINITION_PROPERTY = "INTERACTING_RNA_DEFINITION"
+INTERACTING_RNA_DEFINITION_CLASS = "InteractingRNA"
+
+INTERACTING_RNA_DEFINITION_HEADERS = ["ensembl_id"]
+INTERACTING_RNA_DEFINITION_PARAMS = ["ensembl_id"]
+INTERACTING_RNA_DEFINITION_COMMENT_CHAR = "#"
+
+ 
+# Headers and Parameters for InteractingProtein
+#===============================================================================
+ 
+INTERACTING_PROTEIN_DEFINITION_PROPERTY = "INTERACTING_PROTEIN_DEFINITION"
+INTERACTING_PROTEIN_DEFINITION_CLASS = "InteractingProtein"
+ 
+INTERACTING_PROTEIN_DEFINITION_HEADERS = ["uniprotac"]
+INTERACTING_PROTEIN_DEFINITION_PARAMS = ["uniprotac"]
+INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR = "#"
+
+
 #===============================================================================
 #===============================================================================
 # RNA EXPRESSION DATA
