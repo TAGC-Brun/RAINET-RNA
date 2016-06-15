@@ -12,7 +12,7 @@ DB_PATH = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rain
 # Test input files: /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data
 #=======================================================================
 
-TOTAL_NUMBER_TABLES = 31
+TOTAL_NUMBER_TABLES = 33
 TOTAL_COLUMNS_IN_RNA_TABLE = 20
 TOTAL_COLUMNS_IN_RNAXREF_TABLE = 3
 EXAMPLE_MRNA = "ENST00000379749"
@@ -48,14 +48,14 @@ EXAMPLE_MRNA_XREFS = {
                      "refseq_mrna_predicted|XM_005266231"
                     }
 EXAMPLE_MRNA_PEPTIDE = ["ENST00000379749","B1ALD9"]
-EXAMPLE_PRI_RNA = "ENST00000411230"
+EXAMPLE_PRI_RNA = "ENST00000384294"
 EXAMPLE_PRI_RNA_INTERACTIONS = {
-                                "ENSP00000410728" : -7.61,
-                                "ENSP00000450122" : 4.02,
-                                "ENSP00000431009" : 8.68
+                                "Q8WZA6" : -15.22,
+                                "Q96SR6" : -6.74,
                                 }
-EXAMPLE_PRI_RNA_PROTEIN_UNIPROT = {"ENSP00000410728" : "Q5RI18"} 
 NUMBER_TISSUES = 49
+NUMBER_INTERACTING_RNAS = 17
+NUMBER_INTERACTING_PROTEINS = 48
 
 #=======================================================================
 

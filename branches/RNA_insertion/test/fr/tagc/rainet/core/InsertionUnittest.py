@@ -30,6 +30,8 @@ from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInt
 from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
 from fr.tagc.rainet.core.data.Tissue import Tissue
+from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
+from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 
 from UnittestConstants import *
 
@@ -126,16 +128,21 @@ class InsertionUnittest(unittest.TestCase):
         
         for line in response:
             
-            self.assertTrue(line.peptideID in EXAMPLE_PRI_RNA_INTERACTIONS, "asserting that correct interaction exists")
+            self.assertTrue(line.proteinID in EXAMPLE_PRI_RNA_INTERACTIONS, "asserting that correct interaction exists")
             
-            self.assertTrue(line.interactionScore == EXAMPLE_PRI_RNA_INTERACTIONS[line.peptideID], "asserting that interaction score is correct")
-
-            if line.peptideID in EXAMPLE_PRI_RNA_PROTEIN_UNIPROT:
-                self.assertTrue(line.proteinID == EXAMPLE_PRI_RNA_PROTEIN_UNIPROT[line.peptideID],
-                                 "asserting that peptideID is associated to correct proteinID")
-                protein = self.sql_session.query( Protein ).filter(Protein.uniprotAC == line.proteinID).first()
-                self.assertTrue(protein != None,"assert that a given protein in protein-RNA interaction table is present in protein table")
+            self.assertTrue(line.interactionScore == EXAMPLE_PRI_RNA_INTERACTIONS[line.proteinID], "asserting that interaction score is correct")
  
+    # #
+    # Unittest for InteractingRNA and InteractingProtein SQL tables and python objects
+    def testInteractingCatRAPID(self):
+
+        response = self.sql_session.query( InteractingRNA ).filter().all()
+        
+        # checked using overlap between list of RNAs in input file vs RNA_ATTRIBUTE.. file
+        self.assertTrue(len( response) == NUMBER_INTERACTING_RNAS, "query should return correct number of results" )
+
+        response = self.sql_session.query( InteractingProtein ).filter().all()
+        self.assertTrue(len( response) == NUMBER_INTERACTING_PROTEINS, "query should return correct number of results" )
 
     # #
     # Unittest for RNATissueExpression and Tissue SQL table and python objects
