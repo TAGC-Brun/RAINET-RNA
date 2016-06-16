@@ -28,12 +28,14 @@ SCRIPT_NAME = "ReadCatrapid.py"
 # Processing notes:
 # 1) To reduce memory consumption, the score values are rounded to 1 decimal. 
 #    Thus, means are not precise
+# 2) Filters are all applied on top of each other, first by score, then RNA, then protein, then interaction-based.
 #===============================================================================
 
 
 class ReadCatrapid(object):
     
-    STORED_INTERACTIONS_FILENAME = "/storedInteractions_"
+    TEMP_STORED_INTERACTIONS_FILENAME = "/temp_storedInteractions_"
+    STORED_INTERACTIONS_FILENAME = "/storedInteractions.tsv"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
@@ -52,6 +54,9 @@ class ReadCatrapid(object):
         # make output folder
         if not os.path.exists( self.outputFolder):
             os.mkdir( self.outputFolder)
+        else:
+            print "__init__: Output folder already exists: %s" % self.outputFolder
+
 
 
     # #
@@ -167,7 +172,7 @@ class ReadCatrapid(object):
 
                     # dump dictionaries into files
                     if self.writeInteractions:
-                        with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
+                        with open( self.outputFolder + ReadCatrapid.TEMP_STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                             outFile.write( interactionText)
                     
                     interactionText = ""
@@ -231,10 +236,20 @@ class ReadCatrapid(object):
 
             # write remaining interactions into file
             if self.writeInteractions:
-                with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
+                with open( self.outputFolder + ReadCatrapid.TEMP_STORED_INTERACTIONS_FILENAME + str( outFileCount) + ".tsv", "w") as outFile:
                     outFile.write( interactionText)
 
         print "read_catrapid_file: read %s lines.." % lineCount
+
+        # join stored interaction files
+        if self.writeInteractions:
+            # cat files
+            cmd = "cat %s* > %s" % ( self.outputFolder + ReadCatrapid.TEMP_STORED_INTERACTIONS_FILENAME, self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME )
+            os.system( cmd)
+            
+            # remove temp files
+            cmd = "rm %s*" % ( self.outputFolder + ReadCatrapid.TEMP_STORED_INTERACTIONS_FILENAME)
+            os.system( cmd)
 
 
         #=======================================================================
@@ -335,11 +350,11 @@ if __name__ == "__main__":
     parser.add_argument('--interactionCutoff', metavar='interactionCutoff', type=str,
                          default = "OFF", help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
     parser.add_argument('--interactionFilterFile', metavar='interactionFilterFile', type=str,
-                         default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID.')
+                         default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID. No header.')
     parser.add_argument('--rnaFilterFile', metavar='rnaFilterFile', type=str,
-                         default = "", help='File with list of RNAs we want to keep, one per line.')
+                         default = "", help='File with list of RNAs we want to keep, one per line. No header.')
     parser.add_argument('--proteinFilterFile', metavar='proteinFilterFile', type=str,
-                         default = "", help='File with list of Proteins we want to keep, one per line.')
+                         default = "", help='File with list of Proteins we want to keep, one per line. No header.')
     parser.add_argument('--writeInteractions', metavar='writeInteractions', type=int,
                          default = 1, help='Whether to write interaction file after the filters.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
