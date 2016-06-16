@@ -603,7 +603,7 @@ class AnalysisStrategy(ExecutionStrategy):
             # Retrieve previously filtered RNAs and proteins
             selectedRNAs = { str( item.transcriptID) for item in DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW) }
             selectedProteins = { str( item.uniprotAC) for item in DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW) } 
-    
+
             # query interacting RNAs
             queryText = "query( InteractingRNA.transcriptID).all()"
             interactingRNAs = eval('self.sql_session.' +  queryText)
