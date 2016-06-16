@@ -95,80 +95,80 @@ class InsertionStrategy( ExecutionStrategy ):
             # Parse the protein file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_UNIPROT_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.PROTEIN_HEADERS, DataConstants.PROTEIN_CLASS, DataConstants.PROTEIN_PARAMS, None, DataConstants.PROTEIN_COMMENT_CHAR )
-#    
-#             # Parse the protein cross references file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_CROSSREFERENCES_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_CROSS_REFERENCE_HEADERS, DataConstants.PROTEIN_CROSS_REFERENCE_CLASS, DataConstants.PROTEIN_CROSS_REFERENCE_PARAMS, None, DataConstants.PROTEIN_CROSS_REFERENCE_COMMENT_CHAR )
-#    
-#             # Parse the protein isoform file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_ISOFORMS_PROPERTY, True)
-#             self.launch_insertion_Fasta( input_file, DataConstants.ISOFORM_CLASS, DataConstants.ISOFORM_REGULAR_EXPRESSION, DataConstants.ISOFORM_GROUPS, DataConstants.ISOFORM_PARAMS, DataConstants.ISOFORM_PARAMS_VALUE_ALTERNATIVE, DataConstants.ISOFORM_COMMENT_CHAR )
-#                
-#             # Parse the protein domain file of SMART DB
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_DOMAIN_SMART_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, True, DataConstants.PROTEIN_DOMAIN_HEADERS_SMART, DataConstants.PROTEIN_DOMAIN_CLASS, DataConstants.PROTEIN_DOMAIN_PARAM_SMART, DataConstants.PROTEIN_DOMAIN_VALUE_SMART, DataConstants.PROTEIN_DOMAIN_COMMENT_CHAR, "SMART" , False)
-#                
-#             # Parse the protein domain file of PFAM DB
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_DOMAIN_PFAM_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_DOMAIN_HEADERS_PFAM, DataConstants.PROTEIN_DOMAIN_CLASS, DataConstants.PROTEIN_DOMAIN_PARAM_PFAM, DataConstants.PROTEIN_DOMAIN_VALUE_PFAM, DataConstants.PROTEIN_DOMAIN_COMMENT_CHAR, "PFAM", False )
-#    
-#             #===================================================================
-#             # FUNCTION AND PATHWAY ANNOTATIONS
-#             #===================================================================
-#    
-#             # Parse the Gene Ontology file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.GENE_ONTOLOGY_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_Obo( input_file, DataConstants.GENE_ONTOLOGY_CLASS, DataConstants.GENE_ONTOLOGY_ID_TAG, DataConstants.GENE_ONTOLOGY_NAME_TAG, DataConstants.GENE_ONTOLOGY_NAMESPACE_TAG )
-#                
-#             # Parse the Protein Gene Ontology annotation file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.GENE_ONTOLOGY_ANNOTATION_PROPERTY, True)    
-#             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_GO_ANNOTATION_HEADERS, DataConstants.PROTEIN_GO_ANNOTATION_CLASS, DataConstants.PROTEIN_GO_ANNOTATION_PARAMS, None, DataConstants.PROTEIN_GO_ANNOTATION_COMMENT_CHAR )
-#    
-#             # Parse the KEGG pathway file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.KEGG_PATHWAY_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, True, DataConstants.KEGG_PATHWAY_HEADERS, DataConstants.KEGG_PATHWAY_CLASS, DataConstants.KEGG_PATHWAY_PARAMS, None, DataConstants.KEGG_PATHWAY_COMMENT_CHAR )
-#                
-#             # Parse the Protein KEGG Pathway annotation file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.KEGG_PATHWAY_ANNOTATION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, True, DataConstants.KEGG_PATHWAY_ANNOTATION_HEADERS, DataConstants.KEGG_PATHWAY_ANNOTATION_CLASS, DataConstants.KEGG_PATHWAY_ANNOTATION_PARAMS, None, DataConstants.KEGG_PATHWAY_ANNOTATION_COMMENT_CHAR )
-#                
-#             #===================================================================
-#             # REACTOME
-#             #===================================================================
-#    
-#             # Parse the Reactome pathway file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.REACTOME_PATHWAY_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.REACTOME_PATHWAY_HEADERS, DataConstants.REACTOME_PATHWAY_CLASS, DataConstants.REACTOME_PATHWAY_PARAMS, None, DataConstants.REACTOME_PATHWAY_COMMENT_CHAR )
-#                
-#             # Parse the Protein Reactome Pathway annotation file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.REACTOME_PATHWAY_ANNOTATION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.REACTOME_PATHWAY_ANNOTATION_HEADERS, DataConstants.REACTOME_PATHWAY_ANNOTATION_CLASS, DataConstants.REACTOME_PATHWAY_ANNOTATION_PARAMS, None, DataConstants.REACTOME_PATHWAY_ANNOTATION_COMMENT_CHAR )
-#    
-#             #===================================================================
-#             # INTERACTOME
-#             #===================================================================
-#                
-#             # Parse the protein interaction file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_HEADER, DataConstants.INTERACTOME_CLASS, DataConstants.INTERACTOME_PARAMS, None, DataConstants.INTERACTOME_COMMENT_CHAR )
-#                
-#             # Parse the protein interaction network file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_DEFINITION_PROPERTY, True)
-#             ppi_default_values = [None, None, os.path.basename( input_file)]
-#             self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_NETWORK_HEADER, DataConstants.INTERACTOME_NETWORK_CLASS, DataConstants.INTERACTOME_NETWORK_PARAMS, ppi_default_values, DataConstants.INTERACTOME_NETWORK_COMMENT_CHAR )
-#                
-#             # Parse the Network Module file            
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_PARTITION_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_NetworkModule( input_file, DataConstants.INTERACTOME_NETWORK_PARTITION_CLASS, DataConstants.INTERACTOME_NETWORK_PARTITION_CLASS_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_COMMENT_CHAR )
-#                
-#             # Parse the Network Module Annotation file  
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_PROPERTY, True)
-#             self.launch_insertion_NetworkModuleAnnotation( input_file, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS_REGEX, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_PROTEIN_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_ANNOTATION_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_COMMENT_CHAR )
-#                
-#             # Parse the protein redundancy file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PROPERTY, True)
-#             interactome_network_redundancy_definition_value = [None, basename( input_file), None]
-#             self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_HEADERS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_CLASS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PARAMS, interactome_network_redundancy_definition_value, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_COMMENT_CHAR, "Redundancy", False )
+    
+            # Parse the protein cross references file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_CROSSREFERENCES_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_CROSS_REFERENCE_HEADERS, DataConstants.PROTEIN_CROSS_REFERENCE_CLASS, DataConstants.PROTEIN_CROSS_REFERENCE_PARAMS, None, DataConstants.PROTEIN_CROSS_REFERENCE_COMMENT_CHAR )
+    
+            # Parse the protein isoform file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_ISOFORMS_PROPERTY, True)
+            self.launch_insertion_Fasta( input_file, DataConstants.ISOFORM_CLASS, DataConstants.ISOFORM_REGULAR_EXPRESSION, DataConstants.ISOFORM_GROUPS, DataConstants.ISOFORM_PARAMS, DataConstants.ISOFORM_PARAMS_VALUE_ALTERNATIVE, DataConstants.ISOFORM_COMMENT_CHAR )
+                
+            # Parse the protein domain file of SMART DB
+            input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_DOMAIN_SMART_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, True, DataConstants.PROTEIN_DOMAIN_HEADERS_SMART, DataConstants.PROTEIN_DOMAIN_CLASS, DataConstants.PROTEIN_DOMAIN_PARAM_SMART, DataConstants.PROTEIN_DOMAIN_VALUE_SMART, DataConstants.PROTEIN_DOMAIN_COMMENT_CHAR, "SMART" , False)
+                
+            # Parse the protein domain file of PFAM DB
+            input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_DOMAIN_PFAM_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_DOMAIN_HEADERS_PFAM, DataConstants.PROTEIN_DOMAIN_CLASS, DataConstants.PROTEIN_DOMAIN_PARAM_PFAM, DataConstants.PROTEIN_DOMAIN_VALUE_PFAM, DataConstants.PROTEIN_DOMAIN_COMMENT_CHAR, "PFAM", False )
+    
+            #===================================================================
+            # FUNCTION AND PATHWAY ANNOTATIONS
+            #===================================================================
+    
+            # Parse the Gene Ontology file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.GENE_ONTOLOGY_DEFINITION_PROPERTY, True)
+            self.launch_insertion_Obo( input_file, DataConstants.GENE_ONTOLOGY_CLASS, DataConstants.GENE_ONTOLOGY_ID_TAG, DataConstants.GENE_ONTOLOGY_NAME_TAG, DataConstants.GENE_ONTOLOGY_NAMESPACE_TAG )
+                
+            # Parse the Protein Gene Ontology annotation file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.GENE_ONTOLOGY_ANNOTATION_PROPERTY, True)    
+            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_GO_ANNOTATION_HEADERS, DataConstants.PROTEIN_GO_ANNOTATION_CLASS, DataConstants.PROTEIN_GO_ANNOTATION_PARAMS, None, DataConstants.PROTEIN_GO_ANNOTATION_COMMENT_CHAR )
+    
+            # Parse the KEGG pathway file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.KEGG_PATHWAY_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, True, DataConstants.KEGG_PATHWAY_HEADERS, DataConstants.KEGG_PATHWAY_CLASS, DataConstants.KEGG_PATHWAY_PARAMS, None, DataConstants.KEGG_PATHWAY_COMMENT_CHAR )
+                
+            # Parse the Protein KEGG Pathway annotation file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.KEGG_PATHWAY_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, True, DataConstants.KEGG_PATHWAY_ANNOTATION_HEADERS, DataConstants.KEGG_PATHWAY_ANNOTATION_CLASS, DataConstants.KEGG_PATHWAY_ANNOTATION_PARAMS, None, DataConstants.KEGG_PATHWAY_ANNOTATION_COMMENT_CHAR )
+                
+            #===================================================================
+            # REACTOME
+            #===================================================================
+    
+            # Parse the Reactome pathway file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.REACTOME_PATHWAY_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.REACTOME_PATHWAY_HEADERS, DataConstants.REACTOME_PATHWAY_CLASS, DataConstants.REACTOME_PATHWAY_PARAMS, None, DataConstants.REACTOME_PATHWAY_COMMENT_CHAR )
+                
+            # Parse the Protein Reactome Pathway annotation file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.REACTOME_PATHWAY_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.REACTOME_PATHWAY_ANNOTATION_HEADERS, DataConstants.REACTOME_PATHWAY_ANNOTATION_CLASS, DataConstants.REACTOME_PATHWAY_ANNOTATION_PARAMS, None, DataConstants.REACTOME_PATHWAY_ANNOTATION_COMMENT_CHAR )
+    
+            #===================================================================
+            # INTERACTOME
+            #===================================================================
+                
+            # Parse the protein interaction file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_HEADER, DataConstants.INTERACTOME_CLASS, DataConstants.INTERACTOME_PARAMS, None, DataConstants.INTERACTOME_COMMENT_CHAR )
+                
+            # Parse the protein interaction network file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_DEFINITION_PROPERTY, True)
+            ppi_default_values = [None, None, os.path.basename( input_file)]
+            self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_NETWORK_HEADER, DataConstants.INTERACTOME_NETWORK_CLASS, DataConstants.INTERACTOME_NETWORK_PARAMS, ppi_default_values, DataConstants.INTERACTOME_NETWORK_COMMENT_CHAR )
+                
+            # Parse the Network Module file            
+            input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_PARTITION_DEFINITION_PROPERTY, True)
+            self.launch_insertion_NetworkModule( input_file, DataConstants.INTERACTOME_NETWORK_PARTITION_CLASS, DataConstants.INTERACTOME_NETWORK_PARTITION_CLASS_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_COMMENT_CHAR )
+                
+            # Parse the Network Module Annotation file  
+            input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_NetworkModuleAnnotation( input_file, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_CLASS_REGEX, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_PROTEIN_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_ANNOTATION_ANNOTATION_TAG, DataConstants.INTERACTOME_NETWORK_PARTITION_COMMENT_CHAR )
+                
+            # Parse the protein redundancy file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PROPERTY, True)
+            interactome_network_redundancy_definition_value = [None, basename( input_file), None]
+            self.launch_insertion_TSV( input_file, False, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_HEADERS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_CLASS, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_PARAMS, interactome_network_redundancy_definition_value, DataConstants.INTERACTOME_NETWORK_REDUNDANCY_DEFINITION_COMMENT_CHAR, "Redundancy", False )
             
             #===================================================================
             # RNA DEFINITION
@@ -216,7 +216,6 @@ class InsertionStrategy( ExecutionStrategy ):
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
 
-
 # 
 #             # Initialize data items to store missing interactions
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
@@ -224,11 +223,11 @@ class InsertionStrategy( ExecutionStrategy ):
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW not in DataManager.get_instance().data:
 #                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW,[])
 # 
-#             # Parse the ProteinRNAInteractionCatRAPID file
-#             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
-#             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
-#                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
-#                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
+            # Parse the ProteinRNAInteractionCatRAPID file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
+                                       DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
+                                        None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
 
             #===================================================================
             # RNA TISSUE EXPRESSION
