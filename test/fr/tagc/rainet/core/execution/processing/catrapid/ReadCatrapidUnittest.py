@@ -106,8 +106,8 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.assertTrue( round(proteinInteractionsMean[ "Q7Z569"], 1) == 258.3) 
 
         # check if output files are correct
-        with open(self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + "1.tsv", "r") as out:                
-            with open(self.expectedFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME + "1.tsv", "r") as exp:
+        with open(self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME, "r") as out:                
+            with open(self.expectedFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME, "r") as exp:
                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
         with open(self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "r") as out:                
@@ -183,7 +183,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
     # #
     # Runs after each test
     def tearDown(self):
-                      
+                       
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
