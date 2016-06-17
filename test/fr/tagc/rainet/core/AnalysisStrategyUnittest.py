@@ -40,6 +40,8 @@ from fr.tagc.rainet.core.data.LncRNA import LncRNA
 from fr.tagc.rainet.core.data.OtherRNA import OtherRNA
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
+from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
+from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 
 from UnittestConstants import *
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -77,6 +79,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, OptionConstants.DEFAULT_RNA_BIOTYPES)
         optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstants.DEFAULT_GENCODE)
         optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_TISSUE_CUTOFF, OptionConstants.DEFAULT_EXPRESSION_TISSUE_CUTOFF)
 
         
         # Set the level of verbosity
@@ -218,7 +221,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         print "| test_PRI_filter_three | "
    
         optionManager = OptionManager.get_instance()        
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "10")
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
         optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 2)
