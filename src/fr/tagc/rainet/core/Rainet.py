@@ -9,6 +9,7 @@ from fr.tagc.rainet.core.util import Constants
 from fr.tagc.rainet.core.execution.InteractiveQueryStrategy import InteractiveQueryStrategy
 from fr.tagc.rainet.core.execution.InsertionStrategy import InsertionStrategy
 from fr.tagc.rainet.core.execution.AnalysisStrategy import AnalysisStrategy
+from fr.tagc.rainet.core.execution.EnrichmentAnalysisStategy import EnrichmentAnalysisStrategy
 
 ##
 # This is the main class of the Rainet project. It contains methods used to insert data to the database
