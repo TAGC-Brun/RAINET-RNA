@@ -107,6 +107,9 @@ class AnalysisStrategy(ExecutionStrategy):
     # After filter report
     PARAMETERS_LOG = "parameters.log"
     REPORT_RNA_NUMBERS = "rna_numbers.tsv"
+    REPORT_RNA_LIST_AFTER_RNA_FILTER = "list_RNAs_after_RNA_filter.tsv"
+    REPORT_PROTEIN_LIST_AFTER_PROTEIN_FILTER = "list_proteins_after_protein_filter.tsv"
+
     REPORT_INTERACTION_NUMBERS = "interaction_numbers.tsv"
 
     # Expression report
@@ -224,35 +227,35 @@ class AnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().step( "Filtering Proteins.." )        
          
         self.filter_protein()
- 
+  
         Timer.get_instance().step( "Dump filtering by expression.." )               
-
+ 
         self.dump_filter_PRI_expression()
-      
+       
         Timer.get_instance().step( "Filtering Interactions.." )        
-            
+             
         self.filter_PRI()
-    
+     
         Timer.get_instance().step( "Filtering Interactions by expression.." )        
-   
+    
         self.filter_PRI_expression()
-        
+         
         #===================================================================
         # Produce reports
         #===================================================================
-  
+   
         Timer.get_instance().step( "Producing filter report.." )        
-  
+   
         self.after_filter_report()
-  
+   
         Timer.get_instance().step( "Producing expression report.." )        
-  
+   
         self.expression_report()
-  
+   
         Timer.get_instance().step( "Producing interaction report.." )        
-  
+   
         self.interaction_report()
-            
+             
         if self.writeReportFile:
             Timer.get_instance().step( "Writing report.." )
             self.write_report()
@@ -306,15 +309,18 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().store_data( AnalysisStrategy.RNA_FILTER_KEY_KW, selectedRNAs)
         # Convert format
         DataManager.get_instance().query_to_object_dict( AnalysisStrategy.RNA_FILTER_KEY_KW, "transcriptID")
-
-        #===================================================================
-        # Filter transcripts belonging to same gene
-        # 09-Mar-2016 : perhaps this filter does not have to be applied
-        #===================================================================
-        # TODO: decide on a set of rules for this excluding transcript redudancy.
-        # - based on interactions
-        # - based on length
-        # - based on expression
+        
+        #===================================================================   
+        # File with pathway per protein
+        #===================================================================          
+        
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_LIST_AFTER_RNA_FILTER )
+        
+        rnas = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
+        
+        for rna in rnas:
+            outHandler.write( "%s\n" % ( rna) )
+        outHandler.close()
 
         Logger.get_instance().info( "filter_RNA : Finished RNA filter: " + str( len( selectedRNAs)) )
 
@@ -339,6 +345,18 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().store_data( AnalysisStrategy.PROT_FILTER_KEY_KW, selectedProts)
         # Convert format
         DataManager.get_instance().query_to_object_dict( AnalysisStrategy.PROT_FILTER_KEY_KW, "uniprotAC")
+
+        #===================================================================   
+        # File with pathway per protein
+        #===================================================================          
+        
+        outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_PROTEIN_LIST_AFTER_PROTEIN_FILTER )
+        
+        prots = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
+        
+        for prot in prots:
+            outHandler.write( "%s\n" % ( prot) )
+        outHandler.close()
 
         Logger.get_instance().info( "filter_protein : Finished Protein filter: " + str( len( selectedProts)) )
 
