@@ -37,7 +37,7 @@ REMAINING_FILES = ["all_protein_domains_smart.txt",
                    "human.binary.nr0.95.connected.noself.fm",
                    "human_0.95.blastmap"]
 
-REMAINING_FILES_RNA = ["list_interating_RNAs.txt","list_interating_proteins.txt"]
+REMAINING_FILES_RNA = ["list_interacting_RNAs.tsv","list_interacting_proteins.tsv"]
 
 #note that output of this script will be used as input for testing
 OUTPUT_FOLDER = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/testing_input_data/" 
