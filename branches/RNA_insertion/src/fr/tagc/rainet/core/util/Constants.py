@@ -49,3 +49,10 @@ STATUS_ERROR = "ERROR"
 # Constants on folder creation
 #===============================================================================
 REPORT_FOLDER = "Report"
+
+#===============================================================================
+# Constants on enrichment analysis
+#===============================================================================
+ANNOTATION_TABLES = ["NetworkModule", "ReactomePathway", "KEGGPathway"]
+
+
