@@ -536,7 +536,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
                     # significative result tag
                     sign = "0"
-                    if hyperResult < EnrichmentAnalysisStrategy.SIGN_VALUE:
+                    if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
                         sign = "1"
 
                     # add sign tag to existing list

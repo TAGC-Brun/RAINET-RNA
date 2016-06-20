@@ -40,12 +40,15 @@ OPTION_GENCODE = "Gencode basic filtering"
 OPTION_EXPRESSION_VALUE_CUTOFF = "Minimum expression value"
 OPTION_EXPRESSION_TISSUE_CUTOFF = "Minimum number tissues co-present"
 # Enrichment analysis options
-OPTION_ANNOTATION_TABLE = "protein annotation table to be used"
+OPTION_ANNOTATION_TABLE = "Protein annotation"
+OPTION_MINIMUM_PROTEIN_ANNOTATION = "Minimum proteins in annotation"
+OPTION_MINIMUM_PROTEIN_INTERACTION = "Minimum proteins in annotation with interaction"
 
 #===============================================================================
-# Constants for analysis strategy
+# Constants for default values
 #===============================================================================
 
+# Analysis strategy
 DEFAULT_BIOTYPE = "RNA"
 DEFAULT_INTERACTION_SCORE = "OFF"
 DEFAULT_GENCODE = 0
@@ -55,6 +58,10 @@ DEFAULT_OUTPUT_FOLDER = os.getcwd()
 
 RNA_BIOTYPES = DataConstants.RNA_MRNA_BIOTYPE[:] + DataConstants.RNA_LNCRNA_BIOTYPE[:]
 DEFAULT_RNA_BIOTYPES = RNA_BIOTYPES[:]
+
+# Enrichment strategy
+DEFAULT_MINIMUM_PROTEIN_ANNOTATION = 5
+DEFAULT_MINIMUM_PROTEIN_INTERACTION = 2
 
 #===============================================================================
 # The definition of the options
@@ -87,7 +94,9 @@ OPTION_LIST = {  "Insertion": [
                     [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."],
                     [ "-v", "--verbose", "store", "string", OPTION_VERBOSITY, Constants.MODE_INFO, "The level of verbosity. Must be one of : " + str( Constants.VERBOSITY_LEVELS)],
                     [ "-o", "--outputFolder", "store", "string", OPTION_OUTPUT_FOLDER, DEFAULT_OUTPUT_FOLDER, "Folder where output files will be written."],
-                    [ "-a", "--annotationTable", "store", "string", OPTION_ANNOTATION_TABLE, None, "Protein annotation table to be used for analysis. Must be one of : " + str( Constants.ANNOTATION_TABLES) ]
+                    [ "-a", "--annotationTable", "store", "string", OPTION_ANNOTATION_TABLE, None, "Protein annotation table to be used for analysis. Must be one of : " + str( Constants.ANNOTATION_TABLES) ],
+                    [ "-m", "--minimumProteinAnnotation", "store", "int", OPTION_MINIMUM_PROTEIN_ANNOTATION, DEFAULT_MINIMUM_PROTEIN_ANNOTATION, "Minimum number of proteins with annotation for enrichment test to be performed." ],
+                    [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ]
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
