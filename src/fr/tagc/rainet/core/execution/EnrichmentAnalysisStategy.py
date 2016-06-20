@@ -66,9 +66,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     #
     #===============================================================================
 
-    # correspondance between wanted table and the base table
+    # correspondance between the base table and associated data
     ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation", "KEGGPathway" : "ProteinKEGGAnnotation"}
-
 
 
     #===================================================================
@@ -115,12 +114,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
         self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER)
         self.annotationTable = OptionManager.get_instance().get_option(OptionConstants.OPTION_ANNOTATION_TABLE)
+        self.minimumProteinAnnotation= OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION)
 
         # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
                           OptionConstants.OPTION_SPECIES : self.species,
                           OptionConstants.OPTION_OUTPUT_FOLDER : self.outputFolder,
-                          OptionConstants.OPTION_ANNOTATION_TABLE : self.annotationTable
+                          OptionConstants.OPTION_ANNOTATION_TABLE : self.annotationTable,
+                          OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION : self.minimumProteinAnnotation
                         }
 
         #===================================================================
@@ -136,6 +137,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # check if annotation table name is consistent
         if self.annotationTable not in Constants.ANNOTATION_TABLES:
             raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided annotation table name is not correct: " + self.annotationTable)
+            
+        # Check if minimum protein annotation value is consistent
+        try:
+            self.minimumProteinAnnotation = int( self.minimumProteinAnnotation)
+        except:
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided minimum protein annotation value is not correct: " + self.minimumProteinAnnotation)
             
 
         #===================================================================
@@ -276,10 +283,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Note: assuming there is two primary keys in annotation table, first pathway ID, then protein ID
         # Note: assuming there is only one primary key in base annotation table 
              
-        # Define wanted tables
-         
-        # TODO: put annotation tables as system argument
-         
+        # Define wanted tables         
         tableNameBase = self.annotationTable
         tableNameAnnotation = EnrichmentAnalysisStrategy.ANNOTATION_TABLES_DICT[ tableNameBase]
          
@@ -349,13 +353,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
  
         assert ( len( pathwayAnnotDict) == len( pathwayAnnotWithInteractionDataDict) )
  
-#         print ( len( pathwayAnnotDict)) # 300. Put this in unittest?
-#         print ( len( protAnnotDict))          
-#         print pathwayAnnotDict
-#         print pathwayAnnotWithInteractionDataDict
-#         print protAnnotDict
-#         print protAnnotWithInteractionDataDict
-#          
+
         #===================================================================   
         # File with proteins per pathway
         #=================================================================== 
@@ -366,35 +364,48 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Write header
         outHandler.write("annotationID\ttotal_prot_in_pathway\ttotal_prot_with_interaction_data\n") 
   
+        summ = 0
+        summWithInteractionData = 0
         for pathID in pathwayAnnotDict:
  
-            annot = pathwayAnnotDict[ pathID]
-            annotWithInteractionData = pathwayAnnotWithInteractionDataDict[ pathID]
+            annot = set( pathwayAnnotDict[ pathID])
+            annotWithInteractionData = set( pathwayAnnotWithInteractionDataDict[ pathID]) 
+            
+            summ += len( annot)
+            summWithInteractionData += len( annotWithInteractionData)
+            
+            assert( len( annotWithInteractionData) == len( annot.intersection( annotWithInteractionData)) ), "annotations with interaction need to be present in all-annotations dictionary"
              
             outHandler.write( "%s\t%s\t%s\n" % ( pathID, len( annot), len( annotWithInteractionData)) )
+
+        outHandler.write( "# Annotation coverage: %.2f%%\n" % ( summWithInteractionData * 100.0 / summ ) )
           
         outHandler.close()
  
-#         #===================================================================   
-#         # File with pathway per protein
-#         #===================================================================          
-#  
-#         outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ANNOTATION_PER_PROT )
-#   
-#         # Write header
-#         outHandler.write("uniprotAC\twith_interaction_data\ttotal_annotations\tlist_of_annotations\n") 
-#   
-#         for protID in protAnnotDict:
-#              
-#             withInteraction = 0
-#             if protID in interProtObjects:
-#                 withInteraction = 1
-#  
-#             annot = protAnnotDict[ protID]
-#                          
-#             outHandler.write( "%s\t%s\t%s\t%s\n" % ( protID, withInteraction, len( annot), ",".join( annot) ) )
-#           
-#         outHandler.close()
+        #===================================================================   
+        # File with pathway per protein
+        #===================================================================          
+  
+        outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ANNOTATION_PER_PROT )
+   
+        # Write header
+        outHandler.write("uniprotAC\twith_interaction_data\ttotal_annotations\tlist_of_annotations\n") 
+      
+        sumWithInteractionData = 0
+        for protID in protAnnotDict:
+              
+            withInteraction = 0
+            if protID in allProteinsWithInteractionData:
+                withInteraction = 1
+                sumWithInteractionData += 1
+  
+            annot = protAnnotDict[ protID]
+                          
+            outHandler.write( "%s\t%s\t%s\t%s\n" % ( protID, withInteraction, len( annot), ",".join( annot) ) )
+
+        outHandler.write( "# # Proteins with at least one annotation: %i. # with interaction data: %i\n" % ( len( protAnnotDict), sumWithInteractionData ) )
+           
+        outHandler.close()
  
  
 #         #### TESTING / EXPLORATORY ####
@@ -434,7 +445,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 #             for annotID in sorted( rnaInteractions[ rnaID]):
 #                  
 # #                 # TODO: add minimum number of RBPs cutoff as argument or something???                
-# #                 if len( pathwayAnnotDict[ annotID]) < 4: # TO REMOVE
+# #                 if len( pathwayAnnotDict[ annotID]) < self.minimumProteinAnnotation: # TO REMOVE
 # #                     continue
 #                  
 #                 protList = rnaInteractions[ rnaID][ annotID]
