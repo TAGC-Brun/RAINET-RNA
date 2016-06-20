@@ -7,7 +7,7 @@ from fr.tagc.rainet.core.data import DataConstants
 #===============================================================================
 # The list of available strageties
 #===============================================================================
-STRATEGIES_LIST = [ "Insertion", "InteractiveQuery", "Analysis", "DatabaseCheck"]
+STRATEGIES_LIST = [ "Insertion", "InteractiveQuery", "Analysis", "DatabaseCheck", "EnrichmentAnalysis"]
 
 #===============================================================================
 # The tags used to define the options
@@ -27,6 +27,7 @@ HELP_TAG = "help"
 OPTION_DB_NAME = "Database path"
 OPTION_SPECIES = "Species"
 OPTION_VERBOSITY = "Verbosity"
+OPTION_OUTPUT_FOLDER = "Output folder"
 # Insertion strategy options
 OPTION_INSERTION_PROPERTIES_PATH = "insertionPropertiesPath"
 OPTION_INSERTION_FORCE_OVERRIDE = "insertionForceOverride"
@@ -38,7 +39,8 @@ OPTION_RNA_BIOTYPES = "RNA biotypes filtering"
 OPTION_GENCODE = "Gencode basic filtering"
 OPTION_EXPRESSION_VALUE_CUTOFF = "Minimum expression value"
 OPTION_EXPRESSION_TISSUE_CUTOFF = "Minimum number tissues co-present"
-OPTION_OUTPUT_FOLDER = "Output folder"
+# Enrichment analysis options
+OPTION_ANNOTATION_TABLE = "protein annotation table to be used"
 
 #===============================================================================
 # Constants for analysis strategy
@@ -79,6 +81,13 @@ OPTION_LIST = {  "Insertion": [
                     [ "-g", "--gencodeBasicOnly", "store", "int", OPTION_GENCODE, DEFAULT_GENCODE, "If 1, include in analysis ONLY transcripts tagged as present in 'GENCODE basic'. Default: 0 (i.e. all RNAs are considered)."],
                     [ "-e", "--expressionValueCutoff", "store", "float", OPTION_EXPRESSION_VALUE_CUTOFF, DEFAULT_EXPRESSION_VALUE_CUTOFF, "Protein-RNA interactions where one of its components has expression below the given value will be excluded. Default: 0"],
                     [ "-t", "--expressionTissueCutoff", "store", "float", OPTION_EXPRESSION_TISSUE_CUTOFF, DEFAULT_EXPRESSION_TISSUE_CUTOFF, "Protein-RNA interactions between pairs co-present in less that this numbers of tissues will be excluded. Only active if expressionValueCutoff is also active. Default: 1"]
+                ],
+                "EnrichmentAnalysis" : [
+                    [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
+                    [ "-s", "--species", "store", "string", OPTION_SPECIES, None, "The species used in the database."],
+                    [ "-v", "--verbose", "store", "string", OPTION_VERBOSITY, Constants.MODE_INFO, "The level of verbosity. Must be one of : " + str( Constants.VERBOSITY_LEVELS)],
+                    [ "-o", "--outputFolder", "store", "string", OPTION_OUTPUT_FOLDER, DEFAULT_OUTPUT_FOLDER, "Folder where output files will be written."],
+                    [ "-a", "--annotationTable", "store", "string", OPTION_ANNOTATION_TABLE, None, "Protein annotation table to be used for analysis. Must be one of : " + str( Constants.ANNOTATION_TABLES) ]
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],

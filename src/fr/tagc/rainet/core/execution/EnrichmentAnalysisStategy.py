@@ -66,6 +66,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     #
     #===============================================================================
 
+    # correspondance between wanted table and the base table
+    ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation", "KEGGPathway" : "ProteinKEGGAnnotation"}
+
+
+
     #===================================================================
     # Data Manager object Keywords
     #===================================================================
@@ -109,11 +114,13 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.DBPath = OptionManager.get_instance().get_option(OptionConstants.OPTION_DB_NAME)
         self.species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
         self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER)
+        self.annotationTable = OptionManager.get_instance().get_option(OptionConstants.OPTION_ANNOTATION_TABLE)
 
         # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
                           OptionConstants.OPTION_SPECIES : self.species,
                           OptionConstants.OPTION_OUTPUT_FOLDER : self.outputFolder,
+                          OptionConstants.OPTION_ANNOTATION_TABLE : self.annotationTable
                         }
 
         #===================================================================
@@ -125,6 +132,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             FileUtils.initialise_output_folders(self.outputFolder)
         else:
             raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided output folder is empty.")
+
+        # check if annotation table name is consistent
+        if self.annotationTable not in Constants.ANNOTATION_TABLES:
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided annotation table name is not correct: " + self.annotationTable)
+            
 
         #===================================================================
         # Initialisation
@@ -268,14 +280,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
          
         # TODO: put annotation tables as system argument
          
-#         tableNameBase = "KEGGPathway"
-#         tableNameAnnotation = "ProteinKEGGAnnotation"
- 
-        tableNameBase = "NetworkModule"
-        tableNameAnnotation = "ProteinNetworkModule"
- 
-#         tableNameBase = "ReactomePathway"
-#         tableNameAnnotation = "ProteinReactomeAnnotation"
+        tableNameBase = self.annotationTable
+        tableNameAnnotation = EnrichmentAnalysisStrategy.ANNOTATION_TABLES_DICT[ tableNameBase]
          
         # Get table primary key names 
         primaryKeys = eval( "inspect( " + tableNameAnnotation + ").primary_key") 
