@@ -188,11 +188,10 @@ class InsertionStrategy( ExecutionStrategy ):
             input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_CROSS_REFERENCE_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.RNA_CROSS_REFERENCE_HEADERS, DataConstants.RNA_CROSS_REFERENCE_CLASS, DataConstants.RNA_CROSS_REFERENCE_PARAMS, None, DataConstants.RNA_CROSS_REFERENCE_COMMENT_CHAR )
 
-
             #===================================================================
-            # PROTEIN RNA INTERACTION
+            # RNA TISSUE EXPRESSION
             #===================================================================
- 
+  
             # Make query of all RNA IDs to speed up insertion
             DataManager.get_instance().perform_query( DataConstants.RNA_ALL_KW, "query( RNA ).all()") 
             # Format query into dict data structure
@@ -203,41 +202,43 @@ class InsertionStrategy( ExecutionStrategy ):
             # Format query into dict data structure
             DataManager.get_instance().query_to_object_dict( DataConstants.PROT_ALL_KW, "uniprotAC")
 
+            # Parse the RNA tissue expression file
+            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
+                                        DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
+                                        DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
+
+
+            #===================================================================
+            # PROTEIN RNA INTERACTION
+            #===================================================================
+
             # Parse the file listing RNA with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_RNA_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_RNA_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_RNA_DEFINITION_CLASS, DataConstants.INTERACTING_RNA_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_RNA_DEFINITION_COMMENT_CHAR )
 
+ 
 
             # Parse the file listing Proteins with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_PROTEIN_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_PROTEIN_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
-
-# 
+ 
 #             # Initialize data items to store missing interactions
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
 #                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW not in DataManager.get_instance().data:
 #                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW,[])
-# 
+             
             # Parse the ProteinRNAInteractionCatRAPID file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
 
-            #===================================================================
-            # RNA TISSUE EXPRESSION
-            #===================================================================
-  
-            # Parse the RNA tissue expression file
-            input_file = PropertyManager.get_instance().get_property( DataConstants.RNA_TISSUE_EXPRESSION_PROPERTY, True)
-            self.launch_insertion_TSV( input_file, True, DataConstants.RNA_TISSUE_EXPRESSION_HEADERS, DataConstants.RNA_TISSUE_EXPRESSION_CLASS,
-                                        DataConstants.RNA_TISSUE_EXPRESSION_PARAMS, DataConstants.RNA_TISSUE_EXPRESSION_VALUE,
-                                        DataConstants.RNA_TISSUE_EXPRESSION_COMMENT_CHAR ) 
 
             
             # Remove data that will no longer be used to reduce memory usage 
