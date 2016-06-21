@@ -89,11 +89,15 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # Interaction objects after filtering
     PRI_FILTER_KW = "selectedInteractions" # Stores Interaction objects after Interaction filter
-    PRI_TISSUES_KW = "interactingTissues" # Stores custom dictionary containing tissues where interaction has been found after interaction filtering
 
     # Protein / RNA with interaction data, after interaction filterings
     PRI_PROT_FILTER_KW = "filteredInteractingProteins" # Stores all Protein Objects in interactions, after all filters
     PRI_RNA_FILTER_KW = "filteredInteractingRNAs" # Stores all RNA Objects in interactions, after all filters
+
+    # Expression related
+    PROT_TISSUES_KW = "proteinTissues" # Stores set of proteins expressed in each tissue
+    RNA_TISSUES_KW = "rnaTissues" # Stores set of rna expressed in each tissue
+    PRI_TISSUES_KW = "interactingTissues" # Stores custom dictionary containing tissues where interaction has been found after interaction filtering
 
     # Final RNA and Protein sets
     FINAL_PRO_KW = "finalProteins" # Stores Protein IDs for which report and analysis is done
@@ -120,6 +124,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # Expression report
     REPORT_RNA_EXPRESSION = "rna_expression.tsv"
     REPORT_RNA_EXPRESSION_DATA_PRESENCE = "rna_expression_data_presence.tsv"
+    # TODO:     REPORT_PROT_EXPRESSION_DATA_PRESENCE = "prot_expression_data_presence.tsv"
     REPORT_TISSUES_WHERE_EXPRESSED = "interactions_tissues_where_expressed.tsv"
 
     # Interaction report
@@ -608,6 +613,10 @@ class AnalysisStrategy(ExecutionStrategy):
         # Dictionary which will contain tissues where interaction was found to be present
         expressedInteractionsTissues = {} # key -> transcriptID|proteinID (pair), value -> set of tissues
 
+        # Dictionary with list of tissues where protein/rna is present
+        proteinExpressionTissues = {} # key -> tissue, value -> set of protein IDs
+        rnaExpressionTissues = {} # key -> tissue, value -> set of tx IDs
+
         # checking if filtering option is on or off
         if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:      
 
@@ -654,7 +663,7 @@ class AnalysisStrategy(ExecutionStrategy):
                         mRNADict[ protID] = []
                     mRNADict[ protID].append( txID)
 
-            Logger.get_instance().info("dump_filter_PRI_expression : initialised mRNA-protein data. " )    
+            Logger.get_instance().info("dump_filter_PRI_expression : initialised mRNA-protein data. %s proteins with mRNAs." % len( mRNADict)  )    
    
             # Get list of tissues for looking over their expression values on each transcript
             tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
@@ -668,7 +677,7 @@ class AnalysisStrategy(ExecutionStrategy):
                     expressionDict[ txID] = []
                 expressionDict[ txID].append( (expr, tissName) )
 
-            Logger.get_instance().info("dump_filter_PRI_expression : initialised expression data. " )    
+            Logger.get_instance().info("dump_filter_PRI_expression : initialising expression data. %s RNAs with expression data." % len( expressionDict) )    
 
             # Store all protein-related expression values into memory
             ProtMRNATissueExpressions = {} # key -> prot ID, val -> dict. key -> mRNA ID, val -> expression profile per tissue
@@ -705,22 +714,17 @@ class AnalysisStrategy(ExecutionStrategy):
                         ProtMRNATissueExpressions[ protID][ mRNAID] = {}
                     ProtMRNATissueExpressions[ protID][ mRNAID] = MRNATissueExpressions
 
-            #===================================================================    
-            # File with list of interactions passing RNA, protein and expression filters (not interaction cutoff)
-            # E.g. proteinID\ttranscriptID\n
-            #=================================================================== 
-            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
+            Logger.get_instance().info("dump_filter_PRI_expression : initialised expression data. %s proteins with expression data." % len( ProtMRNATissueExpressions) )    
 
             #===================================================================             
             # Loop virtual interactions and apply filter
             # Approach: first retrieve information for RNA, then loop it against each interacting protein. Batch for each RNA
             #=================================================================== 
-            totalProcessed = 0
             countRNA = 0
             for rnaID in interactingRNAs:
 
                 countRNA += 1
-                if countRNA % 1000 == 0:
+                if countRNA % 100 == 0:
                     Logger.get_instance().info("dump_filter_PRI_expression : processed %s RNAs out of %s" % ( countRNA, len( interactingRNAs)) )               
                 
                 # skip transcripts with no expression
@@ -741,7 +745,7 @@ class AnalysisStrategy(ExecutionStrategy):
                 for protID in ProtMRNATissueExpressions:
                     
                     pair = rnaID + "|" + protID
-
+                    
                     # check expression for each mRNA producing the protein
                     for mRNAID in ProtMRNATissueExpressions[ protID]:
                         
@@ -749,39 +753,48 @@ class AnalysisStrategy(ExecutionStrategy):
                         for tissue in tissues:
                             txExpressionVal = RNATissueExpressions[ tissue]
                             protExpressionVal = ProtMRNATissueExpressions[ protID][ mRNAID][ tissue]
-                    
+                                                                                                    
                             if txExpressionVal >= self.expressionValueCutoff and protExpressionVal >= self.expressionValueCutoff:
                                 setOfInteractingTissues.add( tissue)
+                                
+                            # store data on protein tissue expression
+                            if protExpressionVal >= self.expressionValueCutoff:
+                                if tissue not in proteinExpressionTissues:
+                                    proteinExpressionTissues[ tissue] = set()
+                                proteinExpressionTissues[ tissue].add( protID)
+
+                            # store data on RNA tissue expression
+                            if txExpressionVal >= self.expressionValueCutoff:
+                                if tissue not in rnaExpressionTissues:
+                                    rnaExpressionTissues[ tissue] = set()
+                                rnaExpressionTissues[ tissue].add( txID)                               
                     
                     # For a protein-RNA pair, retain interaction only if protein-RNA are present in at least x tissues
                     if len( setOfInteractingTissues) >= self.expressionTissueCutoff: # cutoff of minimum number of tissues
                         expressedInteractionsTissues[ pair] = setOfInteractingTissues
 
+            #===================================================================    
+            # write passing interactions for all RNAs vs all proteins
+            #===================================================================                    
+            #===================================================================    
+            # File with list of interactions passing RNA, protein and expression filters (not interaction cutoff)
+            # E.g. proteinID\ttranscriptID\n
+            #=================================================================== 
+            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
 
-                #===================================================================    
-                # write interactions for 1 RNA vs all proteins
-                #===================================================================    
-
-                # write batch interactions to file
-                text = ""
-                for pair in sorted(expressedInteractionsTissues):
-                    transcriptID,proteinID = pair.split( "|")
-                    text += "%s\t%s\n" % ( proteinID, transcriptID )
+            # write batch interactions to file
+            text = ""
+            for pair in sorted(expressedInteractionsTissues):
+                transcriptID,proteinID = pair.split( "|")
+                text += "%s\t%s\n" % ( proteinID, transcriptID )
                 outHandler.write( text)
- 
-                totalProcessed += len( expressedInteractionsTissues)
-     
-                if totalProcessed % 10000000 == 0:
-                    Logger.get_instance().info("dump_filter_PRI_expression : processed %s interactions." % totalProcessed )
-                 
-            #assert totalProcessed == totalItems, "number of pairs must be equal to number of combinations if no duplicate IDs"
- 
+      
             outHandler.close()
 
             #===================================================================    
             # Store interaction information 
             #===================================================================    
-            # update selectedInteractions object
+            # update selectedInteractions object, adding only the ones that pass the filter
             newSelectedInteractions = []
             for inter in selectedInteractions:
                 pair = inter.transcriptID + "|" + inter.proteinID
@@ -790,6 +803,8 @@ class AnalysisStrategy(ExecutionStrategy):
 
             selectedInteractions = newSelectedInteractions[:]
 
+            DataManager.get_instance().store_data( AnalysisStrategy.PROT_TISSUES_KW, proteinExpressionTissues) 
+            DataManager.get_instance().store_data( AnalysisStrategy.RNA_TISSUES_KW, rnaExpressionTissues) 
             DataManager.get_instance().store_data( AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
             DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
 
@@ -799,9 +814,9 @@ class AnalysisStrategy(ExecutionStrategy):
         else:
             Logger.get_instance().info( "dump_filter_PRI_expression : Expression filtering not active" )
 
-
+        #===================================================================    
         # Store / update information
-        
+        #===================================================================            
         # Keep RNAs and Proteins that will be used for analysis / report
 
         RNAObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
@@ -1207,6 +1222,29 @@ class AnalysisStrategy(ExecutionStrategy):
             outHandler.write("%s\t%i\t%i\t%s\n" % ( subtype, withExpression, withoutExpression, perc) )
          
         outHandler.close()
+
+        #===================================================================    
+        # File with numbers of proteins with expressed per tissue
+        #=================================================================== 
+ 
+        try:
+            protTissues = DataManager.get_instance().get_data( AnalysisStrategy.PROT_TISSUES_KW)
+  
+            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_PROTEINS_EXPRESSED_PER_TISSUE )
+       
+            # Write header
+            outHandler.write("tissue\tnumber_expressed\n") 
+       
+            for tissue in protTissues:
+                nProts = len( protTissues[ tissue])
+                outHandler.write("%s\t%i\n" % ( tissue, nProts) )
+               
+            outHandler.close()
+
+        # if there is not such data
+        except RainetException:
+            pass
+
 
 
         #=================================================================== 
