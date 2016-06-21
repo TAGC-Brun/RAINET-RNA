@@ -59,12 +59,12 @@ class InsertionStrategy( ExecutionStrategy ):
         # Create Logger instance by using the first log action.
         Logger.get_instance().info( "InsertionStrategy.insert_data: Starting..." )
         
-        # Backup the database file
-        try:
-            Logger.get_instance().info( "InsertionStrategy.insert_data:   Backuping DB file..." )
-            shutil.copyfile(self.DBPath, self.DBPath + ".back")
-        except IOError as ioe:
-            Logger.get_instance().info( " warning : Unable to backup database file : " + self.DBPath + " : " + str( ioe))
+#         # Backup the database file
+#         try:
+#             Logger.get_instance().info( "InsertionStrategy.insert_data:   Backuping DB file..." )
+#             shutil.copyfile(self.DBPath, self.DBPath + ".back")
+#         except IOError as ioe:
+#             Logger.get_instance().info( " warning : Unable to backup database file : " + self.DBPath + " : " + str( ioe))
         
         # Create database sqlite file at the provided path
         SQLManager.get_instance().build_database( self.DBPath, self.forceOverride )
