@@ -5,14 +5,17 @@ library(RColorBrewer)
 require(grid)
 require(gridExtra)
 library(plyr)
+library(data.table)
 
 inputFile = paste( output_folder, report_interactions_tissues_where_expressed, sep = "/")
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/interactions_tissues_where_expressed.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/interactions_tissues_where_expressed_shuf.tsv"
 
 print (paste("INPUT FILE:",inputFile) )
 
-dataset = read.table( inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+#dataset = read.table( inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 if (nrow(dataset) != 0 ){
   #### Bar plot with tissue presence frequencies ####
@@ -55,4 +58,21 @@ if (nrow(dataset) != 0 ){
   print ("No data for this section.")
 }
 
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/backup/Report_cut15_expr0.1/interactions_tissues_where_expressed_shuf.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/backup/Report_cut15_expr1.0/interactions_tissues_where_expressed_shuf.tsv"
+# 
+# dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# dataset1 <- melt(dataset1)
+# 
+# dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# dataset2 <- melt(dataset2)
+# 
+# plt2 <- ggplot( dataset1, aes(x = value)) + 
+#   geom_density(  colour="red") + 
+#   geom_density( data = dataset2, aes(x = value),  colour="blue") + 
+#   theme_minimal() +
+#   xlab( "Number of tissues with co-presence" ) +
+#   ylab( "Frequency interaction (density)")
+# 
+# print(plt2)
 
