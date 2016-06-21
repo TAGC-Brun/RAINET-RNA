@@ -604,6 +604,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # Filter protein-RNA interactions by member co-existence, after RNA and protein filters
+    # Expression filtering output file is independent of PRI filtering.
     # Writes co-present interacting pairs 
     def dump_filter_PRI_expression(self):
 
@@ -646,7 +647,7 @@ class AnalysisStrategy(ExecutionStrategy):
     
             totalItems = len( interactingProteins) * len( interactingRNAs)
 
-            Logger.get_instance().info("dump_filter_PRI_expression : initialised interaction data. will produce %s interactions." % totalItems )    
+            Logger.get_instance().info("dump_filter_PRI_expression : initialised interaction data. will measure %s interactions (%s RNAs vs %s proteins)." % ( totalItems, len( interactingRNAs), len( interactingProteins) ))
 
             #===================================================================    
             # Initialise required expression data
@@ -780,13 +781,15 @@ class AnalysisStrategy(ExecutionStrategy):
             # File with list of interactions passing RNA, protein and expression filters (not interaction cutoff)
             # E.g. proteinID\ttranscriptID\n
             #=================================================================== 
+
+            Logger.get_instance().info("dump_filter_PRI_expression : writing output file. % lines." % ( len( expressedInteractionsTissues)) )               
+
             outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
 
             # write batch interactions to file
-            text = ""
-            for pair in sorted(expressedInteractionsTissues):
+            for pair in expressedInteractionsTissues:
                 transcriptID,proteinID = pair.split( "|")
-                text += "%s\t%s\n" % ( proteinID, transcriptID )
+                text = "%s\t%s\n" % ( proteinID, transcriptID )
                 outHandler.write( text)
       
             outHandler.close()
@@ -795,6 +798,9 @@ class AnalysisStrategy(ExecutionStrategy):
             # Store interaction information 
             #===================================================================    
             # update selectedInteractions object, adding only the ones that pass the filter
+
+            Logger.get_instance().info("dump_filter_PRI_expression : storing interactions. " )               
+
             newSelectedInteractions = []
             for inter in selectedInteractions:
                 pair = inter.transcriptID + "|" + inter.proteinID
