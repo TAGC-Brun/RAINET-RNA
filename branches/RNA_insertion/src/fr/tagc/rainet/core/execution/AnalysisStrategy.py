@@ -95,6 +95,11 @@ class AnalysisStrategy(ExecutionStrategy):
     PRI_PROT_FILTER_KW = "filteredInteractingProteins" # Stores all Protein Objects in interactions, after all filters
     PRI_RNA_FILTER_KW = "filteredInteractingRNAs" # Stores all RNA Objects in interactions, after all filters
 
+    # Final RNA and Protein sets
+    FINAL_PRO_KW = "finalProteins" # Stores Protein IDs for which report and analysis is done
+    FINAL_RNA_KW = "finalRNAs" # Stores RNA IDs for which report and analysis is done
+
+
     #===================================================================
     # Report files constants       
     #===================================================================
@@ -347,7 +352,7 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().query_to_object_dict( AnalysisStrategy.PROT_FILTER_KEY_KW, "uniprotAC")
 
         #===================================================================   
-        # File with pathway per protein
+        # File with list of proteins
         #===================================================================          
         
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_PROTEIN_LIST_AFTER_PROTEIN_FILTER )
@@ -594,8 +599,6 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # Filter protein-RNA interactions by member co-existence, after RNA and protein filters
-    # Does not take into account ProteinRNAInteractions. This is used to filter catRAPID interactions a priori,
-    # in order to avoid excessive memory consumption.
     # Writes co-present interacting pairs 
     def dump_filter_PRI_expression(self):
 
@@ -775,8 +778,9 @@ class AnalysisStrategy(ExecutionStrategy):
  
             outHandler.close()
 
-
+            #===================================================================    
             # Store interaction information 
+            #===================================================================    
             # update selectedInteractions object
             newSelectedInteractions = []
             for inter in selectedInteractions:
@@ -784,25 +788,31 @@ class AnalysisStrategy(ExecutionStrategy):
                 if pair in expressedInteractionsTissues:
                     newSelectedInteractions.append( inter)
 
-            selectedInteractions = newSelectedInteractions
+            selectedInteractions = newSelectedInteractions[:]
 
             DataManager.get_instance().store_data( AnalysisStrategy.PRI_TISSUES_KW, expressedInteractionsTissues)
+            DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+
             del expressedInteractionsTissues
+            del newSelectedInteractions
 
         else:
             Logger.get_instance().info( "dump_filter_PRI_expression : Expression filtering not active" )
 
 
         # Store / update information
+        
+        # Keep RNAs and Proteins that will be used for analysis / report
 
-        DataManager.get_instance().store_data( AnalysisStrategy.PRI_FILTER_KW, selectedInteractions)
+        RNAObjects = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KEY_KW)
+        ProtObjects = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KEY_KW)
  
-        interRNAIDs = { str( inter.transcriptID) for inter in selectedInteractions}
-        interProtIDs = { str( inter.proteinID) for inter in selectedInteractions}
+        interRNAs = { RNAObjects[ str( inter.transcriptID)] for inter in selectedInteractions }
+        interProts = { ProtObjects[ str( inter.proteinID)] for inter in selectedInteractions }
 
-        DataManager.get_instance().store_data( AnalysisStrategy.PRI_RNA_ALL_KW, interRNAIDs)
-        DataManager.get_instance().store_data( AnalysisStrategy.PRI_PROT_FILTER_KW, interProtIDs)
-    
+        DataManager.get_instance().store_data( AnalysisStrategy.FINAL_RNA_KW, interRNAs)
+        DataManager.get_instance().store_data( AnalysisStrategy.FINAL_PRO_KW, interProts)
+
     
     # #
     # Write output file with the parameters used
@@ -855,7 +865,7 @@ class AnalysisStrategy(ExecutionStrategy):
         # Get / initialise data
 
         # Get filtered and unfiltered RNAs
-        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.FINAL_RNA_KW)
         allRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_ALL_KW)
 
         # Get RNA broad types
@@ -932,8 +942,8 @@ class AnalysisStrategy(ExecutionStrategy):
 
         # Get filtered interactions
         filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
-        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
-        filteredProts = DataManager.get_instance().get_data( AnalysisStrategy.PROT_FILTER_KW)
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.FINAL_RNA_KW)
+        filteredProts = DataManager.get_instance().get_data( AnalysisStrategy.FINAL_PRO_KW)
 
         # Get count of filtered and unfiltered interactions
         # Note: opposed to filtered interactions, it may not be possible to retrieve all interaction objects due to computational constraints
@@ -1020,7 +1030,7 @@ class AnalysisStrategy(ExecutionStrategy):
         filteredInteractions = DataManager.get_instance().get_data( AnalysisStrategy.PRI_FILTER_KW)
         
         # Get filtered RNAs
-        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.FINAL_RNA_KW)
         # Make dictionary of filtered RNAs for quicker access
         filteredRNAsDict = { str( rna.transcriptID) : rna for rna in filteredRNAs }
 
@@ -1145,7 +1155,7 @@ class AnalysisStrategy(ExecutionStrategy):
         # File with average expression (among tissues) for each transcript, discrimination of RNA types and lncRNA subtypes
         #=================================================================== 
  
-        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.RNA_FILTER_KW)
+        filteredRNAs = DataManager.get_instance().get_data( AnalysisStrategy.FINAL_RNA_KW)
  
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_EXPRESSION )
          
