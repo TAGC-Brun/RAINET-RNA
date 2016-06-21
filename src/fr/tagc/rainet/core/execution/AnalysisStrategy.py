@@ -126,6 +126,8 @@ class AnalysisStrategy(ExecutionStrategy):
     REPORT_RNA_EXPRESSION_DATA_PRESENCE = "rna_expression_data_presence.tsv"
     # TODO:     REPORT_PROT_EXPRESSION_DATA_PRESENCE = "prot_expression_data_presence.tsv"
     REPORT_TISSUES_WHERE_EXPRESSED = "interactions_tissues_where_expressed.tsv"
+    REPORT_PROTEINS_EXPRESSED_PER_TISSUE = "proteins_expressed_per_tissue.tsv"
+    REPORT_RNAS_EXPRESSED_PER_TISSUE = "rnas_expressed_per_tissue.tsv"
 
     # Interaction report
     REPORT_INTERACTION_SCORES_BIOTYPE = "interaction_scores_biotype.tsv"
@@ -678,9 +680,12 @@ class AnalysisStrategy(ExecutionStrategy):
                     expressionDict[ txID] = []
                 expressionDict[ txID].append( (expr, tissName) )
 
-            Logger.get_instance().info("dump_filter_PRI_expression : initialising expression data. %s RNAs with expression data." % len( expressionDict) )    
+            Logger.get_instance().info("dump_filter_PRI_expression : loaded expression data. %s total RNAs with expression data." % len( expressionDict) )    
 
+
+            #===================================================================    
             # Store all protein-related expression values into memory
+            #===================================================================    
             ProtMRNATissueExpressions = {} # key -> prot ID, val -> dict. key -> mRNA ID, val -> expression profile per tissue
             for protID in interactingProteins:
                 # skip protein with no mRNAs in database
@@ -722,6 +727,9 @@ class AnalysisStrategy(ExecutionStrategy):
             # Approach: first retrieve information for RNA, then loop it against each interacting protein. Batch for each RNA
             #=================================================================== 
             countRNA = 0
+            #===================================================================             
+            # Loop RNAs
+            #===================================================================             
             for rnaID in interactingRNAs:
 
                 countRNA += 1
@@ -742,6 +750,15 @@ class AnalysisStrategy(ExecutionStrategy):
                     tissueName = str( tiss[1])
                     RNATissueExpressions[ tissueName] = txExpressionVal                   
 
+                    # store data on RNA tissue expression
+                    if txExpressionVal >= self.expressionValueCutoff:
+                        if tissueName not in rnaExpressionTissues:
+                            rnaExpressionTissues[ tissueName] = set()
+                        rnaExpressionTissues[ tissueName].add( rnaID)                               
+
+                #===================================================================             
+                # Loop Proteins
+                #===================================================================             
                 # loop for each protein, with precalculated values. create list of 1 RNA vs all protein interaction
                 for protID in ProtMRNATissueExpressions:
                     
@@ -764,11 +781,6 @@ class AnalysisStrategy(ExecutionStrategy):
                                     proteinExpressionTissues[ tissue] = set()
                                 proteinExpressionTissues[ tissue].add( protID)
 
-                            # store data on RNA tissue expression
-                            if txExpressionVal >= self.expressionValueCutoff:
-                                if tissue not in rnaExpressionTissues:
-                                    rnaExpressionTissues[ tissue] = set()
-                                rnaExpressionTissues[ tissue].add( txID)                               
                     
                     # For a protein-RNA pair, retain interaction only if protein-RNA are present in at least x tissues
                     if len( setOfInteractingTissues) >= self.expressionTissueCutoff: # cutoff of minimum number of tissues
@@ -782,7 +794,7 @@ class AnalysisStrategy(ExecutionStrategy):
             # E.g. proteinID\ttranscriptID\n
             #=================================================================== 
 
-            Logger.get_instance().info("dump_filter_PRI_expression : writing output file. % lines." % ( len( expressedInteractionsTissues)) )               
+            Logger.get_instance().info("dump_filter_PRI_expression : writing output file. %s lines." % ( len( expressedInteractionsTissues)) )               
 
             outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
 
@@ -1230,7 +1242,7 @@ class AnalysisStrategy(ExecutionStrategy):
         outHandler.close()
 
         #===================================================================    
-        # File with numbers of proteins with expressed per tissue
+        # File with numbers of proteins expressed per tissue
         #=================================================================== 
  
         try:
@@ -1241,17 +1253,47 @@ class AnalysisStrategy(ExecutionStrategy):
             # Write header
             outHandler.write("tissue\tnumber_expressed\n") 
        
+            proteinPot = set() # combine all proteins
+       
             for tissue in protTissues:
+                proteinPot = proteinPot.union( protTissues[ tissue])
                 nProts = len( protTissues[ tissue])
                 outHandler.write("%s\t%i\n" % ( tissue, nProts) )
-               
+
+            outHandler.write("# total %s proteins with expression data\n" % ( len( proteinPot)) )
+
             outHandler.close()
 
-        # if there is not such data
+        # if there is no PROT_TISSUES_KW data
         except RainetException:
             pass
 
+        #===================================================================    
+        # File with numbers of RNAs expressed per tissue
+        #=================================================================== 
 
+        try:
+            rnaTissues = DataManager.get_instance().get_data( AnalysisStrategy.RNA_TISSUES_KW)
+    
+            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNAS_EXPRESSED_PER_TISSUE )
+       
+            # Write header
+            outHandler.write("tissue\tnumber_expressed\n") 
+       
+            rnaPot = set() # combine all proteins
+       
+            for tissue in rnaTissues:
+                rnaPot = rnaPot.union( rnaTissues[ tissue])
+                nRNAs = len( rnaTissues[ tissue])
+                outHandler.write("%s\t%i\n" % ( tissue, nRNAs) )
+
+            outHandler.write("# total %s rnas with expression data\n" % ( len( rnaPot)) )
+
+            outHandler.close()
+
+        # if there is no RNA_TISSUES_KW data
+        except RainetException:
+            pass
 
         #=================================================================== 
         # File with number of tissues where both partners of pair expressed
