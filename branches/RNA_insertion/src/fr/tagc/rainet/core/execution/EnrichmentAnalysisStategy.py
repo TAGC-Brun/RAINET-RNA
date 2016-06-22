@@ -523,7 +523,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         for rnaID in sorted( rnaInteractions):
                         
             rnaCounter+=1
-            if rnaCounter % 1 == 0:
+            if rnaCounter % 100 == 0:
                 Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )
 
             # retrieve total number of interactions with annotated proteins for this RNA
@@ -550,9 +550,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             #===================================================================          
             
             for i in xrange(0, self.numberRandomizations):
-                print i
-                pathwayDict = self.randomize_annotation( self.annotWithInteractionDict)
-                testsCorrected = self.run_rna_vs_annotations( rnaID, pathwayDict, totalRNAInteractions)
+                pathwayDict = self.randomize_annotation( self.annotWithInteractionDict) # this is fast
+                testsCorrected = self.run_rna_vs_annotations( rnaID, pathwayDict, totalRNAInteractions) # this is slow
 
             #===================================================================          
             #===================================================================   
@@ -589,11 +588,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     # Function to run hypergeometric test of RNA against list of annotations
     def run_rna_vs_annotations(self, rna_id, annotation_dict, total_rna_interactions):
         
-        pvalues = [] # stores list of pvalues to be corrected                  
-        tests = [] # stores output from tests
-        
+        pvalues =  numpy.empty( len( annotation_dict)) * numpy.nan # stores list of pvalues to be corrected                  
+        tests = numpy.empty( len( annotation_dict), object) # stores output from tests
+                
         currentRNAInteractions = self.rnaInteractions[ rna_id]
         
+        counter = 0
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
 
@@ -628,16 +628,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             hyperResult = self.hypergeometric_test(x, m, n, k)
 
             # store pvalue to be corrected                
-            pvalues.append( hyperResult)               
+            pvalues[ counter] = hyperResult               
 
             text = "%s\t%s\t%s\t%s\t%s\t%s\t%e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
-            tests.append( text.split("\t") ) 
+            tests[ counter] = text.split("\t") 
+ 
+            counter += 1
  
         #===================================================================   
         # For each test performed with this RNA
         #===================================================================          
         # calculate corrected p values
-        testsCorrected = [] # stores data plus correction
+        testsCorrected = numpy.empty( len( annotation_dict), object) # stores data plus correction
         
         correctedPvalues = multipletests(pvalues, method = "fdr_bh")[1]
         
@@ -657,7 +659,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             l.append( sign)
 
             # append current list to list of RNA vs annotation
-            testsCorrected.append( l)
+            testsCorrected[ i] = l
 
 
         return testsCorrected
@@ -684,11 +686,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # - If there are no balls drawn (k), pvalue will be 0.0, regardless of other parameters
         # - If there are not white balls withdrawn (x), but number of m and k is small , p-val may still be significant e.g. x = 0, m = 1, n = 36, k = 1. pval = 0.027
 
+#         cmd = "Rscript /home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/hypergeom_test.R %s %s %s %s" % (x,m,n,k)
+#         os.system(cmd)
+        
         if m == 0:
             raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls is zero.")
         if k == 0:
             raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of draws is zero.")
-
+ 
         # stats.hypergeome.sf gives the same result as R phyper
         testResult = stats.hypergeom.sf( x, m+n, m, k)
 
