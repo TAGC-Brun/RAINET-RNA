@@ -99,6 +99,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     REPORT_PROT_PER_ANNOTATION = "prot_per_annotation.tsv"
     REPORT_ANNOTATION_PER_PROT = "annotation_per_prot.tsv"
     REPORT_ENRICHMENT = "enrichment_results.tsv"
+    REPORT_ENRICHMENT_PER_RNA = "enrichment_per_rna.tsv"
 
 
     def __init__(self):  
@@ -415,17 +416,35 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                           
             outHandler.write( "%s\t%s\t%s\t%s\n" % ( protID, withInteraction, len( annot), ",".join( annot) ) )
 
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.annotation_report: # Proteins with at least one annotation: %i. # with interaction data: %i" % ( len( protAnnotDict), sumWithInteractionData )  )
         outHandler.write( "# # Proteins with at least one annotation: %i. # with interaction data: %i\n" % ( len( protAnnotDict), sumWithInteractionData ) )
            
         outHandler.close()
          
+        #===================================================================   
+        # Set protein background
+        #===================================================================   
+        # Background (search space) changes depending on annotation being used
+        # it is the interaction of proteins with interaction prediction and proteins with annotation
+
+        backgroundProteins =  allProteinsWithInteractionData.intersection( set( protAnnotDict.keys()))
+        assert sumWithInteractionData == len( backgroundProteins)
+
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
+
+        #===================================================================   
         # store processed data
+        #===================================================================   
+        self.backgroundProteins = backgroundProteins
         self.protAnnotDict = protAnnotDict
         self.allProteinsWithInteractionData = allProteinsWithInteractionData
         self.pathwayAnnotDict = pathwayAnnotDict
         self.pathwayAnnotWithInteractionDataDict = pathwayAnnotWithInteractionDataDict
+
  
- 
+    # #
+    # Perform enrichment analysis
+    # Write main output files
     def enrichement_analysis(self):
 
         #=================================================================== 
@@ -437,52 +456,45 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
         # For each RNA, store all proteins it interacts with and their annotations
         rnaInteractions = {} # Key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs (after filtering)
-        totalRNAInteractionsDict = {} # Key -> transcript ID, value -> list of prot IDs (after filtering)       
         for inter in interactions:
             txID = str( inter.transcriptID)
             protID = str( inter.proteinID)
    
             if txID not in rnaInteractions:
                 rnaInteractions[ txID] = {}
-                totalRNAInteractionsDict[ txID] = []
                                
             # only store info of proteins that have annotation information
             if protID in self.protAnnotDict: 
-                totalRNAInteractionsDict[ txID].append( protID)
-
                 for annot in self.protAnnotDict[ protID]:
                     if annot not in rnaInteractions[ txID]:
                         rnaInteractions[ txID][ annot] = []
                     rnaInteractions[ txID][ annot].append( protID)
    
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
+        self.rnaInteractions = rnaInteractions
    
-        #===================================================================   
-        # Set protein background
-        #===================================================================   
-        # Background (search space) changes depending on annotation being used
-        # it is the interaction of proteins with interaction prediction and proteins with annotation
-
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
-        backgroundProteins =  self.allProteinsWithInteractionData.intersection( set( self.protAnnotDict.keys()))
-
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
-   
+        #===================================================================    
         #===================================================================   
-        # File with enrichment test per RNA-module pair, if applicable
+        # Make enrichment tests
         #===================================================================          
-    
-        outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
-    
-        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\tpval\tcorrected_pval\tsign_corrected\n")
-
-        text = "" # ongoing text. to write to file in batches
+        #===================================================================          
   
+        #===================================================================   
+        # File with enrichment test per RNA-module pair
+        #===================================================================          
+        outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
+        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\tminimum_items\tpval\tcorrected_pval\tsign_corrected\n")
+
+        #===================================================================   
+        # File with stats per RNA
+        #===================================================================          
+        outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
+        outHandlerStats.write("transcriptID\tnumber_significant_tests\tnumber_significant_random\n")
+
         rnaCounter = 0
-        skippedTests = 0
-        performedTests = 0
         # for each RNA with any interaction
         for rnaID in sorted( rnaInteractions):
                         
@@ -490,83 +502,108 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             if rnaCounter % 100 == 0:
                 Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: processed %s RNAs.." % str( rnaCounter ) )
 
-            # initialise for each RNA
-            pvalues = [] # stores list of pvalues to be corrected                  
-            tests = [] # stores output from tests
-            text = "" # stores text to be write to output file
-                 
-            # for each annotation with at least one interacting partner
-            for annotID in sorted( rnaInteractions[ rnaID]):
-
-
-                # positive interactions in current annotation
-                protList = rnaInteractions[ rnaID][ annotID]
-
-                # number of proteins with annotation that have interaction predictions
-                possibleProtList = self.pathwayAnnotWithInteractionDataDict[ annotID]
-
-                assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins than existing in annotation"
-
-                # tag whether test does not pass the minimum number of annotations or interactions
-                skipTest = 0
-
-                # Skip test/output if minimum number of items is not respected                   
-                if len( possibleProtList) < self.minimumProteinAnnotation or len( protList) < self.minimumProteinInteraction :
-                    skippedTests += 1
-                    skipTest = 1
-                    # print "Skipping test: ", rnaID, annotID, len( self.pathwayAnnotDict[ annotID])
-    
-                # Hypergeometric test parameters
-                # note: test for each RNA - annotation pair. 
-                x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
-                m = len( possibleProtList) # total white balls ( proteins with the current annotation that have interaction predictions)
-                n = len( backgroundProteins) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
-                k = len( totalRNAInteractionsDict[ rnaID]) # total number of draws ( proteins with positive interactions, regardless of current annotation)
-    
-                assert ( m + n >= k) # number of draws should be less than total number of balls
-    
-                hyperResult = self.hypergeometric_test(x, m, n, k)
-                
-                pvalues.append( hyperResult)               
-
-                text = "%s\t%s\t%s\t%s\t%s\t%e\t%s" % ( rnaID, annotID, x, m, k, hyperResult, skipTest ) 
-     
-                tests.append( text.split("\t") ) 
-     
-                performedTests += 1
-
+            #===================================================================   
+            # Run tests            
+            #===================================================================   
+            tests, pvalues = self.run_rna_vs_annotation( rnaID, self.pathwayAnnotDict)
+            
+            #===================================================================   
+            # For each test performed with this RNA
+            #===================================================================          
 
             # calculate corrected p values
             testsCorrection = [] # stores data plus correction
-            if len( pvalues) > 0:
-                correctedPvalues = multipletests(pvalues, 0.1, "bonferroni")[1]
-                for i in xrange( 0, len( tests)):
-                    l = tests[i][:]
+            
+            correctedPvalues = multipletests(pvalues, 0.1, "fdr_bh")[1]
+            
+            for i in xrange( 0, len( tests)):
+                l = tests[i][:]
 
-                    # add corrected pvalue to existing list
-                    corr =  "%e" % correctedPvalues[i]
-                    l.append( corr)
+                # add corrected pvalue to existing list
+                corr =  "%e" % correctedPvalues[i]
+                l.append( corr)
 
-                    # significative result tag
-                    sign = "0"
-                    if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
-                        sign = "1"
+                # significative result tag
+                sign = "0"
+                if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
+                    sign = "1"
 
-                    # add sign tag to existing list
-                    l.append( sign)
+                # add sign tag to existing list
+                l.append( sign)
 
-                    # append current list to list of RNA vs annotation
-                    testsCorrection.append( l)
+                # append current list to list of RNA vs annotation
+                testsCorrection.append( l)
 
-                # write to file
-                for test in testsCorrection:
-                    outHandler.write( "\t".join( test) + "\n" )
+            #===================================================================   
+            # File with enrichment test per RNA-module pair
+            #===================================================================          
+            for test in testsCorrection:
+                outHandler.write( "\t".join( test) + "\n" )
 
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
+            #===================================================================   
+            # File with stats per RNA
+            #===================================================================          
+
+
+        #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
+        #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
    
         outHandler.close()
 
+
+    # #
+    # Function to run hypergeometric test of RNA against list of annotations
+    def run_rna_vs_annotation(self, rna_id, annotation_dict):
+        
+        pvalues = [] # stores list of pvalues to be corrected                  
+        tests = [] # stores output from tests
+        
+        currentRNAInteractions = self.rnaInteractions[ rna_id]
+
+        # retrieve total number of interactions with annotated proteins for this RNA
+        totalRNAInteractions = { prot for annotID in currentRNAInteractions for prot in currentRNAInteractions[ annotID]}
+        
+        # for each annotation with at least one interacting partner
+        for annotID in annotation_dict:
+
+            # positive interactions in current annotation
+            if annotID in currentRNAInteractions:
+                protList = currentRNAInteractions[ annotID]
+            else: # so that we perform test even if there is no interactions with any protein of this annotation
+                protList = []
+
+            # number of proteins with annotation that have interaction predictions
+            possibleProtList = self.pathwayAnnotWithInteractionDataDict[ annotID]
+
+            assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins of annotation than existing in annotation"
+
+            # tag whether test does not pass the minimum number of annotations or interactions
+            skipTest = 0
+
+            # Skip test/output if minimum number of items is not respected                   
+            if len( possibleProtList) < self.minimumProteinAnnotation or len( protList) < self.minimumProteinInteraction :
+                skipTest = 1
+                # print "Skipping test: ", rnaID, annotID, len( self.pathwayAnnotDict[ annotID])
+
+            # Hypergeometric test parameters
+            # note: test for each RNA - annotation pair. 
+            x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
+            m = len( possibleProtList) # total white balls ( proteins with the current annotation that have interaction predictions)
+            n = len( self.backgroundProteins) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
+            k = len( totalRNAInteractions) # total number of draws ( proteins with positive interactions, regardless of current annotation)
+
+            assert ( m + n >= k), "number of draws should be less than total number of balls"
+
+            # perform the actual test
+            hyperResult = self.hypergeometric_test(x, m, n, k)
+
+            # store pvalue to be corrected                
+            pvalues.append( hyperResult)               
+
+            text = "%s\t%s\t%s\t%s\t%s\t%s\t%e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
+            tests.append( text.split("\t") ) 
+ 
+        return tests, pvalues
         
 
     # #
