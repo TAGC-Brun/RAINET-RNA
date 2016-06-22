@@ -144,7 +144,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
         # check if annotation table name is consistent
         if self.annotationTable not in Constants.ANNOTATION_TABLES:
-            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided annotation table name is not correct: " + self.annotationTable)
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided annotation table name is not correct: " + self.annotationTable + "Must be one of : " + str( Constants.ANNOTATION_TABLES))
             
         # Check if minimum protein annotation value is consistent
         try:
@@ -316,8 +316,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         pathwayAnnotDict = {} # key -> pathway id, value -> list of proteins IDs
         protAnnotDict = {} # key -> protein id, value -> list of pathway IDs
  
-        pathwayAnnotWithInteractionDataDict = {} # key -> pathway id, value -> list of proteins IDs with interaction data
+        pathwayAnnotWithInteractionDataDict = {} # #FOR REPORTING PURPOSES key -> pathway id, value -> list of proteins IDs with interaction data
         protAnnotWithInteractionDataDict = {} # key -> protein id (if with interaction data), value -> list of pathway IDs
+        annotWithInteractionDict = {} # #FOR ANALYSIS PURPOSES. key -> pathway id (if with interaction data), value -> list of proteins IDs with interaction data
 
         for annot in proteinAnnotations:
             pathID = str( eval( "annot." + primaryKeys[ 0] ) )
@@ -325,18 +326,26 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
  
             # populate dictionaries containing proteins with interaction data
             if protID in allProteinsWithInteractionData:
+                
+                # initialise if interaction only
+                if pathID not in annotWithInteractionDict:
+                    annotWithInteractionDict[ pathID] = []
+                annotWithInteractionDict[ pathID].append( protID)
+
                 if pathID not in pathwayAnnotWithInteractionDataDict:
                     pathwayAnnotWithInteractionDataDict[ pathID] = []
                 pathwayAnnotWithInteractionDataDict[ pathID].append( protID)
                  
                 if protID not in protAnnotWithInteractionDataDict:
                     protAnnotWithInteractionDataDict[ protID] = []
+
                 if pathID not in protAnnotWithInteractionDataDict[ protID]:
                     protAnnotWithInteractionDataDict[ protID].append( pathID)
                 else:
                     raise RainetException( "EnrichmentAnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
  
-            # populate dictionaries containing all proteins         
+            # populate dictionaries containing all proteins
+            # initialise regardless of interaction
             if pathID not in pathwayAnnotDict:
                 pathwayAnnotDict[ pathID] = []
             pathwayAnnotDict[ pathID].append( protID)
@@ -354,7 +363,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         baseAnnotationsPK = eval( "inspect( " + tableNameBase + ").primary_key") 
         # e.g. from ReactomePathway.reactomeID to reactomeID
         baseAnnotationsPK = str( baseAnnotationsPK[ 0]).replace( tableNameBase, "")[ 1:]
- 
+  
         for pathway in baseAnnotations:
             pathID = str( eval ( "pathway." + baseAnnotationsPK ) )
             if pathID not in pathwayAnnotDict:
@@ -394,6 +403,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         outHandler.close()
 
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.annotation_report: Number annotations: %s " % str( len( pathwayAnnotDict)) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.annotation_report: Number annotations with interactions: %s " % str( len( annotWithInteractionDict)) )
  
         #===================================================================   
         # File with pathway per protein
@@ -438,8 +448,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.backgroundProteins = backgroundProteins
         self.protAnnotDict = protAnnotDict
         self.allProteinsWithInteractionData = allProteinsWithInteractionData
-        self.pathwayAnnotDict = pathwayAnnotDict
-        self.pathwayAnnotWithInteractionDataDict = pathwayAnnotWithInteractionDataDict
+        self.annotWithInteractionDict = annotWithInteractionDict
 
  
     # #
@@ -459,17 +468,19 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         for inter in interactions:
             txID = str( inter.transcriptID)
             protID = str( inter.proteinID)
-   
-            if txID not in rnaInteractions:
-                rnaInteractions[ txID] = {}
                                
             # only store info of proteins that have annotation information
             if protID in self.protAnnotDict: 
+
+                # only initialise RNA in dictionary if there is at least one protein with annotation   
+                if txID not in rnaInteractions:
+                    rnaInteractions[ txID] = {}
+
                 for annot in self.protAnnotDict[ protID]:
                     if annot not in rnaInteractions[ txID]:
                         rnaInteractions[ txID][ annot] = []
                     rnaInteractions[ txID][ annot].append( protID)
-   
+      
         self.rnaInteractions = rnaInteractions
    
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
@@ -505,45 +516,38 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             #===================================================================   
             # Run tests            
             #===================================================================   
-            tests, pvalues = self.run_rna_vs_annotation( rnaID, self.pathwayAnnotDict)
-            
-            #===================================================================   
-            # For each test performed with this RNA
-            #===================================================================          
-
-            # calculate corrected p values
-            testsCorrection = [] # stores data plus correction
-            
-            correctedPvalues = multipletests(pvalues, 0.1, "fdr_bh")[1]
-            
-            for i in xrange( 0, len( tests)):
-                l = tests[i][:]
-
-                # add corrected pvalue to existing list
-                corr =  "%e" % correctedPvalues[i]
-                l.append( corr)
-
-                # significative result tag
-                sign = "0"
-                if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
-                    sign = "1"
-
-                # add sign tag to existing list
-                l.append( sign)
-
-                # append current list to list of RNA vs annotation
-                testsCorrection.append( l)
+            testsCorrected = self.run_rna_vs_annotation( rnaID, self.annotWithInteractionDict)
 
             #===================================================================   
             # File with enrichment test per RNA-module pair
             #===================================================================          
-            for test in testsCorrection:
+
+            for test in testsCorrected:
                 outHandler.write( "\t".join( test) + "\n" )
 
+            
+#             for i in xrange(1,10):
+#                 pathwayDict = self.randomize_annotation( self.annotWithInteractionDict)
+#                 testsCorrection = self.run_rna_vs_annotation( rnaID, pathwayDict)
+                                
             #===================================================================   
             # File with stats per RNA
             #===================================================================          
 
+            assert len( testsCorrected) == len( self.annotWithInteractionDict)
+
+            signColumn = 8 # 0-based
+            countSignificant = 0
+            for test in testsCorrected:
+                if test[ signColumn] == "1":
+                    countSignificant += 1
+                elif test[ signColumn] == "0":
+                    pass
+                else:
+                    raise RainetException( "EnrichmentAnalysisStrategy.enrichement_analysis: Significance value is not boolean.")
+                    
+            print rnaID, countSignificant
+                    
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
@@ -573,7 +577,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 protList = []
 
             # number of proteins with annotation that have interaction predictions
-            possibleProtList = self.pathwayAnnotWithInteractionDataDict[ annotID]
+            possibleProtList = self.annotWithInteractionDict[ annotID]
 
             assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins of annotation than existing in annotation"
 
@@ -603,7 +607,33 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             text = "%s\t%s\t%s\t%s\t%s\t%s\t%e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
             tests.append( text.split("\t") ) 
  
-        return tests, pvalues
+        #===================================================================   
+        # For each test performed with this RNA
+        #===================================================================          
+        # calculate corrected p values
+        testsCorrected = [] # stores data plus correction
+        
+        correctedPvalues = multipletests(pvalues, 0.1, "fdr_bh")[1]
+        
+        for i in xrange( 0, len( tests)):
+            l = tests[i][:]
+
+            # add corrected pvalue to existing list
+            corr =  "%e" % correctedPvalues[i]
+            l.append( corr)
+
+            # significative result tag
+            sign = "0"
+            if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
+                sign = "1"
+
+            # add sign tag to existing list
+            l.append( sign)
+
+            # append current list to list of RNA vs annotation
+            testsCorrected.append( l)
+
+        return testsCorrected
         
 
     # #
@@ -621,12 +651,26 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # 
         # k the number of balls drawn from the urn.
 
+        # Notes on behaviour of the test:
+        # - If all white balls are found (x == m), pvalue will be 0.0, regardless of other parameters
+        # - If there are no white balls (m), pvalue will be 0.0, regardless of other parameters
+        # - If there are no balls drawn (k), pvalue will be 0.0, regardless of other parameters
+        # - If there are not white balls withdrawn (x), but number of m and k is small , p-val may still be significant e.g. x = 0, m = 1, n = 36, k = 1. pval = 0.027
+
+        if m == 0:
+            raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls is zero.")
+        if k == 0:
+            raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of draws is zero.")
+
         # stats.hypergeome.sf gives the same result as R phyper
         testResult = stats.hypergeom.sf( x, m+n, m, k)
 
+        if x == 0 and testResult <= EnrichmentAnalysisStrategy.SIGN_VALUE:
+            Logger.get_instance().warning( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls withdrawn is zero but result is significant. x=%s, m=%s, n=%s, k=%s" % (x,m,n,k)  )
+
         # print ("x: %i\tm: %i\tn: %i\tk: %i" % (x,m,n,k) )
         # print ("Hypergeometric_test p-value:\t%.3f\n" % testResult )
-
+            
         return testResult
 
 
