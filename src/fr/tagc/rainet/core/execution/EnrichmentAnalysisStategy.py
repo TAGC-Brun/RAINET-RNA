@@ -285,7 +285,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Retrieve interacting data
         #=================================================================== 
  
-        # proteins with interaction data # background
+        # proteins with interaction data
         allProteinsWithInteractionData = DataManager.get_instance().get_data( EnrichmentAnalysisStrategy.PRI_PROT_KW)
   
         #===================================================================   
@@ -307,7 +307,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         baseAnnotations = eval( "self.sql_session.query( " + tableNameBase +" ).all()")
         # query table containing all annotation mappings of pathway-protein
         proteinAnnotations = eval( "self.sql_session.query( " + tableNameAnnotation +" ).all()")
- 
+  
         #===================================================================   
         # Process annotations
         #=================================================================== 
@@ -317,7 +317,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
  
         pathwayAnnotWithInteractionDataDict = {} # key -> pathway id, value -> list of proteins IDs with interaction data
         protAnnotWithInteractionDataDict = {} # key -> protein id (if with interaction data), value -> list of pathway IDs
- 
+
         for annot in proteinAnnotations:
             pathID = str( eval( "annot." + primaryKeys[ 0] ) )
             protID = str( eval( "annot." + primaryKeys[ 1] ) )
@@ -346,8 +346,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 protAnnotDict[ protID].append( pathID)
             else:
                 raise RainetException( "EnrichmentAnalysisStrategy.annotation_report: duplicate protein-annotation pair.")
- 
- 
+  
         # Note: the protein-pathway annotation table will only contain proteins and pathways which have any annotation
         # add here the pathways which did not have any protein annotation   
         # get primary key of base pathway table 
@@ -363,7 +362,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 pathwayAnnotWithInteractionDataDict[ pathID] = []
  
         assert ( len( pathwayAnnotDict) == len( pathwayAnnotWithInteractionDataDict) )
- 
+
 
         #===================================================================   
         # File with proteins per pathway
@@ -446,13 +445,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             if txID not in rnaInteractions:
                 rnaInteractions[ txID] = {}
                 totalRNAInteractionsDict[ txID] = []
-                
-            #TODO: confirm this
-            # store info of proteins regardless of annotation. as background
-            totalRNAInteractionsDict[ txID].append( protID)
-               
+                               
             # only store info of proteins that have annotation information
             if protID in self.protAnnotDict: 
+                totalRNAInteractionsDict[ txID].append( protID)
+
                 for annot in self.protAnnotDict[ protID]:
                     if annot not in rnaInteractions[ txID]:
                         rnaInteractions[ txID][ annot] = []
@@ -460,6 +457,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
    
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
    
+        #===================================================================   
+        # Set protein background
+        #===================================================================   
+        # Background (search space) changes depending on annotation being used
+        # it is the interaction of proteins with interaction prediction and proteins with annotation
+
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
+
+        backgroundProteins =  self.allProteinsWithInteractionData.intersection( set( self.protAnnotDict.keys()))
+
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
    
         #===================================================================   
         # File with enrichment test per RNA-module pair, if applicable
@@ -476,7 +485,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         performedTests = 0
         # for each RNA with any interaction
         for rnaID in sorted( rnaInteractions):
-            
+                        
             rnaCounter+=1
             if rnaCounter % 100 == 0:
                 Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: processed %s RNAs.." % str( rnaCounter ) )
@@ -489,6 +498,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # for each annotation with at least one interacting partner
             for annotID in sorted( rnaInteractions[ rnaID]):
 
+
                 # positive interactions in current annotation
                 protList = rnaInteractions[ rnaID][ annotID]
 
@@ -497,17 +507,20 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
                 assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins than existing in annotation"
 
+                # tag whether test does not pass the minimum number of annotations or interactions
+                skipTest = 0
+
                 # Skip test/output if minimum number of items is not respected                   
                 if len( possibleProtList) < self.minimumProteinAnnotation or len( protList) < self.minimumProteinInteraction :
                     skippedTests += 1
+                    skipTest = 1
                     # print "Skipping test: ", rnaID, annotID, len( self.pathwayAnnotDict[ annotID])
-                    continue                   
     
                 # Hypergeometric test parameters
                 # note: test for each RNA - annotation pair. 
                 x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
                 m = len( possibleProtList) # total white balls ( proteins with the current annotation that have interaction predictions)
-                n = len( self.allProteinsWithInteractionData) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
+                n = len( backgroundProteins) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
                 k = len( totalRNAInteractionsDict[ rnaID]) # total number of draws ( proteins with positive interactions, regardless of current annotation)
     
                 assert ( m + n >= k) # number of draws should be less than total number of balls
@@ -516,7 +529,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 
                 pvalues.append( hyperResult)               
 
-                text = "%s\t%s\t%s\t%s\t%s\t%e" % ( rnaID, annotID, x, m, k, hyperResult ) 
+                text = "%s\t%s\t%s\t%s\t%s\t%e\t%s" % ( rnaID, annotID, x, m, k, hyperResult, skipTest ) 
      
                 tests.append( text.split("\t") ) 
      
