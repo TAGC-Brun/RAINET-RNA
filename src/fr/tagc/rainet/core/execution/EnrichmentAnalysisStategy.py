@@ -2,6 +2,7 @@
 import os
 import shutil
 import numpy
+import random
 from scipy import stats
 from statsmodels.sandbox.stats.multicomp import multipletests
 
@@ -63,9 +64,7 @@ from statsmodels.stats.multitest import multipletests
 class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
     #===============================================================================
-    #
     # Enrichment Analysis strategy Constants
-    #
     #===============================================================================
 
     # correspondance between the base table and associated data
@@ -120,8 +119,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.species = OptionManager.get_instance().get_option(OptionConstants.OPTION_SPECIES)
         self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER)
         self.annotationTable = OptionManager.get_instance().get_option(OptionConstants.OPTION_ANNOTATION_TABLE)
-        self.minimumProteinAnnotation= OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION)
-        self.minimumProteinInteraction= OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION)
+        self.minimumProteinAnnotation = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION)
+        self.minimumProteinInteraction = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION)
+        self.numberRandomizations = OptionManager.get_instance().get_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS)
 
         # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
@@ -130,6 +130,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                           OptionConstants.OPTION_ANNOTATION_TABLE : self.annotationTable,
                           OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION : self.minimumProteinAnnotation,
                           OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION : self.minimumProteinInteraction,
+                          OptionConstants.OPTION_NUMBER_RANDOMIZATIONS : self.numberRandomizations, 
                         }
 
         #===================================================================
@@ -157,6 +158,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             self.minimumProteinInteraction = int( self.minimumProteinInteraction)
         except:
             raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided minimum protein interactions value is not correct (must be integer): " + self.minimumProteinInteraction)
+
+        # Check if minimum protein annotation value is consistent
+        try:
+            self.numberRandomizations = int( self.numberRandomizations)
+        except:
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided number randomizations value is not correct (must be integer): " + self.numberRandomizations)
 
         #===================================================================
         # Initialisation
@@ -497,57 +504,80 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # File with enrichment test per RNA-module pair
         #===================================================================          
         outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
-        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\tminimum_items\tpval\tcorrected_pval\tsign_corrected\n")
+        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
 
         #===================================================================   
         # File with stats per RNA
         #===================================================================          
         outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
-        outHandlerStats.write("transcriptID\tnumber_significant_tests\tnumber_significant_random\n")
+        outHandlerStats.write("transcriptID\tnumber_significant_tests\tnumber_significant_tests_no_warning\tnumber_significant_random\tnumber_significant_random_no_warning\n")
+
+        # Calculate number of possible permutations
+        listOfProteins = [ prot for annot in self.annotWithInteractionDict for prot in self.annotWithInteractionDict[ annot]]
+        avgPotSize = len( listOfProteins) / float( len( self.annotWithInteractionDict))
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations: %i" % (avgPotSize * len( listOfProteins) ) )
+
 
         rnaCounter = 0
         # for each RNA with any interaction
         for rnaID in sorted( rnaInteractions):
                         
             rnaCounter+=1
-            if rnaCounter % 100 == 0:
-                Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: processed %s RNAs.." % str( rnaCounter ) )
+            if rnaCounter % 1 == 0:
+                Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )
+
+            # retrieve total number of interactions with annotated proteins for this RNA
+            totalRNAInteractions = { prot for annotID in rnaInteractions[ rnaID] for prot in rnaInteractions[ rnaID][ annotID]}
 
             #===================================================================   
-            # Run tests            
+            # Run real test            
             #===================================================================   
-            testsCorrected = self.run_rna_vs_annotation( rnaID, self.annotWithInteractionDict)
+            testsCorrected = self.run_rna_vs_annotations( rnaID, self.annotWithInteractionDict, totalRNAInteractions)
 
+            assert len( testsCorrected) == len( self.annotWithInteractionDict)
+
+            #===================================================================          
             #===================================================================   
             # File with enrichment test per RNA-module pair
+            #===================================================================          
             #===================================================================          
 
             for test in testsCorrected:
                 outHandler.write( "\t".join( test) + "\n" )
 
+            #===================================================================   
+            # Randomization tests
+            #===================================================================          
             
-#             for i in xrange(1,10):
-#                 pathwayDict = self.randomize_annotation( self.annotWithInteractionDict)
-#                 testsCorrection = self.run_rna_vs_annotation( rnaID, pathwayDict)
-                                
+            for i in xrange(0, self.numberRandomizations):
+                print i
+                pathwayDict = self.randomize_annotation( self.annotWithInteractionDict)
+                testsCorrected = self.run_rna_vs_annotations( rnaID, pathwayDict, totalRNAInteractions)
+
+            #===================================================================          
             #===================================================================   
             # File with stats per RNA
             #===================================================================          
-
-            assert len( testsCorrected) == len( self.annotWithInteractionDict)
-
-            signColumn = 8 # 0-based
+            #===================================================================          
+            # count number of significant tests after p-value correction
+            
+            signColumn = 8 # column with result significance tag. 0-based
+            warningColumn = 5 # column with warning/skipTest tag. 0-based
             countSignificant = 0
+            countSignificantNoWarning = 0 # number of significant tests without a warning
             for test in testsCorrected:
                 if test[ signColumn] == "1":
                     countSignificant += 1
+                # if test is significant and does not have warning flag
+                elif test[ signColumn] == "1" and test[ warningColumn] == "0":
+                    countSignificantNoWarning += 1
                 elif test[ signColumn] == "0":
                     pass
                 else:
                     raise RainetException( "EnrichmentAnalysisStrategy.enrichement_analysis: Significance value is not boolean.")
-                    
-            print rnaID, countSignificant
-                    
+
+            outHandlerStats.write( "%s\t%i\t%i\t%i\t%i\n" % (rnaID, countSignificant, countSignificantNoWarning, 0, 0) )
+
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
@@ -557,15 +587,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
     # #
     # Function to run hypergeometric test of RNA against list of annotations
-    def run_rna_vs_annotation(self, rna_id, annotation_dict):
+    def run_rna_vs_annotations(self, rna_id, annotation_dict, total_rna_interactions):
         
         pvalues = [] # stores list of pvalues to be corrected                  
         tests = [] # stores output from tests
         
         currentRNAInteractions = self.rnaInteractions[ rna_id]
-
-        # retrieve total number of interactions with annotated proteins for this RNA
-        totalRNAInteractions = { prot for annotID in currentRNAInteractions for prot in currentRNAInteractions[ annotID]}
         
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
@@ -587,14 +614,13 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # Skip test/output if minimum number of items is not respected                   
             if len( possibleProtList) < self.minimumProteinAnnotation or len( protList) < self.minimumProteinInteraction :
                 skipTest = 1
-                # print "Skipping test: ", rnaID, annotID, len( self.pathwayAnnotDict[ annotID])
 
             # Hypergeometric test parameters
             # note: test for each RNA - annotation pair. 
             x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
             m = len( possibleProtList) # total white balls ( proteins with the current annotation that have interaction predictions)
             n = len( self.backgroundProteins) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
-            k = len( totalRNAInteractions) # total number of draws ( proteins with positive interactions, regardless of current annotation)
+            k = len( total_rna_interactions) # total number of draws ( proteins with positive interactions, regardless of current annotation)
 
             assert ( m + n >= k), "number of draws should be less than total number of balls"
 
@@ -613,7 +639,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # calculate corrected p values
         testsCorrected = [] # stores data plus correction
         
-        correctedPvalues = multipletests(pvalues, 0.1, "fdr_bh")[1]
+        correctedPvalues = multipletests(pvalues, method = "fdr_bh")[1]
         
         for i in xrange( 0, len( tests)):
             l = tests[i][:]
@@ -632,6 +658,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             # append current list to list of RNA vs annotation
             testsCorrected.append( l)
+
 
         return testsCorrected
         
@@ -665,14 +692,51 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # stats.hypergeome.sf gives the same result as R phyper
         testResult = stats.hypergeom.sf( x, m+n, m, k)
 
-        if x == 0 and testResult <= EnrichmentAnalysisStrategy.SIGN_VALUE:
-            Logger.get_instance().warning( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls withdrawn is zero but result is significant. x=%s, m=%s, n=%s, k=%s" % (x,m,n,k)  )
+        #if x == 0 and testResult <= EnrichmentAnalysisStrategy.SIGN_VALUE:
+        #    Logger.get_instance().warning( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls withdrawn is zero but result is significant. x=%s, m=%s, n=%s, k=%s" % (x,m,n,k)  )
 
         # print ("x: %i\tm: %i\tn: %i\tk: %i" % (x,m,n,k) )
         # print ("Hypergeometric_test p-value:\t%.3f\n" % testResult )
             
         return testResult
 
+
+    # #
+    # Randomize values in a dictionary while keeping the structure of the dictionary
+    def randomize_annotation(self, annotDict):
+        
+        # Note: if using NetworkModules, there are overlapping annotations.
+
+        # Get list of proteins in a orderly manner
+        listOfProteins = [ prot for annot in sorted( annotDict) for prot in sorted( annotDict[ annot]) ]
+        
+        # shuffle list of proteins (use of sample with maximum number of sample size, same as shuffle)
+        randomizedListOfProteins = random.sample( listOfProteins, len( listOfProteins))
+        
+        assert len( randomizedListOfProteins) == len( listOfProteins)
+
+        # container of randomized annotation dict
+        randomAnnotDict = {} # key -> annot, val -> list of proteins
+        
+        # for each annotation of original annotation dict, add proteins randomly but with same annotation topology
+        for annot in sorted( annotDict): # sorted is important
+            
+            if annot not in randomAnnotDict:
+                randomAnnotDict[ annot] = []
+            
+            nItems = len( annotDict[ annot])
+            
+            for i in xrange(0, nItems):
+                # pop method removes last item and returns it
+                currentProt = randomizedListOfProteins.pop()
+                
+                randomAnnotDict[ annot].append( currentProt)
+
+        assert len( randomAnnotDict) == len( annotDict)
+        assert len( randomizedListOfProteins) == 0
+            
+
+        return randomAnnotDict
 
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
