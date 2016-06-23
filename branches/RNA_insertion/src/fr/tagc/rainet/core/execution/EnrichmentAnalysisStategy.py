@@ -513,7 +513,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         #===================================================================          
         # one line per RNA, observed significant tests vs random significant tests
         outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
-        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tavg_n_sign_random_no_warning\tnumber_times_below\tempiricalPvalue\tsignificant\n")
+        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tavg_n_sign_random_no_warning\tn_times_above_random\tempiricalPvalue\tsignificant\n")
 
         #===================================================================   
         # Annotation randomization
@@ -584,14 +584,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             countSignificant, countSignificantNoWarning = self.count_sign_tests( testsCorrected)
             
             # find position of observed value in respect to random control
-            empiricalPvalue, numberBelow = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
+            empiricalPvalue, numberAbove = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
             
             # if empirical value is significant  
             sign = "0"
             if float( empiricalPvalue) < EnrichmentAnalysisStrategy.SIGN_VALUE:
                 sign = "1"
                 
-            outHandlerStats.write( "%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberBelow, empiricalPvalue, sign) )
+            outHandlerStats.write( "%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberAbove, empiricalPvalue, sign) )
 
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
@@ -771,18 +771,24 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     # #
     # Calculate proportion of random tests that are below observed value
     # Conservative approach: only counts observed below if < random value (not <=)
-    def empirical_pvalue(self, list_random_significant, observed_significant):
+    def empirical_pvalue(self, list_random_significant, observed_significant, aboveTail = 1):
         
         listRandomSignificant = numpy.sort( list_random_significant)            
 
         below = 0 # count how many times observed value is below random values
+        above = 0 # count how many times observed value is above random values
         for val in listRandomSignificant:
             if observed_significant < val: # conservative
                 below +=1
+            if observed_significant > val:
+                above +=1
 
-        pval = 1.0 - (below / float( len( listRandomSignificant)) )  
-
-        return pval, below
+        if aboveTail:
+            pval = 1.0 - ( above / float( len( listRandomSignificant)) )
+            return pval, above
+        else:
+            pval = 1.0 - (below / float( len( listRandomSignificant)) )  
+            return pval, below
 
 
     # #
