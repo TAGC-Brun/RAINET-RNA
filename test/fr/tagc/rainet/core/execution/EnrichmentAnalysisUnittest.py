@@ -172,21 +172,32 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
         observedSignificant = 10
         
-        # 1/4 below, 1/4 with same, 2/4 above
+        # random are 4/4 above
+        listRandomSignificant = [11] * nTests
+        assert len( listRandomSignificant) == nTests
+
+        res, count = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
+
+        self.assertTrue( res == 1.0, "assert that empirical pvalue is correct according to input")
+        self.assertTrue( count == 0, "assert that empirical count above is correct according to input")
+
+        # random are 0/4 above
+        listRandomSignificant = [0] * nTests
+        assert len( listRandomSignificant) == nTests
+
+        res, count = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
+
+        self.assertTrue( res == 0.0, "assert that empirical pvalue is correct according to input")
+        self.assertTrue( count == 100, "assert that empirical count above is correct according to input")
+
+        # random are 1/4 below, 1/4 with same, 2/4 above
         listRandomSignificant = [0] * (nTests / 4) + [10] * (nTests / 4) + [50] * (nTests / 2)
         assert len( listRandomSignificant) == nTests
 
-        res = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
-
-        self.assertTrue( res == 0.5, "assert that empirical pvalue is correct according to input")
-
-        # 4/4 above
-        listRandomSignificant = [11] * (nTests / 2) + [50] * (nTests / 2)
-        assert len( listRandomSignificant) == nTests
-
-        res = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
-
-        self.assertTrue( res == 0.0, "assert that empirical pvalue is correct according to input")
+        res, count = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
+        
+        self.assertTrue( res == 0.75, "assert that empirical pvalue is correct according to input")
+        self.assertTrue( count == 25, "assert that empirical count above is correct according to input")
 
 
     # TODO: SHOULD ADD TESTS
