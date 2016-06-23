@@ -491,8 +491,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                         rnaInteractions[ txID][ annot] = []
                     rnaInteractions[ txID][ annot].append( protID)
       
-        self.rnaInteractions = rnaInteractions
-   
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
@@ -565,11 +563,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             listRandomSignificants = numpy.empty( self.numberRandomizations, object)
             listRandomSignificantsNoWarning = numpy.empty( self.numberRandomizations, object)
-
+ 
             for i in xrange(0, self.numberRandomizations):
-                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)
+                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)[:]                
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
-
+ 
             # using just Significant no warning
             avgSignNoWarning = numpy.mean( listRandomSignificantsNoWarning)
 
@@ -585,7 +583,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             
             # find position of observed value in respect to random control
             empiricalPvalue = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
-            
+                        
             outHandlerStats.write( "%s\t%i\t%i\t%e\n" % (rnaID, countSignificantNoWarning, avgSignNoWarning, empiricalPvalue) )
 
 
@@ -603,21 +601,16 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         pvalues =  numpy.empty( len( annotation_dict)) * numpy.nan # stores list of pvalues to be corrected                  
         tests = numpy.empty( len( annotation_dict), object) # stores output from tests
                 
-        currentRNAInteractions = self.rnaInteractions[ rna_id]
-        
         # Container for results of hypergeom tests so that they don't have to be repeated. 
         self.testContainer = {} # Key -> test parameters, val -> pval result
-        
+                
         counter = 0
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
 
             # positive interactions in current annotation
-            if annotID in currentRNAInteractions:
-                protList = currentRNAInteractions[ annotID]
-            else: # so that we perform test even if there is no interactions with any protein of this annotation
-                protList = []
-
+            protList = set( annotation_dict[ annotID]).intersection( total_rna_interactions)
+            
             # number of proteins with annotation that have interaction predictions
             possibleProtList = self.annotWithInteractionDict[ annotID]
 
@@ -660,10 +653,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # For each test performed with this RNA
         #===================================================================          
         # calculate corrected p values
-        
+                
         nTests = len( annotation_dict)
                 
-        testsCorrected = self.correct_pvalues( nTests, pvalues, tests)
+        testsCorrected = self.correct_pvalues( nTests, pvalues, tests)[:]
 
         return testsCorrected
 
