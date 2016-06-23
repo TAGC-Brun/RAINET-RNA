@@ -513,7 +513,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Initialise file with stats per RNA
         #===================================================================          
         outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
-        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tn_sign_random_no_warning\n")
+        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tn_sign_random_no_warning\tempiricalPvalue\n")
 
         #===================================================================   
         # Annotation randomization
@@ -564,15 +564,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             #===================================================================          
 
             listRandomSignificants = numpy.empty( self.numberRandomizations, object)
+            listRandomSignificantsNoWarning = numpy.empty( self.numberRandomizations, object)
+
             for i in xrange(0, self.numberRandomizations):
-                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions) # this is slow
-                listRandomSignificants[ i] = self.count_sign_tests( randomTestsCorrected)
+                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)
+                listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
 
-#            print listRandomSignificants
-
-            listRandomSignificants = numpy.sort( listRandomSignificants)
-            
-#            print listRandomSignificants
+            # using just Significant no warning
+            avgSignNoWarning = numpy.mean( listRandomSignificantsNoWarning)
 
             #===================================================================          
             #===================================================================   
@@ -581,17 +580,21 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             #===================================================================          
             # count number of significant tests AFTER p-value correction
             
-            # this should be the real testsCorrected
+            # stats for the real/observed data
             countSignificant, countSignificantNoWarning = self.count_sign_tests( testsCorrected)
             
-            outHandlerStats.write( "%s\t%i\t%i\t%i\n" % (rnaID, countSignificantNoWarning, 0, 0) )
+            # find position of observed value in respect to random control
+            empiricalPvalue = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
+            
+            outHandlerStats.write( "%s\t%i\t%i\t%e\n" % (rnaID, countSignificantNoWarning, avgSignNoWarning, empiricalPvalue) )
 
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
    
         outHandler.close()
-
+        outHandlerStats.close()
+        
 
     # #
     # Function to run hypergeometric test of RNA against list of annotations
@@ -642,7 +645,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 hyperResult = self.testContainer[ tag]
             else:
                 # perform the actual test
-                hyperResult = self.hypergeometric_test(x, m, n, k)
+                hyperResult = self.hypergeometric_test(x, m, n, k) # this is the slow part of the code
                 self.testContainer[ tag] = hyperResult
 
             # store pvalue to be corrected                
@@ -694,7 +697,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         return testsCorrected
 
     # #
-    #
+    # Run multipletest correction and return pvalues
     def multiple_test_correction(self, pvalues, meth = "fdr_bh"):
         return multipletests(pvalues, method = meth)[1]
 
@@ -766,11 +769,24 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
 
     # #
+    # Calculate proportion of random tests that are below observed value
+    # Conservative approach: only counts observed below if < random value (not <=)
+    def empirical_pvalue(self, listRandomSignificant, observedSignificant):
+        
+        listRandomSignificant = numpy.sort( listRandomSignificant)            
+
+        count = 0
+        for val in listRandomSignificant:
+            if observedSignificant < val: # conservative
+                count +=1
+
+        return 1.0 - (count / float( len( listRandomSignificant)) )  
+
+
+    # #
     # Randomize values in a dictionary while keeping the structure of the dictionary
     def randomize_annotation(self, annotDict):
         
-        # Note: if using NetworkModules, there are overlapping annotations.
-
         # Get list of proteins in a orderly manner
         listOfProteins = [ prot for annot in sorted( annotDict) for prot in sorted( annotDict[ annot]) ]
         
@@ -791,13 +807,31 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             nItems = len( annotDict[ annot])
             
             for i in xrange(0, nItems):
-                # pop method removes last item and returns it
-                currentProt = randomizedListOfProteins.pop()
+#                 # pop method removes last item and returns it
+#                 currentProt = randomizedListOfProteins.pop()
+                
+                currentProt = randomizedListOfProteins[i]
+                
+                # Note: if using NetworkModules, there are overlapping annotations.
+                # I.e. same protein present in different annotations
+                # avoid replicates of same protein falling into same annotation
+                swaps = 1
+                # if protein already in bag. Use of while in case this happens consecutively
+                while currentProt in randomAnnotDict[ annot]:
+
+                    otherProt = randomizedListOfProteins[i + swaps]
+                    
+                    # swap current with next
+                    toBeSwapped = randomizedListOfProteins[i ]
+                    randomizedListOfProteins[ i] = otherProt
+                    randomizedListOfProteins[i + swaps] = toBeSwapped
+
+                    currentProt = randomizedListOfProteins[ i]
+                    swaps+=1
                 
                 randomAnnotDict[ annot].append( currentProt)
 
         assert len( randomAnnotDict) == len( annotDict)
-        assert len( randomizedListOfProteins) == 0
             
         return randomAnnotDict
 

@@ -146,14 +146,46 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
 
     def test_randomize_annotation(self):
+            
+        print "| test_randomize_annotation | "
+        
+        annotDict = { "one" : ["P1","P2","P3"], "two" : ["P2","P4"], "three" : ["P5"], "four" : ["P1","P5"]}
     
-        annotDict = { "one" : ["P1","P2","P3"], "two" : ["P2","P4"], "three" : ["P5"]}
+        for i in xrange(1000):
+            randomAnnotDict = self.run.randomize_annotation( annotDict)
     
-        randomAnnotDict = self.run.randomize_annotation( annotDict)
+            lengths1 = [ len( annotDict[ annot]) for annot in sorted(annotDict)]
+            lengths2 = [ len( randomAnnotDict[ annot]) for annot in sorted(randomAnnotDict)]
+    
+            self.assertTrue( lengths1 == lengths2, "assert that topology of annotation dictionary is unchanged with the shuffle")
+    
+            lengths1Set = [ len( set( annotDict[ annot])) for annot in sorted(annotDict)]
+            lengths2Set = [ len( set( randomAnnotDict[ annot])) for annot in sorted(randomAnnotDict)]
+            
+            self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in shuffled list")
+            self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
 
-        print annotDict
-        print randomAnnotDict
+    def test_empirical_pvalue(self):
+        
+        nTests = 100
 
+        observedSignificant = 10
+        
+        # 1/4 below, 1/4 with same, 2/4 above
+        listRandomSignificant = [0] * (nTests / 4) + [10] * (nTests / 4) + [50] * (nTests / 2)
+        assert len( listRandomSignificant) == nTests
+
+        res = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
+
+        self.assertTrue( res == 0.5, "assert that empirical pvalue is correct according to input")
+
+        # 4/4 above
+        listRandomSignificant = [11] * (nTests / 2) + [50] * (nTests / 2)
+        assert len( listRandomSignificant) == nTests
+
+        res = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
+
+        self.assertTrue( res == 0.0, "assert that empirical pvalue is correct according to input")
 
 
 #     # #
