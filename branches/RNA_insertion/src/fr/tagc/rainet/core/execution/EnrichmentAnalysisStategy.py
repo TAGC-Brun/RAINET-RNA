@@ -109,6 +109,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Switch for writing of external report file      
         self.writeReportFile = 1
 
+        # Container for results of hypergeom tests so that they don't have to be repeated. 
+        self.testContainer = {} # Key -> test parameters, val -> pval result
+
+        # counter for total amount of tests
+        self.countTotalTests = 0
 
     # #
     # The Strategy execution method
@@ -217,6 +222,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 #             Timer.get_instance().step( "Writing report.." )
 #             self.write_report()
 # 
+        # Container for results of hypergeom tests so that they don't have to be repeated. 
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.analysis : Number of unique tests performed: %s" % ( len( self.testContainer)) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.analysis : Number of tests performed: %s" % ( self.countTotalTests) )
+        
         Timer.get_instance().stop_chrono( "Analysis Finished!")
  
     
@@ -607,10 +616,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         
         pvalues =  numpy.empty( len( annotation_dict)) * numpy.nan # stores list of pvalues to be corrected                  
         tests = numpy.empty( len( annotation_dict), object) # stores output from tests
-                
-        # Container for results of hypergeom tests so that they don't have to be repeated. 
-        self.testContainer = {} # Key -> test parameters, val -> pval result
-                
+                                
         counter = 0
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
@@ -647,6 +653,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 # perform the actual test
                 hyperResult = self.hypergeometric_test(x, m, n, k) # this is the slow part of the code
                 self.testContainer[ tag] = hyperResult
+
+            self.countTotalTests += 1
 
             # store pvalue to be corrected                
             pvalues[ counter] = hyperResult               
