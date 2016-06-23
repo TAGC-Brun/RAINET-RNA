@@ -533,8 +533,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         avgPotSize = len( listOfProteins) / float( len( self.annotWithInteractionDict))
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations: %i" % (avgPotSize * len( listOfProteins) ) )
        
+        # Get list of proteins in a orderly manner
+        listOfProteins = [ prot for annot in sorted( self.annotWithInteractionDict) for prot in sorted( self.annotWithInteractionDict[ annot]) ]
+       
         # shuffle annotation tags of proteins
-        randomAnnotDicts = [ self.randomize_annotation( self.annotWithInteractionDict) for i in xrange(0, self.numberRandomizations)]
+        randomAnnotDicts = [ self.randomize_annotation( self.annotWithInteractionDict, listOfProteins) for i in xrange(0, self.numberRandomizations)]
 
         #===================================================================   
         #===================================================================   
@@ -574,13 +577,28 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             listRandomSignificants = numpy.empty( self.numberRandomizations, object)
             listRandomSignificantsNoWarning = numpy.empty( self.numberRandomizations, object)
- 
-            for i in xrange(0, self.numberRandomizations):
-                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)[:]                
+            listRandomTestsCorrected = []
+            for i in xrange(0, self.numberRandomizations):               
+                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
+
+                listRandomTestsCorrected.append(randomTestsCorrected)
  
             # using just Significant no warning
             avgSignRandomNoWarning = numpy.mean( listRandomSignificantsNoWarning)
+
+            print listRandomSignificantsNoWarning
+
+            for t in xrange(len(listRandomSignificantsNoWarning)):
+                val = listRandomSignificantsNoWarning[ t]
+                if val > 30:
+                    print val
+ 
+#                     print listRandomSignificantsNoWarning[ t]
+                    print avgSignRandomNoWarning
+#                     print listRandomTestsCorrected[ t]
+                    print randomAnnotDicts[ t]
+                    print
 
             #===================================================================          
             #===================================================================   
@@ -671,7 +689,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 
         nTests = len( annotation_dict)
                 
-        testsCorrected = self.correct_pvalues( nTests, pvalues, tests)[:]
+        testsCorrected = self.correct_pvalues( nTests, pvalues, tests)
 
         return testsCorrected
 
@@ -801,18 +819,20 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
     # #
     # Randomize values in a dictionary while keeping the structure of the dictionary
-    def randomize_annotation(self, annotDict):
-        
-        # Get list of proteins in a orderly manner
-        listOfProteins = [ prot for annot in sorted( annotDict) for prot in sorted( annotDict[ annot]) ]
-        
+    def randomize_annotation(self, annotDict, listOfProteins):
+                
         # shuffle list of proteins (use of sample with maximum number of sample size, same as shuffle)
         randomizedListOfProteins = random.sample( listOfProteins, len( listOfProteins))
+        
+#         randomizedListOfProteins = listOfProteins[:]
+#         random.shuffle(randomizedListOfProteins)
         
         assert len( randomizedListOfProteins) == len( listOfProteins)
 
         # container of randomized annotation dict
         randomAnnotDict = {} # key -> annot, val -> list of proteins
+
+        counter = 0
         
         # for each annotation of original annotation dict, add proteins randomly but with same annotation topology
         for annot in sorted( annotDict): # sorted is important
@@ -821,29 +841,34 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 randomAnnotDict[ annot] = []
             
             nItems = len( annotDict[ annot])
-            
+
+            # for each protein in annotation            
             for i in xrange(0, nItems):
                 
-                currentProt = randomizedListOfProteins[i]
-                
-                # Note: if using NetworkModules, there are overlapping annotations.
-                # I.e. same protein present in different annotations
-                # avoid replicates of same protein falling into same annotation
-                swaps = 1
-                # if protein already in bag. Use of while in case this happens consecutively
-                while currentProt in randomAnnotDict[ annot]:
+#                 currentProt = randomizedListOfProteins[ counter]
+#                  
+#                 # Note: if using NetworkModules, there are overlapping annotations.
+#                 # I.e. same protein present in different annotations
+#                 # avoid replicates of same protein falling into same annotation
+#                 swaps = 1
+#                 # if protein already in bag. Use of while in case this happens consecutively
+#                 while currentProt in randomAnnotDict[ annot]:
+#   
+#                     otherProt = randomizedListOfProteins[counter + swaps]
+#                       
+#                     # swap current with next
+#                     toBeSwapped = randomizedListOfProteins[counter ]
+#                     randomizedListOfProteins[ counter] = otherProt
+#                     randomizedListOfProteins[ counter + swaps] = toBeSwapped
+#   
+#                     currentProt = randomizedListOfProteins[ counter]
+#                     swaps+=1
+#                  
+#                 randomAnnotDict[ annot].append( currentProt)
+#                 
+#                 counter += 1
 
-                    otherProt = randomizedListOfProteins[i + swaps]
-                    
-                    # swap current with next
-                    toBeSwapped = randomizedListOfProteins[i ]
-                    randomizedListOfProteins[ i] = otherProt
-                    randomizedListOfProteins[i + swaps] = toBeSwapped
-
-                    currentProt = randomizedListOfProteins[ i]
-                    swaps+=1
-                
-                randomAnnotDict[ annot].append( currentProt)
+                randomAnnotDict[ annot].append( randomizedListOfProteins.pop() )
 
         assert len( randomAnnotDict) == len( annotDict)
             
