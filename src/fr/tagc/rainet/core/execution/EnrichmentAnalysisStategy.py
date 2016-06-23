@@ -72,6 +72,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
     # significance value 
     SIGN_VALUE = 0.05
+        
+    SIGN_COLUMN = 8 # column from testsCorrected with result significance tag. 0-based
+    WARNING_COLUMN = 5 # column from testsCorrected with warning/skipTest tag. 0-based
 
     #===================================================================
     # Data Manager object Keywords
@@ -495,29 +498,40 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
         #===================================================================    
-        #===================================================================   
+        #
         # Make enrichment tests
-        #===================================================================          
+        # 
         #===================================================================          
   
         #===================================================================   
-        # File with enrichment test per RNA-module pair
+        # Initialise file with enrichment test per RNA-module pair
         #===================================================================          
         outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
         outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
 
         #===================================================================   
-        # File with stats per RNA
+        # Initialise file with stats per RNA
         #===================================================================          
         outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
-        outHandlerStats.write("transcriptID\tnumber_significant_tests\tnumber_significant_tests_no_warning\tnumber_significant_random\tnumber_significant_random_no_warning\n")
+        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tn_sign_random_no_warning\n")
+
+        #===================================================================   
+        # Annotation randomization
+        #===================================================================          
 
         # Calculate number of possible permutations
         listOfProteins = [ prot for annot in self.annotWithInteractionDict for prot in self.annotWithInteractionDict[ annot]]
         avgPotSize = len( listOfProteins) / float( len( self.annotWithInteractionDict))
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations: %i" % (avgPotSize * len( listOfProteins) ) )
+       
+        # shuffle annotation tags of proteins
+        randomAnnotDicts = [ self.randomize_annotation( self.annotWithInteractionDict) for i in xrange(0, self.numberRandomizations)]
 
-
+        #===================================================================   
+        #===================================================================   
+        # Loop RNA to perform tests per RNA
+        #===================================================================          
+        #===================================================================   
         rnaCounter = 0
         # for each RNA with any interaction
         for rnaID in sorted( rnaInteractions):
@@ -525,7 +539,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             rnaCounter+=1
             if rnaCounter % 10 == 0:
                 Timer.get_instance().step( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )        
-
 
             # retrieve total number of interactions with annotated proteins for this RNA
             totalRNAInteractions = { prot for annotID in rnaInteractions[ rnaID] for prot in rnaInteractions[ rnaID][ annotID]}
@@ -549,34 +562,29 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             #===================================================================   
             # Randomization tests
             #===================================================================          
-            
+
+            listRandomSignificants = numpy.empty( self.numberRandomizations, object)
             for i in xrange(0, self.numberRandomizations):
-                pathwayDict = self.randomize_annotation( self.annotWithInteractionDict) # this is fast
-                testsCorrected = self.run_rna_vs_annotations( rnaID, pathwayDict, totalRNAInteractions) # this is slow
+                randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions) # this is slow
+                listRandomSignificants[ i] = self.count_sign_tests( randomTestsCorrected)
+
+#            print listRandomSignificants
+
+            listRandomSignificants = numpy.sort( listRandomSignificants)
+            
+#            print listRandomSignificants
 
             #===================================================================          
             #===================================================================   
             # File with stats per RNA
             #===================================================================          
             #===================================================================          
-            # count number of significant tests after p-value correction
+            # count number of significant tests AFTER p-value correction
             
-            signColumn = 8 # column with result significance tag. 0-based
-            warningColumn = 5 # column with warning/skipTest tag. 0-based
-            countSignificant = 0
-            countSignificantNoWarning = 0 # number of significant tests without a warning
-            for test in testsCorrected:
-                if test[ signColumn] == "1":
-                    countSignificant += 1
-                # if test is significant and does not have warning flag
-                elif test[ signColumn] == "1" and test[ warningColumn] == "0":
-                    countSignificantNoWarning += 1
-                elif test[ signColumn] == "0":
-                    pass
-                else:
-                    raise RainetException( "EnrichmentAnalysisStrategy.enrichement_analysis: Significance value is not boolean.")
-
-            outHandlerStats.write( "%s\t%i\t%i\t%i\t%i\n" % (rnaID, countSignificant, countSignificantNoWarning, 0, 0) )
+            # this should be the real testsCorrected
+            countSignificant, countSignificantNoWarning = self.count_sign_tests( testsCorrected)
+            
+            outHandlerStats.write( "%s\t%i\t%i\t%i\n" % (rnaID, countSignificantNoWarning, 0, 0) )
 
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
@@ -635,7 +643,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             else:
                 # perform the actual test
                 hyperResult = self.hypergeometric_test(x, m, n, k)
-                 
                 self.testContainer[ tag] = hyperResult
 
             # store pvalue to be corrected                
@@ -650,31 +657,47 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # For each test performed with this RNA
         #===================================================================          
         # calculate corrected p values
-        testsCorrected = numpy.empty( len( annotation_dict), object) # stores data plus correction
         
-        correctedPvalues = multipletests(pvalues, method = "fdr_bh")[1]
+        nTests = len( annotation_dict)
+                
+        testsCorrected = self.correct_pvalues( nTests, pvalues, tests)
+
+        return testsCorrected
+
+
+    # #
+    # Function to correct pvalues, and add correction and significance to provided 'tests' list
+    def correct_pvalues(self, nTests, pvalues, tests):
+        
+        testsCorrected = numpy.empty( nTests, object) # stores data plus correction
+         
+        correctedPvalues = self.multiple_test_correction( pvalues)
         
         for i in xrange( 0, len( tests)):
             l = tests[i][:]
-
+ 
             # add corrected pvalue to existing list
             corr =  "%e" % correctedPvalues[i]
             l.append( corr)
-
+ 
             # significative result tag
             sign = "0"
             if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
                 sign = "1"
-
+ 
             # add sign tag to existing list
             l.append( sign)
-
+ 
             # append current list to list of RNA vs annotation
             testsCorrected[ i] = l
 
-
         return testsCorrected
-        
+
+    # #
+    #
+    def multiple_test_correction(self, pvalues, meth = "fdr_bh"):
+        return multipletests(pvalues, method = meth)[1]
+
 
     # #
     # Run hypergeometric test using scipy. Based on R phyper rationel.
@@ -717,6 +740,31 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         return testResult
 
 
+    # # 
+    # Count number of significant tests among tests performed
+    def count_sign_tests(self, tests_corrected):
+
+        signColumn = EnrichmentAnalysisStrategy.SIGN_COLUMN
+        warningColumn = EnrichmentAnalysisStrategy.WARNING_COLUMN
+
+        countSignificant = 0 # number of significant tests regardless of warning
+        countSignificantNoWarning = 0 # number of significant tests without a warning
+        for test in tests_corrected:
+
+            # if test is significant and does not have warning flag
+            if test[ signColumn] == "1":
+                countSignificant += 1
+            elif test[ signColumn] == "0":
+                pass
+            else:
+                raise RainetException( "EnrichmentAnalysisStrategy.count_sign_tests: Significance value is not boolean.")
+
+            if test[ signColumn] == "1" and test[ warningColumn] == "0":
+                countSignificantNoWarning += 1
+
+        return countSignificant, countSignificantNoWarning
+
+
     # #
     # Randomize values in a dictionary while keeping the structure of the dictionary
     def randomize_annotation(self, annotDict):
@@ -751,7 +799,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         assert len( randomAnnotDict) == len( annotDict)
         assert len( randomizedListOfProteins) == 0
             
-
         return randomAnnotDict
 
     # #
