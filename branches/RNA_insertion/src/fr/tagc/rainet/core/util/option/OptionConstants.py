@@ -43,6 +43,7 @@ OPTION_EXPRESSION_TISSUE_CUTOFF = "Minimum number tissues co-present"
 OPTION_ANNOTATION_TABLE = "Protein annotation"
 OPTION_MINIMUM_PROTEIN_ANNOTATION = "Minimum proteins in annotation"
 OPTION_MINIMUM_PROTEIN_INTERACTION = "Minimum proteins in annotation with interaction"
+OPTION_NUMBER_RANDOMIZATIONS = "Number randomizations"
 
 #===============================================================================
 # Constants for default values
@@ -62,6 +63,7 @@ DEFAULT_RNA_BIOTYPES = RNA_BIOTYPES[:]
 # Enrichment strategy
 DEFAULT_MINIMUM_PROTEIN_ANNOTATION = 5
 DEFAULT_MINIMUM_PROTEIN_INTERACTION = 2
+DEFAULT_NUMBER_RANDOMIZATIONS = 100
 
 #===============================================================================
 # The definition of the options
@@ -96,7 +98,9 @@ OPTION_LIST = {  "Insertion": [
                     [ "-o", "--outputFolder", "store", "string", OPTION_OUTPUT_FOLDER, DEFAULT_OUTPUT_FOLDER, "Folder where output files will be written."],
                     [ "-a", "--annotationTable", "store", "string", OPTION_ANNOTATION_TABLE, None, "Protein annotation table to be used for analysis. Must be one of : " + str( Constants.ANNOTATION_TABLES) ],
                     [ "-m", "--minimumProteinAnnotation", "store", "int", OPTION_MINIMUM_PROTEIN_ANNOTATION, DEFAULT_MINIMUM_PROTEIN_ANNOTATION, "Minimum number of proteins with annotation for enrichment test to be performed." ],
-                    [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ]
+                    [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ],
+                    [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ]
+
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
