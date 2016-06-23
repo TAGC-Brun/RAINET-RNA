@@ -523,8 +523,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         for rnaID in sorted( rnaInteractions):
                         
             rnaCounter+=1
-            if rnaCounter % 100 == 0:
-                Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )
+            if rnaCounter % 10 == 0:
+                Timer.get_instance().step( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )        
+
 
             # retrieve total number of interactions with annotated proteins for this RNA
             totalRNAInteractions = { prot for annotID in rnaInteractions[ rnaID] for prot in rnaInteractions[ rnaID][ annotID]}
@@ -593,6 +594,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 
         currentRNAInteractions = self.rnaInteractions[ rna_id]
         
+        # Container for results of hypergeom tests so that they don't have to be repeated. 
+        self.testContainer = {} # Key -> test parameters, val -> pval result
+        
         counter = 0
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
@@ -624,8 +628,15 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             assert ( m + n >= k), "number of draws should be less than total number of balls"
 
-            # perform the actual test
-            hyperResult = self.hypergeometric_test(x, m, n, k)
+            # code speed up, don't need to recalculate hypergeom test if already done previously
+            tag = "%s,%s,%s,%s" % ( x, m, n, k)
+            if tag in self.testContainer:
+                hyperResult = self.testContainer[ tag]
+            else:
+                # perform the actual test
+                hyperResult = self.hypergeometric_test(x, m, n, k)
+                 
+                self.testContainer[ tag] = hyperResult
 
             # store pvalue to be corrected                
             pvalues[ counter] = hyperResult               
