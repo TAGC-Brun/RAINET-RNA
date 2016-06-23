@@ -165,6 +165,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in shuffled list")
             self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
 
+
     def test_empirical_pvalue(self):
         
         nTests = 100
@@ -186,6 +187,12 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         res = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
 
         self.assertTrue( res == 0.0, "assert that empirical pvalue is correct according to input")
+
+
+    # TODO: SHOULD ADD TESTS
+    # HYPERGEOM TEST
+    # CHOICE OF x,m,n,k 
+
 
 
 #     # #
