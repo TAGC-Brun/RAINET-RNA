@@ -504,14 +504,16 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         #===================================================================   
         # Initialise file with enrichment test per RNA-module pair
         #===================================================================          
+        # one line per RNA-module (enrichment test)
         outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
         outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
 
         #===================================================================   
         # Initialise file with stats per RNA
         #===================================================================          
+        # one line per RNA, observed significant tests vs random significant tests
         outHandlerStats = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT_PER_RNA )
-        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tn_sign_random_no_warning\tempiricalPvalue\n")
+        outHandlerStats.write("transcriptID\tn_sign_tests_no_warning\tavg_n_sign_random_no_warning\tnumber_times_below\tempiricalPvalue\tsignificant\n")
 
         #===================================================================   
         # Annotation randomization
@@ -569,7 +571,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
  
             # using just Significant no warning
-            avgSignNoWarning = numpy.mean( listRandomSignificantsNoWarning)
+            avgSignRandomNoWarning = numpy.mean( listRandomSignificantsNoWarning)
 
             #===================================================================          
             #===================================================================   
@@ -582,9 +584,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             countSignificant, countSignificantNoWarning = self.count_sign_tests( testsCorrected)
             
             # find position of observed value in respect to random control
-            empiricalPvalue = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
-                        
-            outHandlerStats.write( "%s\t%i\t%i\t%e\n" % (rnaID, countSignificantNoWarning, avgSignNoWarning, empiricalPvalue) )
+            empiricalPvalue, numberBelow = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
+            
+            # if empirical value is significant  
+            sign = "0"
+            if float( empiricalPvalue) < EnrichmentAnalysisStrategy.SIGN_VALUE:
+                sign = "1"
+                
+            outHandlerStats.write( "%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberBelow, empiricalPvalue, sign) )
 
 
         #Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
@@ -644,7 +651,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # store pvalue to be corrected                
             pvalues[ counter] = hyperResult               
 
-            text = "%s\t%s\t%s\t%s\t%s\t%s\t%e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
+            text = "%s\t%s\t%s\t%s\t%s\t%s\t%.1e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
             tests[ counter] = text.split("\t") 
  
             counter += 1
@@ -673,7 +680,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             l = tests[i][:]
  
             # add corrected pvalue to existing list
-            corr =  "%e" % correctedPvalues[i]
+            corr =  "%.1e" % correctedPvalues[i]
             l.append( corr)
  
             # significative result tag
@@ -764,16 +771,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     # #
     # Calculate proportion of random tests that are below observed value
     # Conservative approach: only counts observed below if < random value (not <=)
-    def empirical_pvalue(self, listRandomSignificant, observedSignificant):
+    def empirical_pvalue(self, list_random_significant, observed_significant):
         
-        listRandomSignificant = numpy.sort( listRandomSignificant)            
+        listRandomSignificant = numpy.sort( list_random_significant)            
 
-        count = 0
+        below = 0 # count how many times observed value is below random values
         for val in listRandomSignificant:
-            if observedSignificant < val: # conservative
-                count +=1
+            if observed_significant < val: # conservative
+                below +=1
 
-        return 1.0 - (count / float( len( listRandomSignificant)) )  
+        pval = 1.0 - (below / float( len( listRandomSignificant)) )  
+
+        return pval, below
 
 
     # #
@@ -800,8 +809,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             nItems = len( annotDict[ annot])
             
             for i in xrange(0, nItems):
-#                 # pop method removes last item and returns it
-#                 currentProt = randomizedListOfProteins.pop()
                 
                 currentProt = randomizedListOfProteins[i]
                 
