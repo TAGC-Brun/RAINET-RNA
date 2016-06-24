@@ -577,28 +577,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             listRandomSignificants = numpy.empty( self.numberRandomizations, object)
             listRandomSignificantsNoWarning = numpy.empty( self.numberRandomizations, object)
-            listRandomTestsCorrected = []
             for i in xrange(0, self.numberRandomizations):               
                 randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
-
-                listRandomTestsCorrected.append(randomTestsCorrected)
  
             # using just Significant no warning
             avgSignRandomNoWarning = numpy.mean( listRandomSignificantsNoWarning)
-
-            print listRandomSignificantsNoWarning
-
-            for t in xrange(len(listRandomSignificantsNoWarning)):
-                val = listRandomSignificantsNoWarning[ t]
-                if val > 30:
-                    print val
- 
-#                     print listRandomSignificantsNoWarning[ t]
-                    print avgSignRandomNoWarning
-#                     print listRandomTestsCorrected[ t]
-                    print randomAnnotDicts[ t]
-                    print
 
             #===================================================================          
             #===================================================================   
@@ -752,6 +736,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 #         cmd = "Rscript /home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/Rscripts/hypergeom_test.R %s %s %s %s" % (x,m,n,k)
 #         os.system(cmd)
         
+        if k > (m + n):
+            raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of draws is higher than total balls.")                   
         if m == 0:
             raise RainetException( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls is zero.")
         if k == 0:

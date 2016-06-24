@@ -92,7 +92,9 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
         # create instance of strategy    
         self.run = EnrichmentAnalysisStrategy()
+        self.run.sql_session = SQLManager.get_instance().get_session()
                 
+
                 
     def test_default_params(self):
     
@@ -176,6 +178,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
 
     def test_empirical_pvalue(self):
+
+        print "| test_empirical_pvalue | "
         
         nTests = 100
 
@@ -209,10 +213,69 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue( count == 25, "assert that empirical count above is correct according to input")
 
 
-    # TODO: SHOULD ADD TESTS
-    # HYPERGEOM TEST
-    # CHOICE OF x,m,n,k 
+    def test_hypergeometric_test(self):
+        
+        print "| test_hypergeometric_test | "
 
+        x, m, n, k = 5, 10, 50, 10
+
+        res = "%.5f" % self.run.hypergeometric_test( x, m, n, k)
+
+        self.assertTrue( res == "0.00067")
+
+
+    def test_get_interaction_data(self):
+        
+        print "| test_get_interaction_data | "
+
+        self.run.get_interaction_data()
+
+        # store into accessible variables
+        interactingProteins = DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)
+        interactingRNAs = DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_RNA_KW)
+        interactions = DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_KW)
+
+        self.assertTrue( len( interactions) == 30, "assert number of retrieved interactions match expected" )
+        self.assertTrue( len( interactingProteins) == 48, "assert number of retrieved interactions match expected" )
+        self.assertTrue( len( interactingRNAs) == 17, "assert number of retrieved interactions match expected" )
+
+
+    def test_annotation_report(self):
+        
+        print "| test_annotation_report | "
+
+        self.run.execute()
+
+        # For NetworkModule
+
+        # Background should be overlap between interactingProteins and Proteins with annotation
+        #SELECT count(distinct( InteractingProtein.uniprotAC)) FROM InteractingProtein, ProteinNetworkModule WHERE  InteractingProtein.uniprotAC == ProteinNetworkModule.protein_id
+        self.assertTrue( len( self.run.backgroundProteins) == 37, "assert number of background proteins is correctly calculated")
+        
+        #SELECT count(distinct(ProteinNetworkModule.protein_id)) FROM ProteinNetworkModule -> 42
+        self.assertTrue( len( self.run.protAnnotDict) == 42, "assert number of proteins with annotations is correctly calculated")
+                
+        self.assertTrue( len( self.run.allProteinsWithInteractionData) == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
+
+        #SELECT count(distinct(ProteinNetworkModule.networkModule_id)) FROM ProteinNetworkModule -> 82. But this does not count interactions.
+        pool = {prot for annot in self.run.annotWithInteractionDict for prot in self.run.annotWithInteractionDict[annot]}
+
+        self.assertTrue( len( pool) == len( self.run.backgroundProteins), "confirm number of proteins with annotation and interaction")
+        
+        # For KEGG Pathway 
+        optionManager = OptionManager.get_instance()
+        optionManager.set_option(OptionConstants.OPTION_ANNOTATION_TABLE, "KEGGPathway" )
+       
+        self.run.execute()
+        
+        #SELECT count(distinct(ProteinKEGGAnnotation.protein_id)) FROM ProteinKEGGAnnotation -> 22
+        self.assertTrue( len( self.run.protAnnotDict) == 22, "assert number of proteins with annotations is correctly calculated")
+              
+        self.assertTrue( len( self.run.allProteinsWithInteractionData) == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
+ 
+        pool = {prot for annot in self.run.annotWithInteractionDict for prot in self.run.annotWithInteractionDict[annot]}
+ 
+        self.assertTrue( len( pool) == len( self.run.backgroundProteins), "confirm number of proteins with annotation and interaction")
 
 
 #     # #
