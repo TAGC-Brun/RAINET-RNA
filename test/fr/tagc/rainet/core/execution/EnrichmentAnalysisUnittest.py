@@ -151,11 +151,13 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             
         print "| test_randomize_annotation | "
         
-        annotDict = { "one" : ["P1","P2","P3"], "two" : ["P2","P4"], "three" : ["P5"], "four" : ["P1","P5"]}
+        annotDict = { "one" : ["P1","P2","P3"], "two" : ["P2","P4"], "three" : ["P5"], "four" : ["P1","P5"], "five" : ["P6","P7"], "six" : ["P8","P9","P10"]}
 
         listOfProteins = [ prot for annot in annotDict for prot in annotDict[ annot]]
         lengths1Set = [ len( set( annotDict[ annot])) for annot in sorted(annotDict)]
         lengths1 = [ len( annotDict[ annot]) for annot in sorted(annotDict)]
+
+        self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in original list")
 
         for i in xrange(1000):
             randomAnnotDict = self.run.randomize_annotation( annotDict, listOfProteins)
@@ -165,14 +167,10 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             self.assertTrue( lengths1 == lengths2, "assert that topology of annotation dictionary is unchanged with the shuffle")
     
 #             lengths2Set = [ len( set( randomAnnotDict[ annot])) for annot in sorted(randomAnnotDict)]
-#               
-#             self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in shuffled list")
+#             
 #             self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
 
             listOfProteins2 = [ prot for annot in randomAnnotDict for prot in randomAnnotDict[ annot]]
-
-            print sorted(set(listOfProteins))
-            print sorted(set(listOfProteins2))
 
             self.assertTrue( set( listOfProteins) == set(listOfProteins2), "assert that there are no duplicate IDs in shuffled list")
 
