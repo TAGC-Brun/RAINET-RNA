@@ -815,6 +815,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         
         assert len( randomizedListOfProteins) == len( listOfProteins)
 
+        assert len( annotDict) > 1, "randomization only works if more than one annotation"
+
         # container of randomized annotation dict
         randomAnnotDict = {} # key -> annot, val -> list of proteins
 
@@ -830,31 +832,70 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             # for each protein in annotation            
             for i in xrange(0, nItems):
-                
+                randomAnnotDict[ annot].append( randomizedListOfProteins.pop() )
+
 #                 currentProt = randomizedListOfProteins[ counter]
 #                  
 #                 # Note: if using NetworkModules, there are overlapping annotations.
 #                 # I.e. same protein present in different annotations
 #                 # avoid replicates of same protein falling into same annotation
-#                 swaps = 1
-#                 # if protein already in bag. Use of while in case this happens consecutively
-#                 while currentProt in randomAnnotDict[ annot]:
-#   
-#                     otherProt = randomizedListOfProteins[counter + swaps]
+#                 # if protein already in bag. Use of while in case this happens consecutively  
+#                 if currentProt in randomAnnotDict[ annot]:
+# 
+#                     if len( randomAnnotDict) == 1:
+#                         # Approach 1: in case there is only one annotation initialised in dictionary, swap with next protein
+# 
+#                         swaps = 1
+#                         # if protein already in bag. Use of while in case this happens consecutively
+#                         while currentProt in randomAnnotDict[ annot]:
+#            
+#                             otherProt = randomizedListOfProteins[counter + swaps]
+# 
+#                             if otherProt != currentProt:
+#                                 # swap current with next
+#                                 toBeSwapped = randomizedListOfProteins[counter ]
+#                                 randomizedListOfProteins[ counter] = otherProt
+#                                 randomizedListOfProteins[ counter + swaps] = toBeSwapped
+#                
+#                                 currentProt = randomizedListOfProteins[ counter]
+#                                 swaps+=1
+# 
+#                     else:
+#                         # Approach 2: swap with protein of a previously filled annotation
+#                      
+#                         succ = 0
+#                         tries = 0
+#       
+#                         # steal protein from another bag   
+#                         while succ == 0:
+#                             for annot2 in randomAnnotDict:                           
+#                                  
+#                                 if annot == annot2:
+#                                     continue
+#      
+#                                 otherProt = randomAnnotDict[ annot2][ tries]
+#                                  
+#                                 # if the new protein is different than current, and the current is not already in bag from where protein is being stolen
+#                                 if otherProt != currentProt and currentProt not in randomAnnotDict[ annot2]:
+#                                     # swap current with other
+#                                     toBeSwapped = currentProt
+#                                     randomAnnotDict[ annot2][ 0] = toBeSwapped
+#                                     currentProt = otherProt
+#                                     # successful swap
+#                                     succ = 1
+#                                     break
+#                                 else: # go to next bag
+#                                     continue
+#      
+#                             tries += 1
+#      
+#                         assert succ == 1
+# 
 #                       
-#                     # swap current with next
-#                     toBeSwapped = randomizedListOfProteins[counter ]
-#                     randomizedListOfProteins[ counter] = otherProt
-#                     randomizedListOfProteins[ counter + swaps] = toBeSwapped
-#   
-#                     currentProt = randomizedListOfProteins[ counter]
-#                     swaps+=1
-#                  
 #                 randomAnnotDict[ annot].append( currentProt)
-#                 
+#                   
 #                 counter += 1
 
-                randomAnnotDict[ annot].append( randomizedListOfProteins.pop() )
 
         assert len( randomAnnotDict) == len( annotDict)
             
