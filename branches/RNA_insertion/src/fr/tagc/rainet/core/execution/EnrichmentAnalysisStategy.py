@@ -504,6 +504,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
+        self.rnaInteractions = rnaInteractions
+
         #===================================================================    
         #
         # Make enrichment tests
@@ -549,7 +551,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         for rnaID in sorted( rnaInteractions):
                         
             rnaCounter+=1
-            if rnaCounter % 10 == 0:
+            if rnaCounter % 100 == 0:
                 Timer.get_instance().step( "EnrichmentAnalysisStrategy.enrichement_analysis : processed %s RNAs.." % str( rnaCounter ) )        
 
             # retrieve total number of interactions with annotated proteins for this RNA
@@ -623,12 +625,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
 
-            # positive interactions in current annotation
-            protList = set( annotation_dict[ annotID]).intersection( total_rna_interactions)
+#             # positive interactions in current annotation
+#             protList = set( annotation_dict[ annotID]).intersection( total_rna_interactions)
+
+            # keep this as list so that it works even if reshuffling and having replicate proteins in same annotation.
+            protList = []            
+            for prot in annotation_dict[ annotID]:
+                if prot in total_rna_interactions:
+                    protList.append( prot)
             
             # number of proteins with annotation that have interaction predictions
             possibleProtList = self.annotWithInteractionDict[ annotID]
-
+            
             assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins of annotation than existing in annotation"
 
             # tag whether test does not pass the minimum number of annotations or interactions

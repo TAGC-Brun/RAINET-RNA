@@ -87,8 +87,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.sql_session = SQLManager.get_instance().get_session()
 
         # setting up internal test folder paths
-        self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/enrichmentAnalysis/test_expected/Report"
-        self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER ) + "/Report/"
+        self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/enrichmentAnalysis/test_expected"
+        self.outputFolder = OptionManager.get_instance().get_option(OptionConstants.OPTION_OUTPUT_FOLDER )
 
         # create instance of strategy    
         self.run = EnrichmentAnalysisStrategy()
@@ -159,6 +159,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
         self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in original list")
 
+#         c = 0
+
         for i in xrange(1000):
             randomAnnotDict = self.run.randomize_annotation( annotDict, listOfProteins)
      
@@ -168,11 +170,15 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
     
 #             lengths2Set = [ len( set( randomAnnotDict[ annot])) for annot in sorted(randomAnnotDict)]
 #             
-#             self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
+#             if lengths2 != lengths2Set:
+#                 c += 1
+#            self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
 
             listOfProteins2 = [ prot for annot in randomAnnotDict for prot in randomAnnotDict[ annot]]
 
             self.assertTrue( set( listOfProteins) == set(listOfProteins2), "assert that there are no duplicate IDs in shuffled list")
+
+#         print c
 
 
     def test_empirical_pvalue(self):
@@ -274,6 +280,47 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         pool = {prot for annot in self.run.annotWithInteractionDict for prot in self.run.annotWithInteractionDict[annot]}
  
         self.assertTrue( len( pool) == len( self.run.backgroundProteins), "confirm number of proteins with annotation and interaction")
+
+
+    def test_results(self):
+        
+        print "| test_results | "
+
+        self.run.execute()
+
+        # assert if all files are as they should by manual inspection
+#         for report in reportConstants:
+#             with open(report, "r") as out:                
+#                 with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
+#                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+    # confirmed enrichment results for this RNA
+    #         ENST00000517179 237     1       1       1       1       0.0e+00 0.0e+00 1
+    #         
+    #         "237","Q96SR6"
+    #         
+    #         "ENST00000517179","Q8WZA6","-21.21"
+    #         "ENST00000517179","Q96SR6","-15.67"
+    #         
+    #         Q8WZA6 has no annotation
+
+        expectedNumberTests = len( self.run.annotWithInteractionDict) * len(self.run.rnaInteractions)
+
+        countLines = 0
+        countTestPerRNA = 0
+        with open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT) as inFile:
+            inFile.readline()
+            for line in inFile:
+                countLines += 1
+                if line.startswith("ENST00000517179"):
+                    countTestPerRNA += 1
+                    if line.startswith("ENST00000517179\t237"):
+                        self.assertTrue( line == "ENST00000517179\t237\t1\t1\t1\t1\t0.0e+00\t0.0e+00\t1\n")
+
+        self.assertTrue( countTestPerRNA == len( self.run.annotWithInteractionDict), "file should have one line per test performed")
+        self.assertTrue( countLines == expectedNumberTests, "file should have one line per test performed")
+
+
 
 
 #     # #
