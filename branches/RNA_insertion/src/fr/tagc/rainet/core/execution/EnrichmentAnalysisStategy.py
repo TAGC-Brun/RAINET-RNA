@@ -71,7 +71,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation", "KEGGPathway" : "ProteinKEGGAnnotation"}
 
     # significance value 
-    SIGN_VALUE = 0.01
+    SIGN_VALUE_TEST = 0.05 # the alpha value to call enrichment for each individual hypergeomtric test
+    SIGN_VALUE_AGAINST_RANDOM_CONTROL = 0.01 # the alpha value for calling a observed different than random control
         
     SIGN_COLUMN = 8 # column from testsCorrected with result significance tag. 0-based
     WARNING_COLUMN = 5 # column from testsCorrected with warning/skipTest tag. 0-based
@@ -602,7 +603,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             
             # if empirical value is significant  
             sign = "0"
-            if float( empiricalPvalue) < EnrichmentAnalysisStrategy.SIGN_VALUE:
+            if float( empiricalPvalue) < EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL:
                 sign = "1"
                 
             outHandlerStats.write( "%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberAbove, empiricalPvalue, sign) )
@@ -704,7 +705,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
  
             # significative result tag
             sign = "0"
-            if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE:
+            if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
                 sign = "1"
  
             # add sign tag to existing list
