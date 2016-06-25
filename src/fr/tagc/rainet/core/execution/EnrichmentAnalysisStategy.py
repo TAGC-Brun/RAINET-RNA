@@ -71,7 +71,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation", "KEGGPathway" : "ProteinKEGGAnnotation"}
 
     # significance value 
-    SIGN_VALUE = 0.05
+    SIGN_VALUE = 0.01
         
     SIGN_COLUMN = 8 # column from testsCorrected with result significance tag. 0-based
     WARNING_COLUMN = 5 # column from testsCorrected with warning/skipTest tag. 0-based
@@ -352,6 +352,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 annotWithInteractionDict[ pathID].append( protID)
 
                 if pathID not in pathwayAnnotWithInteractionDataDict:
+                
                     pathwayAnnotWithInteractionDataDict[ pathID] = []
                 pathwayAnnotWithInteractionDataDict[ pathID].append( protID)
                  
