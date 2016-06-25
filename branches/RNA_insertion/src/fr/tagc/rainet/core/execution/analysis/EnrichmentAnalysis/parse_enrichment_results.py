@@ -44,7 +44,7 @@ REPORT_LIST_RNA_SIGN_ENRICH = "list_RNA_above_random.txt"
 REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered.tsv"
 REPORT_RNA_ANNOT_RESULTS_MATRIX = "enrichment_results_filtered_matrix.tsv"
 
-WARNING_FILTER_VALUE = "NA"
+WARNING_FILTER_VALUE =  1.0 #NA
 
 # #
 # Read RNA enrichment file, get list of RNAs with significantly more enrichments compared to control.
