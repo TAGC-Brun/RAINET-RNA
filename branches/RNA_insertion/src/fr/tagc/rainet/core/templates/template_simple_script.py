@@ -54,7 +54,7 @@ if __name__ == "__main__":
         print "STARTING " + SCRIPT_NAME
         
         #===============================================================================
-        # Get input arguments, initialise class
+        # Get input arguments
         #===============================================================================
         parser = argparse.ArgumentParser(description= DESC_COMMENT) 
     
