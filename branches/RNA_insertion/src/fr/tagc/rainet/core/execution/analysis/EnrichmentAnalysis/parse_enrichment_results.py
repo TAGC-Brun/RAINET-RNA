@@ -31,8 +31,8 @@ SCRIPT_NAME = "parse_enrichment_results.py"
 
 #===============================================================================
 # Processing notes:
-# 1)
-# 2)
+# 1) Only writing to file annotations with at least one enrichment
+# 2) CURRENTLY NOT WORKING IF USING SIGN COLUMN AS INPUT
 #===============================================================================
 
 
@@ -129,6 +129,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     setRNAs = set()
     setAnnots = set()
     dictPairs = {}
+    annotValues = {} # key -> annot ID, val -> list of values
 
     with open( enrichment_results_file, "r") as inFile:
         
@@ -167,28 +168,36 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
             else:
                 raise RainetException("read_enrichment_results_file: duplicate key", pair)
 
+            if annotID not in annotValues:
+                annotValues[ annotID] = []
+            annotValues[ annotID].append( value)
+
             setRNAs.add( txID)
             setAnnots.add( annotID)
 
-    
-    Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of enrichment_rna filter: %s" % ( excludedByRNA) )
 
-    Logger.get_instance().info( "read_enrichment_results_file : Number of RNAs in matrix file (rows): %i" % ( len( setRNAs) ) )
-    Logger.get_instance().info( "read_enrichment_results_file : Number of Annotations in matrix file (columns): %i" % ( len( setAnnots) ) )
+    # Get set of annotations which had no enrichment
+    nonEnrichedAnnotations = set()
+    for annotID in annotValues:
+        if annotValues[ annotID].count( WARNING_FILTER_VALUE) == len( annotValues[ annotID]):
+            nonEnrichedAnnotations.add( annotID)
+
+    Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of enrichment_rna filter: %s" % ( excludedByRNA) )
 
     assert len( dictPairs) ==  len( setRNAs) * len( setAnnots), "number of pairs should equal number of RNAs times number of annotations"
 
     ## Writing matrix file
 
     sortedSetRNAs = sorted( setRNAs)   
-    sortedSetAnnots = sorted( setAnnots)
+    sortedSetAnnots = sorted( setAnnots - nonEnrichedAnnotations)
 
     # write header with annot IDs
     outFile2.write( "RNAs")
     for annot in sortedSetAnnots:
         outFile2.write( "\t%s" % annot )
     outFile2.write( "\n")
-             
+
+    
     # write bulk of file, one row per rna, one column per protein
     for rna in sortedSetRNAs:
         text = rna
@@ -197,10 +206,15 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
             if tag in dictPairs:
                 score = dictPairs[tag]
             else:
-                score = "NA"
+                raise RainetException("read_enrichment_results_file: no data for pair:", pair)
             text+= "\t%s" % score 
         text+= "\n"
         outFile2.write( text)
+    
+    
+    Logger.get_instance().info( "read_enrichment_results_file : Number of RNAs in matrix file (rows): %i" % ( len( sortedSetRNAs) ) )
+    Logger.get_instance().info( "read_enrichment_results_file : Number of Annotations in matrix file (columns): %i" % ( len( sortedSetAnnots) ) )
+
     
     outFile1.close()
     outFile2.close()
