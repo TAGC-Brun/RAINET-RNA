@@ -541,7 +541,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         listOfProteins = [ prot for annot in sorted( self.annotWithInteractionDict) for prot in sorted( self.annotWithInteractionDict[ annot]) ]
        
         # shuffle annotation tags of proteins
-        randomAnnotDicts = [ self.randomize_annotation( self.annotWithInteractionDict, listOfProteins) for i in xrange(0, self.numberRandomizations)]
+        randomAnnotDicts = [ self.randomize_proteins( self.annotWithInteractionDict, listOfProteins) for i in xrange(0, self.numberRandomizations)]
 
         #===================================================================   
         #===================================================================   
@@ -910,6 +910,53 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         assert len( randomAnnotDict) == len( annotDict)
             
         return randomAnnotDict
+
+
+    # #
+    # Randomize values in a dictionary while keeping the structure of the dictionary
+    # Approach: swap the identify of the protein (e.g. Protein1 becomes Protein2, Protein5 becomes Protein1 etc)
+    def randomize_proteins(self, annotDict, listOfProteins):
+
+        # remove redundancy in list           
+        listOfProteins = list( set( listOfProteins))
+
+        # shuffle list of proteins (use of sample with maximum number of sample size, same as shuffle)
+        randomizedListOfProteins = random.sample( listOfProteins, len( listOfProteins))
+
+        # assert sorted( listOfProteins) == sorted( randomizedListOfProteins)
+
+        # assign a number to each protein
+        proteinShapeshifter = {} # key -> old ID of protein, val -> new ID of protein
+        for i in xrange( len(listOfProteins)):
+            oldProtID = listOfProteins[ i]
+            if oldProtID not in proteinShapeshifter:
+                proteinShapeshifter[ oldProtID] = ""
+            else:
+                raise RainetException( "EnrichmentAnalysisStrategy.randomize_proteins: randomization issue: original ID is not unique", listOfProteins[ i])
+            
+            # assign new identity to protein
+            proteinShapeshifter[ oldProtID] = randomizedListOfProteins[ i]
+
+        assert len( proteinShapeshifter) == len( listOfProteins)
+
+        # container of randomized annotation dict
+        randomAnnotDict = {} # key -> annot, val -> list of proteins
+
+        # for each annotation of original annotation dict, change the protein IDs to the swapped ones
+        for annot in sorted( annotDict): # sorted is important
+             
+            if annot not in randomAnnotDict:
+                randomAnnotDict[ annot] = []
+ 
+            for prot in annotDict[ annot]:
+                newProt = proteinShapeshifter[ prot]
+                randomAnnotDict[ annot].append( newProt )
+ 
+        assert len( randomAnnotDict) == len( annotDict)
+
+             
+        return randomAnnotDict
+
 
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
