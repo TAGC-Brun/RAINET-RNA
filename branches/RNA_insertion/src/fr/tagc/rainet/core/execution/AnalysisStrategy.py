@@ -147,7 +147,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # The Strategy execution method
-    def execute(self):
+    def execute(self, run = 1):
 
         #===================================================================
         # Getting input arguments        
@@ -215,8 +215,13 @@ class AnalysisStrategy(ExecutionStrategy):
         SQLManager.get_instance().set_DBpath(self.DBPath)
         self.sql_session = SQLManager.get_instance().get_session()
         self.db_engine = SQLManager.get_instance().get_engine()
-                        
-        self.analysis()
+
+        #===================================================================
+        # Run analysis
+        #===================================================================
+        
+        if run:             
+            self.analysis()
         
     # #
     # Central function to run analysis-related functions in order
@@ -245,13 +250,9 @@ class AnalysisStrategy(ExecutionStrategy):
         self.filter_PRI()
   
         Timer.get_instance().step( "Filtering Interactions by expression." )               
- 
+  
         self.dump_filter_PRI_expression()
-     
-#         Timer.get_instance().step( "Filtering Interactions by expression.." )        
-#     
-#         self.filter_PRI_expression()
-         
+               
         #===================================================================
         # Produce reports
         #===================================================================
@@ -277,7 +278,8 @@ class AnalysisStrategy(ExecutionStrategy):
     # #
     # Filter RNA models
     #
-    # Stores final list of RNAs on DataManager 
+    # Stores into DataManager: RNA_ALL_KW, RNA_FILTER_KW, RNA_FILTER_KEY_KW
+    # Writes file with list of RNAs after filter.
     def filter_RNA(self):
 
         #Logger.get_instance().info("AnalysisStrategy.filter_RNA..")
@@ -323,7 +325,7 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().query_to_object_dict( AnalysisStrategy.RNA_FILTER_KEY_KW, "transcriptID")
         
         #===================================================================   
-        # File with pathway per protein
+        # File with RNA list
         #===================================================================          
         
         outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.REPORT_RNA_LIST_AFTER_RNA_FILTER )
@@ -606,8 +608,9 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # #
     # Filter protein-RNA interactions by member co-existence, after RNA and protein filters
-    # Expression filtering output file is independent of PRI filtering.
-    # Writes co-present interacting pairs 
+    # Expression filtering output file is independent of PRI filtering (uses "InteractingRNA and InteractingProtein" tables).
+    # Writes co-present interacting pairs to file.
+    # Updates 'selectedInteractions' (PRI_FILTER_KW) with the filtering.
     def dump_filter_PRI_expression(self):
 
         # Get filtered interactions
