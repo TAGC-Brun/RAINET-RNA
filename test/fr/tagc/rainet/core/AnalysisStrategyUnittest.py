@@ -42,6 +42,7 @@ from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInteractionCatRAPID
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
 from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
+from fr.tagc.rainet.core.data.Tissue import Tissue
 
 from UnittestConstants import *
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -57,8 +58,8 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     # Constants with default paramters        
     TOTAL_RNAS = 125 #200 total of all biotypes, 125 with used biotypes
     TOTAL_PROTS = 200
-    TOTAL_PRIS = 24 #54 total of all biotypes, 27 with used biotypes, 24 when removing peptide redundancy
-    TOTAL_PRIS_LINC_FILT = 1
+    TOTAL_PRIS = 12
+    TOTAL_PRIS_LINC_FILT = 2
         
     # #
     # Runs before each test
@@ -72,6 +73,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         # In the actual unittests I may override the default options, for testing.
         optionManager = OptionManager.get_instance()
         optionManager.set_option(OptionConstants.OPTION_VERBOSITY, "debug")
+#        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, DB_PATH)
         optionManager.set_option(OptionConstants.OPTION_SPECIES, "human")
         optionManager.set_option(OptionConstants.OPTION_OUTPUT_FOLDER, "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/" )
@@ -202,15 +204,21 @@ class AnalysisStrategyUnittest(unittest.TestCase):
     def test_PRI_filter_two(self):
    
         print "| test_PRI_filter_two | "
-   
+
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
+
         optionManager = OptionManager.get_instance()        
+#        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
         self.strategy.execute()
    
         PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-                   
+        
+        print len(PRIs)
+              
         self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
 
 
@@ -220,24 +228,93 @@ class AnalysisStrategyUnittest(unittest.TestCase):
    
         print "| test_PRI_filter_three | "
    
+        # Overwrite default values
         optionManager = OptionManager.get_instance()        
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "10")
+        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "100")
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
-        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 2)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 1.0)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_TISSUE_CUTOFF, 1)
 
-        self.strategy.execute()
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
 
-        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
-                                      
-        self.assertTrue(len(PRIs) == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT, "asserting if PRIs are affected by RNA-level filters") 
-   
-        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 200)
-        self.strategy.execute()
+        # Run strategy step by step
+        self.strategy = AnalysisStrategy()
+        self.strategy.execute( run = 0 )
+ 
+        self.strategy.filter_RNA()
+        self.strategy.filter_protein()
+        self.strategy.filter_PRI()
+        
+        selectedInteractions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        self.assertTrue( len( selectedInteractions) == 4298, "assert if number of initial interactions is correct") 
 
-        PRIs = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        # run main function we want to test
+        self.strategy.dump_filter_PRI_expression()
+        
+        # select count(distinct(proteinID)) from MRNA  --> 57366
+        self.assertTrue( len( self.strategy.mRNADict) == 57366, "assert if number of mRNA to protein correspondence is correct" )
 
-        self.assertTrue(len(PRIs) == 0, "asserting if PRI is filtered with expression filter ") 
+        # ENST00000005180 --> Q9Y258, ENST00000394905 --> Q9Y258 #confirmed in Ensembl82 website        
+        self.assertTrue( set( self.strategy.mRNADict[ "Q9Y258"]) == set(["ENST00000005180", "ENST00000394905"]), "assert if a specific mRNA-protein correspondence is correct" )
+        
+        # select count(distinct(transcriptID)) from RNATIssueExpression --> 184278
+        self.assertTrue( len( self.strategy.expressionDict) == 184278, "assert number of transcripts with expression data is correct")
+
+        #
+        tissues = [ str( tiss[0]) for tiss in self.sql_session.query( Tissue.tissueName ).all() ]
+        self.assertTrue( len( self.strategy.expressionDict[ "ENST00000394905"]) == len( tissues), "assert number of expression values match number of tissues ")
+
+        # grep ENST00000394905 transcript_expression_metrics_no_outliers.tsv
+        # ENST00000394905    Skin - Sun Exposed (Lower leg)    0.124    0.199    0.000    1.60395658469    0.754
+        boo = 0
+        for tissTuple in self.strategy.expressionDict[ "ENST00000394905"]:
+            if tissTuple == (0.124, "Skin - Sun Exposed (Lower leg)" ):
+                boo = 1
+        self.assertTrue( boo, "assert specific transcript expression data is correct")
+
+        ## Really test expression filter
+
+        # check protein expression of a specific protein
+        # "ENST00000294652","Q5VWK0"
+        # "ENST00000370040","Q5VWK0"
+        # "ENST00000444143","Q5VWK0"
+        # "ENST00000495380","Q5VWK0"
+        self.assertTrue( len( self.strategy.ProtMRNATissueExpressions["Q5VWK0"]) == 4)
+        self.assertTrue( self.strategy.ProtMRNATissueExpressions["Q5VWK0"]["ENST00000370040"]["Liver"] == 0)
+        self.assertTrue( self.strategy.ProtMRNATissueExpressions["Q5VWK0"]["ENST00000495380"]["Testis"] == 3.363)
+
+        # ENST00000495380, an MRNA of Q5VWK0 protein, has expression value > 1.0 RPKM in testis, given by one of the mRNAs
+        # This protein is not present in any other tissue
+        #"ENST00000294652","Pituitary","0.012"
+        #"ENST00000444143","Testis","0.488"
+        #"ENST00000495380","Testis","3.363"
+
+        # InteractingRNA we want to test as positive interaction: ENST00000413466
+        # "ENST00000413466","Testis","1.006"
+
+        # InteractingRNA we want to test as negative interaction: ENST00000423943
+        # "ENST00000423943","Testis","0.512"
+
+        proteinExpressionTissues = DataManager.get_instance().get_data(AnalysisStrategy.PROT_TISSUES_KW)        
+        rnaExpressionTissues = DataManager.get_instance().get_data(AnalysisStrategy.RNA_TISSUES_KW)
+        expressedInteractionsTissues = DataManager.get_instance().get_data(AnalysisStrategy.PRI_TISSUES_KW)
+        
+        self.assertTrue( "Q5VWK0" in proteinExpressionTissues["Testis"])  # key -> tissue, value -> set of protein IDs
+        self.assertTrue( "Q5VWK0" not in proteinExpressionTissues["Pancreas"])  # key -> tissue, value -> set of protein IDs
+        
+        self.assertTrue( "ENST00000413466" in rnaExpressionTissues["Testis"]) # key -> tissue, value -> set of tx IDs        
+        self.assertTrue( "ENST00000413466|Q5VWK0" in expressedInteractionsTissues, "assert if interaction passes cutoffs") # key -> transcriptID|proteinID (pair), value -> set of tissues
+        self.assertTrue( len( expressedInteractionsTissues["ENST00000413466|Q5VWK0"]) == 1, "assert if number of tissues passing cutoff is correct") # key -> transcriptID|proteinID (pair), value -> set of tissues
+
+        self.assertTrue( "ENST00000423943" not in rnaExpressionTissues["Testis"])
+        self.assertTrue( "ENST00000423943|Q5VWK0" not in expressedInteractionsTissues, "assert that interaction is not present") # key -> transcriptID|proteinID (pair), value -> set of tissues
+             
+        newSelectedInteractions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+
+        self.assertTrue( len( newSelectedInteractions) <= len( selectedInteractions), "expression filtered interactions should be equal or less than initial ones")
 
 
 #     # #
@@ -261,108 +338,100 @@ class AnalysisStrategyUnittest(unittest.TestCase):
 #         # TODO: test for expression data
 
 
-    # #
-    # Test function to create report files with filters
-    def test_report_two(self):
-
-        print "| test_report_two | "
-
-        optionManager = OptionManager.get_instance()        
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
-        optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
-        optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
-
-        self.strategy.execute()
-        
-        # RNA numbers report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS)
-                
-        self.assertTrue( table["Total_Genes"][0] == 198, "assert if number of Genes before filter is correct")
-        self.assertTrue( table["Total_Genes"][1] == 8, "assert if number of Genes after filter is correct")        
-
-        # Interaction numbers report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_NUMBERS)
-
-        
-        self.assertTrue( table["Total_interactions"][0] == 54,
-                          "assert if number of total PRI before filter matches same value as other test")
-        
-        self.assertTrue( table["Total_interactions"][1] == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT,
-                          "assert if number of total PRI after filter matches same value as other test")
-
-        # Interaction scores report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
-                
-        self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
-        self.assertTrue( table[1][5] == 28.16, "assert if last value of lincRNA score is correct")
-
-        # Interaction partners report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTIONS_SCORE_MATRIX, header = None, sep = "\t", skip_blank_lines = True)
-        self.assertTrue( float(table[1][1]) == 28.16, "assert interaction value is correct")
-
-        # Interaction partners report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
-
-        self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
-        self.assertTrue( table[1][5] == 1, "assert if number of protein partners is correct")
-
-        # RNA expression data presence report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE, header = None, sep = "\t", skip_blank_lines = True)
-        #confirmed using SQLLite
-        self.assertTrue( table[1][1] == "6","assert if number of lincRNAs with expression data is correct")
-        
-        # RNA expression report
-        table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_EXPRESSION, header = None, sep = "\t", skip_blank_lines = True)    
-        #2  ENST00000426044  LncRNA            lincRNA            0.89, calculated using SQLLite and excel
-        self.assertTrue( table[3][2] == "0.89","asserting if average expression value for given RNA is correct")
-
-
+#     # #
+#     # Test function to create report files with filters
+#     def test_report_two(self):
+# 
+#         print "| test_report_two | "
+# 
+#         optionManager = OptionManager.get_instance()        
+#         optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "28")
+#         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
+#         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
+# 
+#         self.strategy.execute()
+#         
+#         # RNA numbers report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_NUMBERS)
+#                 
+#         self.assertTrue( table["Total_Genes"][0] == 198, "assert if number of Genes before filter is correct")
+#         self.assertTrue( table["Total_Genes"][1] == 8, "assert if number of Genes after filter is correct")        
+# 
+#         # Interaction numbers report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_NUMBERS)
+# 
+#         
+#         self.assertTrue( table["Total_interactions"][0] == 54,
+#                           "assert if number of total PRI before filter matches same value as other test")
+#         
+#         self.assertTrue( table["Total_interactions"][1] == AnalysisStrategyUnittest.TOTAL_PRIS_LINC_FILT,
+#                           "assert if number of total PRI after filter matches same value as other test")
+# 
+#         # Interaction scores report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_SCORES_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
+#                 
+#         self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
+#         self.assertTrue( table[1][5] == 28.16, "assert if last value of lincRNA score is correct")
+# 
+#         # Interaction partners report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTIONS_SCORE_MATRIX, header = None, sep = "\t", skip_blank_lines = True)
+#         self.assertTrue( float(table[1][1]) == 28.16, "assert interaction value is correct")
+# 
+#         # Interaction partners report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_INTERACTION_PARTNERS_BIOTYPE, header = None, sep = ",", skip_blank_lines = True)
+# 
+#         self.assertTrue( table[0][5] == "lincRNA", "assert if lincRNAs in file as they should")
+#         self.assertTrue( table[1][5] == 1, "assert if number of protein partners is correct")
+# 
+#         # RNA expression data presence report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_EXPRESSION_DATA_PRESENCE, header = None, sep = "\t", skip_blank_lines = True)
+#         #confirmed using SQLLite
+#         self.assertTrue( table[1][1] == "6","assert if number of lincRNAs with expression data is correct")
+#         
+#         # RNA expression report
+#         table = pd.read_table( self.outputFolder + AnalysisStrategy.REPORT_RNA_EXPRESSION, header = None, sep = "\t", skip_blank_lines = True)    
+#         #2  ENST00000426044  LncRNA            lincRNA            0.89, calculated using SQLLite and excel
+#         self.assertTrue( table[3][2] == "0.89","asserting if average expression value for given RNA is correct")
 
 
 
-    # #
-    # Test if report files are correctly formatted with manual inspection
-    # Also added this so that I'm sure to remember to produce test for every report file I create
-    def test_report_files(self):
-        
-        print "| test_report_files | "
-        
-        self.strategy.execute()
-
-        # list of report files created with AnalysisStrategy       
-        reportConstants = glob.glob( self.outputFolder + "/*")
-        
-        # assert if all files are as they should by manual inspection
-        for report in reportConstants:
-            with open(report, "r") as out:                
-                with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
-                    self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
-
-        # Update helper:
-        # 1) comment out "tearDown" function
-        # 2) run the "test_default_params" function only
-        # 3) manually check if the files are ok
-        # 4) copy the test results files to expected folder: 
-        # cp -r /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/ /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected
-        # 5) uncomment "tearDown" and rerun all tests
 
 
-    def test_sweaving(self):
-  
-        print "| test_sweaving | "
- 
-        # overwrite switch to write report file
-        self.strategy.writeReportFile = 1
-                    
-        self.strategy.execute()
-
-
-    def test_extra(self):
-
-        self.strategy.execute()
-         
-        # self.strategy.annotation_report()
-        # self.strategy.enrichement_analysis()
+#     # #
+#     # Test if report files are correctly formatted with manual inspection
+#     # Also added this so that I'm sure to remember to produce test for every report file I create
+#     def test_report_files(self):
+#         
+#         print "| test_report_files | "
+#         
+#         self.strategy.execute()
+# 
+#         # list of report files created with AnalysisStrategy       
+#         reportConstants = glob.glob( self.outputFolder + "/*")
+#         
+#         # assert if all files are as they should by manual inspection
+#         for report in reportConstants:
+#             with open(report, "r") as out:                
+#                 with open(self.expectedFolder + "/" + os.path.basename(report), "r") as exp:
+#                     self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+# 
+#         # Update helper:
+#         # 1) comment out "tearDown" function
+#         # 2) run the "test_default_params" function only
+#         # 3) manually check if the files are ok
+#         # 4) copy the test results files to expected folder: 
+#         # cp -r /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/ /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected
+#         # 5) uncomment "tearDown" and rerun all tests
+# 
+# 
+#     def test_sweaving(self):
+#   
+#         print "| test_sweaving | "
+#  
+#         # overwrite switch to write report file
+#         self.strategy.writeReportFile = 1
+#                     
+#         self.strategy.execute()
 
 
 #     # #
