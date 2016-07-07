@@ -30,10 +30,10 @@ class RBPDomainScore(object):
     XREF_SOURCE_DB = "Ensembl_PRO"
     UNIPROT_OUTPUT_FILE = "/proteins_uniprotac.tsv"
     ANNOTATION_OUTPUT_FILE = "/annotated_interactions.tsv"
-    NO_ANNOTATION_TAG = "Non-binding"
+    #NO_ANNOTATION_TAG = "Non-binding"
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
        
-    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, extra_annotation):
+    def __init__(self, domain_annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, extra_annotation, no_annotation_tag):
 
         self.annotationFile = domain_annotation_file
         self.catRAPIDFile = catrapid_file
@@ -43,6 +43,7 @@ class RBPDomainScore(object):
         self.annotationColumn = annotation_column
         self.idColumn = id_column
         self.extraAnnotation = extra_annotation
+        self.noAnnotationTag = no_annotation_tag
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -238,7 +239,7 @@ class RBPDomainScore(object):
                         raise RainetException("read_catrapid_file: Annotation information is incorrect. ", proteinAnnotation[ protID])
                 # if there is no annotation for protein
                 else:
-                    annotation = RBPDomainScore.NO_ANNOTATION_TAG
+                    annotation = self.noAnnotationTag
 
                 outputText = "%s\t%s\n" % (line, annotation)
 
@@ -278,6 +279,8 @@ if __name__ == "__main__":
                              help='Which column in the input annotation file to processed as protein ID. 0-based.')
         parser.add_argument('--extraAnnotation', metavar='extraAnnotation', type=str, default = "",
                              help='File with extended annotation. Column1: uniprotAc, Column2: annotation. No header.')
+        parser.add_argument('--noAnnotationTag', metavar='noAnnotationTag', type=str, default = "Other",
+                             help='Text to write for the proteins that are not in provided annotation files. Default = "Other"')
 #         parser.add_argument('--domainRegex', metavar='domainRegex', type=str, default = "*",
 #                              help=' E.g. RRM_*, KH_*, zf-CCCH*, zf-CCHC*, S1, PWI, PUF, SAM_*.')
            
@@ -286,7 +289,7 @@ if __name__ == "__main__":
     
         # init
         run = RBPDomainScore( args.annotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, 
-                              args.maskMultiple, args.annotationColumn, args.idColumn, args.extraAnnotation)
+                              args.maskMultiple, args.annotationColumn, args.idColumn, args.extraAnnotation, args.noAnnotationTag)
     
         # get cross references from rainet DB
         Timer.get_instance().step( "Read protein cross references..")    
