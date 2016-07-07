@@ -6,7 +6,7 @@ require(gridExtra)
 
 give.n <- function(x){   return(c(y = -10, label = length(x))) }
 
-# Function to run tests for all pairwise comparisons
+# Function to run Smirkov-Kolmorov tests for all pairwise comparisons
 # arg dataset : a dataframe containing at least two columns, a categorical and a numeric
 # arg metricToUse : column name of numerical data
 # arg annotationCol : column name of categorical data

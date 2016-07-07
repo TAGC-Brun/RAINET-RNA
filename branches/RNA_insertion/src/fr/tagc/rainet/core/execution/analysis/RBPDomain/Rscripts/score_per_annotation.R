@@ -37,16 +37,20 @@ give.n <- function(x){   return(c(y = -10, label = length(x))) }
 # inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/core_cutoff15/annotated_interactions.tsv"
 # inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/core_cutoff50/annotated_interactions.tsv"
 
-# stawiski control annot
-inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_cutoff15/annotated_interactions.tsv"
-inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_cutoff50/annotated_interactions.tsv"
+# # stawiski control annot
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_TF_cutoff15/annotated_interactions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_TF_cutoff50/annotated_interactions.tsv"
+
+# Moonlighting
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/moon_cutoff15/annotated_interactions.tsv"
+inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/moon_cutoff50/annotated_interactions.tsv"
 
 
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ## Choose here which metric to use (name of column to use)
-metricToUse = "count"
+metricToUse = "count" # for catrapid file (mean_score, median_score, std_score, count)
 annotCol = "annotation"
 
 #adding type before merging datasets
@@ -84,6 +88,15 @@ dataset2count = count(dataset2, 'annotation')
 #   theme_minimal()
 # 
 # grid.arrange(plt1,plt2)
+
+# # exclude small categories from analysis
+# MINIMUM_CATEGORY_SIZE = 50
+# dataset1Less = dataset1
+# for (i in unique(dataset1$annotation) ){
+#   c = count(dataset1$annotation == i)$freq[[2]]
+#   if (c < MINIMUM_CATEGORY_SIZE){    dataset1Less = dataset1Less[dataset1Less$annotation != i]  }
+# }
+
 
 plt3 <- ggplot(data = dataset1, aes_string(x = "annotation", y = metricToUse))  +
   geom_boxplot(outlier.shape = NA, position = "dodge", fill = "red" ) +
