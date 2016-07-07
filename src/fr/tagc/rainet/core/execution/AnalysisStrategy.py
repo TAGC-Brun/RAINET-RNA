@@ -142,7 +142,7 @@ class AnalysisStrategy(ExecutionStrategy):
     def __init__(self):  
         
         # Switch for writing of external report file      
-        self.writeReportFile = 1
+        self.writeReportFile = 0
 
 
     # #
@@ -1314,6 +1314,9 @@ class AnalysisStrategy(ExecutionStrategy):
                 outHandler.write("%s\t%s\t%s\n" % (str(inter) , len(interactionTissues[ inter]), ",".join( interactionTissues[ inter]) ) )
      
             outHandler.close()
+
+            DataManager.get_instance().delete_data(AnalysisStrategy.PRI_TISSUES_KW)
+
         # if there is not such data
         except RainetException:
             pass
@@ -1328,7 +1331,6 @@ class AnalysisStrategy(ExecutionStrategy):
         DataManager.get_instance().delete_data(AnalysisStrategy.RNA_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PROT_FILTER_KW)
         DataManager.get_instance().delete_data(AnalysisStrategy.PRI_FILTER_KW)
-        DataManager.get_instance().delete_data(AnalysisStrategy.PRI_TISSUES_KW)
 
         # launch the analysis
         command = "cd " + AnalysisStrategy.R_WORKING_DIR + \

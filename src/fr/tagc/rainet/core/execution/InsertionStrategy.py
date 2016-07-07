@@ -501,14 +501,14 @@ class InsertionStrategy( ExecutionStrategy ):
             LncRNA.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), OtherRNA.__tablename__):
             OtherRNA.__table__.create(bind = db_engine)
-        if not db_engine.dialect.has_table(db_engine.connect(), ProteinRNAInteractionCatRAPID.__tablename__):
+#         if not db_engine.dialect.has_table(db_engine.connect(), ProteinRNAInteractionCatRAPID.__tablename__):
 #             ProteinRNAInteractionCatRAPID.__table__.create(bind = db_engine)
 #         if not db_engine.dialect.has_table(db_engine.connect(), RNATissueExpression.__tablename__):
-            RNATissueExpression.__table__.create(bind = db_engine)
+#            RNATissueExpression.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), Tissue.__tablename__):
             Tissue.__table__.create(bind = db_engine)
-        if not db_engine.dialect.has_table(db_engine.connect(), InteractingRNA.__tablename__):
-            InteractingRNA.__table__.create(bind = db_engine)
-        if not db_engine.dialect.has_table(db_engine.connect(), InteractingProtein.__tablename__):
-            InteractingProtein.__table__.create(bind = db_engine)
+#         if not db_engine.dialect.has_table(db_engine.connect(), InteractingRNA.__tablename__):
+#             InteractingRNA.__table__.create(bind = db_engine)
+#         if not db_engine.dialect.has_table(db_engine.connect(), InteractingProtein.__tablename__):
+#             InteractingProtein.__table__.create(bind = db_engine)
 
