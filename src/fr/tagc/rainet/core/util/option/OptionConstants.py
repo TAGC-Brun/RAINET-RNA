@@ -53,7 +53,7 @@ OPTION_NUMBER_RANDOMIZATIONS = "Number randomizations"
 DEFAULT_BIOTYPE = "RNA"
 DEFAULT_INTERACTION_SCORE = "OFF"
 DEFAULT_GENCODE = 0
-DEFAULT_EXPRESSION_VALUE_CUTOFF = 0
+DEFAULT_EXPRESSION_VALUE_CUTOFF = "OFF"
 DEFAULT_EXPRESSION_TISSUE_CUTOFF = 1
 DEFAULT_OUTPUT_FOLDER = os.getcwd()
 
@@ -88,7 +88,7 @@ OPTION_LIST = {  "Insertion": [
                     [ "-m", "--minimumInteractionScore", "store", "string", OPTION_MINIMUM_INTERACTION_SCORE, DEFAULT_INTERACTION_SCORE, "Protein-RNA interactions with interaction score below given value will be excluded from analysis. Default: OFF"],
                     [ "-b", "--RNABiotype", "store", "string", OPTION_RNA_BIOTYPES, DEFAULT_RNA_BIOTYPES, "Comma-separated list of RNA biotypes to be INCLUDED in analysis. Default: all biotypes are considered. Can one or several of :"+ str(RNA_BIOTYPES)],
                     [ "-g", "--gencodeBasicOnly", "store", "int", OPTION_GENCODE, DEFAULT_GENCODE, "If 1, include in analysis ONLY transcripts tagged as present in 'GENCODE basic'. Default: 0 (i.e. all RNAs are considered)."],
-                    [ "-e", "--expressionValueCutoff", "store", "float", OPTION_EXPRESSION_VALUE_CUTOFF, DEFAULT_EXPRESSION_VALUE_CUTOFF, "Protein-RNA interactions where one of its components has expression below the given value will be excluded. Default: 0"],
+                    [ "-e", "--expressionValueCutoff", "store", "string", OPTION_EXPRESSION_VALUE_CUTOFF, DEFAULT_EXPRESSION_VALUE_CUTOFF, "Protein-RNA interactions where one of its components has expression below the given value will be excluded. Default: 0"],
                     [ "-t", "--expressionTissueCutoff", "store", "float", OPTION_EXPRESSION_TISSUE_CUTOFF, DEFAULT_EXPRESSION_TISSUE_CUTOFF, "Protein-RNA interactions between pairs co-present in less that this numbers of tissues will be excluded. Only active if expressionValueCutoff is also active. Default: 1"]
                 ],
                 "EnrichmentAnalysis" : [
