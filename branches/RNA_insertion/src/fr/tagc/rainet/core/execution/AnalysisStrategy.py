@@ -136,6 +136,7 @@ class AnalysisStrategy(ExecutionStrategy):
 
     # Dump expression filter
     DUMP_EXPRESSION_FILTER = "interactions_expression_filter.tsv"
+    DUMP_EXPRESSION = "interactions_expression.tsv"
     DUMP_EXPRESSION_FILTER_BATCH_SIZE = 10000000
 
 
@@ -206,6 +207,13 @@ class AnalysisStrategy(ExecutionStrategy):
             raise RainetException( "AnalysisStrategy.execute: Provided GencodeBasicOnly argument is not numeric.")
         if self.gencode != 1 and self.gencode != 0:
             raise RainetException( "AnalysisStrategy.execute: Provided GencodeBasicOnly argument must be either 0 or 1.")
+
+        # Check if expressionValueCutoff is float or OFF
+        if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:
+            try:
+                float(self.expressionValueCutoff)
+            except TypeError:
+                raise RainetException( "AnalysisStrategy.execute: Provided expression value cutoff is not a float.")
 
         #===================================================================
         # Initialisation
@@ -619,12 +627,14 @@ class AnalysisStrategy(ExecutionStrategy):
         # Dictionary which will contain tissues where interaction was found to be present
         expressedInteractionsTissues = {} # key -> transcriptID|proteinID (pair), value -> set of tissues
 
+        interactionsExpression = {} # key -> transcriptID|proteinID (pair), value -> expression of pair
+
         # Dictionary with list of tissues where protein/rna is present
         proteinExpressionTissues = {} # key -> tissue, value -> set of protein IDs
         rnaExpressionTissues = {} # key -> tissue, value -> set of tx IDs
 
         # checking if filtering option is on or off
-        if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:      
+        if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:
 
             #===================================================================             
             # Create 'virtual' interactions based on lists of interacting RNA and Protein
@@ -760,11 +770,14 @@ class AnalysisStrategy(ExecutionStrategy):
                 #===================================================================             
                 # loop for each protein, with precalculated values. create list of 1 RNA vs all protein interaction
                 for protID in self.ProtMRNATissueExpressions:
+                    
+                    pair = rnaID + "|" + protID
+
+                    # storing the pair expression, defined as the minimum expression between the two partners, in any tissue
+                    pairExpression = 0.0
 
                     # variable which stores set of tissues where both partners of pair are expressed 
                     setOfInteractingTissues = set()
-                    
-                    pair = rnaID + "|" + protID
                     
                     # check expression for each mRNA producing the protein
                     for mRNAID in self.ProtMRNATissueExpressions[ protID]:
@@ -776,18 +789,24 @@ class AnalysisStrategy(ExecutionStrategy):
                                                                                                     
                             if txExpressionVal >= self.expressionValueCutoff and protExpressionVal >= self.expressionValueCutoff:
                                 setOfInteractingTissues.add( tissue)
+
+                            # calculate minimum pair expression, keep the maximum along tissue and among mRNAs of same protein
+                            minExpr = min( txExpressionVal, protExpressionVal)
+                            if minExpr > pairExpression:
+                                pairExpression = minExpr
                                 
                             # store data on protein tissue expression
                             if protExpressionVal >= self.expressionValueCutoff:
                                 if tissue not in proteinExpressionTissues:
                                     proteinExpressionTissues[ tissue] = set()
                                 proteinExpressionTissues[ tissue].add( protID)
-
-
                     
                     # For a protein-RNA pair, retain interaction only if protein-RNA are present in at least x tissues
                     if len( setOfInteractingTissues) >= self.expressionTissueCutoff: # cutoff of minimum number of tissues
                         expressedInteractionsTissues[ pair] = setOfInteractingTissues
+
+                    # For a protein-RNA pair, regardless of passing or not cutoffs, store its expression value
+                    interactionsExpression[ pair] = pairExpression
 
             #===================================================================    
             # write passing interactions for all RNAs vs all proteins
@@ -805,6 +824,26 @@ class AnalysisStrategy(ExecutionStrategy):
             for pair in expressedInteractionsTissues:
                 transcriptID,proteinID = pair.split( "|")
                 text = "%s\t%s\n" % ( proteinID, transcriptID )
+                outHandler.write( text)
+      
+            outHandler.close()
+
+            #===================================================================    
+            # write interactions and their expression for all RNAs vs all proteins
+            #===================================================================                    
+            #===================================================================    
+            # File with list of hypothetical interactions and their pair expression value
+            # E.g. proteinID\ttranscriptID\texpression\n
+            #=================================================================== 
+
+            Logger.get_instance().info("dump_filter_PRI_expression : writing expression file. %s lines." % ( len( interactionsExpression)) )               
+
+            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION )
+
+            # write batch interactions to file
+            for pair in interactionsExpression:
+                transcriptID,proteinID = pair.split( "|")
+                text = "%s\t%s\t%s\n" % ( proteinID, transcriptID, interactionsExpression[ pair] )
                 outHandler.write( text)
       
             outHandler.close()
