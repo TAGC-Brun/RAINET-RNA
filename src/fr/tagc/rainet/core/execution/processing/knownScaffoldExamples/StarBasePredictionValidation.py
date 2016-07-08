@@ -40,7 +40,7 @@ from fr.tagc.rainet.core.util.data.DataManager import DataManager
 # 
 # - StarBase provides data on RBP gene symbol and LncRNA gene symbol, not on transcript level (even though they map against transcript).
 #   to process their data, we assume that if a CLIP read maps to a transcript of a gene, it will map as well for all transcripts of that gene (which may not be true)
-#
+# - In output files, if same RNA-protein pair is repeated (due to input or mapping), the higher clipNumber and BioComplex values are kept.
 #===============================================================================
 
 
@@ -166,6 +166,7 @@ class StarBasePredictionValidation( object ):
         missedRNAs = set()
  
         interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> number of CLIP reads mapped
+        interactingPairsBiocomplex = {} # key -> pair of transcriptID and proteinID, val -> number of biocomplexes
         setOfRNAs = set()
         setOfProts = set()
  
@@ -174,6 +175,7 @@ class StarBasePredictionValidation( object ):
             starbaseRNAID = str( row[ "geneName"]).upper()
             
             clipReads = int( row["clipReadNum"])
+            bioComplex = int( row["bioComplex"])
 
             # dealing with naming exceptions            
             if starbaseProtID == "FMRP":
@@ -203,9 +205,12 @@ class StarBasePredictionValidation( object ):
                     
                     if tag not in interactingPairs:
                         interactingPairs[ tag] = 0
+                        interactingPairsBiocomplex[ tag] = 0
                     # keep the maximum value of clip reads mapped
                     if clipReads > interactingPairs[ tag]:
                         interactingPairs[ tag] = clipReads
+                    if bioComplex > interactingPairsBiocomplex[ tag]:
+                        interactingPairsBiocomplex[ tag] = bioComplex
         
                     setOfProts.add( uniprotID)
                     setOfRNAs.add( ensemblID)
@@ -213,11 +218,13 @@ class StarBasePredictionValidation( object ):
         print "Missing proteins:",len(missedProteins), missedProteins
         print "Missing RNAs",len(missedRNAs), missedRNAs
 
+        assert len( interactingPairs) == len( interactingPairsBiocomplex)
+
         print "read_starbase_file: Total number of interacting pairs:",len(interactingPairs)
         print "read_starbase_file: Total number of interacting RNAs:",len(setOfRNAs)
         print "read_starbase_file: Total number of interacting proteins:",len(setOfProts)
       
-        return interactingPairs
+        return interactingPairs, interactingPairsBiocomplex
 
 
     # #
@@ -231,11 +238,18 @@ class StarBasePredictionValidation( object ):
 
         peptideIDNotFound = set()
         proteinSet = set()
+
+        countLines = 0
         
         with open( self.catrapidFile, "r") as f:
             for line in f:
                 spl = line.split( "\t")
-                
+
+                countLines+= 1 
+
+                if countLines % 10000000 == 0:
+                    print "Processed %s interactions" % countLines
+                               
                 splIDs = spl[2].split("_")
                 peptideID = splIDs[0]
                 transcriptID = splIDs[1]
@@ -329,10 +343,18 @@ class StarBasePredictionValidation( object ):
         interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> score
         
         proteinSet = set()
+
+        countLines = 0
         
         with open( self.catrapidFile, "r") as f:
             for line in f:
                 spl = line.split(" ")
+
+                countLines+= 1 
+
+                if countLines % 10000000 == 0:
+                    print "Processed %s interactions" % countLines
+                               
                 
                 proteinID = spl[0].split( "|")[1]
                 spl2 = spl[1].split( "\t")
@@ -411,7 +433,16 @@ if __name__ == "__main__":
  
         Timer.get_instance().step( "reading starBase file..")    
 
-        starbasePairs = run.read_starbase_file()
+        starbasePairs, starbasePairsBiocomplex = run.read_starbase_file()
+
+        # #
+        # Write file with all Starbase pairs, regardless of being in catRAPID predictions or not
+        outFile = open( run.outputFolder + "/starbase_interactions.tsv", "w")
+        outFile.write( "pairID\tclipReads\tbioComplex\n")
+        
+        for pair in starbasePairs:
+            outFile.write( "%s\t%s\t%s\n" % (pair, starbasePairs[ pair], starbasePairsBiocomplex[ pair]) )            
+        outFile.close()
 
         Timer.get_instance().step( "reading catRAPID file..")    
 
