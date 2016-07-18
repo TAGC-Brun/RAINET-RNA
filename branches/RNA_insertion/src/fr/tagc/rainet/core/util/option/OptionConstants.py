@@ -54,7 +54,7 @@ DEFAULT_BIOTYPE = "RNA"
 DEFAULT_INTERACTION_SCORE = "OFF"
 DEFAULT_GENCODE = 0
 DEFAULT_EXPRESSION_VALUE_CUTOFF = "OFF"
-DEFAULT_EXPRESSION_TISSUE_CUTOFF = 1
+DEFAULT_EXPRESSION_TISSUE_CUTOFF = 1.0
 DEFAULT_OUTPUT_FOLDER = os.getcwd()
 
 RNA_BIOTYPES = DataConstants.RNA_MRNA_BIOTYPE[:] + DataConstants.RNA_LNCRNA_BIOTYPE[:]
@@ -100,7 +100,6 @@ OPTION_LIST = {  "Insertion": [
                     [ "-m", "--minimumProteinAnnotation", "store", "int", OPTION_MINIMUM_PROTEIN_ANNOTATION, DEFAULT_MINIMUM_PROTEIN_ANNOTATION, "Minimum number of proteins with annotation for enrichment test to be performed." ],
                     [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ],
                     [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ]
-
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
