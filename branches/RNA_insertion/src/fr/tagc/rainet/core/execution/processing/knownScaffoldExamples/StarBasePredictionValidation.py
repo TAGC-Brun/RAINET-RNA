@@ -378,6 +378,48 @@ class StarBasePredictionValidation( object ):
         return interactingPairs
 
 
+    # #
+    # Read expression file instead of catrapid file.
+    def read_expression_file(self):
+
+        # E.g.: Q7RTM1  ENST00000437598 0.013
+
+        interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> score
+        
+        proteinSet = set()
+
+        countLines = 0
+        
+        with open( self.catrapidFile, "r") as f:
+            for line in f:
+                spl = line.split("\t")
+
+                countLines+= 1 
+
+                if countLines % 10000000 == 0:
+                    print "Processed %s interactions" % countLines
+                
+                proteinID = spl[0]
+                transcriptID = spl[1]
+                intScore = float( spl[2])
+                
+                pair = transcriptID + "|" + proteinID
+
+                proteinSet.add(proteinID)
+
+                # add pair to interacting pairs and keep the maximum interaction score
+                if pair not in interactingPairs:
+                    interactingPairs[ pair] = intScore
+                else:
+                    raise RainetException( "Repeated protein-RNA pair: " + line)
+   
+
+        print "read_expression_file: Number of proteins: ", len( proteinSet)
+        print "read_expression_file: Number of protein-RNA pairs in file: ", len( interactingPairs)
+
+        return interactingPairs
+
+
 if __name__ == "__main__":
     
     try:
@@ -403,7 +445,7 @@ if __name__ == "__main__":
         parser.add_argument('--minimumBioComplex', metavar='minimumBioComplex', default = 0, type=int, help='Minimum value of BioComplex to keep starBase interaction.')
         parser.add_argument('--minimumClipReadNumber', metavar='minimumClipReadNumber', default = 0, type=int, help='Minimum value of clipReadNum to keep starBase interaction.')
         parser.add_argument('--catRAPIDmRNA', metavar='catRAPIDmRNA', default = 0, type=int, help='Whether provided catRAPID file is mRNA or lncRNA file. Parser used is different.')
-        parser.add_argument('--newFormat', metavar='newFormat', default = 0, type=int, help='Whether provided catRAPID file is using new format (e.g. with uniprotac instead of ENSP) or not.')
+        parser.add_argument('--newFormat', metavar='newFormat', default = 0, type=int, help='Whether provided catRAPID file is using new format (e.g. with uniprotac instead of ENSP) or not. If value == 2, read expression file instead.')
 
         
         #gets the arguments
@@ -446,8 +488,10 @@ if __name__ == "__main__":
 
         Timer.get_instance().step( "reading catRAPID file..")    
 
-        if args.newFormat:
+        if args.newFormat == 1:
             catrapidPairs = run.read_catrapid_file_new()
+        elif args.newFormat == 2:
+            catrapidPairs = run.read_expression_file()
         elif args.catRAPIDmRNA:
             catrapidPairs = run.read_catrapid_file_mRNA()
         else: 
