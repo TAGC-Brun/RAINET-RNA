@@ -45,6 +45,7 @@ from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.Tissue import Tissue
 
 from UnittestConstants import *
+from fr.tagc.rainet.core.util import Constants
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 
 # #
@@ -101,7 +102,6 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         # report only written for selected tests
         self.strategy.writeReportFile = 0
         
-
     # #
     # Test running AnalysisStrategy with default parameters
     def test_default_params(self):
@@ -231,17 +231,21 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         # Overwrite default values
         optionManager = OptionManager.get_instance()        
         optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
-        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, "100")
+#        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-07-07.human_linc_prelim.sqlite")
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_INTERACTION_SCORE, 100) # 100
         optionManager.set_option(OptionConstants.OPTION_RNA_BIOTYPES, "lincRNA")
         optionManager.set_option(OptionConstants.OPTION_GENCODE, 1)
-        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 1.0)
-        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_TISSUE_CUTOFF, 1)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, 1.0) # 1.0
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_TISSUE_CUTOFF, 1.0) # 1
 
         # important to create new SQLManager session if changing database
         SQLManager.get_instance().close_session()
 
         # Run strategy step by step
         self.strategy = AnalysisStrategy()
+
+        self.strategy.execute()
+
         self.strategy.execute( run = 0 )
  
         self.strategy.filter_RNA()
@@ -249,6 +253,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         self.strategy.filter_PRI()
         
         selectedInteractions = DataManager.get_instance().get_data(AnalysisStrategy.PRI_FILTER_KW)
+        
         self.assertTrue( len( selectedInteractions) == 4298, "assert if number of initial interactions is correct") 
 
         # run main function we want to test
