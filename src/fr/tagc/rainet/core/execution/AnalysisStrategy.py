@@ -211,9 +211,17 @@ class AnalysisStrategy(ExecutionStrategy):
         # Check if expressionValueCutoff is float or OFF
         if self.expressionValueCutoff != OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF:
             try:
-                float(self.expressionValueCutoff)
+                self.expressionValueCutoff = float(self.expressionValueCutoff)
             except TypeError:
                 raise RainetException( "AnalysisStrategy.execute: Provided expression value cutoff is not a float.")
+
+        # Check if expressionTissueCutoff is float
+        if self.expressionTissueCutoff != OptionConstants.DEFAULT_EXPRESSION_TISSUE_CUTOFF:
+            try:
+                float(self.expressionTissueCutoff)
+            except TypeError:
+                raise RainetException( "AnalysisStrategy.execute: Provided expression tissue cutoff is not a float.")
+
 
         #===================================================================
         # Initialisation
@@ -800,7 +808,7 @@ class AnalysisStrategy(ExecutionStrategy):
                                 if tissue not in proteinExpressionTissues:
                                     proteinExpressionTissues[ tissue] = set()
                                 proteinExpressionTissues[ tissue].add( protID)
-                    
+
                     # For a protein-RNA pair, retain interaction only if protein-RNA are present in at least x tissues
                     if len( setOfInteractingTissues) >= self.expressionTissueCutoff: # cutoff of minimum number of tissues
                         expressedInteractionsTissues[ pair] = setOfInteractingTissues
@@ -815,6 +823,7 @@ class AnalysisStrategy(ExecutionStrategy):
             # File with list of interactions passing RNA, protein and expression filters (not interaction cutoff)
             # E.g. proteinID\ttranscriptID\n
             #=================================================================== 
+
 
             Logger.get_instance().info("dump_filter_PRI_expression : writing output file. %s lines." % ( len( expressedInteractionsTissues)) )               
 
