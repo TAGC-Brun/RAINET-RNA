@@ -21,7 +21,6 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol, verbose = 1) 
 
   # loop pairs of categories
   comparisons = c()
-  doneComparisons = c()
   pvalues = c()
   means1 = c()
   means2 = c()
@@ -40,9 +39,6 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol, verbose = 1) 
           pvalue = ks.test(set1, set2, alternative = c("two.sided"))$p.value
           comparisons = c(comparisons, comparison)
           pvalues = c( pvalues, pvalue)
-          
-          #keeping track of already performed comparisons
-          doneComparisons = c(doneComparisons, comparison)
       }
     }
   }
