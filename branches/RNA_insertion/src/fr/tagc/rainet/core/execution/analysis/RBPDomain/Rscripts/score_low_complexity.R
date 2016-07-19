@@ -18,6 +18,10 @@ lowComplexityData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/resul
 lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_TF_cutoff15/annotated_interactions.tsv"
 mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_TF_cutoff50/annotated_interactions.tsv"
 
+# # # catrapid data for each protein
+# lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/moon_cutoff15/annotated_interactions.tsv"
+# mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/moon_cutoff50/annotated_interactions.tsv"
+
 # catrapid data for each protein
 # lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/lncrna/stawiski_TF/annotated_interactions.tsv"
 # mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/RBPDomainScore/mrna/stawiski_TF/annotated_interactions.tsv"
@@ -112,7 +116,6 @@ plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 filtAnnot = "Stawiski_control"
 plot_filt_dataset(dataset1, dataset2, filtAnnot, metricToUse1)
 
-
 ### Low terminus analysis
 
 # idea of separating lc into 3 categories: no LC, terminus LC, central LC
@@ -140,6 +143,7 @@ all_vs_all_tests( dataset1, "count", "tag", verbose = 1)
 ## correlation between score and % of LC
 
 dataset1Filt = dataset1[dataset1$annotation == "RBP" | dataset1$annotation == "Non-binding" | dataset1$annotation == "TF"]
+dataset1Filt = dataset1[dataset1$annotation == "EMFs"]
 
 plt1 <- ggplot(data = dataset1Filt, aes_string(x = "perc_low", y = "count", colour = "annotation"))  +
   geom_point( shape = 1, alpha=1/4 ) +
@@ -190,3 +194,41 @@ plt1
 #   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
 #   theme_minimal()
 # plt1
+
+
+# ## Starbase data
+# 
+# mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/forAndreas/protein_interactions.tsv"
+# mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/forAndreas/min_reads_100/protein_interactions.tsv"
+# 
+# dataset2 = dataset2[dataset2$perc_low != "NA"]
+# dataset2
+# 
+# metricToUse1 = "mean_reads"
+# metricToUse2 = "perc_low"
+# 
+# dataset2$metricToUse1 = dataset2[[metricToUse1]]
+# dataset2$metricToUse2 = dataset2[[metricToUse2]]
+# 
+# correlation = cor(dataset2$metricToUse1, dataset2$metricToUse2, method = "spearman")
+# correlationSign = as.numeric(cor.test(dataset2$metricToUse1, dataset2$metricToUse2, method = "spearman")$p.value)
+# correlationText = paste("Corr:", round(correlation,2),"(pval:", round(correlationSign),")")
+# 
+# plt1 <- ggplot(data = dataset2, aes_string(x = metricToUse1, y = metricToUse2))  +
+#   geom_point( shape = 1, alpha=1/4 ) +
+#   #  xlim(c(0,8000)) +
+#   geom_smooth( ) +
+#   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
+#   theme_minimal()
+# plt1
+# 
+# # plot with difference LC locations
+# plt1 <- ggplot(data = dataset2, aes(x = count_interactions, colour = as.factor(tag)) )  +
+#   geom_density( size = 1 ) +
+#   theme_minimal()
+# plt1
+# 
+# # all vs all tests
+# grid.newpage()
+# all_vs_all_tests( dataset2, "count_interactions", "tag", verbose = 1)
+
