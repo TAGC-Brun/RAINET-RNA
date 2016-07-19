@@ -22,14 +22,22 @@ outFolder = args[2]
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/stringent/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/extraStringent/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/test/positives_non_overlap"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/min100/scores_sample.tsv"
 
 setwd(outFolder)
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
+# transform values
+# dataset$catrapid_score = log10(dataset$catrapid_score)
+
 # Separate validated from non-validated 
 validated = dataset[dataset$in_validated_set == 1,]
 nonValidated = dataset[dataset$in_validated_set == 0]
+
+median(validated$catrapid_score)
+median(nonValidated$catrapid_score)
 
 ###################################### 
 ###################################### 
@@ -53,19 +61,19 @@ plt0 <- ggplot(dataset, aes(x=catrapid_score, colour = as.factor(in_validated_se
   annotate("text",  x=Inf, y = 0, label = paste("KS test p-val: ", round(ksTestWhole$p.value,2)), vjust=1, hjust=1)
 plt0
 
-###################################### 
-# Plot catRAPID scores versus CLIP reads mapped in StarBase
-###################################### 
-
-correlation = cor(validated$clipReads,validated$catrapid_score, method = "spearman")
-correlationSign = as.numeric(cor.test(validated$catrapid_score, validated$clipReads, method = "spearman")$p.value)
-correlationText = paste("Corr:", round(correlation,2),"(pval:", round(correlationSign),")")
-
-plt1 <- ggplot(validated, aes(x = clipReads, y = catrapid_score)) + 
-  geom_point(shape=1) + 
-  geom_smooth(method=lm) + 
-  annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  )
-plt1
+# ###################################### 
+# # Plot catRAPID scores versus CLIP reads mapped in StarBase
+# ###################################### 
+# 
+# correlation = cor(validated$clipReads,validated$catrapid_score, method = "spearman")
+# correlationSign = as.numeric(cor.test(validated$catrapid_score, validated$clipReads, method = "spearman")$p.value)
+# correlationText = paste("Corr:", round(correlation,2),"(pval:", round(correlationSign),")")
+# 
+# plt1 <- ggplot(validated, aes(x = clipReads, y = catrapid_score)) + 
+#   geom_point(shape=1) + 
+#   geom_smooth(method=lm) + 
+#   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  )
+# plt1
 
 ###################################### 
 # ROC curve 
@@ -77,7 +85,7 @@ pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.orderi
 perf = performance(pred, measure = "tpr", x.measure = "fpr")
 
 # ROC curve with ROCR package (fast)
-plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of whole dataset")
+plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve")
 abline(a = 0, b = 1, col = "gray60")
 
 auc = performance(pred, measure = "auc")
@@ -85,14 +93,16 @@ text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
 
 # Optimal cutoff / cutpoint, best sensitivity and best specificity
 cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
-cutoff
-text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
+text(0.8,0.45, paste("Max(sens+spec):",round(cutoff,2) ) )
 
-colours = rainbow(5)
+text(0.16,0.90, paste("# True:",nrow(validated) ) )
+text(0.2,0.85, paste("# False:",nrow(nonValidated) ) )
+
+colours = rainbow(3)
 
 # Cutoff cost analysis. Augmenting weight of sensitivity
 print ("cost cutoff sens 1-spec")
-for (cost in seq(1,5)){
+for (cost in seq(1,3)){
   calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
   cutoff = perf@alpha.values[[1]][calc]
   sens = perf@y.values[[1]][calc]
@@ -100,7 +110,7 @@ for (cost in seq(1,5)){
   print (paste(cost, cutoff , sens, spec) )
   points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
 }
-legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
+legend("bottomright", paste("cost =", 1:3), col = colours[1:3], pch = 16, cex = 0.8, title = "Sensitivity")
 
 
 ###################################### 
@@ -221,64 +231,175 @@ text(0.7,0.1, cutoffText )
 text(0.7,0.0, aucText )
 
 
-###################################### 
-###################################### 
-# StarBase + NPInter
-###################################### 
-###################################### 
+# ###################################### 
+# ###################################### 
+# # StarBase + NPInter
+# ###################################### 
+# ###################################### 
+# 
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
+# 
+# dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# 
+# nrow(dataset1[dataset1$in_validated_set == 1])
+# nrow(dataset2[dataset2$in_validated_set == 1])
+# 
+# # new dataset
+# dataset <- dataset2
+# 
+# ## merge the in validated from both files
+# if (nrow(dataset1) == nrow(dataset2)){
+#   
+#   #check which indexes of dataset1 are true
+#   indexesToChange = which(dataset1$in_validated_set == 1)
+# 
+#   # change de items on dataset 2 to be true if they are in dataset1
+#   dataset$in_validated_set[indexesToChange] = 1
+# }
+# 
+# nrow(dataset[dataset$in_validated_set == 1])
+# 
+# # Use ROCR
+# pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+# 
+# perf = performance(pred, measure = "tpr", x.measure = "fpr")
+# 
+# # ROC curve with ROCR package (fast)
+# plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of whole dataset")
+# abline(a = 0, b = 1, col = "gray60")
+# 
+# auc = performance(pred, measure = "auc")
+# text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
+# 
+# # Optimal cutoff / cutpoint, best sensitivity and best specificity
+# cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+# cutoff
+# text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
+# 
+# colours = rainbow(5)
+# 
+# # Cutoff cost analysis. Augmenting weight of sensitivity
+# print ("cost cutoff sens 1-spec")
+# for (cost in seq(1,5)){
+#   calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
+#   cutoff = perf@alpha.values[[1]][calc]
+#   sens = perf@y.values[[1]][calc]
+#   spec = 1-perf@x.values[[1]][calc]
+#   print (paste(cost, cutoff , sens, spec) )
+#   points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
+# }
+# legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
 
-inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores.tsv"
-inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
 
-dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
-dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
-nrow(dataset1[dataset1$in_validated_set == 1])
-nrow(dataset2[dataset2$in_validated_set == 1])
+# ###################################### 
+# ###################################### 
+# # StarBase + NPInter FOR JOBIM 26-June-2016
+# ###################################### 
+# ###################################### 
+# 
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
+# 
+# dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# 
+# nrow(dataset1[dataset1$in_validated_set == 1])
+# nrow(dataset2[dataset2$in_validated_set == 1])
+# 
+# # new dataset
+# dataset <- dataset2
+# 
+# ## merge the in validated from both files
+# if (nrow(dataset1) == nrow(dataset2)){
+#   
+#   #check which indexes of dataset1 are true
+#   indexesToChange = which(dataset1$in_validated_set == 1)
+#   
+#   # change de items on dataset 2 to be true if they are in dataset1
+#   dataset$in_validated_set[indexesToChange] = 1
+# }
+# 
+# positives = nrow(dataset[dataset$in_validated_set == 1])
+# negatives = nrow(dataset[dataset$in_validated_set == 0])
+# 
+# # Use ROCR
+# pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+# 
+# perf = performance(pred, measure = "tpr", x.measure = "fpr")
+# 
+# # ROC curve with ROCR package (fast)
+# plot(perf, ylab = "True positive rate", xlab = "False positive rate", lwd= 3, main = "ROC curve: NPInter + StarBase datasets")
+# abline(a = 0, b = 1, col = "gray60")
+# 
+# auc = performance(pred, measure = "auc")
+# text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
+# 
+# # Optimal cutoff / cutpoint, best sensitivity and best specificity
+# cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+# cutoff
+# text(0.8,0.45, paste("Max(sens+spec):",round(cutoff,2) ) )
+# 
+# text(0.16,0.90, paste("Positives:",positives ) )
+# text(0.2,0.85, paste("Negatives:",negatives ) )
+# 
+# colours = rainbow(3)
+# 
+# # Cutoff cost analysis. Augmenting weight of sensitivity
+# print ("cost cutoff sens 1-spec")
+# for (cost in seq(1,3)){
+#   calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
+#   cutoff = perf@alpha.values[[1]][calc]
+#   sens = perf@y.values[[1]][calc]
+#   spec = 1-perf@x.values[[1]][calc]
+#   print (paste(cost, cutoff , sens, spec) )
+#   points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
+# }
+# legend("bottomright", paste("cost =", 1:3), col = colours[1:3], pch = 16, cex = 0.8, title = "Sensitivity")
+# 
 
-# new dataset
-dataset <- dataset2
 
-## merge the in validated from both files
-if (nrow(dataset1) == nrow(dataset2)){
-  
-  #check which indexes of dataset1 are true
-  indexesToChange = which(dataset1$in_validated_set == 1)
-
-  # change de items on dataset 2 to be true if they are in dataset1
-  dataset$in_validated_set[indexesToChange] = 1
-}
-
-nrow(dataset[dataset$in_validated_set == 1])
-
-# Use ROCR
-pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
-
-perf = performance(pred, measure = "tpr", x.measure = "fpr")
-
-# ROC curve with ROCR package (fast)
-plot(perf, ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of whole dataset")
-abline(a = 0, b = 1, col = "gray60")
-
-auc = performance(pred, measure = "auc")
-text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
-
-# Optimal cutoff / cutpoint, best sensitivity and best specificity
-cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
-cutoff
-text(0.7,0.45, paste("Cutoff[Max(sens+spec)]:",round(cutoff,2) ) )
-
-colours = rainbow(5)
-
-# Cutoff cost analysis. Augmenting weight of sensitivity
-print ("cost cutoff sens 1-spec")
-for (cost in seq(1,5)){
-  calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
-  cutoff = perf@alpha.values[[1]][calc]
-  sens = perf@y.values[[1]][calc]
-  spec = 1-perf@x.values[[1]][calc]
-  print (paste(cost, cutoff , sens, spec) )
-  points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
-}
-legend("bottomright", paste("cost =", 1:5), col = colours[1:5], pch = 16, cex = 0.8, title = "Sensitivity")
-
+# ###################################### 
+# ###################################### 
+# # StarBase FOR ANDREAS FOR JOBIM 26-June-2016
+# ###################################### 
+# ###################################### 
+# 
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/scores.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/stringent/scores.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/extraStringent/scores.tsv"
+# 
+# dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# 
+# # Use ROCR
+# pred = prediction(dataset$catrapid_score, dataset$in_validated_set, label.ordering = NULL)
+# 
+# perf = performance(pred, measure = "tpr", x.measure = "fpr")
+# 
+# # ROC curve with ROCR package (fast)
+# plot(perf, ylab = "True positive rate", xlab = "False positive rate", lwd= 3, main = "ROC curve: StarBase mRNA dataset")
+# abline(a = 0, b = 1, col = "gray60")
+# 
+# auc = performance(pred, measure = "auc")
+# text(0.9, 0.4, paste("AUC:",round(auc@y.values[[1]],2) ) )
+# 
+# # Optimal cutoff / cutpoint, best sensitivity and best specificity
+# cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+# cutoff
+# text(0.8,0.45, paste("Max(sens+spec):",round(cutoff,2) ) )
+# 
+# colours = rainbow(3)
+# 
+# # Cutoff cost analysis. Augmenting weight of sensitivity
+# print ("cost cutoff sens 1-spec")
+# for (cost in seq(1,3)){
+#   calc = which.max(1-perf@x.values[[1]] + cost*perf@y.values[[1]])
+#   cutoff = perf@alpha.values[[1]][calc]
+#   sens = perf@y.values[[1]][calc]
+#   spec = 1-perf@x.values[[1]][calc]
+#   print (paste(cost, cutoff , sens, spec) )
+#   points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
+# }
+# legend("bottomright", paste("cost =", 1:3), col = colours[1:3], pch = 16, cex = 0.8, title = "Sensitivity")
