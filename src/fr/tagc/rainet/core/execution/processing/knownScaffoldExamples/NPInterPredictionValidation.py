@@ -393,6 +393,93 @@ class NPInterPredictionValidation( object ):
         return interactingPairs
 
 
+    # #
+    # Read catRAPID file.
+    # Updated for new catRAPID format. No need for cross references.
+    def read_catrapid_file_new(self):
+
+        # E.g.: sp|Q6P6C2|ALKB5_HUMAN ENST00000559683   47.85   0.93    0.23
+
+        interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> score
+        
+        proteinSet = set()
+
+        countLines = 0
+        
+        with open( self.catrapidFile, "r") as f:
+            for line in f:
+                spl = line.split(" ")
+
+                countLines+= 1 
+
+                if countLines % 10000000 == 0:
+                    print "Processed %s interactions" % countLines
+                               
+                
+                proteinID = spl[0].split( "|")[1]
+                spl2 = spl[1].split( "\t")
+                transcriptID = spl2[0]
+                intScore = float( spl2[1])
+                
+                pair = transcriptID + "|" + proteinID
+
+                proteinSet.add(proteinID)
+
+                # add pair to interacting pairs and keep the maximum interaction score
+                if pair not in interactingPairs:
+                    interactingPairs[ pair] = intScore
+                else:
+                    raise RainetException( "Repeated protein-RNA pair: " + line)
+   
+
+        print "read_catrapid_file_new: Number of proteins: ", len( proteinSet)
+        print "read_catrapid_file_new: Number of protein-RNA pairs in catRAPID: ", len( interactingPairs)
+
+        return interactingPairs
+
+
+    # #
+    # Read expression file instead of catrapid file.
+    def read_expression_file(self):
+
+        # E.g.: Q7RTM1  ENST00000437598 0.013
+
+        interactingPairs = {} # key -> pair of transcriptID and proteinID, val -> score
+        
+        proteinSet = set()
+
+        countLines = 0
+        
+        with open( self.catrapidFile, "r") as f:
+            for line in f:
+                spl = line.split("\t")
+
+                countLines+= 1 
+
+                if countLines % 10000000 == 0:
+                    print "Processed %s interactions" % countLines
+                
+                proteinID = spl[0]
+                transcriptID = spl[1]
+                intScore = float( spl[2])
+                
+                pair = transcriptID + "|" + proteinID
+
+                proteinSet.add(proteinID)
+
+                # add pair to interacting pairs and keep the maximum interaction score
+                if pair not in interactingPairs:
+                    interactingPairs[ pair] = intScore
+                else:
+                    raise RainetException( "Repeated protein-RNA pair: " + line)
+   
+
+        print "read_expression_file: Number of proteins: ", len( proteinSet)
+        print "read_expression_file: Number of protein-RNA pairs in file: ", len( interactingPairs)
+
+        return interactingPairs
+
+
 if __name__ == "__main__":
     
     try:
@@ -416,6 +503,7 @@ if __name__ == "__main__":
         parser.add_argument('rainetDB', metavar='rainetDB', type=str, help='Path to RAINET database to be used.')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Folder where to write output files.')
+        parser.add_argument('--newFormat', metavar='newFormat', default = 0, type=int, help='Whether provided catRAPID file is using new format (e.g. with uniprotac instead of ENSP) or not. If value == 2, read expression file instead.')
         
         #gets the arguments
         args = parser.parse_args( ) 
@@ -448,7 +536,12 @@ if __name__ == "__main__":
 
         Timer.get_instance().step( "reading catRAPID file..")    
 
-        catrapidPairs = run.read_catrapid_file()
+        if args.newFormat == 1:
+            catrapidPairs = run.read_catrapid_file_new()
+        elif args.newFormat == 2:
+            catrapidPairs = run.read_expression_file()
+        else: 
+            catrapidPairs = run.read_catrapid_file()
 
         # #
         # Quick stats on the data
