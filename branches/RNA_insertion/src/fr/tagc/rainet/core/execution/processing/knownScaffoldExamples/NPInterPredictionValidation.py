@@ -592,8 +592,21 @@ if __name__ == "__main__":
 #                     inValidated[ i] = 0
 
             outFile.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i]) )
-        
+
         outFile.close()
+
+
+        # Convert old catrapid format to new
+        if args.newFormat != 1 and args.newFormat != 2:
+            outFile = open( run.outputFolder + "/converted_interactions.tsv", "w")
+            prefix = "sp|"
+            suffix = "|bogus"
+            for i, pair in enumerate( catrapidPairs):
+                txID, protID = pair.split("|")
+                finalProtID = prefix + protID + suffix
+                outFile.write( "%s %s\t%s\n" % ( finalProtID, txID, catrapidPairs[ pair]) )
+                 
+            outFile.close()
         
 #         # # Run R command to create figure
 #         command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
