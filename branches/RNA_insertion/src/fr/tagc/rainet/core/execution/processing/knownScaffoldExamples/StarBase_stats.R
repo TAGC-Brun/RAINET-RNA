@@ -24,6 +24,19 @@ outFolder = args[2]
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/extraStringent/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/test/positives_non_overlap"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/min100/scores_sample.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/ensembl68_rnas/min100/scores_sample.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/ensembl68_rnas_prots/min100/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_rnas/scores_sample.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_rnas_prots/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_prots/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/expression_dataset/min100/scores_sample.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_lncrnas/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/old_remake/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_lib_rnas_prots/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/scores.tsv"
+
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/scores.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/otherRNAs_only/scores.tsv"
 
 setwd(outFolder)
 
@@ -32,7 +45,7 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 # transform values
 # dataset$catrapid_score = log10(dataset$catrapid_score)
 
-# Separate validated from non-validated 
+# Separate validated from non-validated
 validated = dataset[dataset$in_validated_set == 1,]
 nonValidated = dataset[dataset$in_validated_set == 0]
 
