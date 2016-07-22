@@ -34,9 +34,9 @@ outFolder = args[2]
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/old_remake/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_lib_rnas_prots/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/scores.tsv"
-
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/otherRNAs_only/scores.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/otherRNAs_only/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only/scores.tsv"
 
 setwd(outFolder)
 
@@ -51,6 +51,8 @@ nonValidated = dataset[dataset$in_validated_set == 0]
 
 median(validated$catrapid_score)
 median(nonValidated$catrapid_score)
+
+sd(dataset$catrapid_score)
 
 ###################################### 
 ###################################### 
@@ -128,7 +130,7 @@ legend("bottomright", paste("cost =", 1:3), col = colours[1:3], pch = 16, cex = 
 
 ###################################### 
 ###################################### 
-#### Random subsamples 
+#### Random subsamples : negatives
 ###################################### 
 ###################################### 
 # Approach: Sub-sampling the non-validated dataset to match length of validated dataset, and keeping the validated dataset as it is
@@ -153,7 +155,7 @@ for (i in seq(1, repetitions)){
   pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
   perf = performance(pred, measure = "tpr", x.measure = "fpr")
   if (i == 1){
-    plot(perf, lty=5, col= colours[i], ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve of randomised set")
+    plot(perf, lty=5, col= colours[i], ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve: negatives subsampling")
   }else{
     plot(perf, lty=5, col= colours[i],main="", add=TRUE)
   }
@@ -178,6 +180,63 @@ text(0.7,0.3, paste("Subsample size:", nsubsample) )
 text(0.7,0.2, paste("Number randomisations:", repetitions) )
 text(0.7,0.1, cutoffText )
 text(0.7,0.0, aucText )
+
+
+
+###################################### 
+###################################### 
+#### Random subsamples : positives + negatives
+###################################### 
+###################################### 
+# Approach: Sub-sampling the non-validated dataset to match length of validated dataset, and keeping the validated dataset as it is
+
+# parameters
+repetitions = 1000
+nsubsample = nrow(validated) / 10 # change here 
+
+colours = sample(colours(), repetitions)
+
+cutoffs = c()
+aurocs = c()
+kss = c()
+
+# Create ROC plots and other metrics
+for (i in seq(1, repetitions)){
+  # create subsample of non-validated set
+  validatedSample = validated[sample( nrow(validated), nsubsample ), ]
+  nonValidatedSample = nonValidated[sample( nrow(nonValidated), nsubsample), ]
+  datasetSample = rbind(validatedSample, nonValidatedSample) 
+  
+  # ROC using ROCR on subsample
+  pred = prediction(datasetSample$catrapid_score, datasetSample$in_validated_set, label.ordering = NULL)
+  perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  if (i == 1){
+    plot(perf, lty=5, col= colours[i], ylab = "Sensitivity", xlab = "1-Specificity", lwd= 3, main = "ROC curve: positive and negative subsampling")
+  }else{
+    plot(perf, lty=5, col= colours[i],main="", add=TRUE)
+  }
+  
+  # Optimal cutoff / cutpoint
+  cutoff = perf@alpha.values[[1]][which.max(1-perf@x.values[[1]] + perf@y.values[[1]])] 
+  cutoffs = c(cutoffs, cutoff)
+  
+  # AUROC
+  auc = performance(pred, measure = "auc")
+  aurocs = c(aurocs, auc@y.values[[1]])
+}
+
+# Mean cutoff and std of randomisations
+cutoffText = paste("Mean cutoff:",round(mean(cutoffs),2),"std:",round(sd(cutoffs),2))
+# Mean auc and std of randomisations
+aucText = paste("Mean AUC:",round(mean(aurocs),2),"std:",round(sd(aurocs),2))
+
+## adding more info to the plot
+abline(a = 0, b = 1, col = "gray60")
+text(0.7,0.3, paste("Subsample size:", nsubsample) )
+text(0.7,0.2, paste("Number randomisations:", repetitions) )
+text(0.7,0.1, cutoffText )
+text(0.7,0.0, aucText )
+
 
 
 ###################################### 
