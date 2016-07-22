@@ -260,7 +260,7 @@ class ReadCatrapid(object):
  
         with open( self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME, "w") as outFile:
             # change header here
-            outFile.write("ensembl_id\tmean_score\tmedian_score\tmax_score\tstd_score\tcount\n")
+            outFile.write("ensembl_id\tmean_score\tmedian_score\tmin_score\tmax_score\tstd_score\tcount\n")
 
             for rna in allRNASet:
                 if rna in rnaScoreFrequencies:
@@ -269,25 +269,26 @@ class ReadCatrapid(object):
      
                     mean = np.mean( listOfScores)
                     median = np.median( listOfScores)   
+                    minimum = np.min( listOfScores)
                     maximum = np.max( listOfScores)
                     std = np.std( listOfScores)    
                     # number of Proteins/interactions above filter
                     count = len(listOfScores)
                     
-                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n" % (rna, mean, median, maximum, std, count) )
+                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n" % (rna, mean, median, minimum, maximum, std, count) )
 
                 else:                   
-                    outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\n" % ( rna, 
+                    outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % ( rna, 
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
-                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
 
         ### Protein file ###
 
         with open( self.outputFolder + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "w") as outFile:
             # change header here
-            outFile.write("uniprotac\tmean_score\tmedian_score\tmax_score\tstd_score\tcount\n")
+            outFile.write("uniprotac\tmean_score\tmedian_score\tmin_score\tmax_score\tstd_score\tcount\n")
 
             # calculate protein score metrics
             for prot in allProtSet:
@@ -298,6 +299,7 @@ class ReadCatrapid(object):
     
                     mean = np.mean( listOfScores)
                     median = np.median( listOfScores)
+                    minimum = np.min( listOfScores)
                     maximum = np.max( listOfScores)
                     std = np.std( listOfScores)
                         
@@ -307,13 +309,13 @@ class ReadCatrapid(object):
                     proteinInteractionsMean[ prot] = mean
                     proteinInteractionsCounter[ prot] = count
                     
-                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, maximum, std, count) )
+                    outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, minimum, maximum, std, count) )
     
                 else:                   
-                    outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\n" % ( prot, 
+                    outFile.write( "%s\t%s\t%s\t\%st%s\t%s\t%s\n" % ( prot, 
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
-                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
+                                                              ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
 
 
