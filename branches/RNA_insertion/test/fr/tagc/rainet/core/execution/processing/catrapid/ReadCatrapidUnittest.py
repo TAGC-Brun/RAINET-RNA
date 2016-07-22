@@ -177,13 +177,18 @@ class ReadCatrapidUnittest(unittest.TestCase):
             with open(self.expectedFolder + "/extraMetrics" + ReadCatrapid.PROTEIN_INTERACTIONS_FILENAME, "r") as exp:
                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
+        with open(self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME, "r") as out:                
+            with open(self.expectedFolder + "/extraMetrics" + ReadCatrapid.RNA_INTERACTIONS_FILENAME, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+
         # cp /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_output/* /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_expected/extraMetrics
 
-    
+     
     # #
     # Runs after each test
     def tearDown(self):
-                       
+                          
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
