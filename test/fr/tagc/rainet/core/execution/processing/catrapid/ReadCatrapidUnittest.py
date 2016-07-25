@@ -29,12 +29,13 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.writeInteractions = 1
         self.batchSize = 1000000
         # self.extraMetrics = 1
+        self.writeNormalisedInteractions = 0
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
         self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
-                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize )
+                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize, self.writeNormalisedInteractions )
             
 
     # #
@@ -184,11 +185,40 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         # cp /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_output/* /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_expected/extraMetrics
 
+
+    # #
+    def test_write_normalised_interactions(self):
+
+        print "| test_write_normalised_interactions | "
+
+        self.run.writeNormalisedInteractions = 1
+
+        # no file filter
+        wantedPairs = set()
+        self.run.read_catrapid_file( wantedPairs, set(), set())
+
+        self.run.write_normalised_interactions()
+
+        with open(self.outputFolder + ReadCatrapid.NORMALISED_STORED_INTERACTIONS_FILENAME, "r") as out:                
+            with open(self.expectedFolder + "/normalised/" + ReadCatrapid.NORMALISED_STORED_INTERACTIONS_FILENAME, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+        # cp /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_output/* /home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/processing/catrapid/test_expected/normalised
+
+
+    # #
+    def test_min_max_normalisation(self):
+
+        print "| test_min_max_normalisation | "
+
+        normVal = self.run._min_max_normalisation(0, -10, 10)
+     
+        self.assertTrue( normVal == 0.5)
      
     # #
     # Runs after each test
     def tearDown(self):
-                           
+                             
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
