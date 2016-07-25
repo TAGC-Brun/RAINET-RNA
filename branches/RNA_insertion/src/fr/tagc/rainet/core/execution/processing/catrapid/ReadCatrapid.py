@@ -357,12 +357,15 @@ class ReadCatrapid(object):
                 spl = line.split( "\t")
                 
                 transcriptID = spl[ txIDCol]
-                minimum = float( spl[ minCol])
-                maximum = float( spl[ maxCol])
+                minimum = spl[ minCol]
+                maximum = spl[ maxCol]
 
                 # if this RNA was filtered out, it will also not feature in the interactions file.
                 if minimum == ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG or maximum == ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG:
                     continue
+
+                minimum = float( minimum)
+                maximum = float( maximum)
 
                 if transcriptID not in rnaMax:
                     rnaMax[ transcriptID] = maximum
