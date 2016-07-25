@@ -39,8 +39,9 @@ class ReadCatrapid(object):
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
+    NORMALISED_STORED_INTERACTIONS_FILENAME = "/storedInteractionsNormalised.tsv"
     
-    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, write_interactions, batch_size):
+    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, write_interactions, batch_size, write_normalised_interactions):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -50,13 +51,16 @@ class ReadCatrapid(object):
         self.proteinFilterFile = protein_filter_file
         self.writeInteractions = write_interactions
         self.batchSize = batch_size
+        self.writeNormalisedInteractions = write_normalised_interactions
+
+        if write_normalised_interactions and write_interactions == 0:
+            raise RainetException( "ReadCatrapid.__init__ : --write_interactions option must be on for --write_normalised_interactions to run.")
 
         # make output folder
         if not os.path.exists( self.outputFolder):
             os.mkdir( self.outputFolder)
         else:
             print "__init__: Output folder already exists: %s" % self.outputFolder
-
 
 
     # #
@@ -87,7 +91,6 @@ class ReadCatrapid(object):
         else:
             return set()
         
-
     # #
     # Read list of wanted proteins
     # @return set of proteins we want to keep, empty if no file given
@@ -317,11 +320,110 @@ class ReadCatrapid(object):
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
-
-
         return proteinInteractionsMean, proteinInteractionsCounter
 
 
+    # #
+    # Function to write extra output file with interactions normalised by the max for each RNA, 
+    # (using unity-based normalisation, aka min-max normalisation)
+    # This function runs after writing non-normalised interactions file and rna interactions file.
+    def write_normalised_interactions( self):
+
+        if not os.path.exists( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME):
+            raise RainetException( "ReadCatrapid.write_normalised_interactions : output interactions file not found. %s" % self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME)
+        if not os.path.exists( self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME):
+            raise RainetException( "ReadCatrapid.write_normalised_interactions : output rna interactions file not found. %s" % self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME)
+
+
+        #===============================================================================
+        # Get maximum and minimum scores for each transcript
+        #===============================================================================
+
+        # e.g. format: ensembl_id      mean_score      median_score    min_score       max_score       std_score       count
+        #        ENST00000388090 -15.11  -16.10  -45.90  26.90   10.46   1978
+
+        # column indexes
+        txIDCol = 0
+        minCol = 3 
+        maxCol = 4
+
+        rnaMax = {} # key -> transcriptID, val -> max score among all interactions
+        rnaMin = {} # key -> transcriptID, val -> min score among all interactions
+        with open( self.outputFolder + ReadCatrapid.RNA_INTERACTIONS_FILENAME, "r") as inFile:
+            inFile.readline() # skip header
+            
+            for line in inFile:
+                line = line.strip()
+                spl = line.split( "\t")
+                
+                transcriptID = spl[ txIDCol]
+                minimum = float( spl[ minCol])
+                maximum = float( spl[ maxCol])
+
+                # if this RNA was filtered out, it will also not feature in the interactions file.
+                if minimum == ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG or maximum == ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG:
+                    continue
+
+                if transcriptID not in rnaMax:
+                    rnaMax[ transcriptID] = maximum
+                else:
+                    raise RainetException( "ReadCatrapid.write_normalised_interactions : duplicate transcript ID. %s" % transcriptID)
+
+                if transcriptID not in rnaMin:
+                    rnaMin[ transcriptID] = minimum
+                else:
+                    raise RainetException( "ReadCatrapid.write_normalised_interactions : duplicate transcript ID. %s" % transcriptID)
+
+
+        #===============================================================================
+        # Apply normalisation
+        #===============================================================================
+
+        idColumn = 0        
+        scoreColumn = 1
+        
+        # e.g. format: sp|Q7Z419|R144B_HUMAN ENST00000542804    20.56    0.54    0.00
+
+        outFile = open( self.outputFolder + ReadCatrapid.NORMALISED_STORED_INTERACTIONS_FILENAME, "w")
+        
+        with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME, "r") as inFile:
+            
+            for line in inFile:
+                line = line.strip()
+                spl = line.split( "\t")
+                
+                score = round( float( spl[ scoreColumn]), 1)
+
+                transcriptID = spl[ idColumn].split( " ")[1]
+                                
+                # min-max normalisation
+
+                minimum = rnaMin[ transcriptID]
+                maximum = rnaMax[ transcriptID]
+                
+                assert score >= minimum
+                assert score <= maximum
+
+                normalisedScore = self._min_max_normalisation( score, minimum, maximum)
+                
+                # rewrite output file
+                text = "%s\t%.2f\t%s\n" % ( "\t".join( spl[ :scoreColumn]), normalisedScore, "\t".join( spl[ scoreColumn+1:]))
+
+                outFile.write( text)
+
+        outFile.close()
+        
+
+    # function to calculate min-max normalisation (unity-based normalisation)
+    def _min_max_normalisation(self, x, minimum, maximum):
+
+        normVal = float( x - minimum) / float( maximum - minimum)
+       
+        assert normVal >= 0        
+        assert normVal <= 1
+
+        return normVal
+        
     # run functions in proper order
     def run(self):
         
@@ -332,7 +434,10 @@ class ReadCatrapid(object):
     
         Timer.get_instance().step( "reading catrapid interaction file..")    
         self.read_catrapid_file( wantedPairs, wantedRNAs, wantedProteins)
-        
+
+        if self.writeNormalisedInteractions:
+            Timer.get_instance().step( "writing normalised interaction file..")    
+            self.write_normalised_interactions( )
 
 
 if __name__ == "__main__":
@@ -363,13 +468,15 @@ if __name__ == "__main__":
                          default = 1, help='Whether to write interaction file after the filters.')
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
+    parser.add_argument('--writeNormalisedInteractions', metavar='writeNormalisedInteractions', type=int,
+                         default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must be 1.')   
 
     #gets the arguments
     args = parser.parse_args( ) 
 
     # init
     readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
-                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize)
+                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, args.writeNormalisedInteractions)
 
     readCatrapid.run()
 
