@@ -7,6 +7,7 @@ from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.time.Timer import Timer
 from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
+from fr.tagc.rainet.core.data.RNA import RNA
 
 #===============================================================================
 # Started 25-July-2016 
@@ -30,7 +31,7 @@ class LncRNAScore(object):
     ANNOTATION_OUTPUT_FILE = "/annotated_interactions.tsv"
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
        
-    def __init__(self, annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, no_annotation_tag):
+    def __init__(self, annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, no_annotation_tag, cross_reference):
 
         self.annotationFile = annotation_file
         self.catRAPIDFile = catrapid_file
@@ -40,6 +41,7 @@ class LncRNAScore(object):
         self.annotationColumn = annotation_column
         self.idColumn = id_column
         self.noAnnotationTag = no_annotation_tag
+        self.crossReference = cross_reference
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -51,28 +53,25 @@ class LncRNAScore(object):
 
 
     # #
-    # Use RAINET DB to retrieve Protein cross references
+    # Use RAINET DB to retrieve RNA cross references
     def rna_cross_references(self):
         
-        pass
-#         # Query all UniProtAC in database
-#         query = self.sql_session.query( Protein.uniprotAC ).all()        
-#         uniprotACs = { str(prot[0]) for prot in query}
-# 
-#         # # Get external references
-#         # produce dictionary where key is xref ID and value the uniprotAC
-#         # Note: an external ID can point to several uniprot IDs        
-#         query = self.sql_session.query( ProteinCrossReference.protein_id, ProteinCrossReference.crossReferenceID ).filter( ProteinCrossReference.sourceDB == RBPDomainScore.XREF_SOURCE_DB).all()
-# 
-#         protCrossReference = {} # key -> external ID, val -> set of uniprotACs        
-#         for uniprotID, externalID in query:     
-# 
-#             if externalID not in protCrossReference:
-#                 protCrossReference[ externalID] = set()
-#                 
-#             protCrossReference[ externalID].add( str( uniprotID))
-#             
-#         return uniprotACs, protCrossReference
+        # # Get all geneIDs
+        # produce dictionary where key is gene ID / gene name and value the transcriptIDs
+        query = self.sql_session.query( RNA.transcriptID, RNA.geneID, RNA.externalGeneName ).all()
+ 
+        rnaGeneReference = {} # key -> gene ID, val -> set of transcriptIDs      
+        for transcriptID, geneID, externalID in query:     
+ 
+            if geneID not in rnaGeneReference:
+                rnaGeneReference[ geneID] = set()
+            rnaGeneReference[ geneID].add( str( transcriptID))
+
+            if externalID not in rnaGeneReference:
+                rnaGeneReference[ externalID] = set()                 
+            rnaGeneReference[ externalID].add( str( transcriptID))
+             
+        self.rnaGeneReference = rnaGeneReference
 
 
     # #
@@ -118,20 +117,27 @@ class LncRNAScore(object):
                 if not txID.startswith("ENST"):
                     raise RainetException("read_annotation_file: transcript ID is incorrect:", txID)
 
-#                 # retrieve corresponding uniprotACs
-#                 if pepID in protCrossReference:
-#                     protIDs = protCrossReference[ pepID]
-#                 else:
-#                     notFound.add( pepID)
-#                     continue
-
+                if self.crossReference:
+                    # e.g. XLOC_000019
+                    ### process gene ID to exclude the .1 etc
+                    if txID in self.rnaGeneReference:
+                        txID = self.rnaGeneReference[ txID]
+                    elif txID.startswith( "ENSG") and "." in txID: #e.g. ENSG00000267565.1
+                        txID = txID.split( ".")[0]
+                        txID = self.rnaGeneReference[ txID]
+                    else:
+                        notFound.add( txID)
+                        continue
 
                 if txID not in transcriptAnnotation:
                     transcriptAnnotation[ txID] = set()
                 transcriptAnnotation[ txID].add( annotationItem)
 
+            #TODO: 
+            print notFound #ddsadas
+
             print "read_annotation_file: number of entries read:", lineCounter
-#            print "read_annotation_file: number of peptide IDs not found: ", len(notFound)
+            print "read_annotation_file: number of transcript IDs not found: ", len( notFound)
             print "read_annotation_file: number of transcripts with annotation:", len( transcriptAnnotation)
 
         return transcriptAnnotation
@@ -226,13 +232,20 @@ if __name__ == "__main__":
                              help='Which column in the input annotation file to processed as transcript ID. 0-based.')
         parser.add_argument('--noAnnotationTag', metavar='noAnnotationTag', type=str, default = "Other",
                              help='Text to write for the transcripts that are not in provided annotation files. Default = "Other"')
+        parser.add_argument('--crossReference', metavar='crossReference', type=str, default = 0,
+                             help='Whether to use cross references for transcript ID mapping or not.')
            
         #gets the arguments
         args = parser.parse_args( ) 
     
         # init
         run = LncRNAScore( args.annotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, 
-                              args.maskMultiple, args.annotationColumn, args.idColumn, args.noAnnotationTag)
+                              args.maskMultiple, args.annotationColumn, args.idColumn, args.noAnnotationTag, args.crossReference)
+
+        # build cross references
+        if run.crossReference:
+            Timer.get_instance().step( "Reading cross references..")    
+            run.rna_cross_references()
         
         # read annotations file
         Timer.get_instance().step( "Reading annotation file..")    
