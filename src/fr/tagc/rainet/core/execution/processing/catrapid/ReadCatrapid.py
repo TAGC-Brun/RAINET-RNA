@@ -40,8 +40,8 @@ class ReadCatrapid(object):
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
     NORMALISED_STORED_INTERACTIONS_FILENAME = "/storedInteractionsNormalised.tsv"
-    INTERACTIONS_SCORE_MATRIX = "interaction_score_matrix.tsv"
-    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 10000000 # maximum number of interactions writable for interaction matrix output
+    INTERACTIONS_SCORE_MATRIX = "/interaction_score_matrix.tsv"
+    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 100000000 # maximum number of interactions writable for interaction matrix output
     
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file,
                  write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix):
@@ -555,47 +555,53 @@ class ReadCatrapid(object):
 
 if __name__ == "__main__":
     
-    # Start chrono
-    Timer.get_instance().start_chrono()
+    try:
+
+        # Start chrono
+        Timer.get_instance().start_chrono()
+        
+        print "STARTING " + SCRIPT_NAME
+        
+        #===============================================================================
+        # Get input arguments, initialise class
+        #===============================================================================
+        parser = argparse.ArgumentParser(description= DESC_COMMENT) 
     
-    print "STARTING " + SCRIPT_NAME
+        # positional args
+        parser.add_argument('catRAPIDFile', metavar='catRAPIDFile', type=str,
+                             help='Output file from catRAPID library all vs all.')
+        parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
+        parser.add_argument('--interactionCutoff', metavar='interactionCutoff', type=str,
+                             default = "OFF", help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
+        parser.add_argument('--interactionFilterFile', metavar='interactionFilterFile', type=str,
+                             default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID. No header.')
+        parser.add_argument('--rnaFilterFile', metavar='rnaFilterFile', type=str,
+                             default = "", help='File with list of RNAs we want to keep, one per line. No header.')
+        parser.add_argument('--proteinFilterFile', metavar='proteinFilterFile', type=str,
+                             default = "", help='File with list of Proteins we want to keep, one per line. No header.')
+        parser.add_argument('--writeInteractions', metavar='writeInteractions', type=int,
+                             default = 1, help='Whether to write interaction file after the filters.')
+        parser.add_argument('--batchSize', metavar='batchSize', type=int,
+                             default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
+        parser.add_argument('--writeNormalisedInteractions', metavar='writeNormalisedInteractions', type=int,
+                             default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must also be 1.')   
+        parser.add_argument('--writeInteractionMatrix', metavar='writeInteractionMatrix', type=int,
+                             default = 0, help='Whether to write interaction matrix file after the filters. --writeInteractions argument must also be 1.')   
     
-    #===============================================================================
-    # Get input arguments, initialise class
-    #===============================================================================
-    parser = argparse.ArgumentParser(description= DESC_COMMENT) 
+        #gets the arguments
+        args = parser.parse_args( ) 
+    
+        # init
+        readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
+                                     args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, 
+                                     args.writeNormalisedInteractions, args.writeInteractionMatrix)
+    
+        readCatrapid.run()
+    
+        # Stop the chrono      
+        Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
 
-    # positional args
-    parser.add_argument('catRAPIDFile', metavar='catRAPIDFile', type=str,
-                         help='Output file from catRAPID library all vs all.')
-    parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
-    parser.add_argument('--interactionCutoff', metavar='interactionCutoff', type=str,
-                         default = "OFF", help='Minimum catRAPID interaction propensity. Set as "OFF" if no filtering wanted.')
-    parser.add_argument('--interactionFilterFile', metavar='interactionFilterFile', type=str,
-                         default = "", help='TSV file with list of interacting pairs we want to keep, one pair per line. UniprotAC\tEnsemblTxID. No header.')
-    parser.add_argument('--rnaFilterFile', metavar='rnaFilterFile', type=str,
-                         default = "", help='File with list of RNAs we want to keep, one per line. No header.')
-    parser.add_argument('--proteinFilterFile', metavar='proteinFilterFile', type=str,
-                         default = "", help='File with list of Proteins we want to keep, one per line. No header.')
-    parser.add_argument('--writeInteractions', metavar='writeInteractions', type=int,
-                         default = 1, help='Whether to write interaction file after the filters.')
-    parser.add_argument('--batchSize', metavar='batchSize', type=int,
-                         default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
-    parser.add_argument('--writeNormalisedInteractions', metavar='writeNormalisedInteractions', type=int,
-                         default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must also be 1.')   
-    parser.add_argument('--writeInteractionMatrix', metavar='writeInteractionMatrix', type=int,
-                         default = 0, help='Whether to write interaction matrix file after the filters. --writeInteractions argument must also be 1.')   
-
-    #gets the arguments
-    args = parser.parse_args( ) 
-
-    # init
-    readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
-                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, 
-                                 args.writeNormalisedInteractions, args.writeInteractionMatrix)
-
-    readCatrapid.run()
-
-    # Stop the chrono      
-    Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
+    # Use RainetException to catch errors
+    except RainetException as rainet:
+        Logger.get_instance().error( "Error during execution of %s. Aborting :\n" % SCRIPT_NAME + rainet.to_string())
 
