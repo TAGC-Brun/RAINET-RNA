@@ -75,7 +75,7 @@ class LncRNAScore(object):
 
 
     # #
-    # Read list of domains per protein. Use cross references
+    # Read list of annotation per RNA. Can use cross references to map IDs.
     def read_annotation_file( self):
 
         #=======================================================================
@@ -83,6 +83,8 @@ class LncRNAScore(object):
         #
         # ENST00000545914 cytoplasmic
         # ENST00000304751 nuclear
+        # DANCR   Ji2016
+        # ENSG00000188825.9       Ji2016
         #=======================================================================
 
         #=======================================================================
@@ -98,8 +100,7 @@ class LncRNAScore(object):
         #=======================================================================
 
         with open( self.annotationFile, "r") as inFile:
-            # skip header
-            inFile.readline()
+            inFile.readline() # skip header
 
             notFound = set()
             
@@ -113,28 +114,37 @@ class LncRNAScore(object):
                 
                 # select column to use as annotation                
                 annotationItem = spl[ self.annotationColumn]
-                                
-                if not txID.startswith("ENST"):
-                    raise RainetException("read_annotation_file: transcript ID is incorrect:", txID)
 
+                txList = []  
+                                              
                 if self.crossReference:
-                    # e.g. XLOC_000019
-                    ### process gene ID to exclude the .1 etc
+                    # if user defines his input dataset as needing cross referencing
                     if txID in self.rnaGeneReference:
-                        txID = self.rnaGeneReference[ txID]
-                    elif txID.startswith( "ENSG") and "." in txID: #e.g. ENSG00000267565.1
+                        # e.g. XLOC_000019
+                        txList = self.rnaGeneReference[ txID]
+                    elif txID.startswith( "ENSG") and "." in txID: 
+                        # process gene ID to exclude the .1 etc #e.g. ENSG00000267565.1
                         txID = txID.split( ".")[0]
-                        txID = self.rnaGeneReference[ txID]
+                        if txID in self.rnaGeneReference:
+                            txList = self.rnaGeneReference[ txID]
+                    elif txID.startswith( "ENST"):
+                        # if actually a normal ENST ID, no need to process
+                        txList.append( txID)
                     else:
+                        # cannot map ID
                         notFound.add( txID)
                         continue
+                else:
+                    # a normal ENST ID
+                    if not txID.startswith("ENST"):
+                        raise RainetException("read_annotation_file: transcript ID is not ENST*:", txID)
+                    txList.append( txID)
 
-                if txID not in transcriptAnnotation:
-                    transcriptAnnotation[ txID] = set()
-                transcriptAnnotation[ txID].add( annotationItem)
-
-            #TODO: 
-            print notFound #ddsadas
+                for txID in txList:
+                    # there can be several txID if using cross references
+                    if txID not in transcriptAnnotation:
+                        transcriptAnnotation[ txID] = set()
+                    transcriptAnnotation[ txID].add( annotationItem)
 
             print "read_annotation_file: number of entries read:", lineCounter
             print "read_annotation_file: number of transcript IDs not found: ", len( notFound)
