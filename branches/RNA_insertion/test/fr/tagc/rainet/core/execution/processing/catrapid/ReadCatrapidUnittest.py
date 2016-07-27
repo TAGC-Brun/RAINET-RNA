@@ -247,13 +247,13 @@ class ReadCatrapidUnittest(unittest.TestCase):
                 count+=1
      
      
-#     # #
-#     # Runs after each test
-#     def tearDown(self):
-#                               
-#         # Wipe output folder
-#         cmd = "rm %s/*" % self.outputFolder
-#         os.system(cmd)
+    # #
+    # Runs after each test
+    def tearDown(self):
+                               
+        # Wipe output folder
+        cmd = "rm %s/*" % self.outputFolder
+        os.system(cmd)
             
        
 
