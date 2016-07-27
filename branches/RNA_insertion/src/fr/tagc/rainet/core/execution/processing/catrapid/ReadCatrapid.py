@@ -41,7 +41,7 @@ class ReadCatrapid(object):
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
     NORMALISED_STORED_INTERACTIONS_FILENAME = "/storedInteractionsNormalised.tsv"
     INTERACTIONS_SCORE_MATRIX = "/interaction_score_matrix.tsv"
-    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 100000000 # maximum number of interactions writable for interaction matrix output
+    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 170000000 # maximum number of interactions writable for interaction matrix output #170M interactions = 23Gb
     
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file,
                  write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix):
