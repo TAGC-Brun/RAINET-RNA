@@ -30,12 +30,14 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.batchSize = 1000000
         # self.extraMetrics = 1
         self.writeNormalisedInteractions = 0
+        self.writeInteractionMatrix = 0
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
         self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
-                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize, self.writeNormalisedInteractions )
+                                self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize,
+                                self.writeNormalisedInteractions, self.writeInteractionMatrix )
             
 
     # #
@@ -214,14 +216,44 @@ class ReadCatrapidUnittest(unittest.TestCase):
         normVal = self.run._min_max_normalisation(0, -10, 10)
      
         self.assertTrue( normVal == 0.5)
-     
+
+
     # #
-    # Runs after each test
-    def tearDown(self):
-                             
-        # Wipe output folder
-        cmd = "rm %s/*" % self.outputFolder
-        os.system(cmd)
+    def test_write_matrix_output(self):
+
+        print "| test_write_matrix_output | "
+
+        self.run.read_catrapid_file( set(), set(), set())
+
+        self.run.write_matrix_output()
+        
+        with open(self.outputFolder + ReadCatrapid.INTERACTIONS_SCORE_MATRIX, "r") as out:
+            count = 0
+            for line in out:
+                if count == 5:
+                    break
+                spl = line.split( "\t")
+                self.assertTrue( len( spl) == 52, "asserting number of columns is number of proteins plus row header")
+                
+                if count == 0:
+                    self.assertTrue( "Q7Z419" in spl[1], "asserting the sorting of file")
+                
+                if count == 1:
+                    self.assertTrue( spl[0] == "ENST00000542804", "asserting the sorting of file")
+                    # grep ENST00000542804 storedInteractions.tsv | grep Q7Z419
+                    # sp|Q7Z419|R144B_HUMAN ENST00000542804    20.56    0.54    0.00
+
+                    self.assertTrue( float( spl[1]) == 20.56, "asserting that score is correct")        
+                count+=1
+     
+     
+#     # #
+#     # Runs after each test
+#     def tearDown(self):
+#                               
+#         # Wipe output folder
+#         cmd = "rm %s/*" % self.outputFolder
+#         os.system(cmd)
             
        
 

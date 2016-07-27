@@ -40,8 +40,11 @@ class ReadCatrapid(object):
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
     NORMALISED_STORED_INTERACTIONS_FILENAME = "/storedInteractionsNormalised.tsv"
+    INTERACTIONS_SCORE_MATRIX = "interaction_score_matrix.tsv"
+    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 10000000 # maximum number of interactions writable for interaction matrix output
     
-    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file, write_interactions, batch_size, write_normalised_interactions):
+    def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file,
+                 write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -52,8 +55,9 @@ class ReadCatrapid(object):
         self.writeInteractions = write_interactions
         self.batchSize = batch_size
         self.writeNormalisedInteractions = write_normalised_interactions
+        self.writeInteractionMatrix = write_interaction_matrix
 
-        if write_normalised_interactions and write_interactions == 0:
+        if (write_normalised_interactions and write_interactions == 0) or (write_interaction_matrix and write_interactions == 0):
             raise RainetException( "ReadCatrapid.__init__ : --write_interactions option must be on for --write_normalised_interactions to run.")
 
         # make output folder
@@ -426,6 +430,107 @@ class ReadCatrapid(object):
         assert normVal <= 1
 
         return normVal
+
+
+    # #
+    # Function to write matrix output file for interactions after filtering.
+    # This function runs after writing interactions file.
+    def write_matrix_output( self):
+
+        #=================================================================== 
+        # Initialising
+        #=================================================================== 
+
+        if not os.path.exists( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME):
+            raise RainetException( "ReadCatrapid.write_matrix_output : output interactions file not found. %s" % self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME)
+
+        ## Check amount of interactions to not overload the system
+        
+        cmd = "wc -l %s" % ( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME)
+
+        stout = SubprocessUtil.run_command( cmd, verbose = 0, return_stdout = 1)
+        try:
+            nlines = int( stout.split( " ")[0])
+        except:
+            raise RainetException( "Could not calculate number of lines in filtered stored interactions." % cmd)
+
+        if nlines > ReadCatrapid.MAXIMUM_NUMBER_VIABLE_INTERACTIONS:
+            raise RainetException( "ReadCatrapid.write_matrix_output : number of interactions to write matrix is too large to be computable: %s interactions" % nlines)
+            
+        print "Writing matrix with %s interactions" % nlines
+
+        #=================================================================== 
+        # Read filtered interactions file and store interactions into memory
+        #=================================================================== 
+
+        # create data structures with all proteins, RNAs and scores of pairs 
+        setInteractingRNAs = set()
+        setInteractingProts = set()
+        dictPairs = {}
+
+        idColumn = 0        
+        scoreColumn = 1
+         
+        # e.g. format: sp|Q7Z419|R144B_HUMAN ENST00000542804    20.56    0.54    0.00
+  
+        with open( self.outputFolder + ReadCatrapid.STORED_INTERACTIONS_FILENAME, "r") as inFile:
+             
+            for line in inFile:
+                line = line.strip()
+                spl = line.split( "\t")
+                 
+                score = float( spl[ scoreColumn])
+ 
+                spl2 = spl[ idColumn].split( " ")
+ 
+                txID = spl2[ 1]
+                protID = spl2[ 0]
+                            
+                pair = txID + "|" + protID
+
+                if pair not in dictPairs:
+                    dictPairs[pair] = score
+                else:
+                    raise RainetException("ReadCatrapid.write_matrix_output: duplicate interaction", pair)
+     
+                setInteractingRNAs.add( txID)
+                setInteractingProts.add( protID)
+ 
+        #=================================================================== 
+        # Write file with interaction scores for each protein-RNA pair, matrix format
+        #=================================================================== 
+        # E.g.
+        # RNAs Prot1 Prot2
+        # RNA1 10.4    0.3
+        # RNA2 32.6    -34.5
+ 
+        outHandler = open( self.outputFolder + ReadCatrapid.INTERACTIONS_SCORE_MATRIX, "w")
+ 
+        # use sorting to keep headers in place
+        sortedSetInteractingProts = sorted( setInteractingProts)
+        sortedSetInteractingRNAs = sorted( setInteractingRNAs)
+ 
+        # write header with protein IDs
+        outHandler.write( "RNAs")
+        for prot in sortedSetInteractingProts:
+            outHandler.write( "\t%s" % prot )
+        outHandler.write( "\n")
+             
+        # write bulk of file, one row per rna, one column per protein
+        for rna in sortedSetInteractingRNAs:
+            text = rna
+            for prot in sortedSetInteractingProts:
+                tag = rna + "|" + prot
+                if tag in dictPairs:
+                    score = dictPairs[tag]
+                else:
+                    score = "NA"
+                text+= "\t%s" % score 
+            text+= "\n"
+            outHandler.write( text)
+ 
+        outHandler.close()
+
         
     # run functions in proper order
     def run(self):
@@ -441,6 +546,11 @@ class ReadCatrapid(object):
         if self.writeNormalisedInteractions:
             Timer.get_instance().step( "writing normalised interaction file..")    
             self.write_normalised_interactions( )
+
+        if self.writeInteractionMatrix:
+            Timer.get_instance().step( "writing interaction matrix file..")    
+            self.write_matrix_output()
+            
 
 
 if __name__ == "__main__":
@@ -472,16 +582,20 @@ if __name__ == "__main__":
     parser.add_argument('--batchSize', metavar='batchSize', type=int,
                          default = 1000000, help='How many lines to process before writing to file (to avoid excessive memory consumption).')   
     parser.add_argument('--writeNormalisedInteractions', metavar='writeNormalisedInteractions', type=int,
-                         default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must be 1.')   
+                         default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must also be 1.')   
+    parser.add_argument('--writeInteractionMatrix', metavar='writeInteractionMatrix', type=int,
+                         default = 0, help='Whether to write interaction matrix file after the filters. --writeInteractions argument must also be 1.')   
 
     #gets the arguments
     args = parser.parse_args( ) 
 
     # init
     readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
-                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, args.writeNormalisedInteractions)
+                                 args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, 
+                                 args.writeNormalisedInteractions, args.writeInteractionMatrix)
 
     readCatrapid.run()
 
     # Stop the chrono      
     Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
+
