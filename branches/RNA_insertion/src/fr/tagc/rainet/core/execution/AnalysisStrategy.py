@@ -137,7 +137,7 @@ class AnalysisStrategy(ExecutionStrategy):
     # Dump expression filter
     DUMP_EXPRESSION_FILTER = "interactions_expression_filter.tsv"
     DUMP_EXPRESSION = "interactions_expression.tsv"
-    DUMP_EXPRESSION_FILTER_BATCH_SIZE = 10000000
+    DUMP_EXPRESSION_FILTER_BATCH_SIZE = 100
 
     def __init__(self):  
         
@@ -676,8 +676,9 @@ class AnalysisStrategy(ExecutionStrategy):
             # Initialise required expression data
             #===================================================================   
 
-            # Initialise one of the output files
-            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
+            # Initialise the output files to be written in batches
+            outHandlerExpFilt = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
+            outHandlerExp = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION )
             
             # Map mRNA to protein ID
             # Search mRNA that produces interacting protein
@@ -756,20 +757,31 @@ class AnalysisStrategy(ExecutionStrategy):
             for rnaID in interactingRNAs:
 
                 countRNA += 1
-                if countRNA % 100 == 0:
+                if countRNA % AnalysisStrategy.DUMP_EXPRESSION_FILTER_BATCH_SIZE == 0:
                     Logger.get_instance().info("dump_filter_PRI_expression : processed %s RNAs out of %s" % ( countRNA, len( interactingRNAs)) )   
                     
-                    if self.lowMemory:
+                    if self.lowMemory == 1:
                         Logger.get_instance().info("dump_filter_PRI_expression : writing expression filter output file. %s lines." % ( len( expressedInteractionsTissues)) )               
             
                         # write batch interactions to file
                         for pair in expressedInteractionsTissues:
                             transcriptID,proteinID = pair.split( "|")
                             text = "%s\t%s\n" % ( proteinID, transcriptID )
-                            outHandler.write( text)
+                            outHandlerExpFilt.write( text)
                         
                         # reset dictionary to save memory
                         expressedInteractionsTissues = {}
+
+                        Logger.get_instance().info("dump_filter_PRI_expression : writing expression output file. %s lines." % ( len( interactionsExpression)) )               
+
+                        # write batch interactions to file
+                        for pair in interactionsExpression:
+                            transcriptID,proteinID = pair.split( "|")
+                            text = "%s\t%s\t%s\n" % ( proteinID, transcriptID, interactionsExpression[ pair] )
+                            outHandlerExp.write( text)
+
+                        # reset dictionary to save memory
+                        interactionsExpression = {}
                 
                 # skip transcripts with no expression
                 if rnaID not in self.expressionDict:
@@ -814,12 +826,12 @@ class AnalysisStrategy(ExecutionStrategy):
                             if txExpressionVal >= self.expressionValueCutoff and protExpressionVal >= self.expressionValueCutoff:
                                 setOfInteractingTissues.add( tissue)
 
-                            if self.lowMemory == 0:
-                                # calculate minimum pair expression, keep the maximum along tissue and among mRNAs of same protein
-                                minExpr = min( txExpressionVal, protExpressionVal)
-                                if minExpr > pairExpression:
-                                    pairExpression = minExpr
-                                     
+                            # calculate minimum pair expression, keep the maximum along tissue and among mRNAs of same protein
+                            minExpr = min( txExpressionVal, protExpressionVal)
+                            if minExpr > pairExpression:
+                                pairExpression = minExpr
+
+                            if self.lowMemory == 0:                                    
                                 # store data on protein tissue expression
                                 if protExpressionVal >= self.expressionValueCutoff:
                                     if tissue not in proteinExpressionTissues:
@@ -830,10 +842,37 @@ class AnalysisStrategy(ExecutionStrategy):
                     if len( setOfInteractingTissues) >= self.expressionTissueCutoff: # cutoff of minimum number of tissues
                         expressedInteractionsTissues[ pair] = setOfInteractingTissues
 
-                    if self.lowMemory == 0:
-                        # For a protein-RNA pair, regardless of passing or not cutoffs, store its expression value
-                        interactionsExpression[ pair] = pairExpression
+                    # For a protein-RNA pair, regardless of passing or not cutoffs, store its expression value
+                    interactionsExpression[ pair] = pairExpression
 
+
+            ## write last batch if using low memory flag
+            if self.lowMemory == 1:
+                Logger.get_instance().info("dump_filter_PRI_expression : writing expression filter output file. %s lines." % ( len( expressedInteractionsTissues)) )               
+    
+                # write batch interactions to file
+                for pair in expressedInteractionsTissues:
+                    transcriptID,proteinID = pair.split( "|")
+                    text = "%s\t%s\n" % ( proteinID, transcriptID )
+                    outHandlerExpFilt.write( text)
+                
+                # reset dictionary to save memory
+                expressedInteractionsTissues = {}
+
+                Logger.get_instance().info("dump_filter_PRI_expression : writing expression output file. %s lines." % ( len( interactionsExpression)) )               
+
+                # write batch interactions to file
+                for pair in interactionsExpression:
+                    transcriptID,proteinID = pair.split( "|")
+                    text = "%s\t%s\t%s\n" % ( proteinID, transcriptID, interactionsExpression[ pair] )
+                    outHandlerExp.write( text)
+
+                # reset dictionary to save memory
+                interactionsExpression = {}
+            
+            outHandlerExpFilt.close()
+            outHandlerExp.close() 
+            
             #===================================================================    
             # write passing interactions for all RNAs vs all proteins
             #===================================================================                    
@@ -845,13 +884,15 @@ class AnalysisStrategy(ExecutionStrategy):
             if self.lowMemory == 0:
                 Logger.get_instance().info("dump_filter_PRI_expression : writing output file. %s lines." % ( len( expressedInteractionsTissues)) )               
     
-                # write batch interactions to file
+                outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION_FILTER )
+   
+                # write all interactions to file
                 for pair in expressedInteractionsTissues:
                     transcriptID,proteinID = pair.split( "|")
                     text = "%s\t%s\n" % ( proteinID, transcriptID )
                     outHandler.write( text)
           
-            outHandler.close()
+                outHandler.close()
 
             #===================================================================    
             # write interactions and their expression for all RNAs vs all proteins
@@ -861,17 +902,18 @@ class AnalysisStrategy(ExecutionStrategy):
             # E.g. proteinID\ttranscriptID\texpression\n
             #=================================================================== 
 
-            Logger.get_instance().info("dump_filter_PRI_expression : writing expression file. %s lines." % ( len( interactionsExpression)) )               
+            if self.lowMemory == 0:
+                Logger.get_instance().info("dump_filter_PRI_expression : writing expression file. %s lines." % ( len( interactionsExpression)) )               
 
-            outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION )
+                outHandler = FileUtils.open_text_w( self.outputFolderReport + "/" + AnalysisStrategy.DUMP_EXPRESSION )
 
-            # write batch interactions to file
-            for pair in interactionsExpression:
-                transcriptID,proteinID = pair.split( "|")
-                text = "%s\t%s\t%s\n" % ( proteinID, transcriptID, interactionsExpression[ pair] )
-                outHandler.write( text)
+                # write all interactions to file
+                for pair in interactionsExpression:
+                    transcriptID,proteinID = pair.split( "|")
+                    text = "%s\t%s\t%s\n" % ( proteinID, transcriptID, interactionsExpression[ pair] )
+                    outHandler.write( text)
       
-            outHandler.close()
+                outHandler.close()
 
             #===================================================================    
             # Store interaction information 
