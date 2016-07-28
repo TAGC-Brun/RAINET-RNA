@@ -44,6 +44,7 @@ OPTION_ANNOTATION_TABLE = "Protein annotation"
 OPTION_MINIMUM_PROTEIN_ANNOTATION = "Minimum proteins in annotation"
 OPTION_MINIMUM_PROTEIN_INTERACTION = "Minimum proteins in annotation with interaction"
 OPTION_NUMBER_RANDOMIZATIONS = "Number randomizations"
+OPTION_LOW_MEMORY = "Low memory"
 
 #===============================================================================
 # Constants for default values
@@ -56,6 +57,7 @@ DEFAULT_GENCODE = 0
 DEFAULT_EXPRESSION_VALUE_CUTOFF = "OFF"
 DEFAULT_EXPRESSION_TISSUE_CUTOFF = 1.0
 DEFAULT_OUTPUT_FOLDER = os.getcwd()
+DEFAULT_LOW_MEMORY = 0
 
 RNA_BIOTYPES = DataConstants.RNA_MRNA_BIOTYPE[:] + DataConstants.RNA_LNCRNA_BIOTYPE[:]
 DEFAULT_RNA_BIOTYPES = RNA_BIOTYPES[:]
@@ -89,7 +91,8 @@ OPTION_LIST = {  "Insertion": [
                     [ "-b", "--RNABiotype", "store", "string", OPTION_RNA_BIOTYPES, DEFAULT_RNA_BIOTYPES, "Comma-separated list of RNA biotypes to be INCLUDED in analysis. Default: all biotypes are considered. Can one or several of :"+ str(RNA_BIOTYPES)],
                     [ "-g", "--gencodeBasicOnly", "store", "int", OPTION_GENCODE, DEFAULT_GENCODE, "If 1, include in analysis ONLY transcripts tagged as present in 'GENCODE basic'. Default: 0 (i.e. all RNAs are considered)."],
                     [ "-e", "--expressionValueCutoff", "store", "string", OPTION_EXPRESSION_VALUE_CUTOFF, DEFAULT_EXPRESSION_VALUE_CUTOFF, "Protein-RNA interactions where one of its components has expression below the given value will be excluded. Default: 0"],
-                    [ "-t", "--expressionTissueCutoff", "store", "float", OPTION_EXPRESSION_TISSUE_CUTOFF, DEFAULT_EXPRESSION_TISSUE_CUTOFF, "Protein-RNA interactions between pairs co-present in less that this numbers of tissues will be excluded. Only active if expressionValueCutoff is also active. Default: 1"]
+                    [ "-t", "--expressionTissueCutoff", "store", "float", OPTION_EXPRESSION_TISSUE_CUTOFF, DEFAULT_EXPRESSION_TISSUE_CUTOFF, "Protein-RNA interactions between pairs co-present in less that this numbers of tissues will be excluded. Only active if expressionValueCutoff is also active. Default: 1"],
+                    [ "-l", "--lowMemory", "store", "int", OPTION_LOW_MEMORY, DEFAULT_LOW_MEMORY, "Flag to use less memory but do not produce a full report. Used for producing file with expression filtering. Default: 0"]
                 ],
                 "EnrichmentAnalysis" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
