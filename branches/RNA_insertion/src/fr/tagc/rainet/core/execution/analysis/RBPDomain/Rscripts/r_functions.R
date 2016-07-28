@@ -29,7 +29,7 @@ all_vs_all_tests <- function( dataset, metricToUse, annotationCol, verbose = 1) 
     for (j in categories) {
 
         invComparison = paste(j, " vs ", i) %in% comparisons
-
+        
         if (i != j && !invComparison ){
           comparison = paste(i, " vs ", j)
           set1 = dataset[ dataset[[annotationCol]] == i][[metricToUse]]
@@ -138,3 +138,16 @@ multiplot <- function( plots=NULL, ncols=1, nrows) {
   }
 }
 
+
+#EDITED From template: https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+grid_arrange_shared_legend <- function(plots) {
+  g <- ggplotGrob(plots[[1]] + theme(legend.position="bottom"))$grobs
+  legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
+  lheight <- sum(legend$height)
+  grid.arrange(
+    do.call(arrangeGrob, lapply(plots, function(x)
+      x + theme(legend.position="none"))),
+    legend,
+    ncol = 1,
+    heights = unit.c(unit(1, "npc") - lheight, lheight))
+}
