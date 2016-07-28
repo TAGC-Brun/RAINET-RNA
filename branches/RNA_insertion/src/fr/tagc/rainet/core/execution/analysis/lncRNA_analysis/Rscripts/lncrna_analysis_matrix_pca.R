@@ -1,4 +1,5 @@
 
+library( ade4)
 library(data.table)
 # library(devtools)
 # install_github("ggbiplot", "vqv")
@@ -11,8 +12,14 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/test/pca/interaction_score_matrix_altered2.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/mondal2015_ji2016/mondal2015_s5_ji2016/interaction_score_matrix.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/mondal2015_ji2016/annotated_interactions.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/sample_annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/sample_annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/sample_annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/annotated_interactions.tsv"
+
+# RBP only
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RBP_only/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RBP_only/annotated_interactions.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/RBP_only/annotated_interactions.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -31,7 +38,7 @@ minimum_category_size = 100 # minimum number of items in category for it to be p
 datasetLess = dataset
 for (i in unique(dataset$annotation) ){
   c = count(dataset$annotation == i)$freq[[2]]
-  if (c < minimum_category_size){    datasetLess = dataset1Less[datasetLess$annotation != i]  }
+  if (c < minimum_category_size){    datasetLess = datasetLess[datasetLess$annotation != i]  }
 }
 dataset = datasetLess
 
@@ -39,18 +46,86 @@ dataset = datasetLess
 row.names(dataset) = dataset$RNAs
 dataset$RNAs = NULL
 
-# backup dataset, remove annotation column
-copyDataset = dataset
-dataset[[annotCol]] = NULL
+# get list of proteins
+proteins = c(names(dataset))
+proteins = proteins[1:length(proteins)-1]
+proteins = gsub("|", '.', proteins, fixed = 1)
+
+# # backup annotation data, remove annotation column from dataset
+# annotationData = dataset[[annotCol]]
+# dataset[[annotCol]] = NULL
 nrow(dataset)
 ncol(dataset)
 
-# run PCA:
-pca_result <- prcomp(dataset, center = TRUE, scale. = TRUE)
+# to allow column slice, need to convert data.table to data.frame
+dataset = data.frame(dataset)
 
-# means and std of each PC
-#pca_result$center
-#pca_result$scale
+####################
+## Run PCA
+####################
+
+
+## ADE4
+acp <- dudi.pca( dataset[, proteins], scannf = FALSE, nf = ncol(dataset), scale= FALSE)
+
+## Produce colors for dataset
+sample_list = unique( dataset$annotation)
+simple_color_palette = rainbow( length( sample_list))
+simple_colors = unlist( lapply( sample_list, function( x){
+  return( simple_color_palette[ which( sample_list == x)])
+}))
+
+
+# Plot the content of information by axes
+barplot( 100*acp$eig/sum( acp$eig),
+         names.arg = seq(1,length(acp$eig),1),
+         xlab="Axes",
+         ylab="Percentage of information",
+         cex.main=0.7)
+
+# Plot biplot
+par( mfrow= c(2,2))
+scatter(acp, clab.row = 0, clab.col = 0, posieig = "none", clabel=0, xax=1, yax=2)
+s.class(dfxy = acp$li, fac = factor( dataset$annotation), col = simple_colors, add.plot = TRUE, cstar = 0, xax=1, yax=2)
+scatter(acp, clab.row = 0, clab.col = 0, posieig = "none", clabel=0, xax=1, yax=3)
+s.class(dfxy = acp$li, fac = factor( dataset$annotation), col = simple_colors, add.plot = TRUE, cstar = 0, xax=1, yax=3)
+scatter(acp, clab.row = 0, clab.col = 0, posieig = "none", clabel=0, xax=2, yax=3)
+s.class(dfxy = acp$li, fac = factor( dataset$annotation), col = simple_colors, add.plot = TRUE, cstar = 0, xax=2, yax=3)
+scatter(acp, clab.row = 0, clab.col = 0, posieig = "none", clabel=0, xax=3, yax=4)
+s.class(dfxy = acp$li, fac = factor( dataset$annotation), col = simple_colors, add.plot = TRUE, cstar = 0, xax=3, yax=4)
+
+# Compute the best variables on the first 3 axes (code from Lionel Spinelli)
+
+threshold_norm = 0.5
+threshold_percent = 0.01
+names_best_on_axis_all_axes = vector()
+for( cs_index in c(1,2,3)){
+  # Compute on the axis, the best variables, i.e. the variable which have the max coordinates on that axis
+  current_vector = acp$c1[[cs_index]]
+  number_best = floor( length( current_vector) * threshold_percent)
+  decreasing_order = order( abs(current_vector), decreasing = TRUE)
+  names_best_on_axis = row.names( acp$c1)[decreasing_order][1: number_best]
+  cat("\n\nOn CS", cs_index,",", threshold_percent*100, "% of best variables are\n")
+  print( names_best_on_axis)
+  names_best_on_axis_all_axes = unique( append( names_best_on_axis_all_axes, names_best_on_axis))
+  
+  # Look at the variables with the maximal cumulative information on each axes
+  cat("\nOn CS", cs_index, ", direct and cummulative information carried by best variables:\n")
+  old_norm = 0
+  for( gene_index in seq(1, length( current_vector))){
+    current_norm = sqrt (sum( (acp$c1[[ cs_index]][decreasing_order][1: gene_index])^2))
+    cat("\n", row.names( acp$c1)[decreasing_order][gene_index], "\t:\t", signif((current_norm - old_norm)*100, 3), "\t:\t", signif( current_norm*100 , 3), " %")
+    if( current_norm >= threshold_norm){
+      break
+    }
+    old_norm = current_norm
+  }
+}
+
+
+## R prcomp
+pca_result <- prcomp(dataset, center = TRUE, scale. = FALSE)
+# scale false since all data have same units/scale, they all come from catRAPID
 
 # make plot with variance weight for axis
 std_dev <- pca_result$sdev
@@ -68,27 +143,32 @@ plot(cumsum(prop_varex), xlab = "Principal Component",
 # # print a summary of the PCA results:
 # summary(pca_result)
 
-## biplot with names of PCA, can overload plot if too many
-# g <- ggbiplot(pca_result, choices = 1:2, obs.scale = 1, var.scale = 1, ellipse = TRUE, ellipse.prob = 0.68, labels = NULL, circle = TRUE, groups = copyDataset[[annotCol]]) +
-#   scale_color_discrete(name = '') +
-#   theme(legend.direction = 'horizontal', legend.position = 'top')
-# g
-
 listPlot = list()
-listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.5, ellipse = TRUE,  groups = copyDataset[[annotCol]]) +
+listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
  scale_color_discrete(name = '') +
  theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.5, ellipse = TRUE,  groups = copyDataset[[annotCol]]) +
+listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.5, ellipse = TRUE,  groups = copyDataset[[annotCol]]) +
+listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.5, ellipse = TRUE,  groups = copyDataset[[annotCol]]) +
+listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
 
 grid_arrange_shared_legend(listPlot)
+
+
+### analysing the principal components
+
+rot = pca_result$rotation
+
+length(rot[,1])
+
+tail(sort(rot[,1]))
+
+tail(sort(rot[,2]))
 
 # ### heatmap ###
 # 
