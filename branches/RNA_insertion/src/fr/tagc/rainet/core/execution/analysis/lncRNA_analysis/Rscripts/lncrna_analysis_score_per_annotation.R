@@ -14,8 +14,10 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/biotypes/nocutoff/annotated_interactions.tsv"
 #inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/biotypes/cutoff15/annotated_interactions.tsv"
 
-inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/carlevaro2016/cellular_cutoff15/annotated_interactions.tsv"
+#inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/carlevaro2016/cellular_cutoff15/annotated_interactions.tsv"
 #inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/carlevaro2016/ribosomal_cutoff15/annotated_interactions.tsv"
+
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/snorna/annotated_interactions.tsv"
 
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -26,7 +28,7 @@ dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 ## Choose here which metric to use (name of column to use)
 metricToUse = "count" # for catrapid file (mean_score, median_score, std_score, count)
 annotCol = "annotation" # name of the column carrying the annotation information
-minimum_category_size = 100 # minimum number of items in category for it to be plotted #0 if no filter
+minimum_category_size = 10 # minimum number of items in category for it to be plotted #0 if no filter
 
 ####################
 ## initialisation

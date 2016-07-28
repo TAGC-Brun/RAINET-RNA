@@ -21,6 +21,12 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RBP_only/annotated_interactions.tsv"
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/RBP_only/annotated_interactions.tsv"
 
+#small datasets
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/snoRNA/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RNA_transport/cytoplasmic_vs_nuclear.txt"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/free_polysomal_subset.txt"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/fake_matrix_for_testing.tsv"
+
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ####################
@@ -28,7 +34,7 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 ####################
 
 annotCol = "annotation" # name of the column carrying the annotation information
-minimum_category_size = 100 # minimum number of items in category for it to be plotted #0 if no filter
+minimum_category_size = 10 # minimum number of items in category for it to be plotted #0 if no filter
 
 ####################
 ## initialisation
@@ -64,7 +70,6 @@ dataset = data.frame(dataset)
 ## Run PCA
 ####################
 
-
 ## ADE4
 acp <- dudi.pca( dataset[, proteins], scannf = FALSE, nf = ncol(dataset), scale= FALSE)
 
@@ -96,7 +101,7 @@ s.class(dfxy = acp$li, fac = factor( dataset$annotation), col = simple_colors, a
 
 # Compute the best variables on the first 3 axes (code from Lionel Spinelli)
 
-threshold_norm = 0.5
+threshold_norm = 0.50
 threshold_percent = 0.01
 names_best_on_axis_all_axes = vector()
 for( cs_index in c(1,2,3)){
@@ -124,7 +129,7 @@ for( cs_index in c(1,2,3)){
 
 
 ## R prcomp
-pca_result <- prcomp(dataset, center = TRUE, scale. = FALSE)
+pca_result <- prcomp(dataset[, proteins], center = TRUE, scale. = FALSE)
 # scale false since all data have same units/scale, they all come from catRAPID
 
 # make plot with variance weight for axis
@@ -144,16 +149,16 @@ plot(cumsum(prop_varex), xlab = "Principal Component",
 # summary(pca_result)
 
 listPlot = list()
-listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
+listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
  scale_color_discrete(name = '') +
  theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
+listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
+listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = annotationData) +
+listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
   scale_color_discrete(name = '') +
   theme(legend.direction = 'horizontal', legend.position = 'top')
 
