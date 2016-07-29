@@ -5,6 +5,8 @@ import glob
 import numpy as np
 import random 
 import pandas as pd
+import cPickle as pickle
+
 from scipy import stats
 
 from fr.tagc.rainet.core.util.file.FileUtils import FileUtils
@@ -340,6 +342,8 @@ class NPInterPredictionValidation( object ):
         print "read_NPInter_file: Total number of interacting RNAs:",len(setOfRNAs)
         print "read_NPInter_file: Total number of interacting proteins:",len(setOfProts)
   
+        self.npinterPairs = interactingPairs
+  
         return interactingPairs
 
 
@@ -449,15 +453,25 @@ class NPInterPredictionValidation( object ):
         proteinSet = set()
 
         countLines = 0
-        
+
+        outFile = open( run.outputFolder + "/scores.tsv", "w")
+        outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
+
+        text = ""
+
         with open( self.catrapidFile, "r") as f:
             for line in f:
                 spl = line.split("\t")
 
                 countLines+= 1 
 
-                if countLines % 10000000 == 0:
+                if countLines % 1000000 == 0:
                     print "Processed %s interactions" % countLines
+                    
+                    outFile.write(text)
+                    
+                    interactingPairs = {}
+                    text = ""
                 
                 proteinID = spl[0]
                 transcriptID = spl[1]
@@ -472,8 +486,17 @@ class NPInterPredictionValidation( object ):
                     interactingPairs[ pair] = intScore
                 else:
                     raise RainetException( "Repeated protein-RNA pair: " + line)
-   
 
+                if pair in self.npinterPairs:
+                    inValidated = 1
+                else:
+                    inValidated = 0
+   
+                text += "%s\t%s\t%s\n" % ( pair, intScore, inValidated) 
+
+        outFile.write(text)
+        outFile.close()
+   
         print "read_expression_file: Number of proteins: ", len( proteinSet)
         print "read_expression_file: Number of protein-RNA pairs in file: ", len( interactingPairs)
 
@@ -537,80 +560,91 @@ if __name__ == "__main__":
         Timer.get_instance().step( "reading catRAPID file..")    
 
         if args.newFormat == 1:
+            # delete some variables to save some memory
+            del run.rnaXrefDict
+            del run.uniprotACs
+            del run.xrefDict
+            del run.conversionDict
             catrapidPairs = run.read_catrapid_file_new()
         elif args.newFormat == 2:
+            # delete some variables to save some memory
+            del run.rnaXrefDict
+            del run.uniprotACs
+            del run.xrefDict
+            del run.conversionDict
             catrapidPairs = run.read_expression_file()
         else: 
             catrapidPairs = run.read_catrapid_file()
 
-        # #
-        # Quick stats on the data
-        outFileMethod = open( run.outputFolder + "/methodology_used.tsv", "w")
-        outFileMethod.write( "pairID\tcatrapid_score\tmethod\n")
-        countYes = 0
-        countNo = 0
-        countYesSum = 0
-        countNoSum = 0
-        for pair in catrapidPairs:
-            if pair in npinterPairs:
-                countYes+=1
-                countYesSum+= catrapidPairs[ pair]
-                for method in npinterPairs[ pair]:
-                    outFileMethod.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], method) )
-            else:
-                countNo+=1
-                countNoSum+= catrapidPairs[ pair]
- 
-        print "True: %s\tFalse: %s" % ( countYes, countNo)
-        print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
-        print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
-        
-        outFileMethod.close()
-
-        Timer.get_instance().step( "Writing output file..")    
-
-        # #
-        # Write file for R processing
-        outFile = open( run.outputFolder + "/scores.tsv", "w")
-        outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
-        
-        # array of 1s and 0s, whether pair in npInter or not
-        inValidated = [ 1 if pair in npinterPairs else 0 for pair in catrapidPairs]
-
-        for i, pair in enumerate( catrapidPairs):
-
-#             # ad-hoc NPInter method filtering..
-#             boo = 1
-#             if inValidated[ i]:
-#                 boo = 0
-# #                 for method in npinterPairs[ pair]:
-# #                     #if "CLIP" in method: # if "PAR-CLIP" in method or "iCLIP" in method or "CLIP-seq" in method:
-# #                         boo = 0
-#                 if len( npinterPairs[ pair]) > 1:
-#                     boo = 1
-#                 if boo == 0:
-#                     inValidated[ i] = 0
-
-            outFile.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i]) )
-
-        outFile.close()
-
-
-        # Convert old catrapid format to new
-        if args.newFormat != 1 and args.newFormat != 2:
-            outFile = open( run.outputFolder + "/converted_interactions.tsv", "w")
-            prefix = "sp|"
-            suffix = "|bogus"
+        if args.newFormat != 2:
+            # #
+            # Quick stats on the data
+            outFileMethod = open( run.outputFolder + "/methodology_used.tsv", "w")
+            outFileMethod.write( "pairID\tcatrapid_score\tmethod\n")
+            countYes = 0
+            countNo = 0
+            countYesSum = 0
+            countNoSum = 0
+            for pair in catrapidPairs:
+                if pair in npinterPairs:
+                    countYes+=1
+                    countYesSum+= catrapidPairs[ pair]
+                    for method in npinterPairs[ pair]:
+                        outFileMethod.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], method) )
+                else:
+                    countNo+=1
+                    countNoSum+= catrapidPairs[ pair]
+     
+            print "True: %s\tFalse: %s" % ( countYes, countNo)
+            print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
+            print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
+            
+            outFileMethod.close()
+    
+            Timer.get_instance().step( "Writing output file..")    
+    
+            # #
+            # Write file for R processing
+            outFile = open( run.outputFolder + "/scores.tsv", "w")
+            outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
+            
+            # array of 1s and 0s, whether pair in npInter or not
+            inValidated = [ 1 if pair in npinterPairs else 0 for pair in catrapidPairs]
+    
             for i, pair in enumerate( catrapidPairs):
-                txID, protID = pair.split("|")
-                finalProtID = prefix + protID + suffix
-                outFile.write( "%s %s\t%s\n" % ( finalProtID, txID, catrapidPairs[ pair]) )
-                 
+    
+    #             # ad-hoc NPInter method filtering..
+    #             boo = 1
+    #             if inValidated[ i]:
+    #                 boo = 0
+    # #                 for method in npinterPairs[ pair]:
+    # #                     #if "CLIP" in method: # if "PAR-CLIP" in method or "iCLIP" in method or "CLIP-seq" in method:
+    # #                         boo = 0
+    #                 if len( npinterPairs[ pair]) > 1:
+    #                     boo = 1
+    #                 if boo == 0:
+    #                     inValidated[ i] = 0
+    
+                outFile.write( "%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i]) )
+    
             outFile.close()
-        
-#         # # Run R command to create figure
-#         command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
-#         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
+    
+    
+            # Convert old catrapid format to new
+            if args.newFormat != 1 and args.newFormat != 2:
+                outFile = open( run.outputFolder + "/converted_interactions.tsv", "w")
+                prefix = "sp|"
+                suffix = "|bogus"
+                for i, pair in enumerate( catrapidPairs):
+                    txID, protID = pair.split("|")
+                    finalProtID = prefix + protID + suffix
+                    outFile.write( "%s %s\t%s\n" % ( finalProtID, txID, catrapidPairs[ pair]) )
+                     
+                outFile.close()
+            
+    #         # # Run R command to create figure
+    #         command = "Rscript %s %s %s %s" % ( NPInterPredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, outFileMethod.name, run.outputFolder)
+    #         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
     # Use RainetException to catch errors
