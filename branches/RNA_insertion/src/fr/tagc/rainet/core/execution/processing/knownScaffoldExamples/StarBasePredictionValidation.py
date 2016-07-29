@@ -21,6 +21,7 @@ from fr.tagc.rainet.core.data.ProteinCrossReference import ProteinCrossReference
 from fr.tagc.rainet.core.data.RNACrossReference import RNACrossReference
 from fr.tagc.rainet.core.data.RNA import RNA
 from fr.tagc.rainet.core.util.data.DataManager import DataManager
+from NPInterPredictionValidation import NPInterPredictionValidation
 
 #===============================================================================
 # Started 20-Apr-2016 
@@ -224,6 +225,8 @@ class StarBasePredictionValidation( object ):
         print "read_starbase_file: Total number of interacting RNAs:",len(setOfRNAs)
         print "read_starbase_file: Total number of interacting proteins:",len(setOfProts)
       
+      
+        self.starbasePairs = interactingPairs
         return interactingPairs, interactingPairsBiocomplex
 
 
@@ -389,15 +392,25 @@ class StarBasePredictionValidation( object ):
         proteinSet = set()
 
         countLines = 0
-        
+
+        outFile = open( run.outputFolder + "/scores.tsv", "w")
+        outFile.write( "pairID\tcatrapid_score\tin_validated_set\n")
+
+        text = ""
+
         with open( self.catrapidFile, "r") as f:
             for line in f:
                 spl = line.split("\t")
 
                 countLines+= 1 
 
-                if countLines % 10000000 == 0:
+                if countLines % 1000000 == 0:
                     print "Processed %s interactions" % countLines
+                    
+                    outFile.write(text)
+                    
+                    interactingPairs = {}
+                    text = ""
                 
                 proteinID = spl[0]
                 transcriptID = spl[1]
@@ -412,8 +425,17 @@ class StarBasePredictionValidation( object ):
                     interactingPairs[ pair] = intScore
                 else:
                     raise RainetException( "Repeated protein-RNA pair: " + line)
-   
 
+                if pair in self.starbasePairs:
+                    inValidated = 1
+                else:
+                    inValidated = 0
+   
+                text += "%s\t%s\t%s\n" % ( pair, intScore, inValidated) 
+
+        outFile.write(text)
+        outFile.close()
+   
         print "read_expression_file: Number of proteins: ", len( proteinSet)
         print "read_expression_file: Number of protein-RNA pairs in file: ", len( interactingPairs)
 
@@ -497,46 +519,48 @@ if __name__ == "__main__":
         else: 
             catrapidPairs = run.read_catrapid_file()
 
-        # #
-        # Quick stats on the data
-        countYes = 0
-        countNo = 0
-        countYesSum = 0
-        countNoSum = 0
-        for pair in catrapidPairs:
-            if pair in starbasePairs:
-                countYes+=1
-                countYesSum+= catrapidPairs[ pair]
-            else:
-                countNo+=1
-                countNoSum+= catrapidPairs[ pair]
-  
-        print "True: %s\tFalse: %s" % ( countYes, countNo)
-        print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
-        print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
+        if args.newFormat != 2:
 
-        Timer.get_instance().step( "Writing output file..")    
- 
-        # #
-        # Write file for R processing
-        outFile = open( run.outputFolder + "/scores.tsv", "w")
-        outFile.write( "pairID\tcatrapid_score\tin_validated_set\tclipReads\n")
-         
-        # array of 1s and 0s, whether pair in Starbase or not
-        inValidated = [ 1 if pair in starbasePairs else 0 for pair in catrapidPairs]
- 
-        for i, pair in enumerate( catrapidPairs):
-            if pair in starbasePairs:
-                outFile.write( "%s\t%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i], starbasePairs[ pair] ) )
-            else:
-                outFile.write( "%s\t%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i], 0 ) )
-
-        outFile.close()
-
-
-#         # # Run R command to create figure
-#         command = "Rscript %s %s %s" % ( StarBasePredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, run.outputFolder)
-#         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
+            # #
+            # Quick stats on the data
+            countYes = 0
+            countNo = 0
+            countYesSum = 0
+            countNoSum = 0
+            for pair in catrapidPairs:
+                if pair in starbasePairs:
+                    countYes+=1
+                    countYesSum+= catrapidPairs[ pair]
+                else:
+                    countNo+=1
+                    countNoSum+= catrapidPairs[ pair]
+      
+            print "True: %s\tFalse: %s" % ( countYes, countNo)
+            print "True sum: %s\tFalse sum: %s" % ( countYesSum, countNoSum)
+            print "True mean: %.2f\tFalse mean: %.2f" % ( countYesSum / float( countYes), countNoSum / float( countNo))
+    
+            Timer.get_instance().step( "Writing output file..")    
+     
+            # #
+            # Write file for R processing
+            outFile = open( run.outputFolder + "/scores.tsv", "w")
+            outFile.write( "pairID\tcatrapid_score\tin_validated_set\tclipReads\n")
+             
+            # array of 1s and 0s, whether pair in Starbase or not
+            inValidated = [ 1 if pair in starbasePairs else 0 for pair in catrapidPairs]
+     
+            for i, pair in enumerate( catrapidPairs):
+                if pair in starbasePairs:
+                    outFile.write( "%s\t%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i], starbasePairs[ pair] ) )
+                else:
+                    outFile.write( "%s\t%s\t%s\t%s\n" % ( pair, catrapidPairs[ pair], inValidated[ i], 0 ) )
+    
+            outFile.close()
+    
+    
+    #         # # Run R command to create figure
+    #         command = "Rscript %s %s %s" % ( StarBasePredictionValidation.DISTRIBUTION_SCRIPT, outFile.name, run.outputFolder)
+    #         result = SubprocessUtil.run_command( command) #, return_stdout = 1, verbose = 1)
 
 
     # Use RainetException to catch errors
