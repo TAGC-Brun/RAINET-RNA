@@ -83,7 +83,7 @@ class AnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_GENCODE, OptionConstants.DEFAULT_GENCODE)
         optionManager.set_option(OptionConstants.OPTION_EXPRESSION_VALUE_CUTOFF, OptionConstants.DEFAULT_EXPRESSION_VALUE_CUTOFF)
         optionManager.set_option(OptionConstants.OPTION_EXPRESSION_TISSUE_CUTOFF, OptionConstants.DEFAULT_EXPRESSION_TISSUE_CUTOFF)
-
+        optionManager.set_option(OptionConstants.OPTION_LOW_MEMORY, OptionConstants.DEFAULT_LOW_MEMORY)
         
         # Set the level of verbosity
         Logger.get_instance().set_level(OptionManager.get_instance().get_option(OptionConstants.OPTION_VERBOSITY))
