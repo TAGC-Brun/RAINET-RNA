@@ -9,8 +9,12 @@ require(gridExtra)
 library(ggbiplot)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
+# testing
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/test/pca/interaction_score_matrix_altered2.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/mondal2015_ji2016/mondal2015_s5_ji2016/interaction_score_matrix.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/fake_matrix_for_testing.tsv"
+
+# all proteins
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/mondal2015_ji2016/annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/sample_annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/sample_annotated_interactions.tsv"
@@ -19,13 +23,16 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 # RBP only
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RBP_only/annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RBP_only/annotated_interactions.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/RBP_only/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/RBP_only/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/lncrna_vs_mrna/annotated_interactions.tsv"
 
 #small datasets
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/snoRNA/annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RNA_transport/cytoplasmic_vs_nuclear.txt"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/free_polysomal_subset.txt"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/fake_matrix_for_testing.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/free_polysomal_subset.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins/cytoplasmic_vs_nuclear.txt"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_expression_data/cytoplasmic_vs_nuclear.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_expression_data/annotated_interactions.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -80,7 +87,6 @@ simple_colors = unlist( lapply( sample_list, function( x){
   return( simple_color_palette[ which( sample_list == x)])
 }))
 
-
 # Plot the content of information by axes
 barplot( 100*acp$eig/sum( acp$eig),
          names.arg = seq(1,length(acp$eig),1),
@@ -127,7 +133,6 @@ for( cs_index in c(1,2,3)){
   }
 }
 
-
 ## R prcomp
 pca_result <- prcomp(dataset[, proteins], center = TRUE, scale. = FALSE)
 # scale false since all data have same units/scale, they all come from catRAPID
@@ -165,14 +170,11 @@ listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale =
 grid_arrange_shared_legend(listPlot)
 
 
-### analysing the principal components
+# analysing the principal components
 
 rot = pca_result$rotation
-
 length(rot[,1])
-
 tail(sort(rot[,1]))
-
 tail(sort(rot[,2]))
 
 # ### heatmap ###
