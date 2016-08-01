@@ -40,14 +40,16 @@ outFolder = args[2]
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only_normalisation/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only_normalisation/scores.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/normalised/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/normalised/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/expression_dataset/lncRNAs/sampled_scores.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/lncRNAs/min100/sampled_scores.tsv"
 
 setwd(outFolder)
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 # transform values
-# dataset$catrapid_score = log10(dataset$catrapid_score)
+#dataset$catrapid_score = log10(dataset$catrapid_score)
 
 # Separate validated from non-validated
 validated = dataset[dataset$in_validated_set == 1,]
@@ -330,7 +332,7 @@ text(0.7,0.0, aucText )
 #   
 #   #check which indexes of dataset1 are true
 #   indexesToChange = which(dataset1$in_validated_set == 1)
-# 
+#   
 #   # change de items on dataset 2 to be true if they are in dataset1
 #   dataset$in_validated_set[indexesToChange] = 1
 # }
