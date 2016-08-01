@@ -31,13 +31,14 @@ class ReadCatrapidUnittest(unittest.TestCase):
         # self.extraMetrics = 1
         self.writeNormalisedInteractions = 0
         self.writeInteractionMatrix = 0
+        self.booleanInteraction = 0
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
         self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
                                 self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize,
-                                self.writeNormalisedInteractions, self.writeInteractionMatrix )
+                                self.writeNormalisedInteractions, self.writeInteractionMatrix, self.booleanInteraction )
             
 
     # #
@@ -246,11 +247,43 @@ class ReadCatrapidUnittest(unittest.TestCase):
                     self.assertTrue( float( spl[1]) == 20.56, "asserting that score is correct")        
                 count+=1
      
+
+    # #
+    def test_write_matrix_output_two(self):
+
+        print "| test_write_matrix_output_two | "
+
+        ## testing writing of matrix with 0 and 1 instead of interaction score
+
+        # adding interaction cut off parameter
+        self.run.booleanInteraction = 1
+
+        self.run.read_catrapid_file( set(["Q7Z419_ENST00000542804", "Q7Z419_ENST00000542821", "Q7Z429_ENST00000542804"]), set(), set())
+
+        self.run.write_matrix_output()
+        
+        with open(self.outputFolder + ReadCatrapid.INTERACTIONS_SCORE_MATRIX, "r") as out:
+            count = 0
+            for line in out:
+                if count == 3:
+                    break
+                spl = line.split( "\t")
+                            
+                self.assertTrue( len( spl) == 3, "asserting number of columns is number of proteins plus row header")
+                 
+                if count == 0:
+                    self.assertTrue( "Q7Z429" in spl[2], "asserting the sorting of file")
+                 
+                if count == 2:
+                    self.assertTrue( spl[0] == "ENST00000542821", "asserting the sorting of file")
+                    self.assertTrue( float( spl[2].strip()) == 0, "asserting that score is correct")        
+                count+=1
+
      
     # #
     # Runs after each test
     def tearDown(self):
-                               
+                                
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)

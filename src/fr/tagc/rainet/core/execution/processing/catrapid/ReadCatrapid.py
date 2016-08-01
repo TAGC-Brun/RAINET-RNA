@@ -44,7 +44,7 @@ class ReadCatrapid(object):
     MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 170000000 # maximum number of interactions writable for interaction matrix output #170M interactions = 23Gb
     
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file,
-                 write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix):
+                 write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix, boolean_interaction):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -56,9 +56,12 @@ class ReadCatrapid(object):
         self.batchSize = batch_size
         self.writeNormalisedInteractions = write_normalised_interactions
         self.writeInteractionMatrix = write_interaction_matrix
+        self.booleanInteraction = boolean_interaction
 
         if (write_normalised_interactions and write_interactions == 0) or (write_interaction_matrix and write_interactions == 0):
-            raise RainetException( "ReadCatrapid.__init__ : --write_interactions option must be on for --write_normalised_interactions to run.")
+            raise RainetException( "ReadCatrapid.__init__ : --writeInteractions option must be on for --writeNormalisedInteractions to run.")
+        if (boolean_interaction and write_interactions == 0) or (boolean_interaction and write_interaction_matrix == 0):
+            raise RainetException( "ReadCatrapid.__init__ : --writeInteractions and --writeInteractionMatrix option must be on for --booleanInteractions to run.")
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -319,7 +322,7 @@ class ReadCatrapid(object):
                     outFile.write( "%s\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%s\n" % (prot, mean, median, minimum, maximum, std, count) )
     
                 else:                   
-                    outFile.write( "%s\t%s\t%s\t\%s\t%s\t%s\t%s\n" % ( prot, 
+                    outFile.write( "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % ( prot, 
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
@@ -522,9 +525,15 @@ class ReadCatrapid(object):
             for prot in sortedSetInteractingProts:
                 tag = rna + "|" + prot
                 if tag in dictPairs:
-                    score = dictPairs[tag]
+                    if self.booleanInteraction:
+                        score = "1"
+                    else:
+                        score = dictPairs[tag]
                 else:
-                    score = "NA"
+                    if self.booleanInteraction:
+                        score = "0"
+                    else:
+                        score = "NA"
                 text+= "\t%s" % score 
             text+= "\n"
             outHandler.write( text)
@@ -587,6 +596,8 @@ if __name__ == "__main__":
                              default = 0, help='Whether to write interaction file after the filters, normalised by max (unity-based normalisation) score for each RNA. --writeInteractions argument must also be 1.')   
         parser.add_argument('--writeInteractionMatrix', metavar='writeInteractionMatrix', type=int,
                              default = 0, help='Whether to write interaction matrix file after the filters. --writeInteractions argument must also be 1.')   
+        parser.add_argument('--booleanInteraction', metavar='booleanInteraction', type=int,
+                             default = 0, help='Whether to write interaction matrix file with 1 or 0 instead of score values. --writeInteractions and --writeInteractionMatrix argument must also be 1.')   
     
         #gets the arguments
         args = parser.parse_args( ) 
@@ -594,7 +605,7 @@ if __name__ == "__main__":
         # init
         readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
                                      args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, 
-                                     args.writeNormalisedInteractions, args.writeInteractionMatrix)
+                                     args.writeNormalisedInteractions, args.writeInteractionMatrix, args.booleanInteraction)
     
         readCatrapid.run()
     
