@@ -11,6 +11,9 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/output/rnaInteractions.tsv"
 mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/mrna/output/rnaInteractions.tsv"
 
+# lncRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl68/lncRNAs_only/rnaInteractions.tsv"
+# mRNAData = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl68/snoRNA_only/rnaInteractions.tsv"
+
 # annotation / RNA information
 rnaInfoFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_vs_mRNA/ScoreComparison/RNA_table_RAINET.csv"
 rnaInfo <- fread(rnaInfoFile, stringsAsFactors = FALSE, header = TRUE, sep=",")
@@ -25,6 +28,36 @@ stopifnot(nrow(dataset1) + nrow(dataset2) == nrow(mergedDataset))
 # merge with RNA info
 mergedDatasetInfo = merge( mergedDataset, rnaInfo, by="ensembl_id", all.x = TRUE)
 
+# ##### exploration of lncRNA vs snoRNA dataset
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only/positive_rnaInteractions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only/negative_rnaInteractions.tsv"
+# inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/positive_rnaInteractions.tsv"
+# inputFile2 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/negative_rnaInteractions.tsv"
+# 
+# dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
+# dataset2 <- fread(inputFile2, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
+# dataset1$category = "positive"
+# dataset2$category = "negative"
+# mergedDataset = rbind( dataset1, dataset2)
+# 
+# plt01 <- ggplot(data = mergedDataset, aes(y = mean_score, x = category)  )  +
+#   geom_boxplot( ) +
+#   stat_summary(fun.data = give.n, geom = "text", size = 4) +
+#   coord_flip() +
+#   theme_minimal()
+# plt02 <- ggplot(data = mergedDataset, aes(y = max_score, x = category) )  +
+#   geom_boxplot( ) +
+#   stat_summary(fun.data = give.n, geom = "text", size = 4) +
+#   coord_flip() +
+#   theme_minimal()
+# plt03 <- ggplot(data = mergedDataset, aes(y = std_score, x = category) )  +
+#   geom_boxplot( ) +
+#   stat_summary(fun.data = give.n, geom = "text", size = 4) +
+#   coord_flip() +
+#   theme_minimal()
+# grid.arrange(plt01,plt02,plt03)
+
+
 ### Plot comparing scores between lncRNA and mRNA
 # density plot by category
 plt01 <- ggplot(data = mergedDatasetInfo, aes(x = mean_score, colour = type) )  +
@@ -34,12 +67,12 @@ plt01 <- ggplot(data = mergedDatasetInfo, aes(x = mean_score, colour = type) )  
 # box plot
 plt02 <- ggplot(data = mergedDatasetInfo, aes(y = mean_score, x = type) )  +
   geom_boxplot( ) +
+  stat_summary(fun.data = give.n, geom = "text", size = 4) +
   coord_flip() +
   theme_minimal()
 grid.arrange(plt01,plt02)
 grid.newpage()
 table1 = all_vs_all_tests(mergedDatasetInfo, "mean_score", "type", verbose = 1)
-
 
 ## Analyse difference of standard deviation of scores (of transcripts, measure from readCATrapid)
 
@@ -48,6 +81,7 @@ plt5 <- ggplot(data = mergedDatasetInfo, aes(x = std_score, colour = type) )  +
   theme_minimal()
 plt6 <- ggplot(data = mergedDatasetInfo, aes(x = type, y = std_score) )  +
   geom_boxplot( ) +
+  stat_summary(fun.data = give.n, geom = "text", size = 4) +
   coord_flip() +
   theme_minimal()
 grid.arrange(plt5,plt6)
@@ -96,7 +130,7 @@ all_vs_all_tests( mergedDatasetInfoLess, 'mean_score', 'transcriptBiotype', verb
 # mergedDatasetInfo$transcriptLength = as.numeric(mergedDatasetInfo$transcriptLength)
 # 
 # ## measure correlation between transcript length and score
-# correlation = cor(mergedDatasetInfo$transcriptLength, mergedDatasetInfo$mean_score, method = "spearman")
+# correlation = cor(mergedDatasetInfo$transcriptLength, mergedDatasetInfo$mean_score, method = "spearman", use="complete")
 # correlationSign = as.numeric(cor.test(mergedDatasetInfo$transcriptLength, mergedDatasetInfo$mean_score, method = "spearman")$p.value)
 # correlationText = paste("Corr:", round(correlation,2),"(pval:", round(correlationSign),")")
 # 
@@ -106,6 +140,20 @@ all_vs_all_tests( mergedDatasetInfoLess, 'mean_score', 'transcriptBiotype', verb
 #   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
 #   theme_minimal()
 # plt1
+# 
+# # plot for comparing lncRNA and snoRNA
+# # plt1 <- ggplot( )  + #data = mergedDatasetInfo, aes(x = transcriptLength, y = mean_score)
+# #   geom_point(data = mergedDatasetInfo[mergedDatasetInfo$type == "LncRNA"], aes(x = transcriptLength, y = mean_score) , shape = 1, alpha=1/4, color = "blue" ) +
+# #   geom_point(data = mergedDatasetInfo[mergedDatasetInfo$transcriptBiotype == "snoRNA"], aes(x = transcriptLength, y = mean_score) , shape = 1, alpha=1/4, color = "red" ) +
+# #   geom_smooth( ) +
+# #   xlim( c(0,1500)) + 
+# #   annotate("text", x = Inf, y = Inf, label = correlationText, hjust = 1, vjust =1  ) +
+# #   theme_minimal()
+# # plt1
+# 
+# cor(mergedDatasetInfo[mergedDatasetInfo$type == "LncRNA"]$transcriptLength, mergedDatasetInfo[mergedDatasetInfo$type == "LncRNA"]$mean_score, method = "spearman", use="complete")
+# cor(mergedDatasetInfo[mergedDatasetInfo$transcriptBiotype == "snoRNA"]$transcriptLength, mergedDatasetInfo[mergedDatasetInfo$transcriptBiotype == "snoRNA"]$mean_score, method = "spearman", use="complete")
+
 # 
 # ## filtering so that length distributions match
 # 
