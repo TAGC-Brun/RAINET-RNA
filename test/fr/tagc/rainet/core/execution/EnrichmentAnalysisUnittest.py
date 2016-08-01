@@ -345,7 +345,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
                 if line.startswith("ENST00000517179"):
                     countTestPerRNA += 1
                     if line.startswith("ENST00000517179\t237"):
-                        self.assertTrue( line == "ENST00000517179\t237\t1\t1\t1\t1\t0.0e+00\t0.0e+00\t1\n")
+                        self.assertTrue( line == "ENST00000517179\t237\t1\t1\t2.7%\t1\t0.0e+00\t0.0e+00\t1\n")
 
         self.assertTrue( countTestPerRNA == len( self.run.annotWithInteractionDict), "file should have one line per test performed")
         self.assertTrue( countLines == expectedNumberTests, "file should have one line per test performed")

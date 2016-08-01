@@ -519,7 +519,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         #===================================================================          
         # one line per RNA-module (enrichment test)
         outHandler = FileUtils.open_text_w( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT )
-        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
+        outHandler.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\tpercent_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
 
         #===================================================================   
         # Initialise file with stats per RNA
@@ -584,6 +584,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             for i in xrange(0, self.numberRandomizations):               
                 randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
+
+                #testing
+                outHandlerR = open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT +"_random"+ str(i), "a" )
+                outHandlerR.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
+                for test in randomTestsCorrected:
+                    outHandlerR.write( "\t".join( test) + "\n" )
+                outHandlerR.close()
+
  
             # using just Significant no warning
             avgSignRandomNoWarning = numpy.mean( listRandomSignificantsNoWarning)
@@ -671,7 +679,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # store pvalue to be corrected                
             pvalues[ counter] = hyperResult               
 
-            text = "%s\t%s\t%s\t%s\t%s\t%s\t%.1e" % ( rna_id, annotID, x, m, k, skipTest, hyperResult ) 
+            percentInteracting = "%.1f%%" % ( k * 100.0 / len( self.backgroundProteins))
+
+            text = "%s\t%s\t%s\t%s\t%s\t%s\t%.1e" % ( rna_id, annotID, x, m, percentInteracting, skipTest, hyperResult ) 
             tests[ counter] = text.split("\t") 
  
             counter += 1
