@@ -147,6 +147,34 @@ REACTOME_PATHWAY_ANNOTATION_COMMENT_CHAR = "#"
 
 #===============================================================================
 #===============================================================================
+# BIOPLEX DEFINITION AND ANNOTATIONS
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for BioplexCluster
+#===============================================================================
+
+BIOPLEX_CLUSTER_DEFINITION_PROPERTY = "BIOPLEX_CLUSTER_DEFINITION"
+
+BIOPLEX_CLUSTER_CLASS = "BioplexCluster"
+
+BIOPLEX_CLUSTER_HEADERS = ["ID"]
+BIOPLEX_CLUSTER_PARAMS = ["ID"]
+BIOPLEX_CLUSTER_COMMENT_CHAR = "#"
+
+# Headers and Parameters for ProteinBioplexAnnotaiton
+#===============================================================================
+
+BIOPLEX_ANNOTATION_PROPERTY = "BIOPLEX_ANNOTATION"
+
+BIOPLEX_ANNOTATION_CLASS = "ProteinBioplexAnnotation"
+
+BIOPLEX_ANNOTATION_HEADERS = ["ID", "ID2", "protein_id"]
+BIOPLEX_ANNOTATION_PARAMS = ["ID", "protein_id"]
+BIOPLEX_ANNOTATION_COMMENT_CHAR = "#"
+
+#===============================================================================
+#===============================================================================
 # INTERACTOME DEFINITION, NETWORK, PARTITION AND ANNOTATIONS
 #===============================================================================
 #===============================================================================
