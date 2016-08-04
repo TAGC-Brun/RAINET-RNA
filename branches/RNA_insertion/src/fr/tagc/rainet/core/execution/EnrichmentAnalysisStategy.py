@@ -599,14 +599,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
 
-#                 #testing
-#                 outHandlerR = open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT +"_random"+ str(i), "a" )
-#                 outHandlerR.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
-#                 for test in randomTestsCorrected:
-#                     outHandlerR.write( "\t".join( test) + "\n" )
-#                 outHandlerR.close()
-
- 
             # using just Significant no warning
             avgSignRandomNoWarning = numpy.mean( listRandomSignificantsNoWarning)
 
