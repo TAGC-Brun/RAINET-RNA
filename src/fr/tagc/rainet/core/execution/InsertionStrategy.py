@@ -36,6 +36,9 @@ from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
 from fr.tagc.rainet.core.data.Tissue import Tissue
 from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
+from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
+from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
+
 
 # #
 # This class define the Strategy executing insertion of the various data in database
@@ -145,6 +148,22 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.REACTOME_PATHWAY_ANNOTATION_HEADERS, DataConstants.REACTOME_PATHWAY_ANNOTATION_CLASS, DataConstants.REACTOME_PATHWAY_ANNOTATION_PARAMS, None, DataConstants.REACTOME_PATHWAY_ANNOTATION_COMMENT_CHAR )
     
             #===================================================================
+            # BIOPLEX
+            #===================================================================   
+    
+            # Parse the file listing Bioplex clusters
+            input_file = PropertyManager.get_instance().get_property( DataConstants.BIOPLEX_CLUSTER_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.BIOPLEX_CLUSTER_HEADERS,
+                                       DataConstants.BIOPLEX_CLUSTER_CLASS, DataConstants.BIOPLEX_CLUSTER_PARAMS,
+                                        None, DataConstants.BIOPLEX_CLUSTER_COMMENT_CHAR )
+
+            # Parse the file with Bioplex annotations
+            input_file = PropertyManager.get_instance().get_property( DataConstants.BIOPLEX_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.BIOPLEX_ANNOTATION_HEADERS,
+                                       DataConstants.BIOPLEX_ANNOTATION_CLASS, DataConstants.BIOPLEX_ANNOTATION_PARAMS,
+                                        None, DataConstants.BIOPLEX_ANNOTATION_COMMENT_CHAR )
+    
+            #===================================================================
             # INTERACTOME
             #===================================================================
                 
@@ -213,7 +232,7 @@ class InsertionStrategy( ExecutionStrategy ):
             # PROTEIN RNA INTERACTION
             #===================================================================
 
-            self.forceOverride = 1
+#            self.forceOverride = 1
 
             # Parse the file listing RNA with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_RNA_DEFINITION_PROPERTY, True)
@@ -229,7 +248,7 @@ class InsertionStrategy( ExecutionStrategy ):
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
 
-            self.forceOverride = 0
+#            self.forceOverride = 0
  
 #             # Initialize data items to store missing interactions
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
@@ -249,8 +268,7 @@ class InsertionStrategy( ExecutionStrategy ):
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
             DataManager.get_instance().delete_data(DataConstants.PROT_ALL_KW)
-
-            
+           
             
         except RainetException as re:
             Logger.get_instance().error( re.to_string() )
@@ -515,4 +533,8 @@ class InsertionStrategy( ExecutionStrategy ):
 #             InteractingRNA.__table__.create(bind = db_engine)
 #         if not db_engine.dialect.has_table(db_engine.connect(), InteractingProtein.__tablename__):
 #             InteractingProtein.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), BioplexCluster.__tablename__):
+            BioplexCluster.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), ProteinBioplexAnnotation.__tablename__):
+            ProteinBioplexAnnotation.__table__.create(bind = db_engine)
 

@@ -25,6 +25,9 @@ from fr.tagc.rainet.core.data.ProteinRNAInteractionCatRAPID import ProteinRNAInt
 from fr.tagc.rainet.core.data.RNATissueExpression import RNATissueExpression
 from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
+from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
+from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
+
 
 ## This class is a Factory that aims to create objects of various Class from class name
 # and required parameters. The class manage the insertion to database of the newly created
