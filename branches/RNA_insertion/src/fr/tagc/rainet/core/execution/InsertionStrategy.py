@@ -213,6 +213,8 @@ class InsertionStrategy( ExecutionStrategy ):
             # PROTEIN RNA INTERACTION
             #===================================================================
 
+            self.forceOverride = 1
+
             # Parse the file listing RNA with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_RNA_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_RNA_DEFINITION_HEADERS,
@@ -226,6 +228,8 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_PROTEIN_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
+
+            self.forceOverride = 0
  
 #             # Initialize data items to store missing interactions
 #             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
@@ -238,9 +242,9 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
-
-
-            
+ 
+ 
+             
             # Remove data that will no longer be used to reduce memory usage 
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
