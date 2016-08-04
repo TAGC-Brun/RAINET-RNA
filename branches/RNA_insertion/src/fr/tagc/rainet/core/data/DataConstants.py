@@ -241,6 +241,7 @@ RNA_BROAD_TYPES = ["MRNA", "OtherRNA", "LncRNA"]
 RNA_MRNA_BIOTYPE = ["protein_coding"]
 # LncRNA biotypes: Merge from GENCODEv23 and v24 biotypes considered as lncRNAs. See: ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_23/_README.TXT
 RNA_LNCRNA_BIOTYPE = ["3prime_overlapping_ncrna","antisense","bidirectional_promoter_lncrna","known_ncrna","lincRNA","macro_lncRNA","non_coding","processed_transcript","sense_intronic","sense_overlapping","TEC"]
+RNA_ALL_BIOTYPE = ["protein_coding","retained_intron","nonsense_mediated_decay","processed_transcript","processed_pseudogene","antisense","unprocessed_pseudogene","lincRNA","unitary_pseudogene","transcribed_unprocessed_pseudogene","transcribed_processed_pseudogene","miRNA","transcribed_unitary_pseudogene","sense_overlapping","pseudogene","sense_intronic","TR_V_gene","3prime_overlapping_ncrna","IG_V_gene","polymorphic_pseudogene","misc_RNA","non_stop_decay","snRNA","IG_V_pseudogene","snoRNA","rRNA","ribozyme","Mt_tRNA","Mt_rRNA","IG_C_gene","IG_J_gene","TR_J_gene","TR_V_pseudogene","TR_C_gene","TR_J_pseudogene","IG_C_pseudogene","IG_D_gene","TR_D_gene","IG_J_pseudogene","TEC","scaRNA","translated_unprocessed_pseudogene","vaultRNA","sRNA","macro_lncRNA"]
 
 RNA_ALL_KW = "allRNAs"
 PROT_ALL_KW = "allProts"
