@@ -452,21 +452,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
            
         outHandler.close()
          
-        #===================================================================   
-        # Set protein background
-        #===================================================================   
-        # Background (search space) changes depending on annotation being used
-        # it is the interaction of proteins with interaction prediction and proteins with annotation
-
-        backgroundProteins =  allProteinsWithInteractionData.intersection( set( protAnnotDict.keys()))
-        assert sumWithInteractionData == len( backgroundProteins)
-
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
+#         #===================================================================   
+#         # Set protein background
+#         #===================================================================   
+#         # Background (search space) changes depending on annotation dataset being used
+#         # it is the interaction of proteins with interaction prediction and proteins with annotation
+# 
+#         backgroundProteins =  allProteinsWithInteractionData.intersection( set( protAnnotDict.keys()))
+#         assert sumWithInteractionData == len( backgroundProteins)
 
         #===================================================================   
         # store processed data
         #===================================================================   
-        self.backgroundProteins = backgroundProteins
         self.protAnnotDict = protAnnotDict
         self.allProteinsWithInteractionData = allProteinsWithInteractionData
         self.annotWithInteractionDict = annotWithInteractionDict
@@ -486,9 +483,14 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
         # For each RNA, store all proteins it interacts with and their annotations
         rnaInteractions = {} # Key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs (after filtering)
+        
+        setInteractingProteins = set() # stores proteins with at least one interaction
+        
         for inter in interactions:
             txID = str( inter.transcriptID)
             protID = str( inter.proteinID)
+            
+            setInteractingProteins.add( protID)
                                
             # only store info of proteins that have annotation information
             if protID in self.protAnnotDict: 
@@ -507,6 +509,18 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
         self.rnaInteractions = rnaInteractions
+
+
+        #===================================================================   
+        # Set protein background
+        #===================================================================   
+        # Background (search space) changes depending on annotation dataset being used
+        # it is the interaction of proteins with at least one interaction and proteins with annotation
+
+        backgroundProteins =  setInteractingProteins.intersection( set( self.protAnnotDict.keys()))
+        self.backgroundProteins = backgroundProteins
+
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
 
         #===================================================================    
         #
@@ -585,12 +599,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 randomTestsCorrected = self.run_rna_vs_annotations( rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests( randomTestsCorrected)
 
-                #testing
-                outHandlerR = open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT +"_random"+ str(i), "a" )
-                outHandlerR.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
-                for test in randomTestsCorrected:
-                    outHandlerR.write( "\t".join( test) + "\n" )
-                outHandlerR.close()
+#                 #testing
+#                 outHandlerR = open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT +"_random"+ str(i), "a" )
+#                 outHandlerR.write("transcriptID\tannotID\tnumber_observed_interactions\tnumber_possible_interactions\ttotal_interacting_proteins\twarning\tpval\tcorrected_pval\tsign_corrected\n")
+#                 for test in randomTestsCorrected:
+#                     outHandlerR.write( "\t".join( test) + "\n" )
+#                 outHandlerR.close()
 
  
             # using just Significant no warning
@@ -659,8 +673,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # Hypergeometric test parameters
             # note: test for each RNA - annotation pair. 
             x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
-            m = len( possibleProtList) # total white balls ( proteins with the current annotation that have interaction predictions)
-            n = len( self.backgroundProteins) - m # total black balls ( all the proteins with interaction predictions not in current annotation)
+            m = len( possibleProtList) # total white balls ( proteins with the current annotation (that have interaction predictions))
+            n = len( self.backgroundProteins) - m # total black balls ( all the proteins with at least one positive interaction, not in current annotation)
             k = len( total_rna_interactions) # total number of draws ( proteins with positive interactions, regardless of current annotation)
 
             assert ( m + n >= k), "number of draws should be less than total number of balls"
