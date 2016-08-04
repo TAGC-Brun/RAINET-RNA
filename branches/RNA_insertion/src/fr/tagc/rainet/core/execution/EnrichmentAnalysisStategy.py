@@ -53,6 +53,8 @@ from fr.tagc.rainet.core.data.Tissue import Tissue
 from fr.tagc.rainet.core.data.TableStatus import TableStatus
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
 from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
+from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
+from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
 
 from fr.tagc.rainet.core.data import DataConstants
 from fr.tagc.rainet.core.util import Constants
@@ -68,7 +70,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     #===============================================================================
 
     # correspondance between the base table and associated data
-    ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation", "KEGGPathway" : "ProteinKEGGAnnotation"}
+    ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation",
+                              "KEGGPathway" : "ProteinKEGGAnnotation", 
+                              "BioplexCluster" : "ProteinBioplexAnnotation"}
 
     # significance value 
     SIGN_VALUE_TEST = 0.05 # the alpha value to call enrichment for each individual hypergeomtric test
