@@ -510,6 +510,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
       
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with at least one interaction: %s " % str( len( len( setInteractingProteins))) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
         self.rnaInteractions = rnaInteractions
@@ -553,7 +554,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Calculate number of possible permutations
         listOfProteins = [ prot for annot in self.annotWithInteractionDict for prot in self.annotWithInteractionDict[ annot]]
         avgPotSize = len( listOfProteins) / float( len( self.annotWithInteractionDict))
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations: %i" % (avgPotSize * len( listOfProteins) ) )
+        nPermutations = avgPotSize * len( listOfProteins)
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations: %i" % ( nPermutations) )
+        if nPermutations < self.numberRandomizations:
+            Logger.get_instance().warning( "EnrichmentAnalysisStrategy.enrichement_analysis : Number of possible permutations is less than number of randomizations.")           
        
         # Get list of proteins in a orderly manner
         listOfProteins = [ prot for annot in sorted( self.annotWithInteractionDict) for prot in sorted( self.annotWithInteractionDict[ annot]) ]
