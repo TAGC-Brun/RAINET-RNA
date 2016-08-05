@@ -55,6 +55,9 @@ from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
 from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
 from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
+from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
+from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
+
 
 from fr.tagc.rainet.core.data import DataConstants
 from fr.tagc.rainet.core.util import Constants
