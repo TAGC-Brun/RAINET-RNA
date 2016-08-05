@@ -74,7 +74,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                               "ReactomePathway" : "ProteinReactomeAnnotation",
                               "KEGGPathway" : "ProteinKEGGAnnotation", 
                               "BioplexCluster" : "ProteinBioplexAnnotation",
-                              "WanCluster" : "ProteinWanAnnotation"}
+                              "WanCluster" : "ProteinWanAnnotation",
+                              "CorumCluster" : "ProteinCorumAnnotation"}
 
     # significance value 
     SIGN_VALUE_TEST = 0.05 # the alpha value to call enrichment for each individual hypergeomtric test

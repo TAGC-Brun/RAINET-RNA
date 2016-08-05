@@ -202,6 +202,36 @@ WAN_ANNOTATION_HEADERS = ["ID", "protein_id"]
 WAN_ANNOTATION_PARAMS = ["ID", "protein_id"]
 WAN_ANNOTATION_COMMENT_CHAR = "#"
 
+
+#===============================================================================
+#===============================================================================
+# CORUM DEFINITION AND ANNOTATIONS
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for CorumCluster
+#===============================================================================
+
+CORUM_CLUSTER_DEFINITION_PROPERTY = "CORUM_CLUSTER_DEFINITION"
+
+CORUM_CLUSTER_CLASS = "CorumCluster"
+
+CORUM_CLUSTER_HEADERS = ["ID","Name","Method"]
+CORUM_CLUSTER_PARAMS = ["ID","Name","Method"]
+CORUM_CLUSTER_COMMENT_CHAR = "#"
+
+# Headers and Parameters for ProteinCorumAnnotaiton
+#===============================================================================
+
+CORUM_ANNOTATION_PROPERTY = "CORUM_ANNOTATION"
+
+CORUM_ANNOTATION_CLASS = "ProteinCorumAnnotation"
+
+CORUM_ANNOTATION_HEADERS = ["ID", "protein_id"]
+CORUM_ANNOTATION_PARAMS = ["ID", "protein_id"]
+CORUM_ANNOTATION_COMMENT_CHAR = "#"
+
+
 #===============================================================================
 #===============================================================================
 # INTERACTOME DEFINITION, NETWORK, PARTITION AND ANNOTATIONS
