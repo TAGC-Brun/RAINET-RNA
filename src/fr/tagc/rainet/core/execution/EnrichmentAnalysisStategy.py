@@ -510,7 +510,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
       
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with at least one interaction: %s " % str( len( len( setInteractingProteins))) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with at least one interaction: %s " % str( len( setInteractingProteins)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
         self.rnaInteractions = rnaInteractions
@@ -659,6 +659,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                     protList.append( prot)
             
             # number of proteins with annotation that have interaction predictions
+            
             possibleProtList = self.annotWithInteractionDict[ annotID]
             
             assert ( len( protList) <= len( possibleProtList) ), "RNA cannot interact with more proteins of annotation than existing in annotation"
