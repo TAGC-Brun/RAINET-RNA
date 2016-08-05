@@ -216,24 +216,24 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             
         print "| test_run_rna_vs_annotations | "
 
-        #    def run_rna_vs_annotations(self, rna_id, annotation_dict, total_rna_interactions):
 
-        ###### simulating an RNA that interacts with all proteins in annotation
-
-        # on an highly overlapping dataset of annotations        
         rna_id = "fake"
         annotation_dict = { "one" : ["P1","P2","P3"], "two" : ["P1","P2","P4"], "three" : ["P1","P2"], "four" : ["P1","P5"], "five" : ["P1","P2","P3","P6","P7"], "six" : ["P1","P8","P9","P10","P11"]}
         total_rna_interactions = { prot for key in annotation_dict for prot in annotation_dict[ key]}
-
         nRand = 1000
+
+        #Notes on simulation data: P1 is always present in all annotations, P2 and P3 is often present, all others are present in only one annotation.
+        # Annotation five contains redudant proteins, annotation six contains only P1 as redundant, these should produce different significance results.
 
         # run execute to read default options.
         self.run.execute()
-        
         # override some of the objects
         self.run.annotWithInteractionDict = annotation_dict
-        self.run.backgroundProteins = total_rna_interactions
+        self.run.backgroundProteins = total_rna_interactions                       
+        #note: do not update background proteins, this simulation only uses one RNA, but in reality there will be other RNAs which ultimately interact with all the proteins in annotation.
 
+        ###### simulating an RNA that interacts with all proteins in annotation
+        
         testsCorrected = self.run.run_rna_vs_annotations(rna_id, annotation_dict, total_rna_interactions)
         self.assertTrue( self.run.count_sign_tests( testsCorrected)[1] == 2)
 
@@ -243,7 +243,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             randomAnnotDict = self.run.randomize_proteins( annotation_dict, listOfProteins)
             self.assertTrue( self.run.count_sign_tests( testsCorrected) == (6,2), "assert that right number of significants tests is achieved" )
 
-        ###### test other subsequent functions
+        # test other subsequent functions
 
         total_rna_interactions = { prot for key in annotation_dict for prot in annotation_dict[ key]}
 
@@ -262,34 +262,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
 
         self.assertTrue( empiricalPvalue == 1.0, "if interactions are done with all proteins, empirical p-value should be 1.0")
-        
-        ##### simulation with less interactions, proteins that only show up in one annotation
 
-        total_rna_interactions = { prot for key in annotation_dict for prot in annotation_dict[ key]}
-               
-        total_rna_interactions.remove("P8")
-        total_rna_interactions.remove("P9")
-        total_rna_interactions.remove("P10")
-        total_rna_interactions.remove("P11")
-                
-        #note: do not update background proteins, this simulation only uses one RNA, but in reality there will be other RNAs which ultimately interact with all the proteins in annotation.
-        
-        testsCorrected = self.run.run_rna_vs_annotations(rna_id, annotation_dict, total_rna_interactions)
-
-        countSignificant, countSignificantNoWarning = self.run.count_sign_tests( testsCorrected)
-
-        listOfProteins = [ prot for annot in annotation_dict for prot in annotation_dict[ annot]]
-        listRandomSignificants = numpy.empty( nRand, object)
-        listRandomSignificantsNoWarning = numpy.empty( nRand, object)
-        for i in xrange(nRand):    
-            randomAnnotDict = self.run.randomize_proteins( annotation_dict, listOfProteins)        
-            randomTestsCorrected = self.run.run_rna_vs_annotations( rna_id, randomAnnotDict, total_rna_interactions)  
-            listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.run.count_sign_tests( randomTestsCorrected)
-
-        # note: not caring about warnings here
-        empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificants, countSignificant)
-
-        self.assertTrue( empiricalPvalue < EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL, "removing interactions that only show up in one annotation should produce a significant p-value compared to random")
 
         ##### simulation with less interactions, proteins that may show up in more than one annotation
         
@@ -301,7 +274,6 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         total_rna_interactions.remove("P7")
 
         testsCorrected = self.run.run_rna_vs_annotations(rna_id, annotation_dict, total_rna_interactions)
-
         countSignificant, countSignificantNoWarning = self.run.count_sign_tests( testsCorrected)
 
         listOfProteins = [ prot for annot in annotation_dict for prot in annotation_dict[ annot]]
@@ -315,6 +287,33 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificants, countSignificant)
 
         self.assertTrue( empiricalPvalue > EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL, "removing interactions that show up in more than one annotation should not produce a significant p-value compared to random")
+
+        
+        ##### simulation with less interactions, proteins that only show up in one annotation
+
+        total_rna_interactions = { prot for key in annotation_dict for prot in annotation_dict[ key]}
+               
+        total_rna_interactions.remove("P8")
+        total_rna_interactions.remove("P9")
+        total_rna_interactions.remove("P10")
+        total_rna_interactions.remove("P11")
+        
+        testsCorrected = self.run.run_rna_vs_annotations(rna_id, annotation_dict, total_rna_interactions)
+        countSignificant, countSignificantNoWarning = self.run.count_sign_tests( testsCorrected)
+
+        listOfProteins = [ prot for annot in annotation_dict for prot in annotation_dict[ annot]]
+        listRandomSignificants = numpy.empty( nRand, object)
+        listRandomSignificantsNoWarning = numpy.empty( nRand, object)
+        for i in xrange(nRand):    
+            randomAnnotDict = self.run.randomize_proteins( annotation_dict, listOfProteins)        
+            randomTestsCorrected = self.run.run_rna_vs_annotations( rna_id, randomAnnotDict, total_rna_interactions)  
+            listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.run.count_sign_tests( randomTestsCorrected)
+
+        empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificants, countSignificant)
+
+        self.assertTrue( empiricalPvalue < EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL, "removing interactions that only show up in one annotation should produce a significant p-value compared to random")
+
+
         
 
     def test_empirical_pvalue(self):
