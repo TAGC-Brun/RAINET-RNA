@@ -13,14 +13,14 @@ from fr.tagc.rainet.core.data.RNA import RNA
 # Started 25-July-2016 
 # Diogo Ribeiro
 # Based on RBPScore.py
-DESC_COMMENT = "Script to attribute annotations to RNAs of a processed catrapid file."
+DESC_COMMENT = "Script to attribute annotations to RNAs of a processed interactions file."
 SCRIPT_NAME = "LncRNAScore.py"
 #===============================================================================
 
 #===============================================================================
 # General plan:
 # 1) Read file with RNA annotation
-# 2) Read processed catRAPID file, add annotation
+# 2) Read processed interaction file, add annotation to last column of input file
 #===============================================================================
 
 class LncRNAScore(object):
@@ -31,10 +31,10 @@ class LncRNAScore(object):
     ANNOTATION_OUTPUT_FILE = "/annotated_interactions.tsv"
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
        
-    def __init__(self, annotation_file, catrapid_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, no_annotation_tag, cross_reference):
+    def __init__(self, annotation_file, interaction_file, rainet_db, output_folder, mask_multiple, annotation_column, id_column, no_annotation_tag, cross_reference):
 
         self.annotationFile = annotation_file
-        self.catRAPIDFile = catrapid_file
+        self.interactionFile = interaction_file
         self.rainetDB = rainet_db
         self.outputFolder = output_folder
         self.maskMultiple = mask_multiple
@@ -154,13 +154,19 @@ class LncRNAScore(object):
 
 
     # #
-    # Read processed catRAPID file and write output, with added annotation
-    def read_catrapid_file( self, transcript_annotation):
+    # Read processed interaction file and write output, with added annotation
+    def read_interaction_file( self, transcript_annotation):
 
         #=======================================================================
         # Example file
-        # F8VUJ3  10.7053463052
-        # P20933  11.3934851506
+        # ENST00000300167  10.7053463052
+        # ENST00000323813  11.3934851506
+        #=======================================================================
+        #=======================================================================
+        # Example file (matrix)
+        # RNAs    101     10a     
+        # ENST00000300167 0.0e+00 0.0e+00
+        # ENST00000323813 1.0     0.0e+00        
         #=======================================================================
   
         #=======================================================================
@@ -175,7 +181,7 @@ class LncRNAScore(object):
         # read file
         #=======================================================================
 
-        with open( self.catRAPIDFile, "r") as inFile:
+        with open( self.interactionFile, "r") as inFile:
 
             # write same header as input file, adding "annotation"
             outFile.write( inFile.readline().strip() + "\tannotation\n")
@@ -199,7 +205,7 @@ class LncRNAScore(object):
                         # get all annotations
                         annotation = ",".join( list(transcript_annotation[ txID]) )
                     else:
-                        raise RainetException("read_catrapid_file: Annotation information is incorrect. ", transcript_annotation[ txID])
+                        raise RainetException("read_interaction_file: Annotation information is incorrect. ", transcript_annotation[ txID])
                 # if there is no annotation for protein
                 else:
                     annotation = self.noAnnotationTag
@@ -210,7 +216,7 @@ class LncRNAScore(object):
     
         outFile.close()
   
-        print "read_catrapid_file: read %s lines.." % lineCount
+        print "read_interaction_file: read %s lines.." % lineCount
 
 
 if __name__ == "__main__":
@@ -230,8 +236,8 @@ if __name__ == "__main__":
         # positional args
         parser.add_argument('annotationFile', metavar='annotationFile', type=str,
                              help='TSV file with annotation per transcript. No header. Can have several annotations for same transcript, one per line. E.g. transcriptID\tannotation.')
-        parser.add_argument('catRAPIDFile', metavar='catRAPIDFile', type=str,
-                             help='rnaInteractions.tsv output file from ReadCatrapid.py. E.g. transcriptID\tmean_score')
+        parser.add_argument('interactionFile', metavar='interactionFile', type=str,
+                             help='rnaInteractions.tsv or matrix file, output file from ReadCatrapid.py or elsewhere. E.g. transcriptID\tmean_score')
         parser.add_argument('rainetDB', metavar='rainetDB', type=str, help='Path to RAINET database to be used.')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
         parser.add_argument('--maskMultiple', metavar='maskMultiple', type=int, default = 1,
@@ -249,7 +255,7 @@ if __name__ == "__main__":
         args = parser.parse_args( ) 
     
         # init
-        run = LncRNAScore( args.annotationFile, args.catRAPIDFile, args.rainetDB, args.outputFolder, 
+        run = LncRNAScore( args.annotationFile, args.interactionFile, args.rainetDB, args.outputFolder, 
                               args.maskMultiple, args.annotationColumn, args.idColumn, args.noAnnotationTag, args.crossReference)
 
         # build cross references
@@ -262,8 +268,8 @@ if __name__ == "__main__":
         rnaAnnotation = run.read_annotation_file( )      
 
         # read catrapid file and write output
-        Timer.get_instance().step( "Reading catrapid interaction file..")    
-        run.read_catrapid_file( rnaAnnotation)
+        Timer.get_instance().step( "Reading interaction file..")    
+        run.read_interaction_file( rnaAnnotation)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
