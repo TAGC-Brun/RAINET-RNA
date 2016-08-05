@@ -50,43 +50,29 @@ class ProteinBioplexAnnotation( Base ):
             raise RainetException( "ProteinBioplexAnnotation.init : returned cross reference is None for " + cluster_id)
          
         #=======================================================================
-        # Get the ProteinCrossReference corresponding to the provided Biocomplex protein ID
-        # (cross_reference) in order to convert it to Uniprot AC
+        # Search the protein object. Then build the association between the Protein and the Bioplex cluster 
         #=======================================================================
         # -- make the query
-        protein_crossref_list = sql_session.query( SynonymGeneSymbol.protein_id).filter( SynonymGeneSymbol.uniprotGeneSymbol_id == protein_id).all()
+        protein_list = sql_session.query( Protein).filter( Protein.uniprotAC == protein_id).all()
          
-        # --Check if a single cross reference is found. If not, raise an issue
-        if protein_crossref_list == None or len( protein_crossref_list) == 0:
-            raise NotRequiredInstantiationException( "ProteinBioplexAnnotation.init : No ProteinCrossReference found for cross reference = " + protein_id)
-
-        #=======================================================================
-        # Search from the Proteins corresponding to the cross references found
-        # in the previous step. Then build the association between the Protein
-        # and the BioplexCluster 
-        #=======================================================================
-        for cross_ref in protein_crossref_list:
-            # -- make the query
-            protein_list = sql_session.query( Protein).filter( Protein.uniprotAC == cross_ref.protein_id).all()
-             
-            # --Check if a single Protein is found. If not, raise an issue
-            protein = None
-            if protein_list != None and len( protein_list) > 0:
-                if len( protein_list) == 1:
-                    protein = protein_list[0]
-                else:
-                    raise RainetException( "ProteinBioplexAnnotation.init : Abnormal number of Protein found for cross reference = " + cross_ref.protein_id + " : " + str( len( protein_list))) 
+        # --Check if a single Protein is found. If not, raise an issue
+        protein = None
+        if protein_list != None and len( protein_list) > 0:
+            if len( protein_list) == 1:
+                protein = protein_list[0]
             else:
-                raise NotRequiredInstantiationException( "ProteinBioplexAnnotation.init : No Protein found for uniprotAC = " + cross_ref.protein_id)
-     
-            # -- Check if the Protein found is not None
-            if protein == None:
-                raise RainetException( "ProteinBioplexAnnotation.init : returned Protein is None for UniprotAC" + cross_ref.protein_id)
-                 
-            # -- Build the relation between the Bioplex cluster and the Protein
-            cluster_id.add_annotated_protein( protein)
-            sql_session.add( cluster_id)
-            sql_session.add( protein)
+                raise RainetException( "ProteinBioplexAnnotation.init : Abnormal number of Protein found for = " +protein_id + " : " + str( len( protein_list))) 
+        else:
+            raise NotRequiredInstantiationException( "ProteinBioplexAnnotation.init : No Protein found for uniprotAC = " + protein_id)
+ 
+        # -- Check if the Protein found is not None
+        if protein == None:
+            raise RainetException( "ProteinBioplexAnnotation.init : returned Protein is None for UniprotAC" + protein_id)
+             
+        # -- Build the relation between the Bioplex cluster and the Protein
+        cluster_id.add_annotated_protein( protein)
+        sql_session.add( cluster_id)
+        sql_session.add( protein)
             
         # Raise the Exception to indicate the instance must not be inserted since it is automatically created 
         raise NotRequiredInstantiationException( "ProteinBioplexAnnotation.init : ProteinBioplexAnnotation objects do not have to be inserted by __init__ since they are created by BioplexCluster to Protein association table.")
