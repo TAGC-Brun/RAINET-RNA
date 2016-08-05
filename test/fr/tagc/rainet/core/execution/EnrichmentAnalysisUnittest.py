@@ -394,9 +394,9 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         #self.assertTrue( len( self.run.backgroundProteins) == 37, "assert number of background proteins is correctly calculated")
         
         #SELECT count(distinct(ProteinNetworkModule.protein_id)) FROM ProteinNetworkModule -> 42
-        self.assertTrue( len( self.run.protAnnotDict) == 42, "assert number of proteins with annotations is correctly calculated")
+        self.assertTrue( self.run.protAnnotDictLen == 42, "assert number of proteins with annotations is correctly calculated")
                 
-        self.assertTrue( len( self.run.allProteinsWithInteractionData) == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
+        self.assertTrue( self.run.allProteinsWithInteractionDataLen == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
 
         #SELECT count(distinct(ProteinNetworkModule.networkModule_id)) FROM ProteinNetworkModule -> 82. But this does not count interactions.
         pool = {prot for annot in self.run.annotWithInteractionDict for prot in self.run.annotWithInteractionDict[annot]}
@@ -410,9 +410,9 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.run.execute()
         
         #SELECT count(distinct(ProteinKEGGAnnotation.protein_id)) FROM ProteinKEGGAnnotation -> 22
-        self.assertTrue( len( self.run.protAnnotDict) == 22, "assert number of proteins with annotations is correctly calculated")
+        self.assertTrue( self.run.protAnnotDictLen == 22, "assert number of proteins with annotations is correctly calculated")
               
-        self.assertTrue( len( self.run.allProteinsWithInteractionData) == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
+        self.assertTrue( self.run.allProteinsWithInteractionDataLen == len( DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_PROT_KW)), "assert number of proteins with interactions is correctly calculated")
  
 #         pool = {prot for annot in self.run.annotWithInteractionDict for prot in self.run.annotWithInteractionDict[annot]}
 #  
@@ -441,7 +441,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
     #         
     #         Q8WZA6 has no annotation
 
-        expectedNumberTests = len( self.run.annotWithInteractionDict) * len(self.run.rnaInteractions)
+        expectedNumberTests = len( self.run.annotWithInteractionDict) * self.run.rnaInteractionsLength
 
         countLines = 0
         countTestPerRNA = 0

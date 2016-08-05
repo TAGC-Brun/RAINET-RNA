@@ -70,9 +70,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     #===============================================================================
 
     # correspondance between the base table and associated data
-    ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", "ReactomePathway" : "ProteinReactomeAnnotation",
+    ANNOTATION_TABLES_DICT = {"NetworkModule" : "ProteinNetworkModule", 
+                              "ReactomePathway" : "ProteinReactomeAnnotation",
                               "KEGGPathway" : "ProteinKEGGAnnotation", 
-                              "BioplexCluster" : "ProteinBioplexAnnotation"}
+                              "BioplexCluster" : "ProteinBioplexAnnotation",
+                              "WanCluster" : "ProteinWanAnnotation"}
 
     # significance value 
     SIGN_VALUE_TEST = 0.05 # the alpha value to call enrichment for each individual hypergeomtric test
@@ -469,8 +471,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # store processed data
         #===================================================================   
         self.protAnnotDict = protAnnotDict
-        self.allProteinsWithInteractionData = allProteinsWithInteractionData
         self.annotWithInteractionDict = annotWithInteractionDict
+        self.allProteinsWithInteractionDataLen = len( allProteinsWithInteractionData)
+
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( self.allProteinsWithInteractionDataLen ) )
 
  
     # #
@@ -509,12 +513,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                     rnaInteractions[ txID][ annot].append( protID)
       
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: RNAs with interactions: %s " % str( len( rnaInteractions)) )
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( len( self.allProteinsWithInteractionData)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with at least one interaction: %s " % str( len( setInteractingProteins)) )
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with annotation: %s " % str( len( self.protAnnotDict) ) )
 
-        self.rnaInteractions = rnaInteractions
-
+        self.rnaInteractionsLength = len( rnaInteractions)
 
         #===================================================================   
         # Set protein background
@@ -526,6 +528,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.backgroundProteins = backgroundProteins
 
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
+
+        # delete object to save memory
+        self.protAnnotDictLen = len( self.protAnnotDict)
+        del self.protAnnotDict
 
         #===================================================================    
         #
@@ -979,7 +985,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
  
         assert len( randomAnnotDict) == len( annotDict)
 
-             
         return randomAnnotDict
 
 
