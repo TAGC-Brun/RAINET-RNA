@@ -27,6 +27,8 @@ from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
 from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
 from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
+from fr.tagc.rainet.core.data.WanCluster import WanCluster
+from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
 
 
 ## This class is a Factory that aims to create objects of various Class from class name

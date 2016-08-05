@@ -173,6 +173,35 @@ BIOPLEX_ANNOTATION_HEADERS = ["ID", "ID2", "protein_id"]
 BIOPLEX_ANNOTATION_PARAMS = ["ID", "protein_id"]
 BIOPLEX_ANNOTATION_COMMENT_CHAR = "#"
 
+
+#===============================================================================
+#===============================================================================
+# WAN DEFINITION AND ANNOTATIONS
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for WanCluster
+#===============================================================================
+
+WAN_CLUSTER_DEFINITION_PROPERTY = "WAN_CLUSTER_DEFINITION"
+
+WAN_CLUSTER_CLASS = "WanCluster"
+
+WAN_CLUSTER_HEADERS = ["ID"]
+WAN_CLUSTER_PARAMS = ["ID"]
+WAN_CLUSTER_COMMENT_CHAR = "#"
+
+# Headers and Parameters for ProteinWanAnnotaiton
+#===============================================================================
+
+WAN_ANNOTATION_PROPERTY = "WAN_ANNOTATION"
+
+WAN_ANNOTATION_CLASS = "ProteinWanAnnotation"
+
+WAN_ANNOTATION_HEADERS = ["ID", "protein_id"]
+WAN_ANNOTATION_PARAMS = ["ID", "protein_id"]
+WAN_ANNOTATION_COMMENT_CHAR = "#"
+
 #===============================================================================
 #===============================================================================
 # INTERACTOME DEFINITION, NETWORK, PARTITION AND ANNOTATIONS
