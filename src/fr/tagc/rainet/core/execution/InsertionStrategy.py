@@ -38,6 +38,8 @@ from fr.tagc.rainet.core.data.InteractingRNA import InteractingRNA
 from fr.tagc.rainet.core.data.InteractingProtein import InteractingProtein
 from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
 from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
+from fr.tagc.rainet.core.data.WanCluster import WanCluster
+from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
 
 
 # #
@@ -162,6 +164,22 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.BIOPLEX_ANNOTATION_HEADERS,
                                        DataConstants.BIOPLEX_ANNOTATION_CLASS, DataConstants.BIOPLEX_ANNOTATION_PARAMS,
                                         None, DataConstants.BIOPLEX_ANNOTATION_COMMENT_CHAR )
+
+            #===================================================================
+            # WAN CLUSTERS
+            #===================================================================   
+    
+            # Parse the file listing Wan clusters
+            input_file = PropertyManager.get_instance().get_property( DataConstants.WAN_CLUSTER_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.WAN_CLUSTER_HEADERS,
+                                       DataConstants.WAN_CLUSTER_CLASS, DataConstants.WAN_CLUSTER_PARAMS,
+                                        None, DataConstants.WAN_CLUSTER_COMMENT_CHAR )
+
+            # Parse the file with Wan annotations
+            input_file = PropertyManager.get_instance().get_property( DataConstants.WAN_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.WAN_ANNOTATION_HEADERS,
+                                       DataConstants.WAN_ANNOTATION_CLASS, DataConstants.WAN_ANNOTATION_PARAMS,
+                                        None, DataConstants.WAN_ANNOTATION_COMMENT_CHAR )
     
             #===================================================================
             # INTERACTOME
@@ -537,4 +555,8 @@ class InsertionStrategy( ExecutionStrategy ):
             BioplexCluster.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), ProteinBioplexAnnotation.__tablename__):
             ProteinBioplexAnnotation.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), WanCluster.__tablename__):
+            WanCluster.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), ProteinWanAnnotation.__tablename__):
+            ProteinWanAnnotation.__table__.create(bind = db_engine)
 
