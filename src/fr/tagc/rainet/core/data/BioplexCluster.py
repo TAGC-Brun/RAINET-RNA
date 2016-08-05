@@ -8,14 +8,14 @@ from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
 from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
 
 # #
-# This class describes a KEGG Pathway
+# This class describes a Bioplex cluster
 #
 class BioplexCluster( Base ):
     __tablename__ = 'BioplexCluster'
     
     # The pathway ID
     bioplexID = Column( String, primary_key = True  )
-    # Define the N-to-N relationship between KEGGPathway and Protein
+    # Define the N-to-N relationship between Bioplex cluster and Protein
     annotatedProteins = relationship('Protein', secondary=ProteinBioplexAnnotation.__table__, backref="bioplexAnnotations")
     
     #
