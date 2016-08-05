@@ -40,6 +40,8 @@ from fr.tagc.rainet.core.data.BioplexCluster import BioplexCluster
 from fr.tagc.rainet.core.data.ProteinBioplexAnnotation import ProteinBioplexAnnotation
 from fr.tagc.rainet.core.data.WanCluster import WanCluster
 from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
+from fr.tagc.rainet.core.data.CorumCluster import CorumCluster
+from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
 
 
 # #
@@ -180,6 +182,23 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, False, DataConstants.WAN_ANNOTATION_HEADERS,
                                        DataConstants.WAN_ANNOTATION_CLASS, DataConstants.WAN_ANNOTATION_PARAMS,
                                         None, DataConstants.WAN_ANNOTATION_COMMENT_CHAR )
+
+            #===================================================================
+            # CORUM CLUSTERS
+            #===================================================================   
+    
+            # Parse the file listing Corum clusters
+            input_file = PropertyManager.get_instance().get_property( DataConstants.CORUM_CLUSTER_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.CORUM_CLUSTER_HEADERS,
+                                       DataConstants.CORUM_CLUSTER_CLASS, DataConstants.CORUM_CLUSTER_PARAMS,
+                                        None, DataConstants.CORUM_CLUSTER_COMMENT_CHAR )
+
+            # Parse the file with Corum annotations
+            input_file = PropertyManager.get_instance().get_property( DataConstants.CORUM_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.CORUM_ANNOTATION_HEADERS,
+                                       DataConstants.CORUM_ANNOTATION_CLASS, DataConstants.CORUM_ANNOTATION_PARAMS,
+                                        None, DataConstants.CORUM_ANNOTATION_COMMENT_CHAR )
+
     
             #===================================================================
             # INTERACTOME
@@ -559,4 +578,8 @@ class InsertionStrategy( ExecutionStrategy ):
             WanCluster.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), ProteinWanAnnotation.__tablename__):
             ProteinWanAnnotation.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), CorumCluster.__tablename__):
+            CorumCluster.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), ProteinCorumAnnotation.__tablename__):
+            ProteinCorumAnnotation.__table__.create(bind = db_engine)
 

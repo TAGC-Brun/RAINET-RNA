@@ -1,6 +1,6 @@
 
 #05-Aug-2016
-# Script to specifically parse Wan et al 2015 http://www.nature.com/nature/journal/v525/n7569/full/nature14877.html supplementary table 4,
+# Script to specifically parse Bioplex complexes dataset
 # formatting the table for insertion into RAINET DB.
 
 workingFolder = "/home/diogo/Documents/RAINET_data/macromolecular_complex_datasets/Bioplex"

@@ -53,6 +53,6 @@ REPORT_FOLDER = "Report"
 #===============================================================================
 # Constants on enrichment analysis
 #===============================================================================
-ANNOTATION_TABLES = ["NetworkModule", "ReactomePathway", "KEGGPathway", "BioplexCluster"]
+ANNOTATION_TABLES = ["NetworkModule", "ReactomePathway", "KEGGPathway", "BioplexCluster", "CorumCluster", "WanCluster"]
 
 
