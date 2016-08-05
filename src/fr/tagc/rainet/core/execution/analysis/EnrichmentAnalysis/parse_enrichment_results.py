@@ -41,7 +41,7 @@ SCRIPT_NAME = "parse_enrichment_results.py"
 #===============================================================================
 
 REPORT_LIST_RNA_SIGN_ENRICH = "list_RNA_above_random.txt"
-REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered.tsv"
+REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_significant.tsv"
 REPORT_RNA_ANNOT_RESULTS_MATRIX = "enrichment_results_filtered_matrix.tsv"
 
 WARNING_FILTER_VALUE =  1.0 #NA
@@ -140,9 +140,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
             # First check if all the results with this RNA should be filtered out or not
             txID = line.split("\t")[0]
 
-            if txID in list_rna_significant_enrich:
-                outFile1.write( line)
-            else:                
+            if txID not in list_rna_significant_enrich:
                 excludedByRNA += 1
                 continue
 
@@ -161,6 +159,8 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
                 # If value is determined not significant OR is tagged with a warning (for several reasons), fill it with constant value. 
                 if warningFlag or signFlag == 0:
                     value = WARNING_FILTER_VALUE
+                else:
+                    outFile1.write( line + "\n")
 
             pair = txID + "|" + annotID
             if pair not in dictPairs:
@@ -186,7 +186,10 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
 
     assert len( dictPairs) ==  len( setRNAs) * len( setAnnots), "number of pairs should equal number of RNAs times number of annotations"
 
-    ## Writing matrix file
+
+    #===============================================================================
+    # Writing matrix file
+    #===============================================================================
 
     sortedSetRNAs = sorted( setRNAs)   
     sortedSetAnnots = sorted( setAnnots - nonEnrichedAnnotations)
@@ -196,7 +199,6 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     for annot in sortedSetAnnots:
         outFile2.write( "\t%s" % annot )
     outFile2.write( "\n")
-
     
     # write bulk of file, one row per rna, one column per protein
     for rna in sortedSetRNAs:
@@ -211,10 +213,8 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
         text+= "\n"
         outFile2.write( text)
     
-    
     Logger.get_instance().info( "read_enrichment_results_file : Number of RNAs in matrix file (rows): %i" % ( len( sortedSetRNAs) ) )
     Logger.get_instance().info( "read_enrichment_results_file : Number of Annotations in matrix file (columns): %i" % ( len( sortedSetAnnots) ) )
-
     
     outFile1.close()
     outFile2.close()
