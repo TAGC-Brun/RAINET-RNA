@@ -4,7 +4,7 @@ import shutil
 import numpy
 import random
 from scipy import stats
-from statsmodels.sandbox.stats.multicomp import multipletests
+#from statsmodels.sandbox.stats.multicomp import multipletests
 
 from sqlalchemy import or_, and_, distinct
 from sqlalchemy.inspection import inspect    
@@ -87,7 +87,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
     SIGN_VALUE_AGAINST_RANDOM_CONTROL = 0.01 # the alpha value for calling a observed different than random control
         
     SIGN_COLUMN = 8 # column from testsCorrected with result significance tag. 0-based
-    WARNING_COLUMN = 5 # column from testsCorrected with warning/skipTest tag. 0-based
+    WARNING_COLUMN = 5 # column from testsCorrected with warning/skipTest tag. 0-based   
 
     #===================================================================
     # Data Manager object Keywords
@@ -143,6 +143,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.minimumProteinAnnotation = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION)
         self.minimumProteinInteraction = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION)
         self.numberRandomizations = OptionManager.get_instance().get_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS)
+        self.expressionWarning = OptionManager.get_instance().get_option(OptionConstants.OPTION_EXPRESSION_WARNING)
+        self.minimumExpression = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_EXPRESSION)
 
         # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
@@ -152,6 +154,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                           OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION : self.minimumProteinAnnotation,
                           OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION : self.minimumProteinInteraction,
                           OptionConstants.OPTION_NUMBER_RANDOMIZATIONS : self.numberRandomizations, 
+                          OptionConstants.OPTION_EXPRESSION_WARNING : self.expressionWarning,
+                          OptionConstants.OPTION_MINIMUM_EXPRESSION : self.minimumExpression
                         }
 
         #===================================================================
@@ -185,6 +189,23 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             self.numberRandomizations = int( self.numberRandomizations)
         except:
             raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided number randomizations value is not correct (must be integer): " + self.numberRandomizations)
+
+        # Check if expression warning is consistent
+        if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:            
+            try:
+                self.expressionWarning = float( self.expressionWarning)
+                if self.expressionWarning < 0.0 or self.expressionWarning > 1.0:
+                    raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided expression warning value is not correct (must be float between 0.0 and 1.0): " + str( self.expressionWarning) )
+            except:
+                raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided expression warning value is not correct (must be float between 0.0 and 1.0): " + str( self.expressionWarning) )
+
+        # Check if minimum protein annotation value is consistent
+        if self.minimumExpression != OptionConstants.DEFAULT_MINIMUM_EXPRESSION and self.expressionWarning == OptionConstants.DEFAULT_EXPRESSION_WARNING:            
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided minimum RPKM expression value only works if --expressionWarning is active.")
+        try:
+            self.minimumExpression = float( self.minimumExpression)
+        except:
+            raise RainetException( "EnrichmentAnalysisStrategy.execute: Provided minimum RPKM expression value is not correct (must be float): " + self.minimumExpression)
 
         #===================================================================
         # Initialisation
@@ -222,6 +243,17 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().step( "Producing annotation report.." )        
      
         self.annotation_report()
+           
+
+        #===================================================================
+        # Load expression data (if needed)
+        #===================================================================
+           
+        if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:
+            
+            Timer.get_instance().step( "Producing annotation report.." )        
+            
+            self.retrieve_expression()
    
         #===================================================================
         # Perform analysis
@@ -464,23 +496,20 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
            
         outHandler.close()
          
-#         #===================================================================   
-#         # Set protein background
-#         #===================================================================   
-#         # Background (search space) changes depending on annotation dataset being used
-#         # it is the interaction of proteins with interaction prediction and proteins with annotation
-# 
-#         backgroundProteins =  allProteinsWithInteractionData.intersection( set( protAnnotDict.keys()))
-#         assert sumWithInteractionData == len( backgroundProteins)
-
         #===================================================================   
         # store processed data
         #===================================================================   
         self.protAnnotDict = protAnnotDict
         self.annotWithInteractionDict = annotWithInteractionDict
         self.allProteinsWithInteractionDataLen = len( allProteinsWithInteractionData)
+        
+        # proteins with interaction and with annotation # for expression filtering
+        self.proteinWithAnnotationWithInteraction = { prot for pathID in annotWithInteractionDict for prot in annotWithInteractionDict[ pathID]}
+
+        assert sumWithInteractionData == len( self.proteinWithAnnotationWithInteraction)
 
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( self.allProteinsWithInteractionDataLen ) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions and with annotations: %s " % str( len( self.proteinWithAnnotationWithInteraction ) ) )
 
  
     # #
@@ -593,6 +622,13 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # retrieve total number of interactions with annotated proteins for this RNA
             totalRNAInteractions = { prot for annotID in rnaInteractions[ rnaID] for prot in rnaInteractions[ rnaID][ annotID]}
 
+#             #===================================================================   
+#             # initialise tissue expression for RNA       
+#             #===================================================================   
+#             if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:
+#                 # get tissue where RNA is expressed
+#                 for tissue in self.expressionDict[ rnaID]:
+
             #===================================================================   
             # Run real test            
             #===================================================================   
@@ -661,9 +697,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # for each annotation with at least one interacting partner
         for annotID in annotation_dict:
 
-#             # positive interactions in current annotation
-#             protList = set( annotation_dict[ annotID]).intersection( total_rna_interactions)
-
             # keep this as list so that it works even if reshuffling and having replicate proteins in same annotation.
             protList = []            
             for prot in annotation_dict[ annotID]:
@@ -682,6 +715,50 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # Skip test/output if minimum number of items is not respected                   
             if len( possibleProtList) < self.minimumProteinAnnotation or len( protList) < self.minimumProteinInteraction :
                 skipTest = 1
+
+            #===================================================================   
+            # Expression warning 
+            #===================================================================          
+
+            # Skip test/output if group expression filter is on and filter is not passed
+            if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:
+                tissueCounts = {} # key -> tissue name, val -> count of proteins present in tissue
+                for tiss in self.expressionDict[ rna_id]: 
+                    if tiss not in tissueCounts:
+                        tissueCounts[ tiss] = 0
+
+                # for each interacting protein, check which tissues they are expressed
+                for prot in protList:
+                    if prot in self.protTissueExpressions:
+                        for tiss in self.expressionDict[ rna_id]: 
+                            if tiss in self.protTissueExpressions[ prot]:
+                                #i.e. if both RNA and protein present in this tissue
+                                tissueCounts[ tiss] += 1
+                    else:
+                        Logger.get_instance().warning("run_rna_vs_annotations : protein without expression data: %s" % (prot ))
+
+                maxTissueOverlap = 0 # store maximum number of proteins present in tissue
+                for tiss in tissueCounts:
+                    if tissueCounts[ tiss] > maxTissueOverlap:
+                        maxTissueOverlap = tissueCounts[ tiss]
+
+                assert maxTissueOverlap <= len( protList), "Maximum number of proteins with interactions in annotation in the same tissue must always be less than number of interacting proteins in annotation"
+
+                # calculate maximum proportion of proteins in same tissue
+                if len( protList) != 0:
+                    overlapProportion = float( maxTissueOverlap) / float( len( protList))
+                else:
+                    # division by zero
+                    overlapProportion = 0
+
+                # if the proportion in same tissue is not sufficient compared to user input proportion
+                if overlapProportion < self.expressionWarning:
+                    skipTest = 1
+
+
+            #===================================================================   
+            # Values for hypergeometric test
+            #===================================================================          
 
             # Hypergeometric test parameters
             # note: test for each RNA - annotation pair. 
@@ -992,6 +1069,79 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         assert len( randomAnnotDict) == len( annotDict)
 
         return randomAnnotDict
+
+
+    # #
+    # Retrieve expression per tissue for each RNA and protein.
+    # needs access to list of proteins with annotation, therefore it needs to be run after self.annotation_report
+    def retrieve_expression(self):
+
+        self.expressionDict = {} # key -> transcript ID, value -> set of tissues passing expression cutoff
+
+        self.protTissueExpressions = {} # key -> protein ID, value -> set of tissues passing expression cutoff
+
+        #===================================================================    
+        # Map mRNA to protein ID
+        #===================================================================    
+        # Search mRNA that produces interacting protein
+        mRNAMap = self.sql_session.query( MRNA.transcriptID, MRNA.proteinID ).all()
+        mRNADict = {} # key -> protein ID, val -> list of mRNAs encoding protein
+        for items in mRNAMap:
+            txID, protID = str( items[0]), str( items[1])
+            if protID != "None":
+                if protID not in mRNADict:
+                    mRNADict[ protID] = []
+                mRNADict[ protID].append( txID)
+        
+        Logger.get_instance().info("retrieve_expression : initialised mRNA-protein data. %s proteins with mRNAs." % len( mRNADict)  )    
+
+
+        #===================================================================    
+        # Map expression per tissue to transcript ID   
+        #===================================================================    
+        # Load entire expression table        
+        expressionMap = self.sql_session.query( RNATissueExpression.transcriptID, RNATissueExpression.expressionValue, RNATissueExpression.tissueName).all()
+
+        # store tissues where present for each RNA
+        for items in expressionMap:
+            txID, expr, tissName = str( items[0]), float( items[1]), str( items[2])
+            if txID not in self.expressionDict:
+                self.expressionDict[ txID] = set()
+            
+            if expr >= self.minimumExpression:
+                self.expressionDict[ txID].add( tissName)
+        
+        Logger.get_instance().info("retrieve_expression : loaded expression data. %s total RNAs with expression data loaded." % len( self.expressionDict) )    
+        
+        #===================================================================    
+        # Store all protein-related expression values into memory
+        #===================================================================    
+        self.protTissueExpressions = {} # key -> prot ID, val -> dict. key -> tissues where present
+        for protID in self.proteinWithAnnotationWithInteraction:
+            # skip protein with no mRNAs in database
+            if protID not in mRNADict:
+                continue
+        
+            if protID not in self.protTissueExpressions:
+                self.protTissueExpressions[ protID] = set()
+        
+            # Search mRNA that produces interacting protein
+            mRNAs = mRNADict[ protID]
+        
+            # Get Protein expression for all tissues
+            # there can be several mRNAs for the same protein ID, here we use them all to have set of tissues where present
+            # i.e. we only require that at least one of the mRNAs producing the protein is present in a tissue
+            for mRNAID in mRNAs:
+            
+                # skip transcripts with no expression      
+                if mRNAID not in self.expressionDict:
+                    continue
+                                                  
+                # Get the Protein expression, using its mRNA
+                for tissue in self.expressionDict[ mRNAID]:                         
+                    self.protTissueExpressions[ protID].add( tissue)
+        
+        Logger.get_instance().info("retrieve_expression : initialised expression data. %s proteins with expression data loaded." % len( self.protTissueExpressions) )    
 
 
     # #

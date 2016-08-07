@@ -78,6 +78,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION, OptionConstants.DEFAULT_MINIMUM_PROTEIN_ANNOTATION)
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION, OptionConstants.DEFAULT_MINIMUM_PROTEIN_INTERACTION)
         optionManager.set_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS, OptionConstants.DEFAULT_NUMBER_RANDOMIZATIONS)
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_WARNING, OptionConstants.DEFAULT_EXPRESSION_WARNING)
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_EXPRESSION, OptionConstants.DEFAULT_MINIMUM_EXPRESSION)
         
         # Set the level of verbosity
         Logger.get_instance().set_level(OptionManager.get_instance().get_option(OptionConstants.OPTION_VERBOSITY))
@@ -95,7 +97,6 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.run.sql_session = SQLManager.get_instance().get_session()
                 
 
-                
     def test_default_params(self):
     
         print "| test_default_params | "
@@ -147,40 +148,6 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue( signResults[ 1] == 50, "assert correct number of significant results based on input")
 
 
-#     def test_randomize_annotation(self):
-#             
-#         print "| test_randomize_annotation | "
-#         
-#         annotDict = { "one" : ["P1","P2","P3"], "two" : ["P2","P4"], "three" : ["P5"], "four" : ["P1","P5"], "five" : ["P6","P7"], "six" : ["P8","P9","P10"]}
-# 
-#         listOfProteins = [ prot for annot in annotDict for prot in annotDict[ annot]]
-#         lengths1Set = [ len( set( annotDict[ annot])) for annot in sorted(annotDict)]
-#         lengths1 = [ len( annotDict[ annot]) for annot in sorted(annotDict)]
-# 
-#         self.assertTrue( lengths1 == lengths1Set, "assert that there are no duplicate IDs in original list")
-# 
-# #         c = 0
-# 
-#         for i in xrange(1000):
-#             randomAnnotDict = self.run.randomize_annotation( annotDict, listOfProteins)
-#      
-#             lengths2 = [ len( randomAnnotDict[ annot]) for annot in sorted(randomAnnotDict)]
-#      
-#             self.assertTrue( lengths1 == lengths2, "assert that topology of annotation dictionary is unchanged with the shuffle")
-#     
-# #             lengths2Set = [ len( set( randomAnnotDict[ annot])) for annot in sorted(randomAnnotDict)]
-# #             
-# #             if lengths2 != lengths2Set:
-# #                 c += 1
-# #            self.assertTrue( lengths2 == lengths2Set, "assert that there are no duplicate IDs in shuffled list")
-# 
-#             listOfProteins2 = [ prot for annot in randomAnnotDict for prot in randomAnnotDict[ annot]]
-# 
-#             self.assertTrue( set( listOfProteins) == set(listOfProteins2), "assert that there are no duplicate IDs in shuffled list")
-# 
-# #         print c
-
-
     def test_randomize_proteins(self):
             
         print "| test_randomize_annotation | "
@@ -209,7 +176,6 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
             listOfProteins2 = [ prot for annot in randomAnnotDict for prot in randomAnnotDict[ annot]]
 
             self.assertTrue( set( listOfProteins) == set(listOfProteins2), "assert that there are no duplicate IDs in shuffled list")
-
 
 
     def test_run_rna_vs_annotations(self):
@@ -312,9 +278,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificants, countSignificant)
 
         self.assertTrue( empiricalPvalue < EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL, "removing interactions that only show up in one annotation should produce a significant p-value compared to random")
-
-
-        
+       
 
     def test_empirical_pvalue(self):
 
@@ -459,16 +423,91 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         self.assertTrue( countLines == expectedNumberTests, "file should have one line per test performed")
 
 
+    def test_retrieve_expression(self):
+        
+        print "| test_retrieve_expression | "
+
+        optionManager = OptionManager.get_instance()
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_WARNING, 0.8 )
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_EXPRESSION, 1.0 )
+
+        self.run.execute()
+
+        self.run.retrieve_expression()
+
+        rna_id = "ENST00000421534"
+
+        self.assertTrue( "P62826" in self.run.protTissueExpressions )
+        self.assertTrue( len( self.run.protTissueExpressions[ "P62826"]) == 49 )
+        self.assertTrue( len( self.run.expressionDict[ rna_id]) == 2)
+
+
+    def test_expression_warning(self):
+        
+        print "| test_expression_warning | "
+
+        optionManager = OptionManager.get_instance()
+        # need larger database for this test
+        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
+        
+        # set parameters for expression test
+        optionManager.set_option(OptionConstants.OPTION_EXPRESSION_WARNING, 0.8 )
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_EXPRESSION, 1.0 )
+        
+        # so that only way to have skip test flag is by expression filter
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_PROTEIN_ANNOTATION, 0)
+        optionManager.set_option(OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION, 0)
+
+        optionManager.set_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS, 1)
+
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
+
+        self.run.execute()
+
+        countLines = 0
+        countTestPerRNA = 0
+        with open( self.outputFolder + "/" + EnrichmentAnalysisStrategy.REPORT_ENRICHMENT) as inFile:
+            inFile.readline()
+            for line in inFile:
+                countLines += 1
+                if line.startswith("ENST00000309775\t344"):
+                    spl = line.split("\t")
+                    # protein-mRNA correspondence "ENST00000321265","Q9Y266"
+                    self.assertTrue( spl[5] == "0", "example where protein is expressed in all tissues, therefore it passes the filter")
+
+                    if line.startswith("ENST00000309775\t351"):
+                        spl = line.split("\t")
+                        self.assertTrue( spl[5] == "1", "example where the two proteins are not expressed in common tissues, therefore it does not pass the filter")
+                        
+                        # expression of RNA
+                        #set(['Uterus', 'Brain - Cerebellum', 'Cells - EBV-transformed lymphocytes', 'Brain - Cerebellar Hemisphere'])
+                        #{'Uterus': 0, 'Brain - Cerebellar Hemisphere': 0, 'Cells - EBV-transformed lymphocytes': 0, 'Brain - Cerebellum': 0}
+
+                        # interacting/annotated proteins
+                        #['P51843', 'Q14994']
+                        # expression of one of the proteins
+                        # "ENST00000378970","Adrenal Gland","31.103"
+                        # "ENST00000378970","Testis","20.62"
+                        # "ENST00000378970","Ovary","2.754"
+                        # "ENST00000378970","Pituitary","2.505"
+                        # "ENST00000378970","Brain - Hypothalamus","1.109"
+                        # "ENST00000378970","Brain - Amygdala","1.021"
+                        
+                        # there is no overlap of tissues.
+                        # Note: I did not check other protein, it has too many mRNAs associated to check manually.
+
+                        break
+
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
 
 
     # #
     # Runs after each test
     def tearDown(self):
-                   
+                    
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)
           
-      
-
-
