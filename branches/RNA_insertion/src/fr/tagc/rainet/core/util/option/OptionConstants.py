@@ -39,12 +39,14 @@ OPTION_RNA_BIOTYPES = "RNA biotypes filtering"
 OPTION_GENCODE = "Gencode basic filtering"
 OPTION_EXPRESSION_VALUE_CUTOFF = "Minimum expression value"
 OPTION_EXPRESSION_TISSUE_CUTOFF = "Minimum number tissues co-present"
+OPTION_LOW_MEMORY = "Low memory"
 # Enrichment analysis options
 OPTION_ANNOTATION_TABLE = "Protein annotation"
 OPTION_MINIMUM_PROTEIN_ANNOTATION = "Minimum proteins in annotation"
 OPTION_MINIMUM_PROTEIN_INTERACTION = "Minimum proteins in annotation with interaction"
 OPTION_NUMBER_RANDOMIZATIONS = "Number randomizations"
-OPTION_LOW_MEMORY = "Low memory"
+OPTION_EXPRESSION_WARNING = "Protein group expression proportion warning"
+OPTION_MINIMUM_EXPRESSION = "Minimum RPKM expression"
 
 #===============================================================================
 # Constants for default values
@@ -66,6 +68,8 @@ DEFAULT_RNA_BIOTYPES = RNA_BIOTYPES[:]
 DEFAULT_MINIMUM_PROTEIN_ANNOTATION = 5
 DEFAULT_MINIMUM_PROTEIN_INTERACTION = 2
 DEFAULT_NUMBER_RANDOMIZATIONS = 100
+DEFAULT_EXPRESSION_WARNING = "OFF"
+DEFAULT_MINIMUM_EXPRESSION = 0.0
 
 #===============================================================================
 # The definition of the options
@@ -102,7 +106,9 @@ OPTION_LIST = {  "Insertion": [
                     [ "-a", "--annotationTable", "store", "string", OPTION_ANNOTATION_TABLE, None, "Protein annotation table to be used for analysis. Must be one of : " + str( Constants.ANNOTATION_TABLES) ],
                     [ "-m", "--minimumProteinAnnotation", "store", "int", OPTION_MINIMUM_PROTEIN_ANNOTATION, DEFAULT_MINIMUM_PROTEIN_ANNOTATION, "Minimum number of proteins with annotation for enrichment test to be performed." ],
                     [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ],
-                    [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ]
+                    [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ],
+                    [ "-e", "--expressionWarning", "store", "float", OPTION_EXPRESSION_WARNING, DEFAULT_EXPRESSION_WARNING, "Turn warning flag on unless >=X proportion of proteins in annotations are present in the same tissue. Accepts values between 0.0 and 1.0. Default = 'OFF'" ],
+                    [ "-c", "--minimumExpression", "store", "float", OPTION_MINIMUM_EXPRESSION, DEFAULT_MINIMUM_EXPRESSION, "Used in conjunction with --expressionWarning. Minimum RPKM value to consider present in tissue. Default = 0" ]
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
