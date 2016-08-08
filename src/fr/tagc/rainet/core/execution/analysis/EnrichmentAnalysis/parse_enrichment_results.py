@@ -55,9 +55,14 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
 
     listRNASignificantEnrich = set()
 
+    # before filtering
     observedValues = []
     randomValues = []
     diffValues = []
+
+    # after filtering
+    observedValuesAfter = []
+    randomValuesAfter = []
 
     countAboveRandom = 0
     countRatioPassed = 0
@@ -100,7 +105,9 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
             # if both filters passed
             if signBoo and ratioBoo:
                 listRNASignificantEnrich.add( txID)
-
+                observedValuesAfter.append( float(observedSign))
+                randomValuesAfter.append( float(randomSign))
+                
 
             observedValues.append( float(observedSign))
             randomValues.append( float(randomSign))
@@ -117,6 +124,7 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
     if minimum_ratio != "OFF":
         Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing real/random ratio: %s " % countRatioPassed )
     Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing filters: %s " % len( listRNASignificantEnrich) )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : (after filtering) Observed mean: %.1f Random mean: %.1f" % ( np.mean( observedValuesAfter), np.mean( randomValuesAfter)) )
 
     # average number of tests per RNA, versus control
 
