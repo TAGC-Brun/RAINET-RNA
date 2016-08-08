@@ -107,7 +107,7 @@ OPTION_LIST = {  "Insertion": [
                     [ "-m", "--minimumProteinAnnotation", "store", "int", OPTION_MINIMUM_PROTEIN_ANNOTATION, DEFAULT_MINIMUM_PROTEIN_ANNOTATION, "Minimum number of proteins with annotation for enrichment test to be performed." ],
                     [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ],
                     [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ],
-                    [ "-e", "--expressionWarning", "store", "float", OPTION_EXPRESSION_WARNING, DEFAULT_EXPRESSION_WARNING, "Turn warning flag on unless >=X proportion of proteins in annotations are present in the same tissue. Accepts values between 0.0 and 1.0. Default = 'OFF'" ],
+                    [ "-e", "--expressionWarning", "store", "string", OPTION_EXPRESSION_WARNING, DEFAULT_EXPRESSION_WARNING, "Turn warning flag on unless >=X proportion of proteins in annotations are present in the same tissue. Accepts values between 0.0 and 1.0. Default = 'OFF'" ],
                     [ "-c", "--minimumExpression", "store", "float", OPTION_MINIMUM_EXPRESSION, DEFAULT_MINIMUM_EXPRESSION, "Used in conjunction with --expressionWarning. Minimum RPKM value to consider present in tissue. Default = 0" ]
                 ],
                 "DatabaseCheck" : [
