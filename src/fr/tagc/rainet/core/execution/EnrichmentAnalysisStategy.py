@@ -350,7 +350,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # Retrieve interacting data
         #=================================================================== 
  
-        # proteins with interaction data
+        # proteins with interaction data, based on interactingProteins table of RAINET DB
         allProteinsWithInteractionData = DataManager.get_instance().get_data( EnrichmentAnalysisStrategy.PRI_PROT_KW)
   
         #===================================================================   
@@ -397,7 +397,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 annotWithInteractionDict[ pathID].append( protID)
 
                 if pathID not in pathwayAnnotWithInteractionDataDict:
-                
                     pathwayAnnotWithInteractionDataDict[ pathID] = []
                 pathwayAnnotWithInteractionDataDict[ pathID].append( protID)
                  
@@ -437,7 +436,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 pathwayAnnotWithInteractionDataDict[ pathID] = []
  
         assert ( len( pathwayAnnotDict) == len( pathwayAnnotWithInteractionDataDict) )
-
 
         #===================================================================   
         # File with proteins per pathway
@@ -508,8 +506,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
         assert sumWithInteractionData == len( self.proteinWithAnnotationWithInteraction)
 
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions: %s " % str( self.allProteinsWithInteractionDataLen ) )
-        Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Proteins with interactions and with annotations: %s " % str( len( self.proteinWithAnnotationWithInteraction ) ) )
+        #Logger.get_instance().info( "EnrichmentAnalysisStrategy.annotation_report: Proteins with interactions, based on interactingProteins table: %s " % str( self.allProteinsWithInteractionDataLen ) )
+        Logger.get_instance().info( "EnrichmentAnalysisStrategy.annotation_report: Proteins with interactions and with annotations: %s " % str( len( self.proteinWithAnnotationWithInteraction ) ) )
 
  
     # #
@@ -563,6 +561,11 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.backgroundProteins = backgroundProteins
 
         Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Protein background: %s " % str( len( backgroundProteins) ) )
+
+        # Note: difference between backgroundProteins and 'self.proteinWithAnnotationWithInteraction' from annotation_report, 
+        # is that in annotatio_report the set of interacting proteins is retrieved from interactingProteins table, 
+        # whereas here it is retrieved straight from the interaction table, depending on the interaction filtering applied,
+        # not all proteins in interactingProteins table will contain at least an interacting in the interaction table.
 
         # delete object to save memory
         self.protAnnotDictLen = len( self.protAnnotDict)
@@ -621,13 +624,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             # retrieve total number of interactions with annotated proteins for this RNA
             totalRNAInteractions = { prot for annotID in rnaInteractions[ rnaID] for prot in rnaInteractions[ rnaID][ annotID]}
-
-#             #===================================================================   
-#             # initialise tissue expression for RNA       
-#             #===================================================================   
-#             if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:
-#                 # get tissue where RNA is expressed
-#                 for tissue in self.expressionDict[ rnaID]:
 
             #===================================================================   
             # Run real test            
@@ -764,7 +760,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             # note: test for each RNA - annotation pair. 
             x = len( protList) # white balls drawn ( proteins with current annotation with positive interactions)
             m = len( possibleProtList) # total white balls ( proteins with the current annotation (that have interaction predictions))
-            n = len( self.backgroundProteins) - m # total black balls ( all the proteins with at least one positive interaction, not in current annotation)
+            n = len( self.backgroundProteins) - m # total black balls ( all the proteins with at least one positive interaction and at least one annotation, but not in current annotation)
             k = len( total_rna_interactions) # total number of draws ( proteins with positive interactions, regardless of current annotation)
 
             assert ( m + n >= k), "number of draws should be less than total number of balls"
