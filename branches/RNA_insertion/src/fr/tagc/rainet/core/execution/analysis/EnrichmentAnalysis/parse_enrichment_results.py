@@ -15,24 +15,23 @@ from fr.tagc.rainet.core.util.time.Timer import Timer
 
 # from fr.tagc.rainet.core.data.Protein import Protein
 
-
 #===============================================================================
 # Started 25-June-2016 
 # Diogo Ribeiro
-DESC_COMMENT = "Script to parse output from EnrichmentAnalysisStrategy"
+DESC_COMMENT = "Script to parse output from EnrichmentAnalysisStrategy and add extra filters as well as transform into matrix format."
 SCRIPT_NAME = "parse_enrichment_results.py"
 #===============================================================================
 
 #===============================================================================
 # General plan:
-# 1)
-# 2)
+# 1) Read enrichment_per_rna file, get list of RNAs to filter out based on input criteria.
+# 2) Rewrite enrichment_results file based on these filters, output also enrichment matrix file.
 #===============================================================================
 
 #===============================================================================
 # Processing notes:
 # 1) Only writing to file annotations with at least one enrichment
-# 2) CURRENTLY NOT WORKING IF USING SIGN COLUMN AS INPUT
+# 2) 
 #===============================================================================
 
 
@@ -41,16 +40,13 @@ SCRIPT_NAME = "parse_enrichment_results.py"
 #===============================================================================
 
 REPORT_LIST_RNA_SIGN_ENRICH = "list_RNA_above_random.txt"
-REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_significant.tsv"
+REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered.tsv"
 REPORT_RNA_ANNOT_RESULTS_MATRIX = "enrichment_results_filtered_matrix.tsv"
-
-WARNING_FILTER_VALUE =  1.0 #NA
 
 # #
 # Read RNA enrichment file, get list of RNAs with significantly more enrichments compared to control.
-def read_enrichment_per_rna_file( enrichment_per_rna_file):
-    
-    
+def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
+       
     # Example format:
     # transcriptID    n_sign_tests_no_warning avg_n_sign_random_no_warning    n_times_above_random    empiricalPvalue significant
     # ENST00000230113 57      50.78   815     1.9e-01 0
@@ -62,6 +58,9 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file):
     observedValues = []
     randomValues = []
     diffValues = []
+
+    countAboveRandom = 0
+    countRatioPassed = 0
 
     with open( enrichment_per_rna_file, "r") as inFile:
         
@@ -75,9 +74,34 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file):
             
             poolRNA.add( txID)
 
-            if signFlag == "1":
+            # booleans for filterings, start as positive
+            signBoo = 1
+            ratioBoo = 1           
+
+            if signFlag == "0":
+                signBoo = 0
+            else:
+                countAboveRandom += 1
+
+            if minimum_ratio != "OFF":
+                # filter also by ratio between real and random
+                randomSign = float( randomSign)
+                
+                if randomSign != 0: # to avoid division by Zero
+                    ratio = float( observedSign) / randomSign
+                else:
+                    ratio = 0
+
+                if ratio < minimum_ratio:
+                    ratioBoo = 0
+                else:
+                    countRatioPassed += 1                    
+
+            # if both filters passed
+            if signBoo and ratioBoo:
                 listRNASignificantEnrich.add( txID)
-                        
+
+
             observedValues.append( float(observedSign))
             randomValues.append( float(randomSign))
 
@@ -87,9 +111,13 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file):
 
     # Print basic stats
     Logger.get_instance().info( "read_enrichment_per_rna_file : Total number of RNAs: %s " % len( poolRNA) )
-    Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs with enrichment significantly above random: %s " % len( listRNASignificantEnrich) )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : (before filtering) Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
 
-    Logger.get_instance().info( "read_enrichment_per_rna_file : Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs with enrichment significantly above random: %s " % countAboveRandom )
+    if minimum_ratio != "OFF":
+        Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing real/random ratio: %s " % countRatioPassed )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing filters: %s " % len( listRNASignificantEnrich) )
+
     # average number of tests per RNA, versus control
 
     # Write list of enriched RNAs to file
@@ -102,12 +130,11 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file):
     
 # #
 # Read RNA-annotation enrichment file (results), filter out results for RNAs that are not significantly enriched over random control, produce output files.
-def read_enrichment_results_file(enrichment_results_file, list_rna_significant_enrich, matrix_value_column, filter_warning_column):
+def read_enrichment_results_file(enrichment_results_file, list_rna_significant_enrich, matrix_value_column, filter_warning_column, filter_warning_value):
     
     # Example format:
     # transcriptID    annotID number_observed_interactions    number_possible_interactions    total_interacting_proteins      warning pval    corrected_pval  sign_corrected
-    # ENST00000230113 344     12      15      7515    0       5.0e-01 7.3e-01 0
-    
+    # ENST00000230113 344     12      15      7515    0       5.0e-01 7.3e-01 0   
 
     #===============================================================================
     # Output files
@@ -148,7 +175,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
             line = line.strip()
             spl = line.split( "\t")
             
-            annotID = spl[1]            
+            annotID = spl[1]
             warningFlag = int( spl[5])
             signFlag = int( spl[8])
             
@@ -158,7 +185,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
             if filter_warning_column:
                 # If value is determined not significant OR is tagged with a warning (for several reasons), fill it with constant value. 
                 if warningFlag or signFlag == 0:
-                    value = WARNING_FILTER_VALUE
+                    value = filter_warning_value
                 else:
                     outFile1.write( line + "\n")
 
@@ -179,7 +206,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     # Get set of annotations which had no enrichment
     nonEnrichedAnnotations = set()
     for annotID in annotValues:
-        if annotValues[ annotID].count( WARNING_FILTER_VALUE) == len( annotValues[ annotID]):
+        if annotValues[ annotID].count( filter_warning_value) == len( annotValues[ annotID]):
             nonEnrichedAnnotations.add( annotID)
 
     Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of enrichment_rna filter: %s" % ( excludedByRNA) )
@@ -243,19 +270,30 @@ if __name__ == "__main__":
                              help='Column in enrichmentResultsFile to use as value for matrix output file.')
         parser.add_argument('--filterWarningColumn', metavar='filterWarningColumn', type=int, default = 1,
                              help='Whether to exclude enrichments from enrichmentResultsFile based on the warning column ( col 5, 0-based).')
+        parser.add_argument('--filterWarningValue', metavar='filterWarningValue', type=str, default = "1.0",
+                             help='Value to output in matrix when result has warning flag on. E.g. 1.0 if using p-values, 0 if using significant boolean.')        
+        parser.add_argument('--minimumRatio', metavar='minimumRatio', type=str, default = "OFF",
+                             help='Float with minimum ratio value between real number of enrichments and random number of enrichments, if ratio is below given value, all enrichments of that RNA will be excluded. Default = "OFF".')
            
         # Gets the arguments
         args = parser.parse_args( ) 
+
+        #===============================================================================
+        # Argument verification
+        #===============================================================================
+
+        if args.minimumRatio != "OFF":
+            args.minimumRatio = float( args.minimumRatio)
 
         #===============================================================================
         # Run analysis / processing
         #===============================================================================
     
         Timer.get_instance().step( "Read Enrichment per RNA file..")    
-        listRNASignificantEnrich = read_enrichment_per_rna_file( args.enrichmentPerRNAFile)
+        listRNASignificantEnrich = read_enrichment_per_rna_file( args.enrichmentPerRNAFile, args.minimumRatio)
 
         Timer.get_instance().step( "Read Enrichment results file..")    
-        read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn)
+        read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
