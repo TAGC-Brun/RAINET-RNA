@@ -47,6 +47,9 @@ REPORT_MATRIX_COL_ANNOTATION = "matrix_col_annotation.tsv"
 
 SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
 
+COLORS_SET3 = ["#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD", "#CCEBC5", "#FFED6F"]
+COLORS_SET2 = ["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3"]
+
 # #
 # Read RNA enrichment file, get list of RNAs with significantly more enrichments compared to control.
 def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
@@ -264,60 +267,65 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     # Writing row annotation file (if applicable)
     #===============================================================================
 
-    if len( row_annotation) > 0:
-        # if rowAnnotation option is on
-        annotations = [] # contains list of annotations in order
-        for rna in sortedSetRNAs:
-            if rna in row_annotation:
-                # if there is several annotations and we only want information for proteins with a single domain
-                if len( row_annotation[ rna]) > 1 and mask_multiple == 1:
-                    annotation = SEVERAL_ANNOTATION_TAG
-                # if wanting information for all annotations
-                elif len(row_annotation[ rna]) > 0:
-                    # get all annotations
-                    annotation = ",".join( list( row_annotation[ rna]) )
-                else:
-                    raise RainetException("read_enrichment_results_file: Annotation information is incorrect. ", row_annotation[ rna])
-            # if there is no annotation information for current item
-            else:
-                annotation = no_annotation_tag
-        
-            annotations.append( annotation)
+    #TODO: making function out of this
 
-        # Write file with annotation of rows (default = RNA) based on same sorting as output matrix (for R script)
-        outFile3 = open( REPORT_MATRIX_ROW_ANNOTATION, "w")        
-        outFile3.write( "\t".join( annotations) + "\n")
-        outFile3.close()
+    if len( row_annotation) > 0: # if rowAnnotation option is on
+
+        _write_matrix_annotation_file( REPORT_MATRIX_ROW_ANNOTATION, sortedSetRNAs, row_annotation, mask_multiple, no_annotation_tag, COLORS_SET2)
 
     #===============================================================================
     # Writing col annotation file (if applicable)
     #===============================================================================
 
-    if len( col_annotation) > 0:
-        # if colAnnotation option is on
-        annotations = [] # contains list of annotations in order
-        for annotID in sortedSetAnnots:
-            if annotID in col_annotation:
-                # if there is several annotations and we only want information for proteins with a single domain
-                if len( col_annotation[ annotID]) > 1 and mask_multiple == 1:
-                    annotation = SEVERAL_ANNOTATION_TAG
-                # if wanting information for all annotations
-                elif len(col_annotation[ annotID]) > 0:
-                    # get all annotations
-                    annotation = ",".join( list( col_annotation[ annotID]) )
-                else:
-                    raise RainetException("read_enrichment_results_file: Annotation information is incorrect. ", col_annotation[ annotID])
-            # if there is no annotation information for current item
-            else:
-                annotation = no_annotation_tag
-        
-            annotations.append( annotation)
+    if len( col_annotation) > 0: # if colAnnotation option is on
+        _write_matrix_annotation_file( REPORT_MATRIX_COL_ANNOTATION, sortedSetAnnots, col_annotation, mask_multiple, no_annotation_tag, COLORS_SET3)
 
-        # Write file with annotation of rows (default = RNA) based on same sorting as output matrix (for R script)
-        outFile4 = open( REPORT_MATRIX_COL_ANNOTATION, "w")        
-        outFile4.write( "\t".join( annotations) + "\n")
-        outFile4.close()
-       
+
+# #
+# Helper function to write annotation files associated to matrix file.
+def _write_matrix_annotation_file( output_file, sorted_list, annotation_dict, mask_multiple, no_annotation_tag, color_set):
+
+    # set up colors for category plotting
+    listOfColors = []
+    lookupColors = {}
+    colorCount = 0
+
+    annotations = [] # contains list of annotations in order
+    for item in sorted_list:
+        if item in annotation_dict:
+            # if there is several annotations and we only want information for proteins with a single domain
+            if len( annotation_dict[ item]) > 1 and mask_multiple == 1:
+                annotation = SEVERAL_ANNOTATION_TAG
+            # if wanting information for all annotations
+            elif len(annotation_dict[ item]) > 0:
+                # get all annotations
+                annotation = ",".join( list( annotation_dict[ item]) )
+            else:
+                raise RainetException("_write_matrix_annotation_file: Annotation information is incorrect. ", annotation_dict[ item])
+        # if there is no annotation information for current item
+        else:
+            annotation = no_annotation_tag
+
+        # first time annotation is seen, attribute color to it
+        if annotation not in lookupColors:
+            try:
+                lookupColors[ annotation] = color_set[ colorCount]
+            except IndexError:
+                raise RainetException("_write_matrix_annotation_file: Too many different categories for the number of possible colors. ")
+            colorCount+= 1
+            
+        listOfColors.append( lookupColors[ annotation])
+    
+        annotations.append( annotation)
+
+        assert len( listOfColors) == len( annotations)
+        assert len( set(listOfColors)) == len( set( annotations))
+
+    # Write file with annotation of rows (default = RNA) based on same sorting as output matrix (for R script)
+    outFile = open( output_file, "w")        
+    outFile.write( "\t".join( annotations) + "\n")
+    outFile.write( "\t".join( listOfColors) + "\n")
+    outFile.close()
 
 
 # #
