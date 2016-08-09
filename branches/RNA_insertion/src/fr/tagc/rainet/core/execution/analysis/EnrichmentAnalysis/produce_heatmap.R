@@ -12,19 +12,33 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/parsing/NetworkModuleR10000/enrichment_results_filtered_matrix.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/parsing/KEGGR100/enrichment_results_filtered_matrix.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/KEGGR10000/enrichment_results_filtered_matrix.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR10000/enrichment_results_filtered_matrix.tsv"
 
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR10000/enrichment_results_filtered_matrix.tsv"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0"
+inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/test/CorumTest/"
 
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR10000/enrichment_results_filtered_matrix.tsv"
+inputFile = paste( inputFolder, "/enrichment_results_filtered_matrix.tsv", sep="")
+rowAnnotFile = paste( inputFolder, "/matrix_row_annotation.tsv", sep="")
+colAnnotFile = paste( inputFolder, "/matrix_col_annotation.tsv", sep="")
 
+# read files with annotation and colours
+rowAnnot <- fread(rowAnnotFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+rowAnnot = data.frame( rowAnnot)
+rowAnnot = as.character(as.vector(rowAnnot[1,]) )
+
+colAnnot <- fread(colAnnotFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+colAnnot = data.frame( colAnnot)
+colAnnot = as.character(as.vector(colAnnot[1,]) )
+
+length(rowAnnot)
+length(colAnnot)
+
+# matrix processing
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
 
 rownames = dataset$RNAs
-
 dataset <- subset( dataset, select = -RNAs )
-
 rownames(dataset) = rownames
-
 mat_data <- data.matrix(dataset)
 
 nrow(mat_data)
@@ -36,24 +50,31 @@ ncol(mat_data)
 par(cex.main=.6)# change the font size of title of plot
 
 # white to blue
-my_palette <- colorRampPalette(c("#67a9cf", "#f7f7f7"))(n = 20)
+#my_palette <- colorRampPalette(c("#67a9cf", "#f7f7f7"))(n = 20)
 # blue to white
-#my_palette <- colorRampPalette(c("#f7f7f7", "#67a9cf"))(n = 2)
+my_palette <- colorRampPalette(c("#f7f7f7", "#67a9cf"))(n = 2)
 
 heatmap.2(mat_data,
   density.info="none",  # turns off density plot inside color legend
   trace="none",         # turns off trace lines inside the heat map
 #  dendrogram="none",
   main = "", #"Enrichment of lincRNA interactions on network modules",
-  margins=c(1,1),
+  margins=c(10,10),
+#  margins=c(1,1),
+#  Colv="NA",    # turn off column clustering
+#  Rowv="NA",
   distfun = dist,
   hclustfun = hclust,
+  RowSideColors = rowAnnot,
+  ColSideColors = colAnnot,
   key = F, # remove color key
   key.title = "",
   key.xlab = "corrected p-value",
   key.ylab = NULL,
   col=my_palette,       # use on color palette defined earlier 
 )
+
+
 
 
 # dist.pear <- function(x) as.dist(1-cor(t(x)))
