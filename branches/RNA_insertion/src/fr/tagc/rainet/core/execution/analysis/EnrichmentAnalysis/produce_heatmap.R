@@ -1,4 +1,6 @@
 
+library(d3heatmap)
+library(scales)
 library(gplots)
 library(RColorBrewer)
 library(ggplot2)
@@ -15,6 +17,7 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 
 # real
 inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR1000Expr1.0"
 
 
 inputFile = paste( inputFolder, "/enrichment_results_filtered_matrix.tsv", sep="")
@@ -70,6 +73,11 @@ par(cex.main=.6)# change the font size of title of plot
 # blue to white
 my_palette <- colorRampPalette(c("#f7f7f7", "#67a9cf"))(n = 2)
 
+
+########################################
+# with annotation
+########################################
+
 heatmap.2(mat_data,
   density.info="none",  # turns off density plot inside color legend
   trace="none",         # turns off trace lines inside the heat map
@@ -94,51 +102,35 @@ legend("topleft", horiz=F,legend=uniqRow,col=uniqRowCols,pch=16,bty="n",inset = 
 # col legend
 legend("topright", horiz=F,legend=uniqCol,col=uniqColCols,pch=3,bty="n",inset = c(0,0),cex = 0.6)
 
+########################################
+# without annotation
+########################################
+
+install.packages("scales")
+
+d3heatmap(mat_data,
+          density.info="none",  # turns off density plot inside color legend
+          trace="none",         # turns off trace lines inside the heat map
+          #  dendrogram="none",
+          main = "", #"Enrichment of lincRNA interactions on network modules",
+          margins=c(5,5),
+          #  Colv="NA",    # turn off column clustering
+          #  Rowv="NA",
+          distfun = dist,
+          hclustfun = hclust,
+          key = F, # remove color key
+          key.title = "",
+          key.xlab = "corrected p-value",
+          key.ylab = NULL,
+          col=my_palette,       # use on color palette defined earlier 
+          k_row = 10,
+          k_col = 10
+          )
 
 
 # dist.pear <- function(x) as.dist(1-cor(t(x)))
 # hclust.ave <- function(x) hclust(x, method="average")
 # heatmap.2(mat_data, trace="none", distfun=dist.pear, hclustfun=hclust.ave)
-
-# 
-# heatmap.2(df,
-#           #  cellnote = mat_data,  # same data set for cell labels
-#           main = "Test", # heat map title
-#           #  notecol="black",      # change font color of cell labels to black
-#           density.info="none",  # turns off density plot inside color legend
-#           trace="none",         # turns off trace lines inside the heat map
-#           margins =c(8,13),     # widens margins around plot
-#           col=my_palette,       # use on color palette defined earlier 
-#           breaks=col_breaks,    # enable color transition at specified limits
-#           #  dendrogram="none",
-#           dendrogram="row",
-#           #  scale="none",
-#           Colv="NA",    # turn off column clustering
-#           Rowv = rep_tree_d,
-#           #  Rowv="NA",
-#           # RowSideColors = c(    # grouping row-variables into different
-#           #     rep("green", 37),   # categories, Measurement 1-3: green
-#           #     rep("black", 54)),
-#           RowSideColors = categ,
-#           cexRow = 0.6,
-#           cexCol = 0.7,
-#           offsetCol = 0.0,
-#           offsetRow = 0.1,
-#           srtCol = 0,
-#           adjCol = c(NA,0),
-#           #lwid=c(3, 4, 3 ),
-# )         
-# labRow = NULL,
-# labCol = NULL,
-# xlab = "Network modules",
-# ylab = "lincRNAs",
-#   colsep=c(1:6),rowsep=(1:62),
-#   sepwidth=c(0.05,0.05), sepcolor="white",
-#   Colv="NA",    # turn off column clustering
-#   Rowv="NA", #turn off row clustering
-#          na.color="blue",
-#          symbreaks = min(mat_data, na.rm=TRUE),
-
 
 # source("https://bioconductor.org/biocLite.R")
 # biocLite("made4")
