@@ -9,31 +9,45 @@ library(data.table)
 library(plyr)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/parsing/NetworkModuleR10000/enrichment_results_filtered_matrix.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/parsing/KEGGR100/enrichment_results_filtered_matrix.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/KEGGR10000/enrichment_results_filtered_matrix.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR10000/enrichment_results_filtered_matrix.tsv"
+# testing
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/test/CorumTest/"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/test/CorumTest/testingSet/"
 
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0"
-inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/test/CorumTest/"
+# real
+inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0"
+
 
 inputFile = paste( inputFolder, "/enrichment_results_filtered_matrix.tsv", sep="")
 rowAnnotFile = paste( inputFolder, "/matrix_row_annotation.tsv", sep="")
 colAnnotFile = paste( inputFolder, "/matrix_col_annotation.tsv", sep="")
 
+########################################
 # read files with annotation and colours
+########################################
+
 rowAnnot <- fread(rowAnnotFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
-rowAnnot = data.frame( rowAnnot)
-rowAnnot = as.character(as.vector(rowAnnot[1,]) )
+rowAnnotCols = as.character(as.vector(rowAnnot[1,]) )
+
+#Getting color correspondence for plot legend
+uniqRow = unique( names(rowAnnot))
+uniqRowCols = c()
+for (categ in uniqRow){
+    uniqRowCols = c( uniqRowCols, rowAnnot[[categ]])
+}
 
 colAnnot <- fread(colAnnotFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
-colAnnot = data.frame( colAnnot)
-colAnnot = as.character(as.vector(colAnnot[1,]) )
+colAnnotCols = as.character(as.vector(colAnnot[1,]) )
 
-length(rowAnnot)
-length(colAnnot)
+#Getting color correspondence for plot legend
+uniqCol = unique( names(colAnnot))
+uniqColCols = c()
+for (categ in uniqCol){
+  uniqColCols = c( uniqColCols, colAnnot[[categ]])
+}
 
+########################################
 # matrix processing
+########################################
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
 
 rownames = dataset$RNAs
@@ -41,11 +55,13 @@ dataset <- subset( dataset, select = -RNAs )
 rownames(dataset) = rownames
 mat_data <- data.matrix(dataset)
 
-nrow(mat_data)
-ncol(mat_data)
+stopifnot( length(rowAnnotCols) == nrow(mat_data))
+stopifnot( length(colAnnotCols) == ncol(mat_data))
 
-#colMeans(mat_data)
-# apply(mat_data, 1, mean)
+
+########################################
+# produce heatmap
+########################################
 
 par(cex.main=.6)# change the font size of title of plot
 
@@ -59,14 +75,13 @@ heatmap.2(mat_data,
   trace="none",         # turns off trace lines inside the heat map
 #  dendrogram="none",
   main = "", #"Enrichment of lincRNA interactions on network modules",
-  margins=c(10,10),
-#  margins=c(1,1),
+  margins=c(1,1),
 #  Colv="NA",    # turn off column clustering
 #  Rowv="NA",
   distfun = dist,
   hclustfun = hclust,
-  RowSideColors = rowAnnot,
-  ColSideColors = colAnnot,
+  RowSideColors = rowAnnotCols,
+  ColSideColors = colAnnotCols,
   key = F, # remove color key
   key.title = "",
   key.xlab = "corrected p-value",
@@ -74,6 +89,10 @@ heatmap.2(mat_data,
   col=my_palette,       # use on color palette defined earlier 
 )
 
+# row legend
+legend("topleft", horiz=F,legend=uniqRow,col=uniqRowCols,pch=16,bty="n",inset = c(0,0),cex = 0.6)
+# col legend
+legend("topright", horiz=F,legend=uniqCol,col=uniqColCols,pch=3,bty="n",inset = c(0,0),cex = 0.6)
 
 
 
