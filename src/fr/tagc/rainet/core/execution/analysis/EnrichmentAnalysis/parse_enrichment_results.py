@@ -47,7 +47,7 @@ REPORT_MATRIX_COL_ANNOTATION = "matrix_col_annotation.tsv"
 
 SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
 
-COLORS_SET3 = ["#8DD3C7", "#FFFFB3", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#D9D9D9", "#BC80BD", "#CCEBC5", "#FFED6F"]
+COLORS_SET3 = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
 COLORS_SET2 = ["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3"]
 
 # #
@@ -146,7 +146,7 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
 # #
 # Read RNA-annotation enrichment file (results), filter out results for RNAs that are not significantly enriched over random control, produce output files.
 def read_enrichment_results_file(enrichment_results_file, list_rna_significant_enrich, matrix_value_column, filter_warning_column, filter_warning_value,
-                                 row_annotation, col_annotation, mask_multiple, no_annotation_tag):
+                                 row_annotation, col_annotation, mask_multiple, no_annotation_tag, no_annotation_filter):
     
     # Example format:
     # transcriptID    annotID number_observed_interactions    number_possible_interactions    total_interacting_proteins      warning pval    corrected_pval  sign_corrected
@@ -231,24 +231,53 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
 
     outFile1.close()
 
+
+    #===============================================================================
+    # Writing matrix file and associated files
+    #
+    #===============================================================================
+
+    # initialise
+    sortedSetRNAs = sorted( setRNAs)   
+    sortedSetAnnots = sorted( setAnnots - nonEnrichedAnnotations)
+
+    #===============================================================================
+    # Writing row annotation file (if applicable)
+    #===============================================================================
+
+    if len( row_annotation) > 0: # if rowAnnotation option is on
+        rowWithAnnotation = _write_matrix_annotation_file( REPORT_MATRIX_ROW_ANNOTATION, sortedSetRNAs, row_annotation, mask_multiple, no_annotation_tag, COLORS_SET2, no_annotation_filter)
+    else:
+        rowWithAnnotation = None
+
+    #===============================================================================
+    # Writing col annotation file (if applicable)
+    #===============================================================================
+
+    if len( col_annotation) > 0: # if colAnnotation option is on
+        colWithAnnotation = _write_matrix_annotation_file( REPORT_MATRIX_COL_ANNOTATION, sortedSetAnnots, col_annotation, mask_multiple, no_annotation_tag, COLORS_SET3, no_annotation_filter)
+    else:
+        colWithAnnotation = None
+
     #===============================================================================
     # Writing matrix file
     #===============================================================================
 
-    sortedSetRNAs = sorted( setRNAs)   
-    sortedSetAnnots = sorted( setAnnots - nonEnrichedAnnotations)
+    # if no_annotation filter is active, filter lists of RNAs and Annotations accordingly to write matrix
+    if no_annotation_filter:
+        sortedSetRNAs = [ item for item in sortedSetRNAs if item in rowWithAnnotation]
+        sortedSetAnnots = [ item for item in sortedSetAnnots if item in colWithAnnotation]
 
     # write header with annot IDs
     outFile2.write( "RNAs")
     for annot in sortedSetAnnots:
         outFile2.write( "\t%s" % annot )
     outFile2.write( "\n")
-    
+       
     # write bulk of file, one row per rna, one column per protein
     for rna in sortedSetRNAs:
         text = rna
-        
-        for annot in sortedSetAnnots:
+        for annot in sortedSetAnnots:          
             tag = rna + "|" + annot
             if tag in dictPairs:
                 score = dictPairs[tag]
@@ -263,32 +292,20 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     
     outFile2.close()
 
-    #===============================================================================
-    # Writing row annotation file (if applicable)
-    #===============================================================================
-
-    #TODO: making function out of this
-
-    if len( row_annotation) > 0: # if rowAnnotation option is on
-
-        _write_matrix_annotation_file( REPORT_MATRIX_ROW_ANNOTATION, sortedSetRNAs, row_annotation, mask_multiple, no_annotation_tag, COLORS_SET2)
-
-    #===============================================================================
-    # Writing col annotation file (if applicable)
-    #===============================================================================
-
-    if len( col_annotation) > 0: # if colAnnotation option is on
-        _write_matrix_annotation_file( REPORT_MATRIX_COL_ANNOTATION, sortedSetAnnots, col_annotation, mask_multiple, no_annotation_tag, COLORS_SET3)
-
 
 # #
 # Helper function to write annotation files associated to matrix file.
-def _write_matrix_annotation_file( output_file, sorted_list, annotation_dict, mask_multiple, no_annotation_tag, color_set):
+# If option chose, filters out items with no annotation
+def _write_matrix_annotation_file( output_file, sorted_list, annotation_dict, mask_multiple, no_annotation_tag, color_set, no_annotation_filter):
+
+    Logger.get_instance().info( "_write_matrix_annotation_file : writing %s file.." % ( output_file ) )
 
     # set up colors for category plotting
     listOfColors = []
     lookupColors = {}
     colorCount = 0
+
+    withAnnotation = set() # stores items with annotation
 
     annotations = [] # contains list of annotations in order
     for item in sorted_list:
@@ -313,10 +330,14 @@ def _write_matrix_annotation_file( output_file, sorted_list, annotation_dict, ma
             except IndexError:
                 raise RainetException("_write_matrix_annotation_file: Too many different categories for the number of possible colors. ")
             colorCount+= 1
-            
-        listOfColors.append( lookupColors[ annotation])
     
-        annotations.append( annotation)
+        if no_annotation_filter and annotation == no_annotation_tag:
+            # if no_annotation filter on and there is no annotation, do not store in variables
+            pass
+        else:
+            annotations.append( annotation)
+            listOfColors.append( lookupColors[ annotation])
+            withAnnotation.add( item)        
 
         assert len( listOfColors) == len( annotations)
         assert len( set(listOfColors)) == len( set( annotations))
@@ -327,6 +348,9 @@ def _write_matrix_annotation_file( output_file, sorted_list, annotation_dict, ma
     outFile.write( "\t".join( listOfColors) + "\n")
     outFile.close()
 
+    Logger.get_instance().info( "_write_matrix_annotation_file : Number of items filtered out by having no annotation: %i" % ( len( sorted_list) - len( withAnnotation) ) )
+
+    return withAnnotation
 
 # #
 # Reads annotation file and returns dictionary of 
@@ -385,6 +409,8 @@ if __name__ == "__main__":
                              help='Whether to mask annotations when having more than one annotation (val = 1), or display all annotations separated by comma (val = 0). (default = 1).')
         parser.add_argument('--noAnnotationTag', metavar='noAnnotationTag', type=str, default = "Other",
                              help='Text to write for the transcripts that are not in provided annotation files. Default = "Other"')
+        parser.add_argument('--noAnnotationFilter', metavar='noAnnotationFilter', type=int, default = 0,
+                             help='If on, columns and rows with no annotation will be filtered out from the matrix file (and associated files). Default = 0 (OFF)')
 
            
         # Gets the arguments
@@ -420,7 +446,7 @@ if __name__ == "__main__":
 
         Timer.get_instance().step( "Read Enrichment results file..")    
         read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
-                                      rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag )
+                                      rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter )
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
