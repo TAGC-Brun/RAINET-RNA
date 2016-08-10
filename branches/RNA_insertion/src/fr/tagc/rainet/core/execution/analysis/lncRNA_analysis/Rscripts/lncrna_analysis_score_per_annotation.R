@@ -19,6 +19,10 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 
 inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/snorna/annotated_interactions.tsv"
 
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/carlevaro2016/boolean/cytoplasmic_proteins/annotated_interactions.tsv"
+
+inputFile1 = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/carlevaro2016/boolean/nuclear_proteins/annotated_interactions.tsv"
+
 dataset1 <- fread(inputFile1, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ####################
@@ -37,7 +41,7 @@ minimum_category_size = 10 # minimum number of items in category for it to be pl
 # using variable name to get data of interest
 dataset1$metricToUse = dataset1[[metricToUse]]
 
-head(dataset1)
+head(dataset1,2)
 
 dataset1count = count(dataset1, 'annotation')
 

@@ -6,6 +6,7 @@ library(data.table)
 require(ggplot2)
 require(grid)
 require(gridExtra)
+library(RColorBrewer)
 library(ggbiplot)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
@@ -13,12 +14,14 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/test/pca/interaction_score_matrix_altered2.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/mondal2015_ji2016/mondal2015_s5_ji2016/interaction_score_matrix.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/fake_matrix_for_testing.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/fake_matrix_for_testing2.tsv"
 
 # all proteins
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/mondal2015_ji2016/annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/sample_annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/sample_annotated_interactions.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/boolean/nuclear_vs_cytoplasmic.tsv"
 
 # RBP only
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RBP_only/annotated_interactions.tsv"
@@ -31,8 +34,24 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/RNA_transport/cytoplasmic_vs_nuclear.txt"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/ribosomal/RNA_transport/free_polysomal_subset.txt"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins/cytoplasmic_vs_nuclear.txt"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_expression_data/cytoplasmic_vs_nuclear.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_expression_data/cytoplasmic_vs_nuclear.txt"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_expression_data/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/lncrna_vs_mrna/mRNA_surveillance_pathway/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/lncrna_vs_mrna/RNA_degradation_pathway/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/biotypes/RNA_degradation_pathway/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_interaction_filter/nuclear_vs_cytoplasmic.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/exportins_importins_interaction_filter/RBP_only/nuclear_vs_cytoplasmic.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/cytoplasmic_proteins/cytoplasmic_vs_nuclear.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/carlevaro2016/cellular/nuclear_proteins/cytoplasmic_vs_nuclear.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/mondal2015_ji2016/cytoplasmic_proteins/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/mondal2015_ji2016/nuclear_proteins/annotated_interactions.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/snoRNA/Ensembl82/nofilter/haca_vs_cd_box.txt"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_analysis/LncRNA_analysis/results/PCA_analysis/snoRNA/Ensembl82/filter/interacting_proteins/transpose/interaction_score_matrix.tsv"
+
+# enrichment
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR10000/annotated_interactions.tsv"
+
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR10000/annotated_interactions.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -41,7 +60,7 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 ####################
 
 annotCol = "annotation" # name of the column carrying the annotation information
-minimum_category_size = 10 # minimum number of items in category for it to be plotted #0 if no filter
+minimum_category_size = 1 # minimum number of items in category for it to be plotted #0 if no filter
 
 ####################
 ## initialisation
@@ -59,10 +78,6 @@ dataset = datasetLess
 row.names(dataset) = dataset$RNAs
 dataset$RNAs = NULL
 
-# get list of proteins
-proteins = c(names(dataset))
-proteins = proteins[1:length(proteins)-1]
-proteins = gsub("|", '.', proteins, fixed = 1)
 
 # # backup annotation data, remove annotation column from dataset
 # annotationData = dataset[[annotCol]]
@@ -73,19 +88,25 @@ ncol(dataset)
 # to allow column slice, need to convert data.table to data.frame
 dataset = data.frame(dataset)
 
+# get list of proteins
+proteins = c(names(dataset))
+proteins = proteins[1:length(proteins)-1]
+# proteins = gsub("|", '.', proteins, fixed = 1) # perhaps no need in case I create list of proteins after converting dataset to dataframe
+
 ####################
 ## Run PCA
 ####################
 
-## ADE4
-acp <- dudi.pca( dataset[, proteins], scannf = FALSE, nf = ncol(dataset), scale= FALSE)
+## ADE4 library for PCA
 
 ## Produce colors for dataset
 sample_list = unique( dataset$annotation)
-simple_color_palette = rainbow( length( sample_list))
+simple_color_palette = brewer.pal(length( sample_list), "Dark2")
 simple_colors = unlist( lapply( sample_list, function( x){
   return( simple_color_palette[ which( sample_list == x)])
 }))
+
+acp <- dudi.pca( dataset[, proteins], scannf = FALSE, nf = ncol(dataset), scale= FALSE)
 
 # Plot the content of information by axes
 barplot( 100*acp$eig/sum( acp$eig),
@@ -133,49 +154,79 @@ for( cs_index in c(1,2,3)){
   }
 }
 
-## R prcomp
-pca_result <- prcomp(dataset[, proteins], center = TRUE, scale. = FALSE)
-# scale false since all data have same units/scale, they all come from catRAPID
-
-# make plot with variance weight for axis
-std_dev <- pca_result$sdev
-pr_var <- std_dev^2
-prop_varex <- pr_var/sum(pr_var)
-#scree plot
-plot(prop_varex, xlab = "Principal Components",
-       ylab = "Proportion of Variance Explained",
-       type = "b")
-#cumulative scree plot
-plot(cumsum(prop_varex), xlab = "Principal Component",
-       ylab = "Cumulative Proportion of Variance Explained",
-       type = "b")
-
-# # print a summary of the PCA results:
-# summary(pca_result)
-
-listPlot = list()
-listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
- scale_color_discrete(name = '') +
- theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
-  scale_color_discrete(name = '') +
-  theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
-  scale_color_discrete(name = '') +
-  theme(legend.direction = 'horizontal', legend.position = 'top')
-listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
-  scale_color_discrete(name = '') +
-  theme(legend.direction = 'horizontal', legend.position = 'top')
-
-grid_arrange_shared_legend(listPlot)
 
 
-# analysing the principal components
+# #checking how many unique categories, to get how many colors we need
+# unique <- c()
+# for (v in clades){
+#   if (!v %in% unique){
+#     unique <- c(unique,v)
+#   }
+# }
+# colors <- brewer.pal(length(unique),"Set3") #Set1 allows for up to 9 colors, use Set3 for 12 colors
+# 
+# #building lists of categories, and associated colors etc
+# lookup <- c() #helper
+# xcateg <- c() #color per species
+# uniqueColors <-c() #color per clade
+# count <- 0 #for the colors
+# separator <- c()
+# count2 <- 0 #for the separator
+# for (v in clades){
+#   count2 <- count2+1
+#   if (!v %in% lookup){
+#     count <- count+1
+#     uniqueColors <- c(uniqueColors,colors[count])
+#     separator <- c(separator,count2-1)
+#   }
+#   lookup <- c(lookup,v)
+#   xcateg <- c(xcateg,colors[count])
+# }
+#then:   ColSideColors = xcateg,
 
-rot = pca_result$rotation
-length(rot[,1])
-tail(sort(rot[,1]))
-tail(sort(rot[,2]))
+
+# ## R prcomp
+# pca_result <- prcomp(dataset[, proteins], center = TRUE, scale. = FALSE)
+# # scale false since all data have same units/scale, they all come from catRAPID
+# 
+# # make plot with variance weight for axis
+# std_dev <- pca_result$sdev
+# pr_var <- std_dev^2
+# prop_varex <- pr_var/sum(pr_var)
+# #scree plot
+# plot(prop_varex, xlab = "Principal Components",
+#        ylab = "Proportion of Variance Explained",
+#        type = "b")
+# #cumulative scree plot
+# plot(cumsum(prop_varex), xlab = "Principal Component",
+#        ylab = "Cumulative Proportion of Variance Explained",
+#        type = "b")
+# 
+# # # print a summary of the PCA results:
+# # summary(pca_result)
+# 
+# listPlot = list()
+# listPlot[[1]] = ggbiplot(pca_result, choices = 1:2, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
+#  scale_color_discrete(name = '') +
+#  theme(legend.direction = 'horizontal', legend.position = 'top')
+# listPlot[[2]] = ggbiplot(pca_result, choices = c(1,3), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
+#   scale_color_discrete(name = '') +
+#   theme(legend.direction = 'horizontal', legend.position = 'top')
+# listPlot[[3]] = ggbiplot(pca_result, choices = 2:3, var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
+#   scale_color_discrete(name = '') +
+#   theme(legend.direction = 'horizontal', legend.position = 'top')
+# listPlot[[4]] = ggbiplot(pca_result, choices = c(3,4), var.axes = 0, var.scale = 1, alpha = 0.2, ellipse = TRUE,  groups = dataset$annotation) +
+#   scale_color_discrete(name = '') +
+#   theme(legend.direction = 'horizontal', legend.position = 'top')
+# 
+# grid_arrange_shared_legend(listPlot)
+# 
+# # analysing the principal components
+# 
+# rot = pca_result$rotation
+# length(rot[,1])
+# tail(sort(rot[,1]))
+# tail(sort(rot[,2]))
 
 # ### heatmap ###
 # 
