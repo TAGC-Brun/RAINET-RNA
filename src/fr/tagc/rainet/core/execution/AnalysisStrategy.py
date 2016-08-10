@@ -1374,8 +1374,8 @@ class AnalysisStrategy(ExecutionStrategy):
             outHandler.close()
 
         # if there is no PROT_TISSUES_KW data
-        except RainetException:
-            pass
+        except RainetException as e:
+            Logger.get_instance().info( "expression_report : report on number of proteins expressed per tissue not performed. " + str( e))
 
         #===================================================================    
         # File with numbers of RNAs expressed per tissue
@@ -1401,8 +1401,8 @@ class AnalysisStrategy(ExecutionStrategy):
             outHandler.close()
 
         # if there is no RNA_TISSUES_KW data
-        except RainetException:
-            pass
+        except RainetException as e:
+            Logger.get_instance().info( "expression_report : report on number of RNAs expressed per tissue not performed. " + str( e))
 
         #=================================================================== 
         # File with number of tissues where both partners of pair expressed
@@ -1424,8 +1424,8 @@ class AnalysisStrategy(ExecutionStrategy):
             DataManager.get_instance().delete_data(AnalysisStrategy.PRI_TISSUES_KW)
 
         # if there is not such data
-        except RainetException:
-            pass
+        except RainetException as e:
+            Logger.get_instance().info( "expression_report : report on number of tissues where interaction expressed. " + str( e))
 
     # #
     # Run Rscript to produce Sweave file and consequent pdf report, using the data written by this script
