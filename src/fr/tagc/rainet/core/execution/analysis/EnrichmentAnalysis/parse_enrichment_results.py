@@ -125,12 +125,14 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
 
     # Print basic stats
     Logger.get_instance().info( "read_enrichment_per_rna_file : Total number of RNAs: %s " % len( poolRNA) )
-    Logger.get_instance().info( "read_enrichment_per_rna_file : (before filtering) Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
 
     Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs with enrichment significantly above random: %s " % countAboveRandom )
     if minimum_ratio != "OFF":
         Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing real/random ratio: %s " % countRatioPassed )
-    Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing filters: %s " % len( listRNASignificantEnrich) )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing all filters: %s " % len( listRNASignificantEnrich) )
+    
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Significant enrichment tests:" )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : (before filtering) Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
     Logger.get_instance().info( "read_enrichment_per_rna_file : (after filtering) Observed mean: %.1f Random mean: %.1f" % ( np.mean( observedValuesAfter), np.mean( randomValuesAfter)) )
 
     # average number of tests per RNA, versus control
