@@ -11,6 +11,8 @@ inputFile = paste( output_folder, report_interactions_tissues_where_expressed, s
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/interactions_tissues_where_expressed.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/interactions_tissues_where_expressed_shuf.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real_lncrna_expr/stats_full/Report/interactions_tissues_where_expressed.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real_lncrna_expr/stats_full/Report/interactions_tissues_where_expressed_shuf.tsv"
 
 print (paste("INPUT FILE:",inputFile) )
 
@@ -38,7 +40,6 @@ if (nrow(dataset) != 0 ){
     theme_minimal() +
     xlab( "Tissues") +
     ylab( "Frequency")
-  
   print(plt1)
   
   #### Histogram of number of tissues with co-presence ####
@@ -52,7 +53,6 @@ if (nrow(dataset) != 0 ){
     theme_minimal() +
     xlab( "Number of tissues with co-presence" ) +
     ylab( "Interaction count")
-  
   print(plt2)
 } else{
   print ("No data for this section.")
@@ -75,4 +75,4 @@ if (nrow(dataset) != 0 ){
 #   ylab( "Frequency interaction (density)")
 # 
 # print(plt2)
-
+# 
