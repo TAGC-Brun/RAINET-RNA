@@ -1,11 +1,11 @@
 #!/usr/bin/python2.7
 import os
+import sys
 import glob
 from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 # requires fastaq 3.11.0 to be installed
 
 ##### THIS SCRIPT SHOULD BE RUN FROM COMMAND LINE
-
 
 ###############################################################################
 # output files will be written in same folder as input
@@ -13,11 +13,11 @@ from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 # inputFragmentsResult is output file from running catRAPID omics fragments (webserver automatically fragments if above 1200nt)
 ###############################################################################
 
-inputFolder = "/home/diogo/Documents/RAINET_data/catRAPID/webserver_results/HOTAIR_fragments/"
+inputFolder = sys.argv[1] #"/home/diogo/Documents/RAINET_data/catRAPID/webserver_results/HOTAIR_fragments/"
+inputFasta = inputFolder + sys.argv[2] #"ENST00000424518_HOTAIR_001.fa"
+inputFragmentsResult = inputFolder + sys.argv[3] #"ENST00000424518_HOTAIR_001.tsv"
 
-inputFasta = inputFolder + "ENST00000424518_HOTAIR_001.fa"
-inputFragmentsResult = inputFolder + "ENST00000424518_HOTAIR_001.tsv"
-
+###############################################################################
 
 # function to read a output file from catRAPID omics (fragmenting RNA) and retrieve all the fragment coordinates
 def read_input_fragments_result( input_fragments_result):
@@ -48,6 +48,7 @@ def read_input_fragments_result( input_fragments_result):
                 print "Failed to split line"
                 print line
                 print "expected format includes coodinates (fragmented transcript) such as: sp|A0AV96|RBM47_HUMAN HOTAIR-001.cdna_1_261-405    -0.12    0.50    0.99    NO    yes    1    -    1.61"
+                raise Exception
 
     print "Found %s fragments" % len( setOfCoordinates)
 
