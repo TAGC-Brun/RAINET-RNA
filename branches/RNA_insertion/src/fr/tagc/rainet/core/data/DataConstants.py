@@ -234,6 +234,35 @@ CORUM_ANNOTATION_COMMENT_CHAR = "#"
 
 #===============================================================================
 #===============================================================================
+# CUSTOM CLUSTER DEFINITION AND ANNOTATIONS
+#===============================================================================
+#===============================================================================
+
+# Headers and Parameters for CustomCluster
+#===============================================================================
+
+CUSTOM_CLUSTER_DEFINITION_PROPERTY = "CUSTOM_CLUSTER_DEFINITION"
+
+CUSTOM_CLUSTER_CLASS = "CustomCluster"
+
+CUSTOM_CLUSTER_HEADERS = ["ID"]
+CUSTOM_CLUSTER_PARAMS = ["ID"]
+CUSTOM_CLUSTER_COMMENT_CHAR = "#"
+
+# Headers and Parameters for ProteinCustomAnnotaiton
+#===============================================================================
+
+CUSTOM_ANNOTATION_PROPERTY = "CUSTOM_ANNOTATION"
+
+CUSTOM_ANNOTATION_CLASS = "ProteinCustomAnnotation"
+
+CUSTOM_ANNOTATION_HEADERS = ["ID", "protein_id"]
+CUSTOM_ANNOTATION_PARAMS = ["ID", "protein_id"]
+CUSTOM_ANNOTATION_COMMENT_CHAR = "#"
+
+
+#===============================================================================
+#===============================================================================
 # INTERACTOME DEFINITION, NETWORK, PARTITION AND ANNOTATIONS
 #===============================================================================
 #===============================================================================
