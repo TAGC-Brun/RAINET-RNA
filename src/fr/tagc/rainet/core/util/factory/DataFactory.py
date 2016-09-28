@@ -31,6 +31,8 @@ from fr.tagc.rainet.core.data.WanCluster import WanCluster
 from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
 from fr.tagc.rainet.core.data.CorumCluster import CorumCluster
 from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
+from fr.tagc.rainet.core.data.CustomCluster import CustomCluster
+from fr.tagc.rainet.core.data.ProteinCustomAnnotation import ProteinCustomAnnotation
 
 
 ## This class is a Factory that aims to create objects of various Class from class name

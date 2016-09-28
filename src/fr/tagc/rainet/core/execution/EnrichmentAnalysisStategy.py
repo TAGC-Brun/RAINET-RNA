@@ -59,6 +59,8 @@ from fr.tagc.rainet.core.data.WanCluster import WanCluster
 from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
 from fr.tagc.rainet.core.data.CorumCluster import CorumCluster
 from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
+from fr.tagc.rainet.core.data.CustomCluster import CustomCluster
+from fr.tagc.rainet.core.data.ProteinCustomAnnotation import ProteinCustomAnnotation
 
 
 from fr.tagc.rainet.core.data import DataConstants
@@ -80,7 +82,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                               "KEGGPathway" : "ProteinKEGGAnnotation", 
                               "BioplexCluster" : "ProteinBioplexAnnotation",
                               "WanCluster" : "ProteinWanAnnotation",
-                              "CorumCluster" : "ProteinCorumAnnotation"}
+                              "CorumCluster" : "ProteinCorumAnnotation",
+                              "CustomCluster" : "ProteinCustomAnnotation"}
 
     # significance value 
     SIGN_VALUE_TEST = 0.05 # the alpha value to call enrichment for each individual hypergeomtric test
