@@ -30,6 +30,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
         self.networkFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr"
         self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/snrna/sn_expression_1.58_cutoff_15/storedInteractions.tsv"
+        #self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/telomerase_plus_random_tx/telomerase_plus_random_tx_interactions.out"      
         self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
         self.topPartners = 10
         self.outputFolder = "test_output/"
@@ -123,6 +124,8 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
         print "| test_pick_top_proteins | "        
 
+        self.run.read_network_file()
+
         self.run.read_catrapid_file()
 
         self.run.pick_top_proteins()
@@ -141,7 +144,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # sp|Q70EK9|UBP51_HUMAN    ENST00000384010    43.68    0.91    0.14
         # sp|Q92541|RTF1_HUMAN    ENST00000384010    42.07    0.9    0.12
 
-        self.assertTrue( rnaTops[ "ENST00000384010"] == ["KIF2C_HUMAN","GZF1_HUMAN","RSH4A_HUMAN","MD1L1_HUMAN","S12A8_HUMAN","GRPL2_HUMAN","LRC23_HUMAN","PBIP1_HUMAN","UBP51_HUMAN","RTF1_HUMAN"])
+        self.assertTrue( rnaTops[ "ENST00000384010"] == ['KIF2C_HUMAN', 'MD1L1_HUMAN', 'GRPL2_HUMAN', 'PBIP1_HUMAN', 'RTF1_HUMAN', 'IGBP1_HUMAN', 'SHOT1_HUMAN', 'MUM1_HUMAN', 'CASC1_HUMAN', 'SSRP1_HUMAN'])
 
 
     def test_calculate_metrics(self):

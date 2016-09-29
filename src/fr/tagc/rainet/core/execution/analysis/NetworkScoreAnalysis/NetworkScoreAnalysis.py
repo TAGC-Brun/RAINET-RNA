@@ -3,7 +3,7 @@ import os
 import argparse
 import igraph
 
-# import numpy as np
+import numpy as np
 # import pandas as pd
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -32,8 +32,8 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 
 #===============================================================================
 # Processing notes:
-# 1)
-# 2)
+# 1) Using uniprot ID instead of uniprot AC
+# 2) Ignoring interactions with proteins not in the PPI network. the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
 #===============================================================================
 
 class NetworkScoreAnalysis(object):
@@ -266,9 +266,16 @@ class NetworkScoreAnalysis(object):
             for score in sortedScores:
                 if boo:
                     for prot in rnaTargets[ rna][ score]:
-                        # add more top proteins if top limit is not yet reached
+
+                        # add top proteins to rnaTops if top limit is not yet reached
                         if len( rnaTops[ rna]) < self.topPartners:
-                            rnaTops[ rna].append( prot)
+                            # check if protein present in provided graph, otherwise pick next protein
+                            if prot in self.dictNames:
+                                rnaTops[ rna].append( prot)
+                            else:
+                                # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
+                                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' protein %s is not present in PPI network, will use next top protein." % ( rna, prot ) )
+                                
                         else:
                             # if top is full, stop searching for more proteins
                             boo = 0
@@ -277,7 +284,6 @@ class NetworkScoreAnalysis(object):
             # Warn if there is not enough proteins to fill top
             if len( rnaTops[ rna]) < self.topPartners:
                 Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions to fill provided top. %s proteins are used." % ( rna, len( rnaTops[ rna]) ) )
-                
 
         self.rnaTops = rnaTops
 
@@ -286,15 +292,45 @@ class NetworkScoreAnalysis(object):
     # #
     # For each RNA, calculate several metrics for their top protein partners in their PPI network
     def calculate_metrics(self):
-         
-                  
+                
+        dictNames = self.dictNames    
+        
         rnaTops = self.rnaTops        
         graph = self.graph
  
+        #=======================================================================
+        # Calculate mean of mean shortest path between top proteins
+        #=======================================================================
+        # for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
+ 
+        rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
+ 
         for rna in rnaTops:
-            print rna, rnaTops[ rna]
+
+            allIdx = [ dictNames[ prot] for prot in rnaTops[ rna]]
+            
+            assert( len( allIdx) == self.topPartners)
+
+            meanShortestPaths = []
+
+            for idx in allIdx:
+                # get list of indexes other than current
+                otherIdx = [i for i in allIdx if i != idx ] 
+                # calculate shortest path between current node against all others
+                shortestPaths = graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
+                # calculate mean shortest path for a node
+                meanShortestPath = np.mean( shortestPaths)
+                meanShortestPaths.append( meanShortestPath)
+            
+            # calculate mean shortest path for current RNA
+            meanRNAShortestPath = np.mean( meanShortestPaths)
+            
+            rnaShortestPath[ rna] = "%.2f" % meanRNAShortestPath
+
+        
+        print rnaShortestPath
          
-         
+             
         # TODO: when making random control, use same amount of proteins as existing for each RNA
  
      
