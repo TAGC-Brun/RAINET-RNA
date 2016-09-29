@@ -65,14 +65,15 @@ class NetworkScoreAnalysis(object):
         SQLManager.get_instance().set_DBpath(self.rainetDBFile)
         self.sql_session = SQLManager.get_instance().get_session()
 
-#         # make output folder
-#         if not os.path.exists( self.outputFolder):
-#             os.mkdir( self.outputFolder)
+        # make output folder
+        if not os.path.exists( self.outputFolder):
+            os.mkdir( self.outputFolder)
 
 
     # #
     # Use RAINET DB to retrieve Protein cross references
     def protein_cross_references(self):
+
 
         proteinIDMapping = "proteinIDMapping"
 
@@ -85,8 +86,6 @@ class NetworkScoreAnalysis(object):
         proteinIDMappingDict = { prot : proteinIDMappingDict[prot][0] for prot in proteinIDMappingDict}
 
         self.proteinIDMappingDict = proteinIDMappingDict
-
-        return proteinIDMappingDict
    
 
     # #
@@ -127,12 +126,14 @@ class NetworkScoreAnalysis(object):
     
         # swap dictionary to have graph index as keys (note that there is 1-to-1 correspondence)
         proteinGraphIDDict = { dictNames[ prot] : prot for prot in dictNames} # key -> graph index (internal id), value -> protein name
-    
+        
         assert( len( dictNames) == len( dictNames))
     
         self.graph = graph
         self.proteinGraphIDDict = proteinGraphIDDict
+        self.dictNames = dictNames
                 
+        # for testing purposes
         return graph, listOfNames, listOfTuples, dictNames
     
     
@@ -178,8 +179,138 @@ class NetworkScoreAnalysis(object):
  
         self.degreeDict = degreeDict
 
-        return degreeDict
 
+    # #
+    # Read catrapid file, build dictionary for each RNA containing scores and interacting proteins.
+    def read_catrapid_file( self):
+
+        # From template of ReadCatrapid.py
+
+        #=======================================================================
+        # Example file
+        # sp|Q96DC8|ECHD3_HUMAN ENST00000579524   -12.33  0.10    0.00
+        # sp|P10645|CMGA_HUMAN ENST00000516610    10.66   0.32    0.00
+        # protein and rna separated by " ", other values separated by "\t"
+        # 
+        # Protein is always on left side, RNA in the right side.
+        # Assumption that there only one interaction between each Protein-RNA pair
+        #=======================================================================
+
+        rnaTargets = {} # key -> transcript ID (ensembl..), value -> score
+
+        allProtSet = set()
+        allRNASet = set()
+    
+        #=======================================================================
+        # read file
+        #=======================================================================
+        with open( self.catrapidFile, "r") as inFile:
+            for line in inFile:
+
+                spl = line.split(" ")
+                
+                protID = spl[0].split( "|")[1]
+                spl2 = spl[1].split( "\t")
+                rnaID = spl2[0]
+                score = float( spl2[1])
+                
+                # decided not to round score values, but may be useful if input file is too large
+                scoreRounded = score
+                #scoreRounded = round( score, 1) 
+                           
+                allRNASet.add( rnaID)
+                allProtSet.add( protID)
+
+                ## RNA side
+                if rnaID not in rnaTargets:
+                    rnaTargets[ rnaID] = {}
+
+                if scoreRounded not in rnaTargets[ rnaID]:
+                    rnaTargets[ rnaID][ scoreRounded] = set()
+                rnaTargets[ rnaID][ scoreRounded].add( protID)
+
+        
+        assert( len(allRNASet) == len( rnaTargets))
+
+        Logger.get_instance().info( "NetworkScoreAnalysis.read_catrapid_file : Number of unique RNAs = %s" % ( len(allRNASet) ) )
+        Logger.get_instance().info( "NetworkScoreAnalysis.read_catrapid_file : Number of unique Proteins = %s" % ( len(allProtSet) ) )
+
+        self.rnaTargets = rnaTargets
+        self.allProtSet = allProtSet
+        self.allRNASet = allRNASet
+
+
+    # #
+    # Pick top X proteins for each RNA, based on best score, in case of same score, pick first appearence in input file.
+    def pick_top_proteins(self):
+
+        rnaTargets = self.rnaTargets
+        
+        #=======================================================================
+        # pick top X proteins for each RNA
+        #=======================================================================
+        
+        rnaTops = {} # key -> transcript ID, value -> list of Top X proteins
+        
+        for rna in rnaTargets:
+                        
+            if rna not in rnaTops:
+                rnaTops[ rna] = []              
+            
+            # switch of whether to keep searching for more scores to get more top proteins
+            boo = 1
+            
+            sortedScores = sorted(rnaTargets[ rna].keys(), reverse = True)
+            
+            for score in sortedScores:
+                if boo:
+                    for prot in rnaTargets[ rna][ score]:
+                        # add more top proteins if top limit is not yet reached
+                        if len( rnaTops[ rna]) < self.topPartners:
+                            rnaTops[ rna].append( prot)
+                        else:
+                            # if top is full, stop searching for more proteins
+                            boo = 0
+                            continue
+
+            # Warn if there is not enough proteins to fill top
+            if len( rnaTops[ rna]) < self.topPartners:
+                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions to fill provided top. %s proteins are used." % ( rna, len( rnaTops[ rna]) ) )
+                
+
+        self.rnaTops = rnaTops
+
+        
+    
+#     # #
+#     # For each RNA, calculate several metrics for their top protein partners in their PPI network
+#     def calculate_metrics(self):
+#         
+#         
+#         dictNames = self.dictNames
+#         
+#         # create dictionary with uniprotAC as keys and internal graph index as values
+#         
+#         uniprotIndexDict = { self.proteinIDMappingDict[ prot] : dictNames[ prot] for prot in dictNames }
+# 
+#         print uniprotIndexDict
+# 
+#         
+#         rnaTops = self.rnaTops        
+#         graph = self.graph
+# 
+# #         for rna in rnaTops:
+# #             print rna, rnaTops[ rna]
+#         
+#         
+#         # TODO: when making random control, use same amount of proteins as existing for each RNA
+# 
+#     
+#     
+#         # takes time to run...
+#         #print (graph.average_path_length())
+
+    
     
     # #
     # Central function to run functions in order
@@ -192,9 +323,15 @@ class NetworkScoreAnalysis(object):
         #===================================================================
 
         Timer.get_instance().step( "Reading network file.." )        
-          
+        
+        self.protein_cross_references()
         self.read_network_file()
+        self.calculate_protein_degree()
 
+        Timer.get_instance().step( "Reading catrapid file.." )        
+
+        self.read_catrapid_file()        
+        self.pick_top_proteins()
 
          
 #         Logger.get_instance().info( "NetworkScoreAnalysis.run : ... %s" % ( len( self.testContainer)) )
@@ -218,7 +355,7 @@ if __name__ == "__main__":
         parser.add_argument('networkFile', metavar='networkFile', type=str,
                              help='File with binary protein-protein interaction network. E.g. PRRT3_HUMAN\tTMM17_HUMAN.')
         parser.add_argument('catrapidFile', metavar='catrapidFile', type=str,
-                             help='File with all vs all catrapid results. All interactions there will be processed (you may want to filter file in advance).')
+                             help='File with all vs all catrapid results. All interactions there will be processed. Ideally RNA and protein set would be filtered, but not at the cutoff/expression level.')
         parser.add_argument('rainetDBFile', metavar='rainetDBFile', type=str,
                              help='File with a RAINET Database to use for protein ID mapping.')
         parser.add_argument('topPartners', metavar='topPartners', type=int,
