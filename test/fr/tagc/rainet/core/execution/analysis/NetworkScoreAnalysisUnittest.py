@@ -57,15 +57,15 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.assertTrue( len(dictNames) ==  12318)
         
 
-    def test_protein_cross_references(self):
-
-        print "| test_protein_cross_references | "
-        
-        self.run.protein_cross_references()
-        
-        proteinIDMappingDict = self.run.proteinIDMappingDict
-
-        self.assertTrue( proteinIDMappingDict["1A23_HUMAN"] == "P30447")
+#     def test_protein_cross_references(self):
+# 
+#         print "| test_protein_cross_references | "
+#         
+#         self.run.protein_cross_references()
+#         
+#         proteinIDMappingDict = self.run.proteinIDMappingDict
+# 
+#         self.assertTrue( proteinIDMappingDict["1A23_HUMAN"] == "P30447")
 
 
     # #
@@ -73,7 +73,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
         print "| test_calculate_protein_degree | "
 
-        self.run.protein_cross_references()
+#        self.run.protein_cross_references()
 
         graph, listOfNames, listOfTuples, dictNames = self.run.read_network_file()
                      
@@ -86,7 +86,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         #         TCL1B_HUMAN    TNPO2_HUMAN
         #         AKT2_HUMAN    TCL1B_HUMAN
 
-        self.assertTrue( degreeDict[ "O95988"] == 2)
+        self.assertTrue( degreeDict[ "TCL1B_HUMAN"] == 2)
 
 
 
@@ -115,8 +115,8 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # grep ENST00000383925 storedInteractions.tsv | grep Q5T5D7
         # sp|Q5T5D7|ZN684_HUMAN ENST00000383925    17.75    0.47    0.00
 
-        self.assertTrue( "Q5T5D7" in rnaTargets["ENST00000383925"][17.75] )
-        self.assertTrue( "P19525" in rnaTargets["ENST00000383925"][20.16] )
+        self.assertTrue( "ZN684_HUMAN" in rnaTargets["ENST00000383925"][17.75] )
+        self.assertTrue( "E2AK2_HUMAN" in rnaTargets["ENST00000383925"][20.16] )
 
 
     def test_pick_top_proteins(self):
@@ -141,14 +141,13 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # sp|Q70EK9|UBP51_HUMAN    ENST00000384010    43.68    0.91    0.14
         # sp|Q92541|RTF1_HUMAN    ENST00000384010    42.07    0.9    0.12
 
-        self.assertTrue( rnaTops[ "ENST00000384010"] == ['Q99661', 'Q9H116', 'Q5TD94', 'Q9Y6D9', 'A0AV02', 'Q4G1C9', 'Q53EV4', 'Q96AQ6', 'Q70EK9', 'Q92541'])
+        self.assertTrue( rnaTops[ "ENST00000384010"] == ["KIF2C_HUMAN","GZF1_HUMAN","RSH4A_HUMAN","MD1L1_HUMAN","S12A8_HUMAN","GRPL2_HUMAN","LRC23_HUMAN","PBIP1_HUMAN","UBP51_HUMAN","RTF1_HUMAN"])
 
 
     def test_calculate_metrics(self):
 
         print "| test_calculate_metrics | "        
 
-        self.run.protein_cross_references()
         self.run.read_network_file()
         self.run.calculate_protein_degree()
         self.run.read_catrapid_file()        

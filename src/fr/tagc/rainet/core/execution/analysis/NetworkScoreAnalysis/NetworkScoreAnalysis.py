@@ -70,22 +70,22 @@ class NetworkScoreAnalysis(object):
             os.mkdir( self.outputFolder)
 
 
-    # #
-    # Use RAINET DB to retrieve Protein cross references
-    def protein_cross_references(self):
-
-
-        proteinIDMapping = "proteinIDMapping"
-
-        DataManager.get_instance().perform_query( proteinIDMapping, "query( Protein.uniprotAC, Protein.uniprotID).all()") 
-
-        # Convert query into a dictionary
-        DataManager.get_instance().query_to_dict( proteinIDMapping, 1, 0)
-        proteinIDMappingDict = DataManager.get_instance().get_data( proteinIDMapping) # key -> uniprotID (e.g. .._HUMAN), val -> uniprotAC (e.g. P35670)
-        # formatting
-        proteinIDMappingDict = { prot : proteinIDMappingDict[prot][0] for prot in proteinIDMappingDict}
-
-        self.proteinIDMappingDict = proteinIDMappingDict
+#     # #
+#     # Use RAINET DB to retrieve Protein cross references
+#     def protein_cross_references(self):
+# 
+# 
+#         proteinIDMapping = "proteinIDMapping"
+# 
+#         DataManager.get_instance().perform_query( proteinIDMapping, "query( Protein.uniprotAC, Protein.uniprotID).all()") 
+# 
+#         # Convert query into a dictionary
+#         DataManager.get_instance().query_to_dict( proteinIDMapping, 1, 0)
+#         proteinIDMappingDict = DataManager.get_instance().get_data( proteinIDMapping) # key -> uniprotID (e.g. .._HUMAN), val -> uniprotAC (e.g. P35670)
+#         # formatting
+#         proteinIDMappingDict = { prot : proteinIDMappingDict[prot][0] for prot in proteinIDMappingDict}
+# 
+#         self.proteinIDMappingDict = proteinIDMappingDict
    
 
     # #
@@ -141,7 +141,7 @@ class NetworkScoreAnalysis(object):
     # Function to calculate degree level for each protein in PPI network
     def calculate_protein_degree(self):
 
-        degreeDict = {} # key -> uniprotAC, val -> degree of protein
+        degreeDict = {} # key -> uniprotID, val -> degree of protein
         
         g = self.graph
 
@@ -159,21 +159,21 @@ class NetworkScoreAnalysis(object):
                 else:
                     raise RainetException( "NetworkScoreAnalysis.calculate_protein_degree : Could not find protein name for graph index %s" % ( v.index ) )
                     
-            try:
-                proteinUniprotAC = self.proteinIDMappingDict[ proteinName]
-            except KeyError:
-                Logger.get_instance().warning( "NetworkScoreAnalysis.calculate_protein_degree : Could not find protein uniprotac for protein name %s. We will be converting here to uniprotAC" % ( proteinName ) )
-                
-                if "_HUMAN" in proteinName:
-                    proteinUniprotAC = proteinName.split("_")[0]
-                else:
-                    proteinNotFound.add( proteinName)
-                    continue
+#             try:
+#                 proteinUniprotAC = self.proteinIDMappingDict[ proteinName]
+#             except KeyError:
+#                 Logger.get_instance().warning( "NetworkScoreAnalysis.calculate_protein_degree : Could not find protein uniprotac for protein name %s. We will be converting here to uniprotAC" % ( proteinName ) )
+#                 
+#                 if "_HUMAN" in proteinName:
+#                     proteinUniprotAC = proteinName.split("_")[0]
+#                 else:
+#                     proteinNotFound.add( proteinName)
+#                     continue
                         
-            if proteinUniprotAC not in degreeDict:
-                degreeDict[ proteinUniprotAC] = v.degree()
+            if proteinName not in degreeDict:
+                degreeDict[ proteinName] = v.degree()
             else:
-                raise RainetException( "NetworkScoreAnalysis.calculate_protein_degree : duplicate uniprotAC %s" % ( proteinUniprotAC ) )
+                raise RainetException( "NetworkScoreAnalysis.calculate_protein_degree : duplicate uniprotAC %s" % ( proteinName ) )
  
         Logger.get_instance().info( "NetworkScoreAnalysis.calculate_protein_degree : Could not find proteins uniprotac for protein names %s. These were discarded." % ( proteinNotFound ) )
  
@@ -182,6 +182,7 @@ class NetworkScoreAnalysis(object):
 
     # #
     # Read catrapid file, build dictionary for each RNA containing scores and interacting proteins.
+    # Use uniprotID (e.g. .._HUMAN)
     def read_catrapid_file( self):
 
         # From template of ReadCatrapid.py
@@ -209,7 +210,7 @@ class NetworkScoreAnalysis(object):
 
                 spl = line.split(" ")
                 
-                protID = spl[0].split( "|")[1]
+                protID = spl[0].split( "|")[2] #pick uniprotID instead of uniprotAC
                 spl2 = spl[1].split( "\t")
                 rnaID = spl2[0]
                 score = float( spl2[1])
@@ -282,33 +283,24 @@ class NetworkScoreAnalysis(object):
 
         
     
-#     # #
-#     # For each RNA, calculate several metrics for their top protein partners in their PPI network
-#     def calculate_metrics(self):
-#         
-#         
-#         dictNames = self.dictNames
-#         
-#         # create dictionary with uniprotAC as keys and internal graph index as values
-#         
-#         uniprotIndexDict = { self.proteinIDMappingDict[ prot] : dictNames[ prot] for prot in dictNames }
-# 
-#         print uniprotIndexDict
-# 
-#         
-#         rnaTops = self.rnaTops        
-#         graph = self.graph
-# 
-# #         for rna in rnaTops:
-# #             print rna, rnaTops[ rna]
-#         
-#         
-#         # TODO: when making random control, use same amount of proteins as existing for each RNA
-# 
-#     
-#     
-#         # takes time to run...
-#         #print (graph.average_path_length())
+    # #
+    # For each RNA, calculate several metrics for their top protein partners in their PPI network
+    def calculate_metrics(self):
+         
+                  
+        rnaTops = self.rnaTops        
+        graph = self.graph
+ 
+        for rna in rnaTops:
+            print rna, rnaTops[ rna]
+         
+         
+        # TODO: when making random control, use same amount of proteins as existing for each RNA
+ 
+     
+     
+        # takes time to run...
+        #print (graph.average_path_length())
 
     
     
@@ -324,7 +316,7 @@ class NetworkScoreAnalysis(object):
 
         Timer.get_instance().step( "Reading network file.." )        
         
-        self.protein_cross_references()
+        #self.protein_cross_references()
         self.read_network_file()
         self.calculate_protein_degree()
 
