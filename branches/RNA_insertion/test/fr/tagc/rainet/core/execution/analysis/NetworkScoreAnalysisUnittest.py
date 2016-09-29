@@ -31,7 +31,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.networkFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr"
         self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/snrna/sn_expression_1.58_cutoff_15/storedInteractions.tsv"
         self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
-        self.topPartners = 100
+        self.topPartners = 10
         self.outputFolder = "test_output/"
         self.numberRandomizations = 100
 
@@ -57,6 +57,17 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.assertTrue( len(dictNames) ==  12318)
         
 
+    def test_protein_cross_references(self):
+
+        print "| test_protein_cross_references | "
+        
+        self.run.protein_cross_references()
+        
+        proteinIDMappingDict = self.run.proteinIDMappingDict
+
+        self.assertTrue( proteinIDMappingDict["1A23_HUMAN"] == "P30447")
+
+
     # #
     def test_calculate_protein_degree(self):
 
@@ -65,8 +76,10 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.protein_cross_references()
 
         graph, listOfNames, listOfTuples, dictNames = self.run.read_network_file()
-                        
-        degreeDict = self.run.calculate_protein_degree()
+                     
+        self.run.calculate_protein_degree()
+   
+        degreeDict = self.run.degreeDict
 
         # TCL1B_HUMAN = O95988                
         #         grep TCL1B  /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr 
@@ -77,17 +90,78 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
 
 
+    def test_read_catrapid_file(self):
+
+        print "| test_read_catrapid_file | "        
+                
+        self.run.read_catrapid_file()
+
+        rnaTargets = self.run.rnaTargets
+        allProtSet = self.run.allProtSet       
+        allRNASet = self.run.allRNASet
+
+        # cut -f1 storedInteractions.tsv | cut -f1 -d" " | sort -u | wc -l
+        # 4905
+
+        self.assertTrue( len(allProtSet) == 4905)
+
+        # cut -f1 storedInteractions.tsv | cut -f2 -d" " | sort -u | wc -l
+        # 10
+
+        self.assertTrue( len(allRNASet) == 10)
+
+        self.assertTrue( "ENST00000383925" in rnaTargets)
+
+        # grep ENST00000383925 storedInteractions.tsv | grep Q5T5D7
+        # sp|Q5T5D7|ZN684_HUMAN ENST00000383925    17.75    0.47    0.00
+
+        self.assertTrue( "Q5T5D7" in rnaTargets["ENST00000383925"][17.75] )
+        self.assertTrue( "P19525" in rnaTargets["ENST00000383925"][20.16] )
 
 
-    def test_protein_cross_references(self):
+    def test_pick_top_proteins(self):
 
-        print "| test_protein_cross_references | "
-        
-        proteinIDMappingDict = self.run.protein_cross_references()
+        print "| test_pick_top_proteins | "        
 
-        self.assertTrue( proteinIDMappingDict["1A23_HUMAN"] == "P30447")
+        self.run.read_catrapid_file()
+
+        self.run.pick_top_proteins()
+
+        rnaTops = self.run.rnaTops
+
+        # Top 10 interactions for ENST00000384010, sorted in excel
+        # sp|Q99661|KIF2C_HUMAN    ENST00000384010    51.05    0.95    0.38
+        # sp|Q9H116|GZF1_HUMAN    ENST00000384010    50.14    0.95    0.35
+        # sp|Q5TD94|RSH4A_HUMAN    ENST00000384010    49.52    0.94    0.29
+        # sp|Q9Y6D9|MD1L1_HUMAN    ENST00000384010    45.69    0.92    0.18
+        # sp|A0AV02|S12A8_HUMAN    ENST00000384010    45.44    0.92    0.18
+        # sp|Q4G1C9|GRPL2_HUMAN    ENST00000384010    44.32    0.91    0.17
+        # sp|Q53EV4|LRC23_HUMAN    ENST00000384010    43.98    0.91    0.14
+        # sp|Q96AQ6|PBIP1_HUMAN    ENST00000384010    43.9    0.91    0.14
+        # sp|Q70EK9|UBP51_HUMAN    ENST00000384010    43.68    0.91    0.14
+        # sp|Q92541|RTF1_HUMAN    ENST00000384010    42.07    0.9    0.12
+
+        self.assertTrue( rnaTops[ "ENST00000384010"] == ['Q99661', 'Q9H116', 'Q5TD94', 'Q9Y6D9', 'A0AV02', 'Q4G1C9', 'Q53EV4', 'Q96AQ6', 'Q70EK9', 'Q92541'])
 
 
+    def test_calculate_metrics(self):
+
+        print "| test_calculate_metrics | "        
+
+        self.run.protein_cross_references()
+        self.run.read_network_file()
+        self.run.calculate_protein_degree()
+        self.run.read_catrapid_file()        
+        self.run.pick_top_proteins()
+
+        self.run.calculate_metrics()
+
+
+    def test_run(self):
+
+        print "| test_run | "        
+
+        self.run.run()
 
 
 #     # #
