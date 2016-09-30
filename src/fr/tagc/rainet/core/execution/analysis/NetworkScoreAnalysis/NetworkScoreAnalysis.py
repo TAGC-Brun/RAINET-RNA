@@ -76,22 +76,21 @@ class NetworkScoreAnalysis(object):
 
     PARAMETERS_LOG = "parameters.log"
 
-#     # Annotation report
-#     REPORT_PROT_PER_ANNOTATION = "prot_per_annotation.tsv"
+    # Metrics report
+    REPORT_METRICS_OUTPUT = "metrics_per_rna.tsv"
 
        
-    def __init__(self, networkFile, catrapidFile, rainetDBFile, topPartners, outputFolder, numberRandomizations):
+    def __init__(self, networkFile, catrapidFile, topPartners, outputFolder, numberRandomizations):
 
         self.networkFile = networkFile
         self.catrapidFile = catrapidFile
-        self.rainetDBFile = rainetDBFile
         self.topPartners = topPartners
         self.outputFolder = outputFolder
         self.numberRandomizations = numberRandomizations
 
-        # Build a SQL session to DB
-        SQLManager.get_instance().set_DBpath(self.rainetDBFile)
-        self.sql_session = SQLManager.get_instance().get_session()
+#         # Build a SQL session to DB
+#         SQLManager.get_instance().set_DBpath(self.rainetDBFile)
+#         self.sql_session = SQLManager.get_instance().get_session()
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -344,24 +343,25 @@ class NetworkScoreAnalysis(object):
         #=======================================================================
         # Shortest path mean: for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
         #
- 
+  
         rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
-        rnaShortestPathRandom = {} # key -> randomization ID, key -> transcript ID, val -> mean of mean shortest paths
+        rnaShortestPathRandom = {} # key -> transcript ID, val -> list of mean of mean shortest paths, one for each randomization
+        rnaShortestPathPval = {} # key -> transcript ID, val -> pval
  
         lionelMetrics = {} # key -> transcript ID, val -> lionel metric
-        lionelMetricsRandom = {} # key -> randomization ID, key -> transcript ID, val -> lionel metric
+        lionelMetricsRandom = {} # key -> transcript ID, val -> list of lionel metrics, one for each randomization
+        lionelMetricsPval = {} # key -> transcript ID, val -> pval
  
         ### calculate metrics for each RNA
         for rna in rnaTops:
-            
-
+        
             ## calculate metrics for real data
 
             topProteins = rnaTops[ rna]
 
             meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( topProteins)
             
-            rnaShortestPath[ rna] = "%.2f" % meanRNAShortestPath
+            rnaShortestPath[ rna] = meanRNAShortestPath
 
             lionelMetrics[ rna] = lionelMetric
 
@@ -374,23 +374,41 @@ class NetworkScoreAnalysis(object):
                 
                 meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( newProteinSet)
                 
-                if i not in rnaShortestPathRandom:
-                    rnaShortestPathRandom[ i] = {}
-                rnaShortestPathRandom[ i][ rna] = meanRNAShortestPath
+                if rna not in rnaShortestPathRandom:
+                    rnaShortestPathRandom[ rna] = []
+                rnaShortestPathRandom[ rna].append( meanRNAShortestPath)
 
-                if i not in lionelMetricsRandom:
-                    lionelMetricsRandom[ i] = {}
-                lionelMetricsRandom[ i][ rna] = lionelMetric
+                if rna not in lionelMetricsRandom:
+                    lionelMetricsRandom[ rna] = []
+                lionelMetricsRandom[ rna].append( lionelMetric)
 
-#            empiricalPvalue, numberAbove = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
+            # calculate pvalue for lionel metric (based on randomization), they higher the better (count above)
+            lionelMetricsPval[ rna] = self._empirical_pvalue( lionelMetricsRandom[ rna], lionelMetrics[ rna], 1)[0]
+            # calculate pvalue for shortest path (based on randomization), they lower the better (count below)
+            rnaShortestPathPval[ rna] = self._empirical_pvalue( rnaShortestPathRandom[ rna], rnaShortestPath[ rna], 0)[0]
+     
 
+        #=======================================================================
+        # Write output file
+        #=======================================================================
 
-            print rna
-            print lionelMetrics[ rna]
-            for i in xrange( self.numberRandomizations):
-                print lionelMetricsRandom[ i][ rna]
+        outFile = open( self.outputFolder + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
+
+        # write header
+        outFile.write("transcriptID\tlionelMetric\tlionelMetricRandom\tlionelMetricPval\tShortestPath\tShortestPathRandom\tShortestPathPval\n")
+
+        for rna in rnaTops:
+            
+            meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
+            meanRandomRnaShortestPath = np.mean( rnaShortestPathRandom[ rna])
+            
+            outFile.write( "%s\t%i\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
+            
+        outFile.close()
      
         #print (graph.average_path_length()) # take stime to run
+
+        return lionelMetrics, lionelMetricsRandom, lionelMetricsPval, rnaShortestPath, rnaShortestPathRandom, rnaShortestPathPval
 
 
     # #
@@ -494,35 +512,28 @@ class NetworkScoreAnalysis(object):
         return newProteinSet
         
 
+    # #
+    # Calculate proportion of random tests that are below observed value
+    # Conservative approach: only counts observed below if < random value (not <=)
+    def _empirical_pvalue(self, list_random, observed, aboveTail = 1):
+        
+        listRandomSignificant = np.sort( list_random)            
 
-#     # #
-#     # Function to correct pvalues, and add correction and significance to provided 'tests' list
-#     def correct_pvalues(self, nTests, pvalues, tests):
-#         
-#         testsCorrected = numpy.empty( nTests, object) # stores data plus correction
-#          
-#         correctedPvalues = self.multiple_test_correction( pvalues)
-#         
-#         for i in xrange( 0, len( tests)):
-#             l = tests[i][:]
-#  
-#             # add corrected pvalue to existing list
-#             corr =  "%.1e" % correctedPvalues[i]
-#             l.append( corr)
-#  
-#             # significative result tag
-#             sign = "0"
-#             if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
-#                 sign = "1"
-#  
-#             # add sign tag to existing list
-#             l.append( sign)
-#  
-#             # append current list to list of RNA vs annotation
-#             testsCorrected[ i] = l
-# 
-#         return testsCorrected
-    
+        below = 0 # count how many times observed value is below random values
+        above = 0 # count how many times observed value is above random values
+        for val in listRandomSignificant:
+            if observed < val: # conservative
+                below +=1
+            if observed > val:
+                above +=1
+
+        if aboveTail:
+            pval = 1.0 - ( above / float( len( listRandomSignificant)) )
+            return pval, above
+        else:
+            pval = 1.0 - (below / float( len( listRandomSignificant)) )  
+            return pval, below
+
     
     # #
     # Central function to run functions in order
@@ -545,6 +556,9 @@ class NetworkScoreAnalysis(object):
         self.read_catrapid_file()        
         self.pick_top_proteins()
 
+        Timer.get_instance().step( "Calculate metrics.." )        
+
+        self.calculate_metrics()
          
 #         Logger.get_instance().info( "NetworkScoreAnalysis.run : ... %s" % ( len( self.testContainer)) )
    
@@ -568,11 +582,11 @@ if __name__ == "__main__":
                              help='File with binary protein-protein interaction network. E.g. PRRT3_HUMAN\tTMM17_HUMAN.')
         parser.add_argument('catrapidFile', metavar='catrapidFile', type=str,
                              help='File with all vs all catrapid results. All interactions there will be processed. Ideally RNA and protein set would be filtered, but not at the cutoff/expression level.')
-        parser.add_argument('rainetDBFile', metavar='rainetDBFile', type=str,
-                             help='File with a RAINET Database to use for protein ID mapping.')
+#         parser.add_argument('rainetDBFile', metavar='rainetDBFile', type=str,
+#                              help='File with a RAINET Database to use for protein ID mapping.')
         parser.add_argument('topPartners', metavar='topPartners', type=int,
                              help='Number of top protein partners to consider for analysis, for each transcript.')
-        parser.add_argument('outputFolder', metavar='outputFolder', type=int,
+        parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Where to write output files.')
         # optional args
         parser.add_argument('--numberRandomizations', metavar='numberRandomizations', type=int, default = 1000,
@@ -582,7 +596,7 @@ if __name__ == "__main__":
         args = parser.parse_args( ) 
     
         # Initialise class
-        networkScoreAnalysis = NetworkScoreAnalysis( args.networkFile, args.catrapidFile, args.rainetDBFile, args.topPartners, args.outputFolder, args.numberRandomizations)
+        networkScoreAnalysis = NetworkScoreAnalysis( args.networkFile, args.catrapidFile, args.topPartners, args.outputFolder, args.numberRandomizations)
     
         #===============================================================================
         # Run analysis / processing
