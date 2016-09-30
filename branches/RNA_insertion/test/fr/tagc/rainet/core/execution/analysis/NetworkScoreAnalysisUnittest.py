@@ -34,7 +34,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
         self.topPartners = 10
         self.outputFolder = "test_output/"
-        self.numberRandomizations = 100
+        self.numberRandomizations = 10
 
 #         # folder containing expected output files
 #         self.expectedFolder = "test_expected/"
@@ -147,9 +147,9 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.assertTrue( rnaTops[ "ENST00000384010"] == ['KIF2C_HUMAN', 'MD1L1_HUMAN', 'GRPL2_HUMAN', 'PBIP1_HUMAN', 'RTF1_HUMAN', 'IGBP1_HUMAN', 'SHOT1_HUMAN', 'MUM1_HUMAN', 'CASC1_HUMAN', 'SSRP1_HUMAN'])
 
 
-    def test_calculate_metrics(self):
+    def test_calculate_metric_for_rna(self):
 
-        print "| test_calculate_metrics | "        
+        print "| test_calculate_metric_for_rna | "        
 
         ## changing parameters in other to be stable
         self.run.topPartners = 3
@@ -165,8 +165,9 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.read_catrapid_file()        
         self.run.pick_top_proteins()
 
-        self.run.calculate_metrics()
+        topProteins = self.run.rnaTops[ "ENST00000384382"]
 
+        meanRNAShortestPath, lionelMetric = self.run._calculate_metric_for_rna( topProteins)
 
 #         # top 3 proteins of ENST00000384382
 #         MCM7_HUMAN
@@ -177,15 +178,43 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # NEMO_HUMAN is connected to RBM8A_HUMAN and MCM10_HUMAN as second neighbours
         # PPM1G_HUMAN is isolated in the subnetwork of second neighbours
         # In summary, for the sum of all proteins, the distances counts are: 1 -> 0 times, 2 -> 2 times, 3 -> 4 times.
-        
-        result = self.run.lionelMetrics["ENST00000384382"]
-        
+                
         expectedResult = str(2.04)
         
-        self.assertTrue( str(result) == expectedResult )
+        self.assertTrue( str( lionelMetric) == expectedResult )
         
 
+    def test_get_sample_protein_degree(self):
 
+        print "| test_get_sample_protein_degree | "               
+
+        self.run.read_network_file()
+        self.run.calculate_protein_degree()
+
+        # picked some random proteins in the PPI
+        topProteins = [ "GLP1R_HUMAN", "B2L12_HUMAN", "KAD5_HUMAN"]
+
+        newProteinSet = self.run._get_sample_protein_degree( topProteins)
+
+        originalDegrees = { self.run.degreeDict[ prot] for prot in topProteins}
+        newDegrees = { self.run.degreeDict[ prot] for prot in newProteinSet}
+        
+        self.assertTrue( originalDegrees == newDegrees)
+
+        newProteinSet2 = self.run._get_sample_protein_degree( topProteins)
+
+        self.assertTrue( newProteinSet != newProteinSet2)
+
+
+    def test_calculate_metrics(self):
+
+        print "| test_calculate_metrics | "               
+
+        self.run.read_network_file()
+        self.run.calculate_protein_degree()
+        self.run.read_catrapid_file()        
+        self.run.pick_top_proteins()
+        self.run.calculate_metrics()
 
 
     def test_run(self):
