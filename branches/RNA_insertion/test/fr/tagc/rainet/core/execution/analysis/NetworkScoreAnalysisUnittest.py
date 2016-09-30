@@ -31,7 +31,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.networkFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr"
         self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/snrna/sn_expression_1.58_cutoff_15/storedInteractions.tsv"
         #self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/telomerase_plus_random_tx/telomerase_plus_random_tx_interactions.out"      
-        self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
+        #self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
         self.topPartners = 10
         self.outputFolder = "test_output/"
         self.numberRandomizations = 10
@@ -39,7 +39,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 #         # folder containing expected output files
 #         self.expectedFolder = "test_expected/"
         
-        self.run = NetworkScoreAnalysis( self.networkFile,  self.catrapidFile,  self.rainetDBFile,  self.topPartners,  self.outputFolder,  self.numberRandomizations)
+        self.run = NetworkScoreAnalysis( self.networkFile,  self.catrapidFile, self.topPartners,  self.outputFolder,  self.numberRandomizations)
         
 
     # #
@@ -213,25 +213,31 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.read_network_file()
         self.run.calculate_protein_degree()
         self.run.read_catrapid_file()        
-        self.run.pick_top_proteins()
-        self.run.calculate_metrics()
+        self.run.pick_top_proteins()        
 
+        lionelMetrics, lionelMetricsRandom, lionelMetricsPval, rnaShortestPath, rnaShortestPathRandom, rnaShortestPathPval = self.run.calculate_metrics()
 
+        self.assertTrue( len( lionelMetrics) == 10) #there are 10 rnas
+        self.assertTrue( len( lionelMetricsRandom[ "ENST00000384278"]) == self.topPartners)
+        self.assertTrue( len( rnaShortestPathRandom[ "ENST00000384278"]) == self.topPartners)
+
+        
     def test_run(self):
 
         print "| test_run | "        
 
         self.run.run()
 
+        #TODO: test output files
 
      
-    # #
-    # Runs after each test
-    def tearDown(self):
-                                
-        # Wipe output folder
-        cmd = "rm %s/*" % self.outputFolder
-        os.system(cmd)
+#     # #
+#     # Runs after each test
+#     def tearDown(self):
+#                                 
+#         # Wipe output folder
+#         cmd = "rm %s/*" % self.outputFolder
+#         os.system(cmd)
             
        
 
