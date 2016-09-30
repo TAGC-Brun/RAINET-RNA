@@ -28,6 +28,22 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 1) Read PPI network, calculate degree of each protein
 # 2) Read catRAPID interactions file, pick top X protein binders, calculate several metrics of this set of proteins on the PPI
 # 3) Compare real results against random control
+#
+# Lionel/Christine metric:
+# 
+# * Let's consider the first N protein in the top list of interaction to a given RNA.
+# 
+# * For each of those proteins, locate the corresponding node in the network
+# 
+# * Compute the shortest distances from this node to the nodes of the (N-1) other proteins
+# 
+# * For each distance, if it is 1, add 1 to the score of the initial node, if it's 2, add 1/2 and if it's three add 1/3. Add 0 if the distance in greater than 3.
+# 
+# * Sum up the scores of the N proteins to get a global score and write it down
+# 
+# * Finally, compute this score varying N from 3 to 20 for instance...
+# 
+# * Display the evolution of the score on a graph....
 #===============================================================================
 
 #===============================================================================
@@ -36,11 +52,21 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 2) Ignoring interactions with proteins not in the PPI network. the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
 #===============================================================================
 
+
 class NetworkScoreAnalysis(object):
     
     #===============================================================================
     # NetworkScoreAnalysis Constants
     #===============================================================================        
+
+    # Lionel metric scores, if shortest path is one, it will have a specific score, if shortest path value is not in the dictionary the "DISTANCE_ABOVE_LIMIT_SCORE" is used
+    DISTANCE_SCORE = {
+                      1 : 1,
+                      2 : 0.5,
+                      3 : 0.25 }
+
+    DISTANCE_ABOVE_LIMIT_SCORE = 0
+    
 
     #===================================================================
     # Report files constants       
@@ -254,7 +280,10 @@ class NetworkScoreAnalysis(object):
         rnaTops = {} # key -> transcript ID, value -> list of Top X proteins
         
         for rna in rnaTargets:
-                        
+            
+            # store proteins that are in top interactors but not present in network, and therefore skipped in analysis
+            skippedProteins = set()     
+                   
             if rna not in rnaTops:
                 rnaTops[ rna] = []              
             
@@ -273,17 +302,21 @@ class NetworkScoreAnalysis(object):
                             if prot in self.dictNames:
                                 rnaTops[ rna].append( prot)
                             else:
-                                # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
-                                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' protein %s is not present in PPI network, will use next top protein." % ( rna, prot ) )
-                                
+                                skippedProteins.add( prot)                                
                         else:
                             # if top is full, stop searching for more proteins
                             boo = 0
                             continue
 
+            # Warn about how many top proteins skipped because they are not present in PPI network
+            # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
+            Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
+
             # Warn if there is not enough proteins to fill top
             if len( rnaTops[ rna]) < self.topPartners:
                 Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions to fill provided top. %s proteins are used." % ( rna, len( rnaTops[ rna]) ) )
+
+        print rnaTops[ "ENST00000384382"]
 
         self.rnaTops = rnaTops
 
@@ -300,10 +333,14 @@ class NetworkScoreAnalysis(object):
  
         #=======================================================================
         # Calculate mean of mean shortest path between top proteins
+        # Calculate Lionel metric (see details at start of script)
         #=======================================================================
-        # for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
+        # Shortest path mean: for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
+        #
  
         rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
+ 
+        lionelMetrics = {} # key -> transcript ID, val -> lionel metric
  
         for rna in rnaTops:
 
@@ -311,29 +348,64 @@ class NetworkScoreAnalysis(object):
             
             assert( len( allIdx) == self.topPartners)
 
+            # stores mean shortest paths for this RNA, a value for each top protein
             meanShortestPaths = []
 
+            # stores sum of lionel metric for this RNA
+            lionelMetric = 0.0
+
+            # for each top protein
             for idx in allIdx:
+                
                 # get list of indexes other than current
-                otherIdx = [i for i in allIdx if i != idx ] 
+                otherIdx = [i for i in allIdx if i != idx ]
+                                
                 # calculate shortest path between current node against all others
                 shortestPaths = graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
+                
+                #=======================================================================
+                # Lionel metric
+                #=======================================================================
+
+                ## Shortest paths
+                # distance 0 -> self interaction (should not happen in 'no self' network, also the shortest path is only calculated against other proteins)
+                # distance 1 -> direct interaction
+                # distance 2 -> one protein in the middle (first neighbours)
+                # distance 3 -> two proteins in the middle (second neighbours)
+
+                for pathLength in shortestPaths:
+                    
+                    if pathLength == 0:
+                        raise RainetException( "NetworkScoreAnalysis.calculate_metrics : shortest path equals 0, error. %s" % ( rna ) )
+
+                    if pathLength in NetworkScoreAnalysis.DISTANCE_SCORE: 
+                        #print rna, pathLength, self.proteinGraphIDDict[ idx], self.proteinGraphIDDict[ otherIdx[ c]]
+                        lionelMetric += NetworkScoreAnalysis.DISTANCE_SCORE[ pathLength]
+                    else:
+                        lionelMetric += NetworkScoreAnalysis.DISTANCE_ABOVE_LIMIT_SCORE
+               
+                #=======================================================================
+                # mean shortest path
+                #=======================================================================
+                
                 # calculate mean shortest path for a node
                 meanShortestPath = np.mean( shortestPaths)
                 meanShortestPaths.append( meanShortestPath)
-            
+
+                        
             # calculate mean shortest path for current RNA
             meanRNAShortestPath = np.mean( meanShortestPaths)
             
             rnaShortestPath[ rna] = "%.2f" % meanRNAShortestPath
 
-        
-        print rnaShortestPath
-         
+
+            lionelMetrics[ rna] = lionelMetric
+
+
+        self.rnaShortestPath = rnaShortestPath
+        self.lionelMetrics = lionelMetrics
              
         # TODO: when making random control, use same amount of proteins as existing for each RNA
- 
-     
      
         # takes time to run...
         #print (graph.average_path_length())
