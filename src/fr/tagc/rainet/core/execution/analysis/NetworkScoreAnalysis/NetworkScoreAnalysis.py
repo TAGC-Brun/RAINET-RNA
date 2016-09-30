@@ -2,6 +2,8 @@ import sys
 import os
 import argparse
 import igraph
+import copy
+import random
 
 import numpy as np
 # import pandas as pd
@@ -29,7 +31,7 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 2) Read catRAPID interactions file, pick top X protein binders, calculate several metrics of this set of proteins on the PPI
 # 3) Compare real results against random control
 #
-# Lionel/Christine metric:
+# Lionel/Christine neighbour score metric:
 # 
 # * Let's consider the first N protein in the top list of interaction to a given RNA.
 # 
@@ -169,6 +171,8 @@ class NetworkScoreAnalysis(object):
 
         degreeDict = {} # key -> uniprotID, val -> degree of protein
         
+        proteinsPerDegreeDict = {} # key -> degree, val -> set of proteins with that degree
+        
         g = self.graph
 
         proteinNotFound = set()
@@ -203,7 +207,16 @@ class NetworkScoreAnalysis(object):
  
         Logger.get_instance().info( "NetworkScoreAnalysis.calculate_protein_degree : Could not find proteins uniprotac for protein names %s. These were discarded." % ( proteinNotFound ) )
  
+        # create dictionary with list of proteins per degree
+        for prot in degreeDict:
+            degree = degreeDict[ prot]
+            if degree not in proteinsPerDegreeDict:
+                proteinsPerDegreeDict[ degree] = set()
+            proteinsPerDegreeDict[ degree].add( prot)
+            
+ 
         self.degreeDict = degreeDict
+        self.proteinsPerDegreeDict = proteinsPerDegreeDict
 
 
     # #
@@ -316,20 +329,14 @@ class NetworkScoreAnalysis(object):
             if len( rnaTops[ rna]) < self.topPartners:
                 Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions to fill provided top. %s proteins are used." % ( rna, len( rnaTops[ rna]) ) )
 
-        print rnaTops[ "ENST00000384382"]
-
         self.rnaTops = rnaTops
 
         
-    
     # #
     # For each RNA, calculate several metrics for their top protein partners in their PPI network
     def calculate_metrics(self):
-                
-        dictNames = self.dictNames    
-        
+                        
         rnaTops = self.rnaTops        
-        graph = self.graph
  
         #=======================================================================
         # Calculate mean of mean shortest path between top proteins
@@ -339,77 +346,182 @@ class NetworkScoreAnalysis(object):
         #
  
         rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
+        rnaShortestPathRandom = {} # key -> randomization ID, key -> transcript ID, val -> mean of mean shortest paths
  
         lionelMetrics = {} # key -> transcript ID, val -> lionel metric
+        lionelMetricsRandom = {} # key -> randomization ID, key -> transcript ID, val -> lionel metric
  
+        ### calculate metrics for each RNA
         for rna in rnaTops:
-
-            allIdx = [ dictNames[ prot] for prot in rnaTops[ rna]]
             
-            assert( len( allIdx) == self.topPartners)
 
-            # stores mean shortest paths for this RNA, a value for each top protein
-            meanShortestPaths = []
+            ## calculate metrics for real data
 
-            # stores sum of lionel metric for this RNA
-            lionelMetric = 0.0
+            topProteins = rnaTops[ rna]
 
-            # for each top protein
-            for idx in allIdx:
-                
-                # get list of indexes other than current
-                otherIdx = [i for i in allIdx if i != idx ]
-                                
-                # calculate shortest path between current node against all others
-                shortestPaths = graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
-                
-                #=======================================================================
-                # Lionel metric
-                #=======================================================================
-
-                ## Shortest paths
-                # distance 0 -> self interaction (should not happen in 'no self' network, also the shortest path is only calculated against other proteins)
-                # distance 1 -> direct interaction
-                # distance 2 -> one protein in the middle (first neighbours)
-                # distance 3 -> two proteins in the middle (second neighbours)
-
-                for pathLength in shortestPaths:
-                    
-                    if pathLength == 0:
-                        raise RainetException( "NetworkScoreAnalysis.calculate_metrics : shortest path equals 0, error. %s" % ( rna ) )
-
-                    if pathLength in NetworkScoreAnalysis.DISTANCE_SCORE: 
-                        #print rna, pathLength, self.proteinGraphIDDict[ idx], self.proteinGraphIDDict[ otherIdx[ c]]
-                        lionelMetric += NetworkScoreAnalysis.DISTANCE_SCORE[ pathLength]
-                    else:
-                        lionelMetric += NetworkScoreAnalysis.DISTANCE_ABOVE_LIMIT_SCORE
-               
-                #=======================================================================
-                # mean shortest path
-                #=======================================================================
-                
-                # calculate mean shortest path for a node
-                meanShortestPath = np.mean( shortestPaths)
-                meanShortestPaths.append( meanShortestPath)
-
-                        
-            # calculate mean shortest path for current RNA
-            meanRNAShortestPath = np.mean( meanShortestPaths)
+            meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( topProteins)
             
             rnaShortestPath[ rna] = "%.2f" % meanRNAShortestPath
-
 
             lionelMetrics[ rna] = lionelMetric
 
 
-        self.rnaShortestPath = rnaShortestPath
-        self.lionelMetrics = lionelMetrics
-             
-        # TODO: when making random control, use same amount of proteins as existing for each RNA
-     
-        # takes time to run...
-        #print (graph.average_path_length())
+            ## calculate metrics for each randomization
 
+            for i in xrange( self.numberRandomizations):
+                
+                newProteinSet = self._get_sample_protein_degree( topProteins)
+                
+                meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( newProteinSet)
+                
+                if i not in rnaShortestPathRandom:
+                    rnaShortestPathRandom[ i] = {}
+                rnaShortestPathRandom[ i][ rna] = meanRNAShortestPath
+
+                if i not in lionelMetricsRandom:
+                    lionelMetricsRandom[ i] = {}
+                lionelMetricsRandom[ i][ rna] = lionelMetric
+
+#            empiricalPvalue, numberAbove = self.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
+
+
+            print rna
+            print lionelMetrics[ rna]
+            for i in xrange( self.numberRandomizations):
+                print lionelMetricsRandom[ i][ rna]
+     
+        #print (graph.average_path_length()) # take stime to run
+
+
+    # #
+    # Internal function to actual perform the metric calculation for a given RNA
+    # @param rna : ensembl ID of wanted RNA
+    def _calculate_metric_for_rna(self, top_proteins):
+        
+        graph = self.graph
+        
+        dictNames = self.dictNames    
+
+        # get indexes of top proteins for wanted RNA        
+        allIdx = [ dictNames[ prot] for prot in top_proteins]
+        
+        assert( len( allIdx) == self.topPartners)
+
+        # stores mean shortest paths for this RNA, a value for each top protein
+        meanShortestPaths = []
+
+        # stores sum of lionel metric for this RNA
+        lionelMetric = 0.0
+
+        # for each top protein
+        for idx in allIdx:
+            
+            # get list of indexes other than current
+            otherIdx = [i for i in allIdx if i != idx ]
+                            
+            # calculate shortest path between current node against all others
+            shortestPaths = graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
+            
+            #=======================================================================
+            # Lionel metric
+            #=======================================================================
+
+            ## Shortest paths
+            # distance 0 -> self interaction (should not happen in 'no self' network, also the shortest path is only calculated against other proteins)
+            # distance 1 -> direct interaction
+            # distance 2 -> one protein in the middle (first neighbours)
+            # distance 3 -> two proteins in the middle (second neighbours)
+
+            for pathLength in shortestPaths:
+                
+                if pathLength == 0:
+                    raise RainetException( "NetworkScoreAnalysis.calculate_metrics : shortest path equals 0, error. %s" % ( idx ) )
+
+                if pathLength in NetworkScoreAnalysis.DISTANCE_SCORE: 
+                    #print pathLength, self.proteinGraphIDDict[ idx], self.proteinGraphIDDict[ otherIdx[ c]]
+                    lionelMetric += NetworkScoreAnalysis.DISTANCE_SCORE[ pathLength]
+                else:
+                    lionelMetric += NetworkScoreAnalysis.DISTANCE_ABOVE_LIMIT_SCORE
+           
+            #=======================================================================
+            # mean shortest path
+            #=======================================================================
+            
+            # calculate mean shortest path for a node
+            meanShortestPath = np.mean( shortestPaths)
+            meanShortestPaths.append( meanShortestPath)
+
+                    
+        # calculate mean shortest path for current RNA
+        meanRNAShortestPath = np.mean( meanShortestPaths)
+        
+        return meanRNAShortestPath, lionelMetric
+
+    # #
+    # Internal function to pick a random set of proteins with the same degree as input protein list.
+    def _get_sample_protein_degree(self, list_of_proteins):
+        
+        degreeDict = self.degreeDict
+        
+        # make copy of proteins per degree in each randomization, so that I can remove already chosen proteins
+        proteinsPerDegreeDictCopy = copy.deepcopy( self.proteinsPerDegreeDict)
+        
+        newProteinSet = set()
+
+        # loop over provided list of proteins and remove them as a choice to be picked randomly
+        for prot in list_of_proteins:
+            degree = degreeDict[ prot]
+            proteinsPerDegreeDictCopy[ degree].remove( prot)
+
+        # loop over provided list of proteins, pick and remove new set of proteins with same degree randomly
+        for prot in list_of_proteins:
+                        
+            degree = degreeDict[ prot]
+            
+            if len( proteinsPerDegreeDictCopy[ degree]) == 0:
+                raise RainetException( "NetworkScoreAnalysis._get_sample_protein_degree : No more proteins with degree %s" % ( degree ) )
+
+            randomProt = random.sample( proteinsPerDegreeDictCopy[ degree], 1)[0]
+            proteinsPerDegreeDictCopy[ degree].remove( randomProt)
+            
+            newProteinSet.add( randomProt)
+                   
+        assert( len( list_of_proteins) == len( newProteinSet))
+    
+        # convert set into list
+        newProteinSet = [prot for prot in newProteinSet]
+    
+        return newProteinSet
+        
+
+
+#     # #
+#     # Function to correct pvalues, and add correction and significance to provided 'tests' list
+#     def correct_pvalues(self, nTests, pvalues, tests):
+#         
+#         testsCorrected = numpy.empty( nTests, object) # stores data plus correction
+#          
+#         correctedPvalues = self.multiple_test_correction( pvalues)
+#         
+#         for i in xrange( 0, len( tests)):
+#             l = tests[i][:]
+#  
+#             # add corrected pvalue to existing list
+#             corr =  "%.1e" % correctedPvalues[i]
+#             l.append( corr)
+#  
+#             # significative result tag
+#             sign = "0"
+#             if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
+#                 sign = "1"
+#  
+#             # add sign tag to existing list
+#             l.append( sign)
+#  
+#             # append current list to list of RNA vs annotation
+#             testsCorrected[ i] = l
+# 
+#         return testsCorrected
     
     
     # #
