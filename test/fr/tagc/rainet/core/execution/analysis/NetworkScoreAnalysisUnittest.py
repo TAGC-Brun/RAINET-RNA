@@ -29,7 +29,8 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # Set the options
 
         self.networkFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/input_data/PROTEIN/human.binary.nr0.95.connected.noself.gr"
-        self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/snrna/sn_expression_1.58_cutoff_15/storedInteractions.tsv"
+        self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/snrna/sn_expression_1.58_cutoff_15/storedInteractions.tsv"      
+        
         #self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/telomerase_plus_random_tx/telomerase_plus_random_tx_interactions.out"      
         #self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
         self.topPartners = 10
@@ -229,6 +230,14 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.run()
 
         #TODO: test output files
+
+
+    def test_extra(self):
+
+        self.run.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/cutoff50/Corum_Havugimana/storedInteractions.tsv"
+        self.run.numberRandomizations = 1
+                
+        self.run.run()
 
      
 #     # #

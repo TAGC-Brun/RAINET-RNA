@@ -52,6 +52,7 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # Processing notes:
 # 1) Using uniprot ID instead of uniprot AC
 # 2) Ignoring interactions with proteins not in the PPI network. the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
+# 3) For randomization: if there are no more proteins to sample with same degree, take proteins from closest degree possible.
 #===============================================================================
 
 
@@ -213,9 +214,13 @@ class NetworkScoreAnalysis(object):
                 proteinsPerDegreeDict[ degree] = set()
             proteinsPerDegreeDict[ degree].add( prot)
             
- 
+
+        # list of degrees available, so that closest degree to the degree of interest can be probed
+        sortedDegrees = sorted( proteinsPerDegreeDict.keys()) 
+
         self.degreeDict = degreeDict
         self.proteinsPerDegreeDict = proteinsPerDegreeDict
+        self.sortedDegrees = sortedDegrees
 
 
     # #
@@ -338,8 +343,8 @@ class NetworkScoreAnalysis(object):
         rnaTops = self.rnaTops        
  
         #=======================================================================
-        # Calculate mean of mean shortest path between top proteins
-        # Calculate Lionel metric (see details at start of script)
+        # - Calculate mean of mean shortest path between top proteins
+        # - Calculate Lionel metric (see details at start of script)
         #=======================================================================
         # Shortest path mean: for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
         #
@@ -352,8 +357,14 @@ class NetworkScoreAnalysis(object):
         lionelMetricsRandom = {} # key -> transcript ID, val -> list of lionel metrics, one for each randomization
         lionelMetricsPval = {} # key -> transcript ID, val -> pval
  
+        count = 0
+ 
         ### calculate metrics for each RNA
         for rna in rnaTops:
+
+            if count % 1000 == 0:
+                Logger.get_instance().info( "NetworkScoreAnalysis.calculate_metrics: processed %s transcripts.." % ( count) )           
+            count+=1
         
             ## calculate metrics for real data
 
@@ -365,6 +376,7 @@ class NetworkScoreAnalysis(object):
 
             lionelMetrics[ rna] = lionelMetric
 
+            print rna
 
             ## calculate metrics for each randomization
 
@@ -422,6 +434,9 @@ class NetworkScoreAnalysis(object):
 
         # get indexes of top proteins for wanted RNA        
         allIdx = [ dictNames[ prot] for prot in top_proteins]
+
+        print len( allIdx)
+        print self.topPartners
         
         assert( len( allIdx) == self.topPartners)
 
@@ -495,9 +510,22 @@ class NetworkScoreAnalysis(object):
         for prot in list_of_proteins:
                         
             degree = degreeDict[ prot]
-            
+
+            # check if can pick protein with same degree, if not, sample protein from the closest possible degree            
             if len( proteinsPerDegreeDictCopy[ degree]) == 0:
-                raise RainetException( "NetworkScoreAnalysis._get_sample_protein_degree : No more proteins with degree %s" % ( degree ) )
+                
+                # get list of all degrees except current degree
+                otherDegrees = filter(lambda a: a != degree, self.sortedDegrees)
+
+                # calculate distances of all degrees against ours and return the closest degree
+                newDegree = min( otherDegrees, key=lambda x:abs( x-degree))
+
+                Logger.get_instance().warning(  "NetworkScoreAnalysis._get_sample_protein_degree : No more proteins with degree %s. Sampling closest degree: %s." % ( degree, newDegree ) )
+
+                degree = newDegree
+
+            if len( proteinsPerDegreeDictCopy[ degree]) < self.numberRandomizations:
+                Logger.get_instance().warning( "NetworkScoreAnalysis._get_sample_protein_degree : less proteins with degree %s than number of randomizations." % ( degree ) )
 
             randomProt = random.sample( proteinsPerDegreeDictCopy[ degree], 1)[0]
             proteinsPerDegreeDictCopy[ degree].remove( randomProt)
