@@ -232,12 +232,14 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         #TODO: test output files
 
 
-    def test_extra(self):
-
-        self.run.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/cutoff50/Corum_Havugimana/storedInteractions.tsv"
-        self.run.numberRandomizations = 1
-                
-        self.run.run()
+#     def test_extra(self):
+#  
+#         self.run.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/cutoff50/Corum_Havugimana/storedInteractions.tsv"
+#         self.run.numberRandomizations = 0
+#         self.run.topPartners = 50
+# 
+#                  
+#         self.run.run()
 
      
 #     # #
