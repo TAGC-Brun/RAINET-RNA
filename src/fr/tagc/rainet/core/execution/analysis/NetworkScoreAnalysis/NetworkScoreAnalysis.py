@@ -31,7 +31,7 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 2) Read catRAPID interactions file, pick top X protein binders, calculate several metrics of this set of proteins on the PPI
 # 3) Compare real results against random control
 #
-# Lionel/Christine neighbour score metric:
+# Lionel/Christine neighbour score metric (LCneighbours):
 # 
 # * Let's consider the first N protein in the top list of interaction to a given RNA.
 # 
@@ -53,7 +53,11 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 1) Using uniprot ID instead of uniprot AC
 # 2) Ignoring interactions with proteins not in the PPI network. the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
 # 3) For randomization: if there are no more proteins to sample with same degree, take proteins from closest degree possible.
+# 4) If transcript has less interactions than number of wanted top proteins, transcript is not processed.
+# 5) Potential issue: for picking random proteins we use whole PPI network, regardless of having interactions or not. This may be different protein set as we only have interactions for proteins <750aa
 #===============================================================================
+
+
 
 
 class NetworkScoreAnalysis(object):
@@ -69,7 +73,9 @@ class NetworkScoreAnalysis(object):
                       3 : 0.25 }
 
     DISTANCE_ABOVE_LIMIT_SCORE = 0
-    
+
+    # Number of interactions above this value will use too much memory
+    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 30000000    
 
     #===================================================================
     # Report files constants       
@@ -248,6 +254,9 @@ class NetworkScoreAnalysis(object):
         #=======================================================================
         # read file
         #=======================================================================
+        
+        nlines = 0
+        
         with open( self.catrapidFile, "r") as inFile:
             for line in inFile:
 
@@ -272,6 +281,11 @@ class NetworkScoreAnalysis(object):
                 if scoreRounded not in rnaTargets[ rnaID]:
                     rnaTargets[ rnaID][ scoreRounded] = set()
                 rnaTargets[ rnaID][ scoreRounded].add( protID)
+
+                nlines += 1
+
+                if nlines > NetworkScoreAnalysis.MAXIMUM_NUMBER_VIABLE_INTERACTIONS:
+                    raise RainetException( "NetworkScoreAnalysis.read_catrapid_file : number of interactions is too large to be computable: %s interactions" % nlines)
 
         
         assert( len(allRNASet) == len( rnaTargets))
@@ -330,8 +344,10 @@ class NetworkScoreAnalysis(object):
             Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
 
             # Warn if there is not enough proteins to fill top
+            # transcript is not analysed as it wouldn't be comparable to others
             if len( rnaTops[ rna]) < self.topPartners:
-                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions to fill provided top. %s proteins are used." % ( rna, len( rnaTops[ rna]) ) )
+                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions (has %s) to fill provided top. No results for this transcript." % ( rna, len( rnaTops[ rna]) ) )
+                del rnaTops[ rna]
 
         self.rnaTops = rnaTops
 
@@ -347,8 +363,17 @@ class NetworkScoreAnalysis(object):
         # - Calculate Lionel metric (see details at start of script)
         #=======================================================================
         # Shortest path mean: for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
-        #
-  
+        # LCneighbour metric: see top of script
+    
+        #=======================================================================
+        # Write output file
+        #=======================================================================
+
+        outFile = open( self.outputFolder + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
+
+        # write header
+        outFile.write("transcriptID\tLCneighbours\tLCneighboursRandom\tLCneighboursPval\tShortestPath\tShortestPathRandom\tShortestPathPval\n")
+
         rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
         rnaShortestPathRandom = {} # key -> transcript ID, val -> list of mean of mean shortest paths, one for each randomization
         rnaShortestPathPval = {} # key -> transcript ID, val -> pval
@@ -362,9 +387,9 @@ class NetworkScoreAnalysis(object):
         ### calculate metrics for each RNA
         for rna in rnaTops:
 
-            if count % 1000 == 0:
-                Logger.get_instance().info( "NetworkScoreAnalysis.calculate_metrics: processed %s transcripts.." % ( count) )           
             count+=1
+            if count % 100 == 0:
+                Logger.get_instance().info( "NetworkScoreAnalysis.calculate_metrics: processed %s transcripts.." % ( count) )           
         
             ## calculate metrics for real data
 
@@ -376,45 +401,40 @@ class NetworkScoreAnalysis(object):
 
             lionelMetrics[ rna] = lionelMetric
 
-            print rna
 
             ## calculate metrics for each randomization
 
-            for i in xrange( self.numberRandomizations):
-                
-                newProteinSet = self._get_sample_protein_degree( topProteins)
-                
-                meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( newProteinSet)
-                
+            if self.numberRandomizations > 0:
+
                 if rna not in rnaShortestPathRandom:
                     rnaShortestPathRandom[ rna] = []
-                rnaShortestPathRandom[ rna].append( meanRNAShortestPath)
-
                 if rna not in lionelMetricsRandom:
                     lionelMetricsRandom[ rna] = []
-                lionelMetricsRandom[ rna].append( lionelMetric)
-
-            # calculate pvalue for lionel metric (based on randomization), they higher the better (count above)
-            lionelMetricsPval[ rna] = self._empirical_pvalue( lionelMetricsRandom[ rna], lionelMetrics[ rna], 1)[0]
-            # calculate pvalue for shortest path (based on randomization), they lower the better (count below)
-            rnaShortestPathPval[ rna] = self._empirical_pvalue( rnaShortestPathRandom[ rna], rnaShortestPath[ rna], 0)[0]
+    
+                for i in xrange( self.numberRandomizations):
+                    
+                    # retrieve a new set of top proteins, with the same degree
+                    newProteinSet = self._get_sample_protein_degree( topProteins)
+                    
+                    meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( newProteinSet)
+                    
+                    rnaShortestPathRandom[ rna].append( meanRNAShortestPath)
+    
+                    lionelMetricsRandom[ rna].append( lionelMetric)
+    
+                # calculate pvalue for lionel metric (based on randomization), they higher the better (count above)
+                lionelMetricsPval[ rna] = self._empirical_pvalue( lionelMetricsRandom[ rna], lionelMetrics[ rna], 1)[0]
+                # calculate pvalue for shortest path (based on randomization), they lower the better (count below)
+                rnaShortestPathPval[ rna] = self._empirical_pvalue( rnaShortestPathRandom[ rna], rnaShortestPath[ rna], 0)[0]
      
+                meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
+                meanRandomRnaShortestPath = np.mean( rnaShortestPathRandom[ rna])
+                
+                outFile.write( "%s\t%i\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
 
-        #=======================================================================
-        # Write output file
-        #=======================================================================
-
-        outFile = open( self.outputFolder + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
-
-        # write header
-        outFile.write("transcriptID\tlionelMetric\tlionelMetricRandom\tlionelMetricPval\tShortestPath\tShortestPathRandom\tShortestPathPval\n")
-
-        for rna in rnaTops:
-            
-            meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
-            meanRandomRnaShortestPath = np.mean( rnaShortestPathRandom[ rna])
-            
-            outFile.write( "%s\t%i\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
+            else:
+                outFile.write( "%s\t%i\tNA\tNA\t%.2f\tNA\tNA\n" % ( rna, lionelMetrics[ rna], rnaShortestPath[ rna] ) )
+                
             
         outFile.close()
      
@@ -428,16 +448,9 @@ class NetworkScoreAnalysis(object):
     # @param rna : ensembl ID of wanted RNA
     def _calculate_metric_for_rna(self, top_proteins):
         
-        graph = self.graph
-        
-        dictNames = self.dictNames    
-
         # get indexes of top proteins for wanted RNA        
-        allIdx = [ dictNames[ prot] for prot in top_proteins]
+        allIdx = [ self.dictNames[ prot] for prot in top_proteins]
 
-        print len( allIdx)
-        print self.topPartners
-        
         assert( len( allIdx) == self.topPartners)
 
         # stores mean shortest paths for this RNA, a value for each top protein
@@ -453,7 +466,7 @@ class NetworkScoreAnalysis(object):
             otherIdx = [i for i in allIdx if i != idx ]
                             
             # calculate shortest path between current node against all others
-            shortestPaths = graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
+            shortestPaths = self.graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
             
             #=======================================================================
             # Lionel metric
@@ -485,7 +498,7 @@ class NetworkScoreAnalysis(object):
             meanShortestPaths.append( meanShortestPath)
 
                     
-        # calculate mean shortest path for current RNA
+        # calculate mean shortest path for current RNA (mean of means)
         meanRNAShortestPath = np.mean( meanShortestPaths)
         
         return meanRNAShortestPath, lionelMetric
