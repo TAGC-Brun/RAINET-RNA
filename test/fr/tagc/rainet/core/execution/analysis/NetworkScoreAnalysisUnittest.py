@@ -191,7 +191,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
         self.run.read_network_file()
         self.run.calculate_protein_degree()
-
+        
         # picked some random proteins in the PPI
         topProteins = [ "GLP1R_HUMAN", "B2L12_HUMAN", "KAD5_HUMAN"]
 
@@ -205,6 +205,24 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         newProteinSet2 = self.run._get_sample_protein_degree( topProteins)
 
         self.assertTrue( newProteinSet != newProteinSet2)
+
+
+    def test_get_new_degree(self):
+
+        print "| test_get_new_degree | "               
+
+        self.run.read_network_file()
+        self.run.calculate_protein_degree()
+
+        topProteins = ["ZDH17_HUMAN", 'CRK_HUMAN']
+
+        newProteinSet = self.run._get_sample_protein_degree( topProteins)
+
+        originalDegrees = { self.run.degreeDict[ prot] for prot in topProteins}
+        newDegrees = { self.run.degreeDict[ prot] for prot in newProteinSet}
+
+        self.assertTrue( originalDegrees == set([224, 223]) )
+        self.assertTrue( newDegrees == set([219, 222]))
 
 
     def test_calculate_metrics(self):
