@@ -221,12 +221,12 @@ class NetworkScoreAnalysis(object):
             proteinsPerDegreeDict[ degree].add( prot)
             
 
-        # list of degrees available, so that closest degree to the degree of interest can be probed
-        sortedDegrees = sorted( proteinsPerDegreeDict.keys()) 
+        ## list of degrees available, so that closest degree to the degree of interest can be probed
+        #sortedDegrees = sorted( proteinsPerDegreeDict.keys()) 
 
         self.degreeDict = degreeDict
         self.proteinsPerDegreeDict = proteinsPerDegreeDict
-        self.sortedDegrees = sortedDegrees
+        #self.sortedDegrees = sortedDegrees
 
 
     # #
@@ -517,31 +517,38 @@ class NetworkScoreAnalysis(object):
         # loop over provided list of proteins and remove them as a choice to be picked randomly
         for prot in list_of_proteins:
             degree = degreeDict[ prot]
+
             proteinsPerDegreeDictCopy[ degree].remove( prot)
+            # if there is no more proteins with this degree, remove the degree as key in dictionary
+            if len( proteinsPerDegreeDictCopy[ degree]) == 0:
+                del proteinsPerDegreeDictCopy[ degree]
 
         # loop over provided list of proteins, pick and remove new set of proteins with same degree randomly
         for prot in list_of_proteins:
                         
             degree = degreeDict[ prot]
 
-            # check if can pick protein with same degree, if not, sample protein from the closest possible degree            
-            if len( proteinsPerDegreeDictCopy[ degree]) == 0:
-                
-                # get list of all degrees except current degree
-                otherDegrees = filter(lambda a: a != degree, self.sortedDegrees)
+            # check if can pick protein with same degree, if not, sample protein from the closest possible degree
+            if degree not in proteinsPerDegreeDictCopy:
+                # change current degree to the closest available degree
+                degree = self._get_new_degree( degree, proteinsPerDegreeDictCopy)
+            elif len( proteinsPerDegreeDictCopy[ degree]) == 0:
+                # change current degree to the closest available degree
+                degree = self._get_new_degree( degree, proteinsPerDegreeDictCopy)
 
-                # calculate distances of all degrees against ours and return the closest degree
-                newDegree = min( otherDegrees, key=lambda x:abs( x-degree))
-
-                Logger.get_instance().warning(  "NetworkScoreAnalysis._get_sample_protein_degree : No more proteins with degree %s. Sampling closest degree: %s." % ( degree, newDegree ) )
-
-                degree = newDegree
-
+            # (meaning randomization is limited)
             if len( proteinsPerDegreeDictCopy[ degree]) < self.numberRandomizations:
                 Logger.get_instance().warning( "NetworkScoreAnalysis._get_sample_protein_degree : less proteins with degree %s than number of randomizations." % ( degree ) )
 
+            # pick one random protein from list of proteins with that degree
             randomProt = random.sample( proteinsPerDegreeDictCopy[ degree], 1)[0]
+
+            # remove protein so that it is not picked up again in this randomization
             proteinsPerDegreeDictCopy[ degree].remove( randomProt)
+            
+            # if there is no more proteins with this degree, remove the degree as key in dictionary
+            if len( proteinsPerDegreeDictCopy[ degree]) == 0:
+                del proteinsPerDegreeDictCopy[ degree]
             
             newProteinSet.add( randomProt)
                    
@@ -551,7 +558,23 @@ class NetworkScoreAnalysis(object):
         newProteinSet = [prot for prot in newProteinSet]
     
         return newProteinSet
+
+
+    # Function to get the closest possible available degree
+    def _get_new_degree(self, degree, proteinsPerDegreeDictCopy):
+
+        sortedDegrees = sorted( proteinsPerDegreeDictCopy.keys()) 
         
+        # get list of all degrees except current degree
+        otherDegrees = filter(lambda a: a != degree, sortedDegrees)
+
+        # calculate distances of all degrees against ours and return the closest degree
+        newDegree = min( otherDegrees, key=lambda x:abs( x-degree))
+
+        Logger.get_instance().warning(  "NetworkScoreAnalysis._get_new_degree : No more proteins with degree %s. Sampling closest degree: %s." % ( degree, newDegree ) )
+
+        return newDegree
+
 
     # #
     # Calculate proportion of random tests that are below observed value
