@@ -104,6 +104,9 @@ class NetworkScoreAnalysis(object):
             os.mkdir( self.outputFolder)
 
 
+        self.calculatedShortestPaths = {}
+
+
 #     # #
 #     # Use RAINET DB to retrieve Protein cross references
 #     def protein_cross_references(self):
@@ -401,7 +404,6 @@ class NetworkScoreAnalysis(object):
 
             lionelMetrics[ rna] = lionelMetric
 
-
             ## calculate metrics for each randomization
 
             if self.numberRandomizations > 0:
@@ -466,6 +468,24 @@ class NetworkScoreAnalysis(object):
             otherIdx = [i for i in allIdx if i != idx ]
                             
             # calculate shortest path between current node against all others
+
+            shortestPaths = []
+
+#             # Approach 1: Calculating shortest path one vs one, saving result in a dictionary for reusal
+#             for otherProt in otherIdx:
+#                 tag = str( idx) + "|" + str( otherProt)
+#                  
+#                 if tag in self.calculatedShortestPaths:
+#                     shortestPath = self.calculatedShortestPaths[ tag]
+#                 else:
+#                     shortestPath = self.graph.shortest_paths( idx, otherProt, mode = "OUT")[0]                
+#                     # save result in dictionary. Shortest path is the same both ways in our type of network
+#                     self.calculatedShortestPaths[ tag] = shortestPath
+#                     self.calculatedShortestPaths[ str( otherProt) + "|" + str( idx)] = shortestPath
+#                  
+#                 shortestPaths.extend( shortestPath)
+            
+            # Approach 2: Calculating one protein vs all (much faster!)
             shortestPaths = self.graph.shortest_paths( idx, otherIdx, mode = "OUT")[0]
             
             #=======================================================================
@@ -500,7 +520,7 @@ class NetworkScoreAnalysis(object):
                     
         # calculate mean shortest path for current RNA (mean of means)
         meanRNAShortestPath = np.mean( meanShortestPaths)
-        
+                
         return meanRNAShortestPath, lionelMetric
 
     # #
