@@ -239,7 +239,6 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.assertTrue( len( lionelMetrics) == 10) #there are 10 rnas
         self.assertTrue( len( lionelMetricsRandom[ "ENST00000384278"]) == self.topPartners)
         self.assertTrue( len( rnaShortestPathRandom[ "ENST00000384278"]) == self.topPartners)
-
         
     def test_run(self):
 
@@ -251,12 +250,10 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 
 
 #     def test_extra(self):
-#  
+#   
 #         self.run.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/cutoff50/Corum_Havugimana/storedInteractions.tsv"
-#         self.run.numberRandomizations = 0
+#         self.run.numberRandomizations = 1
 #         self.run.topPartners = 50
-# 
-#                  
 #         self.run.run()
 
      
