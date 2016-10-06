@@ -33,9 +33,10 @@ SP_RANDOM_HEAD = "SP_random"
 # SP_REAL_COL = 4
 # SP_RANDOM_COL = 5
 
+PVAL_THRESHOLD = 0.01
 
 # Read input file and return averages by column
-def read_input_file( input_file):
+def read_input_file( input_file, only_significant):
     
     # E.g. 
     #     transcriptID    LCneighbours    LCneighboursRandom      LCneighboursPval        ShortestPath    ShortestPathRandom      ShortestPathPval
@@ -45,14 +46,45 @@ def read_input_file( input_file):
     with open( input_file) as inFile:
         
         table = pd.read_table( inFile, header = 0, sep = "\t", skip_blank_lines = True)
-        
+
+        # whether to keep only transcripts with significant results compared to random
+        if only_significant:
+            # filter by LCneighbours p value
+            if only_significant == 1:        
+                cols = ["LCneighboursPval"]
+                table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+                table = table[table.LCneighboursPval.notnull()]
+            # filter by Shortest path p value
+            if only_significant == 2:
+                cols = ["ShortestPathPval"]
+                table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+                table = table[table.ShortestPathPval.notnull()]
+
+        # count number significant entries
+        newTable = table.copy()
+        cols = ["LCneighboursPval"]
+        newTable[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+        newTable = newTable[newTable.LCneighboursPval.notnull()]
+        signLCN = str( len(newTable))
+
+        newTable = table.copy()
+        cols = ["ShortestPathPval"]
+        newTable[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+        newTable = newTable[newTable.ShortestPathPval.notnull()]
+        signSP = str( len(newTable))
+
+
         lcnRealMean = "%.2f" % np.mean( table["LCneighbours"])
         lcnRandomMean = "%.2f" % np.mean( table["LCneighboursRandom"])
         spRealMean = "%.2f" % np.mean( table["ShortestPath"])
         spRandomMean = "%.2f" % np.mean( table["ShortestPathRandom"])
+        nTranscripts = str( len( table) ) #n transcripts used for means etc
 
 
-    return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean
+        ## write filtered table
+        table.to_csv(input_file + "_processed.txt", sep = "\t")
+        
+    return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP
         
 
 if __name__ == "__main__":
@@ -69,6 +101,8 @@ if __name__ == "__main__":
         # positional args
         parser.add_argument('inFolder', metavar='inFolder', type=str,
                              help='Folder with several topPartners* folders to be analysed.')
+        parser.add_argument('--onlySignificant', metavar='onlySignificant', type=int, default = 0,
+                             help='If 1, calculate means only when differences are significant. If 2, use shortestPath instead of LCneighbours for the filter.')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -85,7 +119,7 @@ if __name__ == "__main__":
         
         outFile = open("combined_results.tsv", "w")
          
-        outFile.write("%s\n" % ( "\t".join( [TOP_PARTNERS_HEAD, LCN_REAL_HEAD, LCN_RANDOM_HEAD, SP_REAL_HEAD, SP_RANDOM_HEAD])) )
+        outFile.write("%s\n" % ( "\t".join( [TOP_PARTNERS_HEAD, LCN_REAL_HEAD, LCN_RANDOM_HEAD, SP_REAL_HEAD, SP_RANDOM_HEAD, "n_transcripts", "signLCN", "signSP"])) )
         
         resultsDict = {}
         
@@ -93,7 +127,7 @@ if __name__ == "__main__":
             #e.g. /TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_produce_plots/topPartners20/metrics_per_rna.tsv
             topPartnersValue = int( inputFile.split("/")[-2].split(FOLDER_NAME)[1])
 
-            resultsDict[ topPartnersValue] = read_input_file( inputFile) #[ lcnReal, lcnRandom, spReal, spRandom]
+            resultsDict[ topPartnersValue] = read_input_file( inputFile, args.onlySignificant) #[ lcnReal, lcnRandom, spReal, spRandom]
             
         for topValue in sorted( resultsDict):
             outFile.write( "%s\t%s\n" % ( topValue, "\t".join( resultsDict[ topValue]) ) )
