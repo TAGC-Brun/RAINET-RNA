@@ -72,7 +72,7 @@ class NetworkScoreAnalysis(object):
                       2 : 0.5,
                       3 : 0.25 }
 
-    DISTANCE_ABOVE_LIMIT_SCORE = 0
+    DISTANCE_ABOVE_LIMIT_SCORE = -0.1
 
     # Number of interactions above this value will use too much memory
     MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 30000000    
@@ -432,12 +432,11 @@ class NetworkScoreAnalysis(object):
                 meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
                 meanRandomRnaShortestPath = np.mean( rnaShortestPathRandom[ rna])
                 
-                outFile.write( "%s\t%i\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
+                outFile.write( "%s\t%.2f\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
 
             else:
-                outFile.write( "%s\t%i\tNA\tNA\t%.2f\tNA\tNA\n" % ( rna, lionelMetrics[ rna], rnaShortestPath[ rna] ) )
-                
-            
+                outFile.write( "%s\t%.2f\tNA\tNA\t%.2f\tNA\tNA\n" % ( rna, lionelMetrics[ rna], rnaShortestPath[ rna] ) )
+                            
         outFile.close()
      
         #print (graph.average_path_length()) # take stime to run
