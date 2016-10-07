@@ -7,6 +7,8 @@ from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.time.Timer import Timer
 
+from statsmodels.stats.multitest import multipletests
+
 from fr.tagc.rainet.core.execution.analysis.NetworkScoreAnalysis.NetworkScoreAnalysis import NetworkScoreAnalysis
 
 #===============================================================================
@@ -33,7 +35,7 @@ SP_RANDOM_HEAD = "SP_random"
 # SP_REAL_COL = 4
 # SP_RANDOM_COL = 5
 
-PVAL_THRESHOLD = 0.01
+PVAL_THRESHOLD = 0.05
 
 # Read input file and return averages by column
 def read_input_file( input_file, only_significant):
@@ -60,19 +62,24 @@ def read_input_file( input_file, only_significant):
                 table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
                 table = table[table.ShortestPathPval.notnull()]
 
-        # count number significant entries
+        # count number significant entries for LCN
         newTable = table.copy()
         cols = ["LCneighboursPval"]
-        newTable[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
-        newTable = newTable[newTable.LCneighboursPval.notnull()]
+        # apply multiple test correction
+        newTable[cols] = multiple_test_correction( table.LCneighboursPval)
+        newTable[cols] = newTable[newTable[cols] < PVAL_THRESHOLD][cols]
+        newTable = newTable[newTable.LCneighboursPval.notnull()]        
         signLCN = str( len(newTable))
 
+
+        # count number significant entries for SP
         newTable = table.copy()
         cols = ["ShortestPathPval"]
-        newTable[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+        # apply multiple test correction
+        newTable[cols] = multiple_test_correction( table.ShortestPathPval)
+        newTable[cols] = newTable[newTable[cols] < PVAL_THRESHOLD][cols]
         newTable = newTable[newTable.ShortestPathPval.notnull()]
         signSP = str( len(newTable))
-
 
         lcnRealMean = "%.2f" % np.mean( table["LCneighbours"])
         lcnRandomMean = "%.2f" % np.mean( table["LCneighboursRandom"])
@@ -85,6 +92,12 @@ def read_input_file( input_file, only_significant):
         table.to_csv(input_file + "_processed.txt", sep = "\t")
         
     return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP
+        
+
+# #
+# Run multipletest correction and return pvalues
+def multiple_test_correction(pvalues, meth = "fdr_bh"):
+    return multipletests(pvalues, method = meth)[1]
         
 
 if __name__ == "__main__":
@@ -112,6 +125,9 @@ if __name__ == "__main__":
         #===============================================================================
 
         filesToProcess = glob.glob( args.inFolder + "/" + FOLDER_NAME + "*/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT)
+        
+        if len( filesToProcess) == 0:
+            raise RainetException( "combine_network_analysis_results : No files to process in %s" % ( args.inFolder ) )
         
         #===============================================================================
         # Write output file
