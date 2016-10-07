@@ -256,6 +256,18 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
 #         self.run.topPartners = 50
 #         self.run.run()
 
+
+#     def test_extra(self):
+#    
+#         self.run.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/test_set/fake_interactions.txt"
+#         self.run.networkFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/test_set/fake_interactome.txt"
+#         self.run.numberRandomizations = 0
+#         self.run.topPartners = 2
+#         self.run.run()
+#         # testing with fake dataset
+#         # results here
+#         #/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/test_set
+
      
 #     # #
 #     # Runs after each test
