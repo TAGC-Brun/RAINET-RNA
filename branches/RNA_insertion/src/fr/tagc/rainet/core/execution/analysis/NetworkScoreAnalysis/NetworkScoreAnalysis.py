@@ -55,9 +55,8 @@ SCRIPT_NAME = "NetworkScoreAnalysis.py"
 # 3) For randomization: if there are no more proteins to sample with same degree, take proteins from closest degree possible.
 # 4) If transcript has less interactions than number of wanted top proteins, transcript is not processed.
 # 5) Potential issue: for picking random proteins we use whole PPI network, regardless of having interactions or not. This may be different protein set as we only have interactions for proteins <750aa
+# 6) Assortativity: using undirected assortativity of graph, populating graph with presence/absence (1/0) of interaction based on a cutoff. If no interaction information (e.g. protein >750aa), this protein is treated as having no interaction (0).
 #===============================================================================
-
-
 
 
 class NetworkScoreAnalysis(object):
@@ -76,6 +75,9 @@ class NetworkScoreAnalysis(object):
 
     # Number of interactions above this value will use too much memory
     MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 30000000    
+
+    # For assortativity metric: interaction propensity cutoff to distinguish interacting from non-interacting.
+    SCORE_CUTOFF = 15
 
     #===================================================================
     # Report files constants       
@@ -364,6 +366,7 @@ class NetworkScoreAnalysis(object):
         #=======================================================================
         # - Calculate mean of mean shortest path between top proteins
         # - Calculate Lionel metric (see details at start of script)
+        # - Calculate assortativity
         #=======================================================================
         # Shortest path mean: for each RNA, for each top protein, calculate shortest path against each other top protein. Calculate mean for each protein, and then mean for each RNA.
         # LCneighbour metric: see top of script
@@ -375,7 +378,7 @@ class NetworkScoreAnalysis(object):
         outFile = open( self.outputFolder + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
 
         # write header
-        outFile.write("transcriptID\tLCneighbours\tLCneighboursRandom\tLCneighboursPval\tShortestPath\tShortestPathRandom\tShortestPathPval\n")
+        outFile.write("transcriptID\tLCneighbours\tLCneighboursRandom\tLCneighboursPval\tShortestPath\tShortestPathRandom\tShortestPathPval\tAssortativity\tAssortativityRandom\tAssortativityPval\n")
 
         rnaShortestPath = {} # key -> transcript ID, val -> mean of mean shortest paths
         rnaShortestPathRandom = {} # key -> transcript ID, val -> list of mean of mean shortest paths, one for each randomization
@@ -385,11 +388,15 @@ class NetworkScoreAnalysis(object):
         lionelMetricsRandom = {} # key -> transcript ID, val -> list of lionel metrics, one for each randomization
         lionelMetricsPval = {} # key -> transcript ID, val -> pval
  
+        assortativityMetric = {} # key -> transcript ID, val -> assortativity
+        assortativityMetricRandom = {} # key -> transcript ID, val -> list of assortativity values, one for each randomization
+        assortativityMetricPval = {} # key -> transcript ID, val -> pval
+ 
         count = 0
  
         ### calculate metrics for each RNA
         for rna in rnaTops:
-
+                  
             count+=1
             if count % 100 == 0:
                 Logger.get_instance().info( "NetworkScoreAnalysis.calculate_metrics: processed %s transcripts.." % ( count) )           
@@ -404,6 +411,37 @@ class NetworkScoreAnalysis(object):
 
             lionelMetrics[ rna] = lionelMetric
 
+            ## calculate assortativity of graph, using current RNA scores
+
+            # backup graph
+            localGraph = self.graph.copy()
+
+            # Add attribute to vertices in the graph, based on interaction with current RNA
+            # note: if adding an attribute to one vertex, all other vertex will also have that attribute initialised as "None",
+            # however, we do not have interactions for all proteins in PPI,
+            # therefore the solution is to add a boolean, whether or not interaction occurs, based on a cutoff
+            aboveCutoff = 0
+            for scoreBin in self.rnaTargets[ rna]:
+                for prot in self.rnaTargets[ rna][scoreBin]:
+                    try:
+                        vertexID = self.dictNames[ prot]
+                        # if interaction exists, attribute value 1
+                        if scoreBin > NetworkScoreAnalysis.SCORE_CUTOFF:
+                            localGraph.vs[vertexID]["score"] = 1 #float( scoreBin)
+                            aboveCutoff += 1
+                        else:
+                            localGraph.vs[vertexID]["score"] = 0    
+                    except KeyError:
+                        # not all proteins are in the PPI, this will be treated afterwards
+                        continue
+            # for the proteins in graph with no interaction, attribute value 0
+            for v in localGraph.vs:
+                if v["score"] == None:
+                    v["score"] = 0
+
+            assortativityMetric[ rna] = localGraph.assortativity("score", directed=False)
+                    
+
             ## calculate metrics for each randomization
 
             if self.numberRandomizations > 0:
@@ -412,6 +450,8 @@ class NetworkScoreAnalysis(object):
                     rnaShortestPathRandom[ rna] = []
                 if rna not in lionelMetricsRandom:
                     lionelMetricsRandom[ rna] = []
+                if rna not in assortativityMetricRandom:
+                    assortativityMetricRandom[ rna] = []
     
                 for i in xrange( self.numberRandomizations):
                     
@@ -423,19 +463,46 @@ class NetworkScoreAnalysis(object):
                     rnaShortestPathRandom[ rna].append( meanRNAShortestPath)
     
                     lionelMetricsRandom[ rna].append( lionelMetric)
+
+                    ## randomise for assortativity metric
+                    localGraph = self.graph.copy()
+
+                    counter = 0                    
+                    # randomize looping over graph
+                    for v in random.sample( localGraph.vs, len( localGraph.vs)):
+                        # add same number of interacting proteins as for the real case
+                         
+                        if counter < aboveCutoff:
+                            v["score"] = 1
+                            counter+=1
+                        else:
+                            v["score"] = 0
+
+
+                    # testing
+                    # value when all scores except one are 1: -8.10445996733e-06 (depends on which prot has the 0) # same is also true if I swap 1's and 0's
+                    # value with aboveCutoff = 1000: -0.0690268123661
+                    # value with aboveCutoff = 5000: -0.0923544580935
+                    # value with aboveCutoff = 10000: -0.00756139885646
+                    # 100 randomizations tend to have mean values of 0, regardless of aboveCutoff
+
+                    assortativityMetricRandom[ rna].append( localGraph.assortativity("score", directed=False) )
     
                 # calculate pvalue for lionel metric (based on randomization), they higher the better (count above)
                 lionelMetricsPval[ rna] = self._empirical_pvalue( lionelMetricsRandom[ rna], lionelMetrics[ rna], 1)[0]
                 # calculate pvalue for shortest path (based on randomization), they lower the better (count below)
                 rnaShortestPathPval[ rna] = self._empirical_pvalue( rnaShortestPathRandom[ rna], rnaShortestPath[ rna], 0)[0]
+                # calculate pvalue for assortativity (based on randomization), they higher the better (more correlated)
+                assortativityMetricPval[ rna] = self._empirical_pvalue( assortativityMetricRandom[ rna], assortativityMetric[ rna], 1)[0]
      
                 meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
                 meanRandomRnaShortestPath = np.mean( rnaShortestPathRandom[ rna])
+                meanRandomAssortativity = np.mean( assortativityMetricRandom[ rna])
                 
-                outFile.write( "%s\t%.2f\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna]) )
+                outFile.write( "%s\t%.2f\t%.2f\t%.1e\t%.2f\t%.2f\t%.1e\t%.3f\t%.3f\t%.1e\n" % ( rna, lionelMetrics[ rna], meanRandomLionelMetric, lionelMetricsPval[ rna], rnaShortestPath[ rna], meanRandomRnaShortestPath, rnaShortestPathPval[ rna], assortativityMetric[ rna], meanRandomAssortativity, assortativityMetricPval[ rna] ) )
 
             else:
-                outFile.write( "%s\t%.2f\tNA\tNA\t%.2f\tNA\tNA\n" % ( rna, lionelMetrics[ rna], rnaShortestPath[ rna] ) )
+                outFile.write( "%s\t%.2f\tNA\tNA\t%.2f\tNA\tNA\t%.3f\tNA\tNA\n" % ( rna, lionelMetrics[ rna], rnaShortestPath[ rna], assortativityMetric[ rna] ) )
                             
         outFile.close()
      
