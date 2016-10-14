@@ -294,7 +294,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
         res, count = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
 
-        self.assertTrue( res == 1.0, "assert that empirical pvalue is correct according to input")
+        self.assertTrue( abs( res - 1.0) <= 0.01, "assert that empirical pvalue is correct according to input")
         self.assertTrue( count == 0, "assert that empirical count above is correct according to input")
 
         # random are 0/4 above
@@ -311,8 +311,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         assert len( listRandomSignificant) == nTests
 
         res, count = self.run.empirical_pvalue(listRandomSignificant, observedSignificant)
-        
-        self.assertTrue( res == 0.75, "assert that empirical pvalue is correct according to input")
+
+        self.assertTrue( abs( res - 0.75) <= 0.01, "assert that empirical pvalue is correct according to input")
         self.assertTrue( count == 25, "assert that empirical count above is correct according to input")
 
 

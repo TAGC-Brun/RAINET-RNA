@@ -919,10 +919,10 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                 above +=1
 
         if aboveTail:
-            pval = 1.0 - ( above / float( len( listRandomSignificant)) )
+            pval = 1.0 - ( (above + 1) / float( len( listRandomSignificant) + 1) )
             return pval, above
         else:
-            pval = 1.0 - (below / float( len( listRandomSignificant)) )  
+            pval = 1.0 - ( (below + 1) / float( len( listRandomSignificant) + 1) )  
             return pval, below
 
 
