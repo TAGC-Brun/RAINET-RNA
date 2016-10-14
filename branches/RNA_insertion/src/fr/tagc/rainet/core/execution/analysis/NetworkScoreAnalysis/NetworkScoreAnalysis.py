@@ -75,7 +75,7 @@ class NetworkScoreAnalysis(object):
     DISTANCE_ABOVE_LIMIT_SCORE = -0.1
 
     # Number of interactions above this value will use too much memory
-    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 30000000    
+    MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 100000000    
 
     #===================================================================
     # Report files constants       
@@ -271,8 +271,8 @@ class NetworkScoreAnalysis(object):
                 score = float( spl2[1])
                 
                 # decided not to round score values, but may be useful if input file is too large
-                scoreRounded = score
-                #scoreRounded = round( score, 1) 
+                #scoreRounded = score
+                scoreRounded = round( score, 1) 
                            
                 allRNASet.add( rnaID)
                 allProtSet.add( protID)
@@ -287,6 +287,9 @@ class NetworkScoreAnalysis(object):
 
                 nlines += 1
 
+                if nlines % 10000000 == 0:
+                    Logger.get_instance().info( "NetworkScoreAnalysis.read_catrapid_file : Processed %s lines.." % ( nlines ) )
+                    
                 if nlines > NetworkScoreAnalysis.MAXIMUM_NUMBER_VIABLE_INTERACTIONS:
                     raise RainetException( "NetworkScoreAnalysis.read_catrapid_file : number of interactions is too large to be computable: %s interactions" % nlines)
 
@@ -342,9 +345,9 @@ class NetworkScoreAnalysis(object):
                             boo = 0
                             continue
 
-            # Warn about how many top proteins skipped because they are not present in PPI network
-            # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
-            Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
+#             # Warn about how many top proteins skipped because they are not present in PPI network
+#             # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
+#             Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
 
             # Warn if there is not enough proteins to fill top
             # transcript is not analysed as it wouldn't be comparable to others
@@ -555,9 +558,9 @@ class NetworkScoreAnalysis(object):
                 # change current degree to the closest available degree
                 degree = self._get_new_degree( degree, proteinsPerDegreeDictCopy)
 
-            # (meaning randomization is limited)
-            if len( proteinsPerDegreeDictCopy[ degree]) < self.numberRandomizations:
-                Logger.get_instance().warning( "NetworkScoreAnalysis._get_sample_protein_degree : less proteins with degree %s than number of randomizations." % ( degree ) )
+#             # (meaning randomization is limited)
+#             if len( proteinsPerDegreeDictCopy[ degree]) < self.numberRandomizations:
+#                 Logger.get_instance().warning( "NetworkScoreAnalysis._get_sample_protein_degree : less proteins with degree %s than number of randomizations." % ( degree ) )
 
             # pick one random protein from list of proteins with that degree
             randomProt = random.sample( proteinsPerDegreeDictCopy[ degree], 1)[0]

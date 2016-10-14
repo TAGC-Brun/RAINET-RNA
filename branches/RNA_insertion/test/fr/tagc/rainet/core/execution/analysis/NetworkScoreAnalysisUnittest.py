@@ -117,8 +117,13 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # grep ENST00000383925 storedInteractions.tsv | grep Q5T5D7
         # sp|Q5T5D7|ZN684_HUMAN ENST00000383925    17.75    0.47    0.00
 
-        self.assertTrue( "ZN684_HUMAN" in rnaTargets["ENST00000383925"][17.75] )
-        self.assertTrue( "E2AK2_HUMAN" in rnaTargets["ENST00000383925"][20.16] )
+        # if using score rounding
+        self.assertTrue( "ZN684_HUMAN" in rnaTargets["ENST00000383925"][17.8] )
+        self.assertTrue( "E2AK2_HUMAN" in rnaTargets["ENST00000383925"][20.2] )
+
+        # if not using score rounding
+#         self.assertTrue( "ZN684_HUMAN" in rnaTargets["ENST00000383925"][17.75] )
+#         self.assertTrue( "E2AK2_HUMAN" in rnaTargets["ENST00000383925"][20.16] )
 
 
     def test_pick_top_proteins(self):

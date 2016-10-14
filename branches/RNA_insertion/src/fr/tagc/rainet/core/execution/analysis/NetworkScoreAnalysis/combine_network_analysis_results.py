@@ -37,6 +37,8 @@ SP_RANDOM_HEAD = "SP_random"
 
 PVAL_THRESHOLD = 0.05
 
+NUMBER_EXAMPLE_TRANSCRIPTS = 20
+
 # Read input file and return averages by column
 def read_input_file( input_file, only_significant):
     
@@ -45,10 +47,23 @@ def read_input_file( input_file, only_significant):
     #     ENST00000477643 9       4.39    0.0e+00 3.32    3.81    0.0e+00
     #     ENST00000548215 0       1.98    1.0e+00 4.86    4.27    9.8e-01
 
+    exampleTranscripts = set()
+    boo = 1
+
     with open( input_file) as inFile:
         
         table = pd.read_table( inFile, header = 0, sep = "\t", skip_blank_lines = True)
 
+        # pick example transcript for the first file read
+        if boo:
+            exampleTranscripts = set( table["transcriptID"][0:NUMBER_EXAMPLE_TRANSCRIPTS])
+            boo = 0
+
+        # Get LCN just for the example transcripts
+        # order of transcripts is always kept in input files and thus also in the table
+        exampleLCNs = list( table.loc[table["transcriptID"].isin(exampleTranscripts)]["LCneighbours"] )
+        exampleLCNs = [ "%.2f" % val for val in exampleLCNs]
+       
         # whether to keep only transcripts with significant results compared to random
         if only_significant:
             # filter by LCneighbours p value
@@ -91,7 +106,7 @@ def read_input_file( input_file, only_significant):
         ## write filtered table
         table.to_csv(input_file + "_processed.txt", sep = "\t")
         
-    return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP
+    return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP, exampleTranscripts, exampleLCNs
         
 
 # #
@@ -134,21 +149,35 @@ if __name__ == "__main__":
         #===============================================================================
         
         outFile = open("combined_results.tsv", "w")
+        outFile2 = open("combined_examples.tsv", "w")
          
         outFile.write("%s\n" % ( "\t".join( [TOP_PARTNERS_HEAD, LCN_REAL_HEAD, LCN_RANDOM_HEAD, SP_REAL_HEAD, SP_RANDOM_HEAD, "n_transcripts", "signLCN", "signSP"])) )
         
         resultsDict = {}
         
+        exampleDict = {}
+        
         for inputFile in filesToProcess:
             #e.g. /TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_produce_plots/topPartners20/metrics_per_rna.tsv
             topPartnersValue = int( inputFile.split("/")[-2].split(FOLDER_NAME)[1])
 
-            resultsDict[ topPartnersValue] = read_input_file( inputFile, args.onlySignificant) #[ lcnReal, lcnRandom, spReal, spRandom]
+            data = read_input_file( inputFile, args.onlySignificant)
+            resultsDict[ topPartnersValue] = data[0:-2] #[ lcnReal, lcnRandom, spReal, spRandom]
+
+            # get the LCN values for example transcripts          
+            exampleDict[ topPartnersValue] = data[ -1]
+            # get list of example transcripts IDs
+            exampleHeader = data[ -2]
+
+
+        outFile2.write("topPartners\t%s\n" % ( "\t".join( exampleHeader)) )
             
         for topValue in sorted( resultsDict):
             outFile.write( "%s\t%s\n" % ( topValue, "\t".join( resultsDict[ topValue]) ) )
-
+            outFile2.write( "%s\t%s\n" % ( topValue, "\t".join( exampleDict[ topValue]) ) )
+            
         outFile.close()
+        outFile2.close()
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
