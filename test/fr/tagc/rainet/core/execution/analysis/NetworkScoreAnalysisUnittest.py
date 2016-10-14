@@ -33,7 +33,10 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         
         #self.catrapidFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/telomerase_plus_random_tx/telomerase_plus_random_tx_interactions.out"      
         #self.rainetDBFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-09-27.human_noPRI.sqlite"
-        self.topPartners = 10
+        
+        #self.topPartners = 10
+        self.topPartners = "10"
+        self.topPartnersSingle = 10
         self.outputFolder = "test_output/"
         self.numberRandomizations = 10
 
@@ -150,7 +153,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         # sp|Q70EK9|UBP51_HUMAN    ENST00000384010    43.68    0.91    0.14
         # sp|Q92541|RTF1_HUMAN    ENST00000384010    42.07    0.9    0.12
 
-        self.assertTrue( rnaTops[ "ENST00000384010"] == ['KIF2C_HUMAN', 'MD1L1_HUMAN', 'GRPL2_HUMAN', 'PBIP1_HUMAN', 'RTF1_HUMAN', 'IGBP1_HUMAN', 'SHOT1_HUMAN', 'MUM1_HUMAN', 'CASC1_HUMAN', 'SSRP1_HUMAN'])
+        self.assertTrue( rnaTops[ "ENST00000384010"][10] == ['KIF2C_HUMAN', 'MD1L1_HUMAN', 'GRPL2_HUMAN', 'PBIP1_HUMAN', 'RTF1_HUMAN', 'IGBP1_HUMAN', 'SHOT1_HUMAN', 'MUM1_HUMAN', 'CASC1_HUMAN', 'SSRP1_HUMAN'])
 
 
     def test_calculate_metric_for_rna(self):
@@ -158,7 +161,8 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         print "| test_calculate_metric_for_rna | "        
 
         ## changing parameters in other to be stable
-        self.run.topPartners = 3
+        self.run.topPartners = [3]
+        val = self.run.topPartners[0]
         distanceScore = {
                       1 : 100,
                       2 : 1.0,
@@ -171,7 +175,7 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.read_catrapid_file()        
         self.run.pick_top_proteins()
 
-        topProteins = self.run.rnaTops[ "ENST00000384382"]
+        topProteins = self.run.rnaTops[ "ENST00000384382"][ val]
 
         meanRNAShortestPath, lionelMetric = self.run._calculate_metric_for_rna( topProteins)
 
@@ -239,11 +243,40 @@ class NetworkScoreAnalysisUnittest(unittest.TestCase):
         self.run.read_catrapid_file()        
         self.run.pick_top_proteins()        
 
-        lionelMetrics, lionelMetricsRandom, lionelMetricsPval, rnaShortestPath, rnaShortestPathRandom, rnaShortestPathPval = self.run.calculate_metrics()
+        topPartners = self.topPartnersSingle
+
+        lionelMetrics, lionelMetricsRandom, lionelMetricsPval, rnaShortestPath, rnaShortestPathRandom, rnaShortestPathPval = self.run.calculate_metrics( topPartners)
 
         self.assertTrue( len( lionelMetrics) == 10) #there are 10 rnas
-        self.assertTrue( len( lionelMetricsRandom[ "ENST00000384278"]) == self.topPartners)
-        self.assertTrue( len( rnaShortestPathRandom[ "ENST00000384278"]) == self.topPartners)
+        self.assertTrue( len( lionelMetricsRandom[ "ENST00000384278"]) == topPartners)
+        self.assertTrue( len( rnaShortestPathRandom[ "ENST00000384278"]) == topPartners)
+
+
+    def test_multi_topPartners(self):
+
+        print "| test_multi_topPartners | "  
+              
+        self.run.topPartners = [2,4]
+
+        self.run.read_network_file()
+        self.run.calculate_protein_degree()
+
+        self.run.read_catrapid_file()        
+        self.run.pick_top_proteins()
+        
+        # verify if the different top values are there
+        for rna in self.run.rnaTops:
+            self.assertTrue( self.run.topPartners == self.run.rnaTops[ rna].keys() )
+            smaller = self.run.rnaTops[ rna][ min(self.run.topPartners)]
+            larger = self.run.rnaTops[ rna][ max(self.run.topPartners)]
+            
+            # every protein of the smaller top value should be on the larger one
+            for prot in smaller:
+                self.assertTrue( prot in larger)
+
+        for topVal in self.run.topPartners:
+            self.run.calculate_metrics( topVal)
+
         
     def test_run(self):
 

@@ -91,7 +91,7 @@ class NetworkScoreAnalysis(object):
 
         self.networkFile = networkFile
         self.catrapidFile = catrapidFile
-        self.topPartners = topPartners
+        self.topPartners = [int( i) for i in topPartners.split(",")]
         self.outputFolder = outputFolder
         self.numberRandomizations = numberRandomizations
 
@@ -99,9 +99,9 @@ class NetworkScoreAnalysis(object):
 #         SQLManager.get_instance().set_DBpath(self.rainetDBFile)
 #         self.sql_session = SQLManager.get_instance().get_session()
 
-        # make output folder
-        if not os.path.exists( self.outputFolder):
-            os.mkdir( self.outputFolder)
+#         # make output folder
+#         if not os.path.exists( self.outputFolder):
+#             os.mkdir( self.outputFolder)
 
 
         self.calculatedShortestPaths = {}
@@ -307,63 +307,63 @@ class NetworkScoreAnalysis(object):
     # #
     # Pick top X proteins for each RNA, based on best score, in case of same score, pick first appearence in input file.
     def pick_top_proteins(self):
-
-        rnaTargets = self.rnaTargets
         
         #=======================================================================
         # pick top X proteins for each RNA
         #=======================================================================
+
+        # store proteins that are in top interactors but not present in network, and therefore skipped in analysis
+        skippedProteins = set()     
+       
+        rnaTops = {} # key -> transcript ID, value -> dict. key -> topValue, value -> list of Top X proteins
         
-        rnaTops = {} # key -> transcript ID, value -> list of Top X proteins
-        
-        for rna in rnaTargets:
-            
-            # store proteins that are in top interactors but not present in network, and therefore skipped in analysis
-            skippedProteins = set()     
-                   
+        for rna in self.rnaTargets:
+
+            sortedScores = sorted(self.rnaTargets[ rna].keys(), reverse = True)
+                       
             if rna not in rnaTops:
-                rnaTops[ rna] = []              
+                rnaTops[ rna] = {}             
             
-            # switch of whether to keep searching for more scores to get more top proteins
-            boo = 1
-            
-            sortedScores = sorted(rnaTargets[ rna].keys(), reverse = True)
-            
-            for score in sortedScores:
-                if boo:
-                    for prot in rnaTargets[ rna][ score]:
-
-                        # add top proteins to rnaTops if top limit is not yet reached
-                        if len( rnaTops[ rna]) < self.topPartners:
-                            # check if protein present in provided graph, otherwise pick next protein
-                            if prot in self.dictNames:
-                                rnaTops[ rna].append( prot)
+            for topVal in self.topPartners:
+                                
+                if topVal not in rnaTops[ rna]:
+                    rnaTops[ rna][ topVal] = []
+                                
+                # switch of whether to keep searching for more scores to get more top proteins
+                boo = 1
+                                
+                for score in sortedScores:
+                    if boo:
+                        for prot in self.rnaTargets[ rna][ score]:   
+                            # add top proteins to rnaTops if top limit is not yet reached
+                            if len( rnaTops[ rna][ topVal]) < topVal:
+                                # check if protein present in provided graph, otherwise pick next protein
+                                if prot in self.dictNames:
+                                    rnaTops[ rna][ topVal].append( prot)
+                                else:
+                                    skippedProteins.add( prot)                                
                             else:
-                                skippedProteins.add( prot)                                
-                        else:
-                            # if top is full, stop searching for more proteins
-                            boo = 0
-                            continue
+                                # if top is full, stop searching for more proteins
+                                boo = 0
+                                break
+    
+                # Warn if there is not enough proteins to fill top
+                # transcript is not analysed as it wouldn't be comparable to others
+                if len( rnaTops[ rna][ topVal]) < topVal:
+                    Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions (has %s) to fill provided top %s. No results for this transcript." % ( rna, len( rnaTops[ rna][ topVal]), topVal ) )
+                    del rnaTops[ rna][ topVal]
 
-#             # Warn about how many top proteins skipped because they are not present in PPI network
-#             # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
-#             Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
-
-            # Warn if there is not enough proteins to fill top
-            # transcript is not analysed as it wouldn't be comparable to others
-            if len( rnaTops[ rna]) < self.topPartners:
-                Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s does not have enough interactions (has %s) to fill provided top. No results for this transcript." % ( rna, len( rnaTops[ rna]) ) )
-                del rnaTops[ rna]
+        # Warn about how many top proteins skipped because they are not present in PPI network
+        # the fact that a protein is not in the PPI network, does not mean that protein has no known interactions, but that we can't easily apply any metrics, therefore we ignore those cases
+        Logger.get_instance().warning( "NetworkScoreAnalysis.pick_top_proteins : %s. 'Top' proteins skipped for not being present in PPI network: %s. List: %s" % ( rna, len( skippedProteins), ",".join( skippedProteins) ) )
 
         self.rnaTops = rnaTops
 
         
     # #
     # For each RNA, calculate several metrics for their top protein partners in their PPI network
-    def calculate_metrics(self):
-                        
-        rnaTops = self.rnaTops        
- 
+    def calculate_metrics(self, topValue):
+                         
         #=======================================================================
         # - Calculate mean of mean shortest path between top proteins
         # - Calculate Lionel metric (see details at start of script)
@@ -375,7 +375,11 @@ class NetworkScoreAnalysis(object):
         # Write output file
         #=======================================================================
 
-        outFile = open( self.outputFolder + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
+        # make output folder specific for the current topValue
+        if not os.path.exists( self.outputFolder + str( topValue)):
+            os.mkdir( self.outputFolder + str( topValue))
+
+        outFile = open( self.outputFolder + str( topValue) + "/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT, "w" )
 
         # write header
         outFile.write("transcriptID\tLCneighbours\tLCneighboursRandom\tLCneighboursPval\tShortestPath\tShortestPathRandom\tShortestPathPval\n")
@@ -391,7 +395,7 @@ class NetworkScoreAnalysis(object):
         count = 0
  
         ### calculate metrics for each RNA
-        for rna in rnaTops:
+        for rna in self.rnaTops:
 
             count+=1
             if count % 100 == 0:
@@ -399,8 +403,12 @@ class NetworkScoreAnalysis(object):
         
             ## calculate metrics for real data
 
-            topProteins = rnaTops[ rna]
-
+            # only write to file if there is hits with this topValue
+            if topValue in self.rnaTops[ rna]:
+                topProteins = self.rnaTops[ rna][ topValue]
+            else:
+                continue
+            
             meanRNAShortestPath, lionelMetric = self._calculate_metric_for_rna( topProteins)
             
             rnaShortestPath[ rna] = meanRNAShortestPath
@@ -427,9 +435,9 @@ class NetworkScoreAnalysis(object):
     
                     lionelMetricsRandom[ rna].append( lionelMetric)
     
-                # calculate pvalue for lionel metric (based on randomization), they higher the better (count above)
+                # calculate pvalue for lionel metric (based on randomization), the higher the better (count above)
                 lionelMetricsPval[ rna] = self._empirical_pvalue( lionelMetricsRandom[ rna], lionelMetrics[ rna], 1)[0]
-                # calculate pvalue for shortest path (based on randomization), they lower the better (count below)
+                # calculate pvalue for shortest path (based on randomization), the lower the better (count below)
                 rnaShortestPathPval[ rna] = self._empirical_pvalue( rnaShortestPathRandom[ rna], rnaShortestPath[ rna], 0)[0]
      
                 meanRandomLionelMetric = np.mean( lionelMetricsRandom[ rna])
@@ -454,8 +462,6 @@ class NetworkScoreAnalysis(object):
         
         # get indexes of top proteins for wanted RNA        
         allIdx = [ self.dictNames[ prot] for prot in top_proteins]
-
-        assert( len( allIdx) == self.topPartners)
 
         # stores mean shortest paths for this RNA, a value for each top protein
         meanShortestPaths = []
@@ -644,7 +650,9 @@ class NetworkScoreAnalysis(object):
 
         Timer.get_instance().step( "Calculate metrics.." )        
 
-        self.calculate_metrics()
+        # calculate metrics for each of the wanted topPartner values
+        for topVal in self.topPartners:
+            self.calculate_metrics( topVal)
          
 #         Logger.get_instance().info( "NetworkScoreAnalysis.run : ... %s" % ( len( self.testContainer)) )
    
@@ -670,8 +678,8 @@ if __name__ == "__main__":
                              help='File with all vs all catrapid results. All interactions there will be processed. Ideally RNA and protein set would be filtered, but not at the cutoff/expression level.')
 #         parser.add_argument('rainetDBFile', metavar='rainetDBFile', type=str,
 #                              help='File with a RAINET Database to use for protein ID mapping.')
-        parser.add_argument('topPartners', metavar='topPartners', type=int,
-                             help='Number of top protein partners to consider for analysis, for each transcript.')
+        parser.add_argument('topPartners', metavar='topPartners', type=str,
+                             help='List of number of top protein partners to consider for analysis, for each transcript. E.g. 2,3,4. E.g. 2')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Where to write output files.')
         # optional args
