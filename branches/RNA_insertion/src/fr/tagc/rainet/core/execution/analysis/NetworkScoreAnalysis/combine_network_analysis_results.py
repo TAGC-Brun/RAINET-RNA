@@ -39,6 +39,12 @@ PVAL_THRESHOLD = 0.05
 
 NUMBER_EXAMPLE_TRANSCRIPTS = 20
 
+
+#globals
+signLCNTranscripts = {} # Key -> transcriptID (if significant) on LCN, value -> which topPartner values it is significant
+signSPTranscripts = {} # Key -> transcriptID (if significant) on SP, value -> which topPartner values it is significant
+
+
 # Read input file and return averages by column
 def read_input_file( input_file, only_significant):
     
@@ -49,6 +55,8 @@ def read_input_file( input_file, only_significant):
 
     exampleTranscripts = set()
     boo = 1
+
+    topPartnersValue = int( inputFile.split("/")[-2].split(FOLDER_NAME)[1])
 
     with open( input_file) as inFile:
         
@@ -77,16 +85,24 @@ def read_input_file( input_file, only_significant):
                 table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
                 table = table[table.ShortestPathPval.notnull()]
 
+        ## Get significant transcripts
+
         # count number significant entries for LCN
         newTable = table.copy()
         cols = ["LCneighboursPval"]
         # apply multiple test correction
+        # TODO: change choice of significant transcripts based on Lionel input about p-value functuation on correction
         newTable[cols] = multiple_test_correction( table.LCneighboursPval)
         newTable[cols] = newTable[newTable[cols] < PVAL_THRESHOLD][cols]
         newTable = newTable[newTable.LCneighboursPval.notnull()]        
         signLCN = str( len(newTable))
 
-
+        # store transcript as significant
+        for tx in newTable["transcriptID"]:
+            if tx not in signLCNTranscripts:
+                signLCNTranscripts[ tx] = []
+            signLCNTranscripts[ tx].append( str( topPartnersValue))
+        
         # count number significant entries for SP
         newTable = table.copy()
         cols = ["ShortestPathPval"]
@@ -96,22 +112,31 @@ def read_input_file( input_file, only_significant):
         newTable = newTable[newTable.ShortestPathPval.notnull()]
         signSP = str( len(newTable))
 
+        # store transcript as significant
+        for tx in newTable["transcriptID"]:
+            if tx not in signSPTranscripts:
+                signSPTranscripts[ tx] = []
+            signSPTranscripts[ tx].append( str( topPartnersValue))
+
+
+        # process values to display in combine file
         lcnRealMean = "%.2f" % np.mean( table["LCneighbours"])
         lcnRandomMean = "%.2f" % np.mean( table["LCneighboursRandom"])
         spRealMean = "%.2f" % np.mean( table["ShortestPath"])
         spRandomMean = "%.2f" % np.mean( table["ShortestPathRandom"])
-        nTranscripts = str( len( table) ) #n transcripts used for means etc
+        nTranscripts = str( len( table) ) # number transcripts used for means etc (validation value)
 
 
         ## write filtered table
-        table.to_csv(input_file + "_processed.txt", sep = "\t")
-        
+        table.to_csv(input_file + "_corrected_pval.txt", sep = "\t")
+               
+
     return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP, exampleTranscripts, exampleLCNs
         
 
 # #
 # Run multipletest correction and return pvalues
-def multiple_test_correction(pvalues, meth = "fdr_bh"):
+def multiple_test_correction(pvalues, meth = "fdr_bh"):    
     return multipletests(pvalues, method = meth)[1]
         
 
@@ -140,7 +165,7 @@ if __name__ == "__main__":
         #===============================================================================
 
         filesToProcess = glob.glob( args.inFolder + "/" + FOLDER_NAME + "*/" + NetworkScoreAnalysis.REPORT_METRICS_OUTPUT)
-        
+                
         if len( filesToProcess) == 0:
             raise RainetException( "combine_network_analysis_results : No files to process in %s" % ( args.inFolder ) )
         
@@ -150,6 +175,7 @@ if __name__ == "__main__":
         
         outFile = open("combined_results.tsv", "w")
         outFile2 = open("combined_examples.tsv", "w")
+        outFile3 = open("combined_significant_transcripts.tsv", "w")
          
         outFile.write("%s\n" % ( "\t".join( [TOP_PARTNERS_HEAD, LCN_REAL_HEAD, LCN_RANDOM_HEAD, SP_REAL_HEAD, SP_RANDOM_HEAD, "n_transcripts", "signLCN", "signSP"])) )
         
@@ -160,7 +186,7 @@ if __name__ == "__main__":
         for inputFile in filesToProcess:
             #e.g. /TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_produce_plots/topPartners20/metrics_per_rna.tsv
             topPartnersValue = int( inputFile.split("/")[-2].split(FOLDER_NAME)[1])
-
+            
             data = read_input_file( inputFile, args.onlySignificant)
             resultsDict[ topPartnersValue] = data[0:-2] #[ lcnReal, lcnRandom, spReal, spRandom]
 
@@ -168,6 +194,29 @@ if __name__ == "__main__":
             exampleDict[ topPartnersValue] = data[ -1]
             # get list of example transcripts IDs
             exampleHeader = data[ -2]
+
+
+        # Make union of significant transcripts between the two LCN and SP metrics
+        unionSignificant = set( signLCNTranscripts.keys()).union( set( signSPTranscripts.keys()) )
+        
+        # write file with significance results
+        outFile3.write("transcriptID\tmethodsSignificant\ttopValuesLCN\ttopValuesSP\n" )
+
+        for transcript in unionSignificant:
+
+            # if present in both methods
+            if transcript in signLCNTranscripts and transcript in signSPTranscripts:
+                methodPresent = 2
+                topValueText = ",".join( signLCNTranscripts[ transcript]) + "\t" + ",".join( signSPTranscripts[ transcript])
+            elif transcript in signLCNTranscripts:
+                methodPresent = 1
+                topValueText = ",".join( signLCNTranscripts[ transcript]) + "\tNA"
+            # meaning it is present in the other method
+            else: 
+                methodPresent = 1
+                topValueText = "NA\t" + ",".join( signSPTranscripts[ transcript] )
+                
+            outFile3.write( "%s\t%s\t%s\n" % (transcript, methodPresent, topValueText ) )
 
 
         outFile2.write("topPartners\t%s\n" % ( "\t".join( exampleHeader)) )
@@ -178,6 +227,7 @@ if __name__ == "__main__":
             
         outFile.close()
         outFile2.close()
+        outFile3.close()
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
