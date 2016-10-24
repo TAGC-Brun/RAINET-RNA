@@ -1,6 +1,7 @@
 
 import unittest
 import os
+import random
 import numpy
 import pandas as pd
 import glob
@@ -122,6 +123,24 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         nTests = 100
         
         tests = numpy.empty( nTests, object)
+
+
+        # create fake tests
+        a = [ x/1900.0 for x in xrange( 100)]
+        hyperResults = random.sample( a, len( a))
+        
+        skipTests = [0] * (nTests / 2) + [1] * (nTests / 2)
+        
+        for i in xrange(0, nTests):
+            text = "%s\t%s\t%s\t%s\t%s\t%s\t%e" % ( "rna_id", "annotID", "x", "m", "k", skipTests[ i], hyperResults[ i] )
+            tests[ i] = text.split("\t")
+
+        testsCorrected = self.run.correct_pvalues( nTests, hyperResults, tests)
+ 
+        signResults = self.run.count_sign_tests( testsCorrected)      
+        
+        self.assertTrue( signResults[ 0] == 20, "assert correct number of significant results based on input")
+
         
         # create fake tests
         # 3/4s have significant results, 1/2 are skipped
@@ -227,7 +246,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
 
         empiricalPvalue, numberAbove = self.run.empirical_pvalue( listRandomSignificantsNoWarning, countSignificantNoWarning)
 
-        self.assertTrue( empiricalPvalue == 1.0, "if interactions are done with all proteins, empirical p-value should be 1.0")
+        self.assertTrue( abs( empiricalPvalue - 1.0) < 0.001, "if interactions are done with all proteins, empirical p-value should be 1.0")
 
 
         ##### simulation with less interactions, proteins that may show up in more than one annotation
