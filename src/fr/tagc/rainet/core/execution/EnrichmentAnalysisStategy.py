@@ -809,21 +809,48 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
          
         correctedPvalues = self.multiple_test_correction( pvalues)
         
+        assert (len( pvalues) == len( correctedPvalues))
+
+        # Correction of test selection, by ranking original pvalues, apply correction, 
+        # select all the original p-values below the first where corrected pvalue is below our threshold
+
+        # sort pvalues and keep index        
+        sortedPvalues = sorted( pvalues, reverse=True)
+        sortedPvaluesIdx = sorted( xrange( len( pvalues)), reverse=True, key=lambda k: pvalues[ k])
+
+        # correspondece of pvalues -> corrected pvalues of the sorted pvalues array
+        correctedPvaluesOfSorted = [ correctedPvalues[ idx]  for idx in sortedPvaluesIdx]
+
+        # stores list of indexes deemed significant with our own selection of rejected values from 
+        significantIndexes = []
+
+        # find the first corrected pvalue below our threshold, and pick all the original pvalues on the sorted array as accepted            
+        for i in xrange( len( sortedPvalues)):
+            if correctedPvaluesOfSorted[ i] < EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
+                significantIndexes = sortedPvaluesIdx[ i: ]
+                break
+
+#         # to observe that some corrected pvalues will be higher than threshold, yet their original pvalue is below the first sorted pvalue to be accepted
+#         for idx in significantIndexes:
+#              
+#             if correctedPvalues[ idx] > EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
+#                 print "SEE", correctedPvalues[idx], pvalues[idx]
+
         for i in xrange( 0, len( tests)):
             l = tests[i][:]
- 
+   
             # add corrected pvalue to existing list
             corr =  "%.1e" % correctedPvalues[i]
             l.append( corr)
- 
+   
             # significative result tag
             sign = "0"
-            if float( corr) < EnrichmentAnalysisStrategy.SIGN_VALUE_TEST:
+            if i in significantIndexes:
                 sign = "1"
- 
+   
             # add sign tag to existing list
             l.append( sign)
- 
+   
             # append current list to list of RNA vs annotation
             testsCorrected[ i] = l
 
