@@ -44,6 +44,7 @@ REPORT_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered.tsv"
 REPORT_RNA_ANNOT_RESULTS_MATRIX = "enrichment_results_filtered_matrix.tsv"
 REPORT_MATRIX_ROW_ANNOTATION = "matrix_row_annotation.tsv"
 REPORT_MATRIX_COL_ANNOTATION = "matrix_col_annotation.tsv"
+REPORT_SPECIFICITY_RANK = "enrichment_specificity_rank.tsv"
 
 SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
 
@@ -173,8 +174,8 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     excludedByRNA = 0
     setRNAs = set()
     setAnnots = set()
-    dictPairs = {}
-    annotValues = {} # key -> annot ID, val -> list of values
+    dictPairs = {} # key -> txID|annotID, val -> value (variable, boolean or pval) # includes annotations without enrichments
+    annotValues = {} # key -> annot ID, val -> list of values # includes annotations without enrichments
 
     with open( enrichment_results_file, "r") as inFile:
         
@@ -293,6 +294,65 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     Logger.get_instance().info( "read_enrichment_results_file : Number of Annotations in matrix file (columns): %i" % ( len( sortedSetAnnots) ) )
     
     outFile2.close()
+
+    return dictPairs
+
+# #
+# Writes file with complex-lncRNA pairs ranked by specificity
+def rank_by_specificity( dict_pairs, filter_warning_value):
+
+    lncDict = {} # key -> txID, val -> list of annot ID where enriched
+    annotDict = {} # key -> annot ID, val -> list of lncRNAs where enriched
+
+    # read lncRNA-annot pairs with enrichments, store data to have counts of enrichments for each lncRNA and each annotation    
+    for pair in dict_pairs:
+        txID, annotID = pair.split("|")
+        
+        if dict_pairs[ pair] != filter_warning_value:
+                    
+            if txID not in lncDict:
+                lncDict[ txID] = []
+    
+            lncDict[ txID].append( annotID)
+    
+            if annotID not in annotDict:
+                annotDict[ annotID] = []
+    
+            annotDict[ annotID].append( txID)
+
+
+    # read again dictPairs and put results into a rank so that pairs can be ranked by 'global' specificity
+    rankDict = {} # key -> rank value of lncRNA-annot specificity, val -> lncRNA-complex pair
+    for pair in dict_pairs:
+        txID, annotID = pair.split("|")
+        if dict_pairs[ pair] != filter_warning_value:
+
+            rank = len( lncDict[ txID]) + len( annotDict[ annotID])
+
+            if rank not in rankDict:
+                rankDict[ rank] = []
+            rankDict[ rank].append( pair)
+
+    #===============================================================================
+    # Writing specificity rank file
+    #===============================================================================
+    # e.g. 
+    # lncRNA\tcomplex\tlncRNA_specificity\tannot_specificity\n
+    # lnc1\ttelomerase\t2\t5\n
+
+    # File with same file as enrichment_results file but filtered based on enrichment_per_rna
+    outFile = open( REPORT_SPECIFICITY_RANK, "w")
+
+    outFile.write( "transcriptID\tannotID\ttranscript_enrichments\tannot_enrichments\n")
+
+    for rank in sorted( rankDict):
+
+        for pair in rankDict[ rank]:
+            txID, annotID = pair.split("|")
+            
+            outFile.write( "%s\t%s\t%s\t%s\t\n" % ( txID, annotID, len( lncDict[ txID]), len( annotDict[ annotID])) )
+
+    outFile.close()
 
 
 # #
@@ -447,8 +507,11 @@ if __name__ == "__main__":
         listRNASignificantEnrich = read_enrichment_per_rna_file( args.enrichmentPerRNAFile, args.minimumRatio)
 
         Timer.get_instance().step( "Read Enrichment results file..")    
-        read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
+        dictPairs = read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
                                       rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter )
+
+        Timer.get_instance().step( "Write specificity ranking..")    
+        rank_by_specificity( dictPairs, args.filterWarningValue)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
