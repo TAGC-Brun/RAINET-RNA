@@ -350,7 +350,7 @@ def rank_by_specificity( dict_pairs, filter_warning_value):
         for pair in rankDict[ rank]:
             txID, annotID = pair.split("|")
             
-            outFile.write( "%s\t%s\t%s\t%s\t\n" % ( txID, annotID, len( lncDict[ txID]), len( annotDict[ annotID])) )
+            outFile.write( "%s\t%s\t%s\t%s\n" % ( txID, annotID, len( lncDict[ txID]), len( annotDict[ annotID])) )
 
     outFile.close()
 
