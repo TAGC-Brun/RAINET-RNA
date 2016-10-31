@@ -9,10 +9,11 @@ library(data.table)
 library(plyr)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
-# positives
-#resultFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_produce_plots_extended/combined_results.tsv"
-#resultFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/1000tx_produce_plots/combined_results.tsv"
-resultFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_1000R/combined_results.tsv"
+#
+#resultFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_100R_negative"
+resultFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_shuf_negative"
+
+resultFile = paste( resultFolder, "/combined_results.tsv", sep = "")
 
 dataset <- fread(resultFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
 
@@ -56,17 +57,19 @@ plt1.1 <- ggplot(data = dataset, aes(x = TopPartners, y = LCN_real_minus_random)
   theme_minimal()
 plt1.1
 
+
 ## Significant based on LCN metric # all points
 plt1.2 <- ggplot(data = dataset, aes(x = TopPartners, y = signLCN) )  +
   geom_bar( stat = "identity" ) +
-  ylab( "# significant") +
-  ggtitle( "Number of significant transcripts per TopPartners") +
+  ylab( "% significant") +
+  ylim( c(0, max(dataset$n_transcripts))) +
+  ggtitle( "% significant transcripts per TopPartners") +
   theme_minimal()
 plt1.2
 
 grid.arrange( plt0, plt1.0, plt1.1)
 
-grid.arrange( plt1.0, plt1.1, plt1.2)
+grid.arrange( plt1.0, plt1.1)#, plt1.2)
 
 
 #### SP METRIC
@@ -110,6 +113,39 @@ plt5
 
 grid.arrange( plt2, plt3, plt4)
 
-grid.arrange(  plt3, plt4, plt5)
+grid.arrange(  plt3, plt4)#, plt5)
+
+# ### test significance between means of real vs random
+# 
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_1000R/topPartners3/metrics_per_rna.tsv"
+# 
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/1000tx_produce_plots/topPartners10/metrics_per_rna.tsv"
+# 
+# dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
+# 
+# mean( dataset$LCneighbours)
+# mean( dataset$LCneighboursRandom)
+# 
+# wilcox_test = wilcox.test( dataset$LCneighbours, dataset$LCneighboursRandom, alternative="greater")
+# wilcox_test
+# 
+# wilcox_test = wilcox.test( dataset$ShortestPath, dataset$ShortestPathRandom, alternative="less")
+# wilcox_test
+# 
+
+### Combine example transcripts ###
+# Evolution of metric for a couple of example transcripts instead of mean
+
+inputFile = paste( resultFolder, "/combined_examples.tsv", sep = "")
+
+dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
+
+meltedDataset = melt(dataset, id="topPartners")
+
+## SP metric # all points
+plt10 <- ggplot(data = meltedDataset, aes(x = topPartners, y = value, color = variable) )  +
+  geom_line( ) +
+  theme_minimal()
+plt10
 
 
