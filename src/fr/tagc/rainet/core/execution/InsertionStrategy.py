@@ -42,6 +42,8 @@ from fr.tagc.rainet.core.data.WanCluster import WanCluster
 from fr.tagc.rainet.core.data.ProteinWanAnnotation import ProteinWanAnnotation
 from fr.tagc.rainet.core.data.CorumCluster import CorumCluster
 from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
+from fr.tagc.rainet.core.data.CustomCluster import CustomCluster
+from fr.tagc.rainet.core.data.ProteinCustomAnnotation import ProteinCustomAnnotation
 
 
 # #
@@ -199,6 +201,22 @@ class InsertionStrategy( ExecutionStrategy ):
                                        DataConstants.CORUM_ANNOTATION_CLASS, DataConstants.CORUM_ANNOTATION_PARAMS,
                                         None, DataConstants.CORUM_ANNOTATION_COMMENT_CHAR )
 
+            #===================================================================
+            # CUSTOM CLUSTERS
+            #===================================================================   
+            
+            # Parse the file listing Custom clusters
+            input_file = PropertyManager.get_instance().get_property( DataConstants.CUSTOM_CLUSTER_DEFINITION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.CUSTOM_CLUSTER_HEADERS,
+                                       DataConstants.CUSTOM_CLUSTER_CLASS, DataConstants.CUSTOM_CLUSTER_PARAMS,
+                                        None, DataConstants.CUSTOM_CLUSTER_COMMENT_CHAR )
+            
+            # Parse the file with Custom annotations
+            input_file = PropertyManager.get_instance().get_property( DataConstants.CUSTOM_ANNOTATION_PROPERTY, True)
+            self.launch_insertion_TSV( input_file, False, DataConstants.CUSTOM_ANNOTATION_HEADERS,
+                                       DataConstants.CUSTOM_ANNOTATION_CLASS, DataConstants.CUSTOM_ANNOTATION_PARAMS,
+                                        None, DataConstants.CUSTOM_ANNOTATION_COMMENT_CHAR )
+    
     
             #===================================================================
             # INTERACTOME
@@ -269,38 +287,38 @@ class InsertionStrategy( ExecutionStrategy ):
             # PROTEIN RNA INTERACTION
             #===================================================================
 
-#            self.forceOverride = 1
-
+            self.forceOverride = 1
+  
             # Parse the file listing RNA with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_RNA_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_RNA_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_RNA_DEFINITION_CLASS, DataConstants.INTERACTING_RNA_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_RNA_DEFINITION_COMMENT_CHAR )
-
- 
-
+   
+    
+   
             # Parse the file listing Proteins with catRAPID data
             input_file = PropertyManager.get_instance().get_property( DataConstants.INTERACTING_PROTEIN_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_PROTEIN_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
-
-#            self.forceOverride = 0
- 
-#             # Initialize data items to store missing interactions
-#             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
-#                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
-#             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW not in DataManager.get_instance().data:
-#                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW,[])
-             
+  
+            self.forceOverride = 0
+  
+            # Initialize data items to store missing interactions
+            if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
+                DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
+            if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW not in DataManager.get_instance().data:
+                DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_PROT_KW,[])
+               
             # Parse the ProteinRNAInteractionCatRAPID file
             input_file = PropertyManager.get_instance().get_property( DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_DEFINITION_PROPERTY, True)
             self.launch_insertion_TSV( input_file, False, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_HEADERS,
                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
- 
- 
-             
+   
+  
+              
             # Remove data that will no longer be used to reduce memory usage 
             DataManager.get_instance().delete_data(DataConstants.PROTEIN_ENSP_XREF_KW)
             DataManager.get_instance().delete_data(DataConstants.RNA_ALL_KW)
@@ -582,4 +600,8 @@ class InsertionStrategy( ExecutionStrategy ):
             CorumCluster.__table__.create(bind = db_engine)
         if not db_engine.dialect.has_table(db_engine.connect(), ProteinCorumAnnotation.__tablename__):
             ProteinCorumAnnotation.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), CustomCluster.__tablename__):
+            CustomCluster.__table__.create(bind = db_engine)
+        if not db_engine.dialect.has_table(db_engine.connect(), ProteinCustomAnnotation.__tablename__):
+            ProteinCustomAnnotation.__table__.create(bind = db_engine)
 
