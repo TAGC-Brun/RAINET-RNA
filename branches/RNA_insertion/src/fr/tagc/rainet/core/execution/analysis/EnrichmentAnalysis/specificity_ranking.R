@@ -17,9 +17,10 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", n
 plt1 <- ggplot( dataset, aes(x = transcript_enrichments, y = annot_enrichments)) + 
   stat_bin2d( bin = 20) + 
   xlab("# lncRNA enrichments") +
-  ylab("# complex enrichments")
-#   xlim( c(1,75)) +
-#   ylim( c(1,150))
+  ylab("# complex enrichments") +
+  ggtitle("2D histogram specificity ranking") +
+  xlim( c(1,75)) +
+  ylim( c(1,150))
 plt1
 
 # plt1 <- ggplot( dataset, aes(x = transcript_enrichments, y = annot_enrichments)) + 
