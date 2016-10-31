@@ -68,4 +68,4 @@ plt2 <- ggplot( rnaNumbers, aes(x = variable, y = value, fill = Data)) +
 #   xlab( "Biotype") +
 #   ylab( "Percentage after interaction filter")
 # 
-#grid.arrange( plt1, plt2, plt3)
+grid.arrange( plt1, plt2) #, plt3)
