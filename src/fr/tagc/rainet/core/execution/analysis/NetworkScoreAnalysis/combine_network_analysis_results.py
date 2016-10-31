@@ -35,7 +35,7 @@ SP_RANDOM_HEAD = "SP_random"
 # SP_REAL_COL = 4
 # SP_RANDOM_COL = 5
 
-PVAL_THRESHOLD = 0.05
+#PVAL_THRESHOLD = 0.05
 
 NUMBER_EXAMPLE_TRANSCRIPTS = 20
 
@@ -46,7 +46,7 @@ signSPTranscripts = {} # Key -> transcriptID (if significant) on SP, value -> wh
 
 
 # Read input file and return averages by column
-def read_input_file( input_file, only_significant):
+def read_input_file( input_file, only_significant, significance_level):
     
     # E.g. 
     #     transcriptID    LCneighbours    LCneighboursRandom      LCneighboursPval        ShortestPath    ShortestPathRandom      ShortestPathPval
@@ -77,12 +77,12 @@ def read_input_file( input_file, only_significant):
             # filter by LCneighbours p value
             if only_significant == 1:        
                 cols = ["LCneighboursPval"]
-                table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+                table[cols] = table[table[cols] < significance_level][cols]
                 table = table[table.LCneighboursPval.notnull()]
             # filter by Shortest path p value
             if only_significant == 2:
                 cols = ["ShortestPathPval"]
-                table[cols] = table[table[cols] < PVAL_THRESHOLD][cols]
+                table[cols] = table[table[cols] < significance_level][cols]
                 table = table[table.ShortestPathPval.notnull()]
 
         ## Get significant transcripts
@@ -93,7 +93,7 @@ def read_input_file( input_file, only_significant):
         # apply multiple test correction
         # TODO: change choice of significant transcripts based on Lionel input about p-value functuation on correction
         newTable[cols] = multiple_test_correction( table.LCneighboursPval)
-        newTable[cols] = newTable[newTable[cols] < PVAL_THRESHOLD][cols]
+        newTable[cols] = newTable[newTable[cols] < significance_level][cols]
         newTable = newTable[newTable.LCneighboursPval.notnull()]        
         signLCN = str( len(newTable))
 
@@ -108,7 +108,7 @@ def read_input_file( input_file, only_significant):
         cols = ["ShortestPathPval"]
         # apply multiple test correction
         newTable[cols] = multiple_test_correction( table.ShortestPathPval)
-        newTable[cols] = newTable[newTable[cols] < PVAL_THRESHOLD][cols]
+        newTable[cols] = newTable[newTable[cols] < significance_level][cols]
         newTable = newTable[newTable.ShortestPathPval.notnull()]
         signSP = str( len(newTable))
 
@@ -129,7 +129,7 @@ def read_input_file( input_file, only_significant):
 
         ## write filtered table
         table.to_csv(input_file + "_corrected_pval.txt", sep = "\t")
-               
+
 
     return lcnRealMean, lcnRandomMean, spRealMean, spRandomMean, nTranscripts, signLCN, signSP, exampleTranscripts, exampleLCNs
         
@@ -156,6 +156,8 @@ if __name__ == "__main__":
                              help='Folder with several topPartners* folders to be analysed.')
         parser.add_argument('--onlySignificant', metavar='onlySignificant', type=int, default = 0,
                              help='If 1, calculate means only when differences are significant. If 2, use shortestPath instead of LCneighbours for the filter.')
+        parser.add_argument('--significanceLevel', metavar='significanceLevel', type=float, default = 0.05,
+                             help='Significance level, confidence interval, pvalue threshold. Default = 0.05.')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -187,7 +189,7 @@ if __name__ == "__main__":
             #e.g. /TAGC/rainetDatabase/results/networkAnalysis/NetworkScoreAnalysis/100tx_produce_plots/topPartners20/metrics_per_rna.tsv
             topPartnersValue = int( inputFile.split("/")[-2].split(FOLDER_NAME)[1])
             
-            data = read_input_file( inputFile, args.onlySignificant)
+            data = read_input_file( inputFile, args.onlySignificant, args.significanceLevel)
             resultsDict[ topPartnersValue] = data[0:-2] #[ lcnReal, lcnRandom, spReal, spRandom]
 
             # get the LCN values for example transcripts          
@@ -229,7 +231,7 @@ if __name__ == "__main__":
         outFile2.close()
         outFile3.close()
 
-        # Stop the chrono      
+        # Stop the chrono
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
 
     # Use RainetException to catch errors
