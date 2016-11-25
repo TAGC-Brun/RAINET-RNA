@@ -11,6 +11,9 @@ from fr.tagc.rainet.core.util.time.Timer import Timer
 
 # from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 
+from constants import *
+
+
 #===============================================================================
 # Started 24-Nov-2016 
 # Diogo Ribeiro
@@ -29,6 +32,9 @@ SCRIPT_NAME = "filter_eclip_files.py"
 # 1)
 # 2)
 #===============================================================================
+
+# default constants. these are also used in another script
+
 
 # 0-based bed columns
 PVALUE_COLUMN = 7
@@ -93,9 +99,9 @@ if __name__ == "__main__":
         # positional args
         parser.add_argument('bedFile', metavar='bedFile', type=str,
                              help='Input bed file to be processed.')
-        parser.add_argument('--minPval', metavar='minPval', type=float, default = -1,
+        parser.add_argument('--minPval', metavar='minPval', type=float, default = MIN_PVAL_DEFAULT,
                              help='Peaks below given value will be excluded. Note that provided pvalue is positive log10, the higher the value, the more significant it is. (Default = -1, i.e. "OFF").')
-        parser.add_argument('--minFC', metavar='minPval', type=float, default = -1,
+        parser.add_argument('--minFC', metavar='minPval', type=float, default = MIN_FC_DEFAULT,
                              help='Peaks below given value will be excluded. Note that provided fold-change enrichment is positive log2, the higher the value, the higher is the fold change. (Default = -1, i.e. "OFF").')
            
         #gets the arguments
