@@ -80,7 +80,7 @@ def read_bed_file( bedFile, minPval, minFC):
     print "After pvalue and Fold-change enrichment filter:", len( filteredTable)
 
     ### write filtered table to output file
-    pd.DataFrame.to_csv( filteredTable, bedFile + "_filtered", sep = "\t", header = False, index = False)
+    pd.DataFrame.to_csv( filteredTable, bedFile + FITLERED_OUTPUT_SUFFIX, sep = "\t", header = False, index = False)
     #Note: float precision is changed when using pandas
 
 if __name__ == "__main__":
