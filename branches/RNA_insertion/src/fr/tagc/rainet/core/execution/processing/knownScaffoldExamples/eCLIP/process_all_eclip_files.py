@@ -55,6 +55,9 @@ NUMBER_REPLICATES = 2
 # List of cell lines names
 CELL_LINES = ["K562", "HepG2"]
 
+# ID mapping columns
+ORIGINAL_ID = 0
+NEW_ID = 2
 
 # #
 # Read, filter and write filtered bed file
@@ -229,9 +232,30 @@ def map_to_transcript( filesToProcess, bedModels, outputFolder):
     return newFilesToProcess
 
 
+# # 
+# Read uniprot ID mapping file 
+def read_id_mapping( idMappingFile):
+
+    idMapping = {} # key -> proteinName, value -> uniprotAC
+
+    with open( idMappingFile, "r") as inFile:
+        for line in inFile:
+            spl = line.split( "\t")
+            proteinName = spl[ ORIGINAL_ID]
+            proteinAC = spl[ NEW_ID]
+
+            if proteinName not in idMapping:
+                idMapping[ proteinName] = proteinAC
+            else:
+                print "read_id_mapping: problem, using two ACs for same protein name %s" % proteinName
+
+    print "read_id_mapping: using ID mapping of %s proteins" % len( idMapping)
+
+    return idMapping
+
 # #
 # From peak-transcript mapping, create an interactions file of all the data
-def produce_interactions_file( filesToProcess, outputFolder):
+def produce_interactions_file( filesToProcess, outputFolder, idMapping):
 
     # example mapped bed    
     #chr1    149842203       149886641       ENST00000369160.3       .       -       ENSEMBL transcript      .       ID=ENST00000369160.3;Parent=ENSG00000184678.9;gene_id=ENSG00000184678.9;transcript_id=ENST00000369160.3;gene_type=protein_coding;gene_status=KNOWN;gene_name=HIST2H2BE;transcript_type=protein_coding;transcript_status=KNOWN;transcript_name=HIST2H2BE-201;level=3;protein_id=ENSP00000375736.2;transcript_support_level=5;tag=basic,appris_principal_1;havana_gene=OTTHUMG00000012095.1
@@ -255,6 +279,10 @@ def produce_interactions_file( filesToProcess, outputFolder):
         # remove the 'human' tag
         if "-human" in proteinName:
             proteinName = proteinName.replace("-human","")
+
+        # if ID mapping was used as option, replace name of protein with its uniprotAC
+        if proteinName in idMapping:
+            proteinName = idMapping[ proteinName]
 
         if proteinName not in interactionsPerProtein:
             interactionsPerProtein[ proteinName] = {}
@@ -315,6 +343,8 @@ if __name__ == "__main__":
                              help='Peaks below given value will be excluded. Note that provided pvalue is positive log10, the higher the value, the more significant it is. (Default = -1, i.e. "OFF").')
         parser.add_argument('--minFC', metavar='minPval', type=float, default = MIN_FC_DEFAULT,
                              help='Peaks below given value will be excluded. Note that provided fold-change enrichment is positive log2, the higher the value, the higher is the fold change. (Default = -1, i.e. "OFF").')
+        parser.add_argument('--idMapping', metavar='idMapping', type=str, default = "",
+                             help='If Uniprot ID mapping file provided, final output file with display interactions of protein name in column 0 using the ID in column 2 (0-based).')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -338,8 +368,14 @@ if __name__ == "__main__":
         Timer.get_instance().step( "Map peak to transcript..") 
         mappedFilesToProcess = map_to_transcript( combinedFilesToProcess, args.bedModels, args.outputFolder)
 
+        if args.idMapping != "":
+            Timer.get_instance().step( "Read protein ID mapping file..") 
+            idMapping = read_id_mapping( args.idMapping)
+        else:
+            idMapping = {}
+
         Timer.get_instance().step( "Produce interaction file..") 
-        produce_interactions_file( mappedFilesToProcess, args.outputFolder)
+        produce_interactions_file( mappedFilesToProcess, args.outputFolder, idMapping)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
