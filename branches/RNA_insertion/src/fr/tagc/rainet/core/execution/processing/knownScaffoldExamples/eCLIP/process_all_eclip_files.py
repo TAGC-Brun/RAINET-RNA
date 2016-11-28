@@ -237,7 +237,7 @@ def produce_interactions_file( filesToProcess, outputFolder):
     #chr1    149842203       149886641       ENST00000369160.3       .       -       ENSEMBL transcript      .       ID=ENST00000369160.3;Parent=ENSG00000184678.9;gene_id=ENSG00000184678.9;transcript_id=ENST00000369160.3;gene_type=protein_coding;gene_status=KNOWN;gene_name=HIST2H2BE;transcript_type=protein_coding;transcript_status=KNOWN;transcript_name=HIST2H2BE-201;level=3;protein_id=ENSP00000375736.2;transcript_support_level=5;tag=basic,appris_principal_1;havana_gene=OTTHUMG00000012095.1
 
     # output file:
-    # transcriptID\tproteinName
+    # transcriptID|proteinName\tcount_peaks
     
     outFile = open( outputFolder + "/" + INTERACTION_FILE_NAME, "w")
     
@@ -277,9 +277,13 @@ def produce_interactions_file( filesToProcess, outputFolder):
     # write all interactions
     for prot in sorted( interactionsPerProtein):
         for txID in sorted( interactionsPerProtein[ prot]):
-            outFile.write( "%s\t%s\t%s\n" % ( txID, prot, interactionsPerProtein[ prot][ txID] ) )
+            outFile.write( "%s|%s\t%s\n" % ( txID, prot, interactionsPerProtein[ prot][ txID] ) )
 
     outFile.close()
+    
+    # clean output
+    os.system( "mkdir %s/processed" % ( outputFolder))
+    os.system( "mv %s/*.bed %s/processed" % ( outputFolder, outputFolder))
 
     print "produce_interactions_file: produced interactions for %s proteins.." % len( interactionsPerProtein)
 
