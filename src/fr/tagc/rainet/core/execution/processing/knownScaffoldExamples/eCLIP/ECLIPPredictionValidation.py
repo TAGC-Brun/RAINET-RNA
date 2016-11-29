@@ -110,7 +110,7 @@ class ECLIPPredictionValidation( object ):
              
         outFile.close()
 
-        print "read_catrapid_file: Number of protein-RNA pairs in catRAPID: ", len( countLines)
+        print "read_catrapid_file: Number of protein-RNA pairs in catRAPID: ", countLines
         print "read_catrapid_file: Number of proteins: ", len( proteinSet)
         print "read_catrapid_file: Number of transcripts: ", len( transcriptSet)
         print "read_catrapid_file: Number of interactions with experimental data: ", countInValidated
