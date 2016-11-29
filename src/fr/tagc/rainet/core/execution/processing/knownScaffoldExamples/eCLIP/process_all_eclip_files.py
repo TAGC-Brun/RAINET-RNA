@@ -34,8 +34,9 @@ SCRIPT_NAME = "process_all_eclip_files.py"
 
 #===============================================================================
 # Processing notes:
-# 1)
-# 2)
+# 1) Filtering of peaks based on values of columns is done using another script
+# 2) Merge of replicates is done by bedtools intersect default behaviour. i.e. keeping only the coordinates that overlap between the two files
+# 3) Mapping peaks to transcript is done by bedtools intersect with -wa flag, i.e. keeping the entry corresponding to the transcript models that overlap (even if by only one base) with a peak
 #===============================================================================
 
 
