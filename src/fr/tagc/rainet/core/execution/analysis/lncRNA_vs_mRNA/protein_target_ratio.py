@@ -2,6 +2,7 @@ import sys
 import os
 import argparse
 
+import scipy.stats as stats
 # import numpy as np
 # import pandas as pd
 
@@ -124,7 +125,7 @@ def read_interaction_file( interactionFile, transcriptType):
 
     outFile = open("protein_target_ratio.tsv","w")
 
-    outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\n")
+    outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\n")
 
     for protID in typeStats:
                 
@@ -142,10 +143,37 @@ def read_interaction_file( interactionFile, transcriptType):
             ratio = float(nMRNA) / nLNCRNA
         else:
             ratio = "NA"
+
+        ## fisher exact test
+        # Our question: does the protein preferentially bind mRNA or bind lncRNA? with which significance?
+        # Contigency table:
+        #         interacting    non_interacting
+        # lncRNA    nLNCRNA    transcriptSetType["LNCRNA"] - nLNCRNA
+        # mRNA    nMRNA    transcriptSetType["MRNA"] - nMRNA
+
+        nonInteractingLNCRNA = len( transcriptSetType["LncRNA"]) - nLNCRNA
+        nonInteractingMRNA = len( transcriptSetType["MRNA"]) - nMRNA
+
+        matrix = [[nLNCRNA, nonInteractingLNCRNA], [nMRNA, nonInteractingMRNA]]
         
-        outFile.write( "%s\t%s\t%s\t%.2f\n" % ( protID, nMRNA, nLNCRNA, ratio) )
+        oddsRatio, pvalue = fisher_exact_test(matrix)
+        
+        outFile.write( "%s\t%s\t%s\t%.2f\t%.2f\t%.1e\n" % ( protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue) )
 
     outFile.close()
+
+
+# #
+# Perform fishers exact test using scipy
+def fisher_exact_test( matrix):
+
+    # equivalent of doing in R:    
+    # fisher.test( matrix(c(8, 2, 1, 5), nrow = 2), alternative = "two.sided")
+
+    oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = "two-sided")
+
+    return oddsRatio, pvalue
+
 
 
 if __name__ == "__main__":
