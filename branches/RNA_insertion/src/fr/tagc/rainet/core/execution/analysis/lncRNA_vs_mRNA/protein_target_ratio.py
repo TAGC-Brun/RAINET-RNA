@@ -122,15 +122,22 @@ def read_interaction_file( interactionFile, transcriptType):
     
     ### write output file
 
-    outFile = open("protein_target_ration.tsv","w")
+    outFile = open("protein_target_ratio.tsv","w")
 
     outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\n")
 
     for protID in typeStats:
+                
+        if "MRNA" in typeStats[ protID]:
+            nMRNA = typeStats[ protID]["MRNA"]
+        else:
+            nMRNA = 0
         
-        nMRNA = typeStats[ protID]["MRNA"]
-        nLNCRNA = typeStats[ protID]["LncRNA"]
-
+        if "LncRNA" in typeStats[ protID]:
+            nLNCRNA = typeStats[ protID]["LncRNA"] 
+        else:
+            nLNCRNA = 0
+        
         if nLNCRNA > 0:
             ratio = float(nMRNA) / nLNCRNA
         else:
