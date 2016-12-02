@@ -129,7 +129,7 @@ def read_interaction_file( interactionFile, transcriptType, outputFile):
 
     outFile = open( outputFile,"w")
 
-    outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\n")
+    outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\tcorrected_pval\tsignificant\n")
 
     
     pvalues = [] # stored pvalues for multiple test correction
@@ -172,11 +172,12 @@ def read_interaction_file( interactionFile, transcriptType, outputFile):
         
         pvalues.append( pvalue)
 
- 
+    # pvalue correction
     processedData = correct_pvalues( len( dataStore), pvalues, dataStore)
+    
+    # writing to file
     for item in processedData:
         outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\t%s\t%s\n" % ( item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]) )
-
 
     outFile.close()
 
