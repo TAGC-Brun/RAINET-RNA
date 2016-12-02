@@ -3,7 +3,7 @@ import os
 import argparse
 
 import scipy.stats as stats
-# import numpy as np
+import numpy as np
 # import pandas as pd
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
@@ -57,7 +57,7 @@ def read_transcript_types( transcriptTypesFile):
     return transcriptType
 
 # #
-def read_interaction_file( interactionFile, transcriptType):
+def read_interaction_file( interactionFile, transcriptType, outputFile):
    
     # Example format 
     # sp|O00425|sp ENST00000217233    1
@@ -123,7 +123,7 @@ def read_interaction_file( interactionFile, transcriptType):
     
     ### write output file
 
-    outFile = open("protein_target_ratio.tsv","w")
+    outFile = open( outputFile,"w")
 
     outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\n")
 
@@ -140,7 +140,7 @@ def read_interaction_file( interactionFile, transcriptType):
             nLNCRNA = 0
         
         if nLNCRNA > 0:
-            ratio = float(nMRNA) / nLNCRNA
+            ratio = "%.2f" % ( float(nMRNA) / nLNCRNA)
         else:
             ratio = "NA"
 
@@ -158,7 +158,7 @@ def read_interaction_file( interactionFile, transcriptType):
         
         oddsRatio, pvalue = fisher_exact_test(matrix)
         
-        outFile.write( "%s\t%s\t%s\t%.2f\t%.2f\t%.1e\n" % ( protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue) )
+        outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\n" % ( protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue) )
 
     outFile.close()
 
@@ -194,6 +194,8 @@ if __name__ == "__main__":
                              help='Catrapid interactions file.')
         parser.add_argument('transcriptTypesFile', metavar='transcriptTypesFile', type=str,
                              help='RAINET DB RNA table dump. E.g. "ENST00000001146","protein_coding","MRNA"')
+        parser.add_argument('outputFile', metavar='outputFile', type=str,
+                             help='Output file path/')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -206,7 +208,7 @@ if __name__ == "__main__":
         transcriptType = read_transcript_types( args.transcriptTypesFile)
 
         Timer.get_instance().step( "Read interaction file..")            
-        read_interaction_file( args.interactionFile, transcriptType)
+        read_interaction_file( args.interactionFile, transcriptType, args.outputFile)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
