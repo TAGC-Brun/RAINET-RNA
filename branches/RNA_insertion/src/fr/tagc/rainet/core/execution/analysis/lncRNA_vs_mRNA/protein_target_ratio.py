@@ -3,12 +3,14 @@ import os
 import argparse
 
 import scipy.stats as stats
-import numpy as np
+import numpy
 # import pandas as pd
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
 from fr.tagc.rainet.core.util.time.Timer import Timer
+
+from statsmodels.stats.multitest import multipletests
 
 # from fr.tagc.rainet.core.util.subprocess.SubprocessUtil import SubprocessUtil
 # from fr.tagc.rainet.core.util.sql.SQLManager import SQLManager
@@ -34,6 +36,8 @@ SCRIPT_NAME = "protein_target_ratio.py"
 # 1)
 # 2)
 #===============================================================================
+
+SIGN_VALUE_TEST = 0.05
 
 # #
 def read_transcript_types( transcriptTypesFile):
@@ -127,6 +131,10 @@ def read_interaction_file( interactionFile, transcriptType, outputFile):
 
     outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\n")
 
+    
+    pvalues = [] # stored pvalues for multiple test correction
+    dataStore = [] # store data for writing after pvalue correction
+
     for protID in typeStats:
                 
         if "MRNA" in typeStats[ protID]:
@@ -158,9 +166,69 @@ def read_interaction_file( interactionFile, transcriptType, outputFile):
         
         oddsRatio, pvalue = fisher_exact_test(matrix)
         
-        outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\n" % ( protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue) )
+        #outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\n" % ( protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue) )
+        
+        dataStore.append( [protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue])
+        
+        pvalues.append( pvalue)
+
+ 
+    processedData = correct_pvalues( len( dataStore), pvalues, dataStore)
+    for item in processedData:
+        outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\t%s\t%s\n" % ( item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]) )
+
 
     outFile.close()
+
+
+# #
+# Function to correct pvalues, and add correction and significance to provided 'tests' list
+def correct_pvalues( nTests, pvalues, tests):
+    
+    testsCorrected = numpy.empty(nTests, object)  # stores data plus correction
+     
+    correctedPvalues = multiple_test_correction(pvalues)
+    
+    assert (len(pvalues) == len(correctedPvalues))
+
+    # Correction of test selection, by ranking original pvalues, apply correction, 
+    # select all the original p-values below the first where corrected pvalue is below our threshold
+
+    # sort pvalues and keep index        
+    sortedPvalues = sorted(pvalues, reverse=True)
+    sortedPvaluesIdx = sorted(xrange(len(pvalues)), reverse=True, key=lambda k: pvalues[ k])
+
+    # correspondece of pvalues -> corrected pvalues of the sorted pvalues array
+    correctedPvaluesOfSorted = [ correctedPvalues[ idx]  for idx in sortedPvaluesIdx]
+
+    # stores list of indexes deemed significant with our own selection of rejected values from 
+    significantIndexes = []
+
+    # find the first corrected pvalue below our threshold, and pick all the original pvalues on the sorted array as accepted            
+    for i in xrange(len(sortedPvalues)):
+        if correctedPvaluesOfSorted[ i] < SIGN_VALUE_TEST:
+            significantIndexes = sortedPvaluesIdx[ i: ]
+            break
+
+    for i in xrange(0, len(tests)):
+        l = tests[i][:]
+
+        # add corrected pvalue to existing list
+        corr = "%.1e" % correctedPvalues[i]
+        l.append(corr)
+
+        # significative result tag
+        sign = "0"
+        if i in significantIndexes:
+            sign = "1"
+
+        # add sign tag to existing list
+        l.append(sign)
+
+        # append current list to list of RNA vs annotation
+        testsCorrected[ i] = l
+
+    return testsCorrected
 
 
 # #
@@ -171,9 +239,14 @@ def fisher_exact_test( matrix):
     # fisher.test( matrix(c(8, 2, 1, 5), nrow = 2), alternative = "two.sided")
 
     oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = "two-sided")
-
+    
     return oddsRatio, pvalue
 
+
+# #
+# Run multipletest correction and return pvalues
+def multiple_test_correction(pvalues, meth="fdr_bh"):
+    return multipletests(pvalues, method=meth)[1]
 
 
 if __name__ == "__main__":
