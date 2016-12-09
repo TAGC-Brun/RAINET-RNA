@@ -47,6 +47,7 @@ OPTION_MINIMUM_PROTEIN_INTERACTION = "Minimum proteins in annotation with intera
 OPTION_NUMBER_RANDOMIZATIONS = "Number randomizations"
 OPTION_EXPRESSION_WARNING = "Protein group expression proportion warning"
 OPTION_MINIMUM_EXPRESSION = "Minimum RPKM expression"
+OPTION_LOWER_TAIL = "Use lower tail of hypergeometric test"
 
 #===============================================================================
 # Constants for default values
@@ -70,6 +71,7 @@ DEFAULT_MINIMUM_PROTEIN_INTERACTION = 2
 DEFAULT_NUMBER_RANDOMIZATIONS = 100
 DEFAULT_EXPRESSION_WARNING = "OFF"
 DEFAULT_MINIMUM_EXPRESSION = 0.0
+DEFAULT_LOWER_TAIL = 1
 
 #===============================================================================
 # The definition of the options
@@ -108,7 +110,8 @@ OPTION_LIST = {  "Insertion": [
                     [ "-i", "--minimumProteinInteraction", "store", "int", OPTION_MINIMUM_PROTEIN_INTERACTION, DEFAULT_MINIMUM_PROTEIN_INTERACTION, "Minimum number of proteins in a given annotation with positive interactions for enrichment test to be performed." ],
                     [ "-r", "--numberRandomizations", "store", "int", OPTION_NUMBER_RANDOMIZATIONS, DEFAULT_NUMBER_RANDOMIZATIONS, "Number of randomizations to be performed for the control experiment." ],
                     [ "-e", "--expressionWarning", "store", "string", OPTION_EXPRESSION_WARNING, DEFAULT_EXPRESSION_WARNING, "Turn warning flag on unless >=X proportion of proteins in annotations are present in the same tissue. Accepts values between 0.0 and 1.0. Default = 'OFF'" ],
-                    [ "-c", "--minimumExpression", "store", "float", OPTION_MINIMUM_EXPRESSION, DEFAULT_MINIMUM_EXPRESSION, "Used in conjunction with --expressionWarning. Minimum RPKM value to consider present in tissue. Default = 0" ]
+                    [ "-c", "--minimumExpression", "store", "float", OPTION_MINIMUM_EXPRESSION, DEFAULT_MINIMUM_EXPRESSION, "Used in conjunction with --expressionWarning. Minimum RPKM value to consider present in tissue. Default = 0" ],
+                    [ "-t", "--lowerTail", "store", "int", OPTION_LOWER_TAIL, DEFAULT_LOWER_TAIL, "While computing hypergeometric test, whether to look for enrichment (lower tail = 1) or depletion ( lower tail = 0). Default = 1" ]
                 ],
                 "DatabaseCheck" : [
                     [ "-d", "--databasePath", "store", "string", OPTION_DB_NAME, None, "The path to the SQL database to use/create."],
