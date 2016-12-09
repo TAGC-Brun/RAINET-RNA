@@ -181,19 +181,19 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         try:
             self.minimumProteinAnnotation = int(self.minimumProteinAnnotation)
         except:
-            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum protein annotation value is not correct (must be integer): " + self.minimumProteinAnnotation)
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum protein annotation value is not correct (must be integer): " + str( self.minimumProteinAnnotation))
             
         # Check if minimum protein annotation value is consistent
         try:
             self.minimumProteinInteraction = int(self.minimumProteinInteraction)
         except:
-            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum protein interactions value is not correct (must be integer): " + self.minimumProteinInteraction)
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum protein interactions value is not correct (must be integer): " + str( self.minimumProteinInteraction))
 
         # Check if minimum protein annotation value is consistent
         try:
             self.numberRandomizations = int(self.numberRandomizations)
         except:
-            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided number randomizations value is not correct (must be integer): " + self.numberRandomizations)
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided number randomizations value is not correct (must be integer): " + str( self.numberRandomizations))
 
         # Check if expression warning is consistent
         if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:            
@@ -210,13 +210,13 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         try:
             self.minimumExpression = float(self.minimumExpression)
         except:
-            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum RPKM expression value is not correct (must be float): " + self.minimumExpression)
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum RPKM expression value is not correct (must be float): " + str( self.minimumExpression))
 
         # Check if minimum protein annotation value is consistent
         try:
             self.lowerTail = int(self.lowerTail)
         except:
-            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided lower tail option is not correct (must be integer): " + self.lowerTail)
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided lower tail option is not correct (must be integer): " + str( self.lowerTail))
 
         #===================================================================
         # Initialisation

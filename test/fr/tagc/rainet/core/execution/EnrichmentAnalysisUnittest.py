@@ -81,6 +81,7 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         optionManager.set_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS, OptionConstants.DEFAULT_NUMBER_RANDOMIZATIONS)
         optionManager.set_option(OptionConstants.OPTION_EXPRESSION_WARNING, OptionConstants.DEFAULT_EXPRESSION_WARNING)
         optionManager.set_option(OptionConstants.OPTION_MINIMUM_EXPRESSION, OptionConstants.DEFAULT_MINIMUM_EXPRESSION)
+        optionManager.set_option(OptionConstants.OPTION_LOWER_TAIL, OptionConstants.DEFAULT_LOWER_TAIL)
         
         # Set the level of verbosity
         Logger.get_instance().set_level(OptionManager.get_instance().get_option(OptionConstants.OPTION_VERBOSITY))
@@ -338,6 +339,8 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
     def test_hypergeometric_test(self):
         
         print "| test_hypergeometric_test | "
+
+        self.run.lowerTail = 1
 
         x, m, n, k = 5, 10, 50, 10
 
