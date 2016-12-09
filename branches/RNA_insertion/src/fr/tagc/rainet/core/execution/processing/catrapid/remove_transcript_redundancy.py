@@ -37,7 +37,7 @@ SCRIPT_NAME = "remove_transcript_redundancy.py"
 #===============================================================================
 
 # #
-def run( list_interacting_rnas, info_file):
+def run( list_interacting_rnas, info_file, outputGenes):
 
     #===============================================================================
     # Read list of interacting RNAs
@@ -90,27 +90,34 @@ def run( list_interacting_rnas, info_file):
     print "Number lines read: %s" % ( str(nlines))
     print "Number of genes with interacting transcripts: %s" % len( genes)
 
-    outFile = open("list_non_redundant_transcripts.txt" , "w")
+    if outputGenes:
+        outFile = open("list_non_redundant_genes.txt" , "w")        
+    else:
+        outFile = open("list_non_redundant_transcripts.txt" , "w")
 
     count = 0    
     for geneID in genes:
         
-        maxLength = 0
-        maxTranscript = ""
-        
-        for tx in genes[ geneID]:
-            spl = tx.split("|")
-            length = int( spl[1])
-            if length > maxLength:
-                maxLength = length
-                maxTranscript = spl[0]
-
-        outFile.write( maxTranscript + "\n")
-        count += 1
-
-        if maxLength > 1200:
-            print "Warning: length above 1200 nt"
-            print maxLength, maxTranscript, geneID
+        if outputGenes:
+            outFile.write( geneID + "\n")
+            count += 1
+        else:        
+            maxLength = 0
+            maxTranscript = ""
+            
+            for tx in genes[ geneID]:
+                spl = tx.split("|")
+                length = int( spl[1])
+                if length > maxLength:
+                    maxLength = length
+                    maxTranscript = spl[0]
+    
+            outFile.write( maxTranscript + "\n")
+            count += 1
+    
+            if maxLength > 1200:
+                print "Warning: length above 1200 nt"
+                print maxLength, maxTranscript, geneID
 
     assert( count == len( genes))
 
@@ -135,6 +142,8 @@ if __name__ == "__main__":
                              help='List of interacting RNAs (RNAs with interaction data) from a catRAPID omics/all vs all file. Only these transcripts will be considered.')
         parser.add_argument('infoFile', metavar='infoFile', type=str,
                              help='Dump of RAINET DB RNA table. Tx ID, Gene ID, Tx length. e.g.: "ENST00000000233","ENSG00000004059","1103"')
+        parser.add_argument('--outputGenes', metavar='outputGenes', type=int, default = 0,
+                             help='Instead of outputting the longest transcript for a gene, output the gene ids. Default = 0 (OFF)')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -143,7 +152,7 @@ if __name__ == "__main__":
         # Run analysis / processing
         #===============================================================================
 
-        run( args.listOfInteractingRNAs, args.infoFile)
+        run( args.listOfInteractingRNAs, args.infoFile, args.outputGenes)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
