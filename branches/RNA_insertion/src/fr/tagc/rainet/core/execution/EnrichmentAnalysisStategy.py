@@ -148,6 +148,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         self.numberRandomizations = OptionManager.get_instance().get_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS)
         self.expressionWarning = OptionManager.get_instance().get_option(OptionConstants.OPTION_EXPRESSION_WARNING)
         self.minimumExpression = OptionManager.get_instance().get_option(OptionConstants.OPTION_MINIMUM_EXPRESSION)
+        self.lowerTail = OptionManager.get_instance().get_option(OptionConstants.OPTION_LOWER_TAIL)
 
         # Variable that stores all arguments to appear in parameters log file
         self.arguments = {OptionConstants.OPTION_DB_NAME : self.DBPath,
@@ -158,7 +159,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
                           OptionConstants.OPTION_MINIMUM_PROTEIN_INTERACTION : self.minimumProteinInteraction,
                           OptionConstants.OPTION_NUMBER_RANDOMIZATIONS : self.numberRandomizations,
                           OptionConstants.OPTION_EXPRESSION_WARNING : self.expressionWarning,
-                          OptionConstants.OPTION_MINIMUM_EXPRESSION : self.minimumExpression
+                          OptionConstants.OPTION_MINIMUM_EXPRESSION : self.minimumExpression,
+                          OptionConstants.OPTION_LOWER_TAIL : self.lowerTail                          
                         }
 
         #===================================================================
@@ -209,6 +211,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             self.minimumExpression = float(self.minimumExpression)
         except:
             raise RainetException("EnrichmentAnalysisStrategy.execute: Provided minimum RPKM expression value is not correct (must be float): " + self.minimumExpression)
+
+        # Check if minimum protein annotation value is consistent
+        try:
+            self.lowerTail = int(self.lowerTail)
+        except:
+            raise RainetException("EnrichmentAnalysisStrategy.execute: Provided lower tail option is not correct (must be integer): " + self.lowerTail)
 
         #===================================================================
         # Initialisation
@@ -894,7 +902,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             raise RainetException("EnrichmentAnalysisStrategy.hypergeometric_test: Number of draws is zero.")
  
         # stats.hypergeome.sf gives the same result as R phyper
-        testResult = stats.hypergeom.sf(x, m + n, m, k)
+        if self.lowerTail:
+            testResult = stats.hypergeom.sf(x, m + n, m, k)
+        else:
+            # equivalent to R lower.tail = FALSE
+            testResult = 1 - stats.hypergeom.sf(x, m + n, m, k)
+            
 
         # if x == 0 and testResult <= EnrichmentAnalysisStrategy.SIGN_VALUE:
         #    Logger.get_instance().warning( "EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls withdrawn is zero but result is significant. x=%s, m=%s, n=%s, k=%s" % (x,m,n,k)  )
