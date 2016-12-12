@@ -217,19 +217,20 @@ class ProteinTargetRatio( object):
         proteinSet = set()
         transcriptSet = set()
         transcriptSetType = {} # key -> type, value -> set of transcripts
+
+        # controls proteins that have already been processed (to confirm that file is sorted)
+        alreadyProcessed = set()
     
         # stores targets for which we do not know the biotype
         missingTargets = set()
     
         countLines = 0
     
-        ### write output file
-        outFile = open( outputFile,"w")
-        outFile.write("proteinID\tn_mRNA\tn_lncRNA\tratio_mRNA_lncRNA\tfisher_odds\tfisher_pval\tcorrected_pval\tsignificant\n")
-    
         pvalues = [] # stored pvalues for multiple test correction
         dataStore = [] # store data for writing after pvalue correction
-    
+
+        firstProtein = 1
+        previousProtein = ""
     
         with open( interactionFile, "r") as inFile:
             for line in inFile:
@@ -257,12 +258,25 @@ class ProteinTargetRatio( object):
                     # if protein is new protein:
                     # make all calculations for previous protein
                     # reset dictionary
-    
-                    self.calculate_for_protein( typeStats)
+
+                    if firstProtein == 0:
+                        l = [previousProtein]
+                        tTest = self.prepare_t_test( typeStats[ previousProtein])
+                        l.extend(  list(tTest) )
+                        dataStore.append( l)
+                        pvalues.append( tTest[-1])
+                        alreadyProcessed.add( previousProtein)
+                    else:
+                        firstProtein = 0
     
                     # reset dictionary                
-                    typeStats = {}
+                    typeStats[ previousProtein] = {}
                     typeStats[ proteinID] = {}
+
+                # if a "new" protein is already processed
+                if previousProtein != proteinID and proteinID in alreadyProcessed:
+                    raise RainetException( "read_sorted_interaction_file : input file is not properly sorted by protein" )
+                        
                 
                 if txType not in typeStats[ proteinID]:
                     typeStats[ proteinID][ txType] = []
@@ -278,43 +292,40 @@ class ProteinTargetRatio( object):
                 proteinSet.add(proteinID)
                 transcriptSet.add( transcriptID)
     
-            #TODO: process for each protein
+                previousProtein = proteinID
+
+
+        # do the same processing for the last protein
+        l = [previousProtein]
+        tTest = self.prepare_t_test( typeStats[ previousProtein])
+        l.extend(  list(tTest) )
+        dataStore.append( l)
+        pvalues.append(tTest[-1])
+        alreadyProcessed.add( previousProtein)
     
+        assert len( alreadyProcessed) == len( proteinSet)
+
         print "read_interaction_file: %s unique proteins" % len(proteinSet)
         print "read_interaction_file: %s unique transcripts" % len(transcriptSet)
         print "read_interaction_file: %s target with biotype not found" % len(missingTargets)
+           
+
+        ### write output file
+        outFile = open( outputFile,"w")
+        outFile.write("proteinID\tlncRNA_mean\tmRNA_mean\tt_test_statistic\t\tt_test_pval\tcorrected_pval\tsignificant\n")
     
-        ### report on transcript types
-        
-        for type in transcriptSetType:
-            print type, len( transcriptSetType[ type])
-        
-    
-    # TODO: 
-    #     ## perform p value correction
-    #     # this has to be done after processing all data
-    #         # pvalue correction
-    #         processedData = correct_pvalues( len( dataStore), pvalues, dataStore)
-    #         
-    #         # writing to file
-    #         for item in processedData:
-    #             outFile.write( "%s\t%s\t%s\t%s\t%.2f\t%.1e\t%s\t%s\n" % ( item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]) )
-    #     
-    #         outFile.close()
-    
-    
-    # def calculate_for_protein( typeStats):
-    #         
-    #     for protID in typeStats:
-    #                 
-    #         
-    #         dataStore = [protID, nMRNA, nLNCRNA, ratio, oddsRatio, pvalue]
-    #         
-    #         pvalues = pvalue
-    #     
-    #     return dataStore, pvalues
-    
-    
+        ## perform p value correction
+        # this has to be done after processing all data
+        # pvalue correction
+                
+        processedData = self.correct_pvalues( len( dataStore), pvalues, dataStore)
+         
+        # writing to file
+        for item in processedData:
+            outFile.write( "%s\t%s\t%s\t%s\t%.1e\t%s\t%s\n" % ( item[0], item[1], item[2], item[3], item[4], item[5], item[6]) )
+      
+        outFile.close()
+       
     
     # #
     # Function to correct pvalues, and add correction and significance to provided 'tests' list
@@ -376,14 +387,40 @@ class ProteinTargetRatio( object):
         oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = "two-sided")
             
         return oddsRatio, pvalue
+
+
+    # #
+    # Check provided data and run t test   
+    def prepare_t_test(self, proteinStats):
+        
+        #proteinStats has stats for protein, one key for lncRNA, other for mRNA, a list with all scores for each
+
+        if "LncRNA" not in proteinStats:
+            raise RainetException( "prepare_t_test : protein has no LncRNA targets %s" % ( proteinStats ) )
+        if "MRNA" not in proteinStats:
+            raise RainetException( "prepare_t_test : protein has no MRNA targets %s" % ( proteinStats ) )
+
+        meanLncRNA = "%.2f" % numpy.mean( proteinStats[ "LncRNA"])
+        meanMRNA = "%.2f" % numpy.mean( proteinStats[ "MRNA"])
+
+        tTest = self.t_test(proteinStats[ "LncRNA"], proteinStats[ "MRNA"])
+        statistic = "%.2f" % tTest[0]
+        pvalue = tTest[1] # "%.1e" % tTest[1]
+
+        return meanLncRNA, meanMRNA, statistic, pvalue
+
     
+    # #
+    # Perform Welchs t-test
+    def t_test(self, sample1, sample2):
+
+        # equivalent of doing in R:
+        # t.test(sample1, sample2)
+        # but here we force usage of Welchs test, wheareas in R it tests for equal variance beforehand
+
+        statistic, pvalue = stats.ttest_ind( sample1, sample2, equal_var = False)
     
-    # # #
-    # # Perform Welchs t-test
-    # def t_test( sample1, sample2):
-    #     #TODO: finish this
-    #     print stats.ttest_ind( sample1, sample2, equal_var = False)
-    
+        return statistic, pvalue
     
     
     # #
@@ -410,6 +447,8 @@ if __name__ == "__main__":
                              help='Catrapid interactions file.')
         parser.add_argument('transcriptTypesFile', metavar='transcriptTypesFile', type=str,
                              help='RAINET DB RNA table dump. E.g. "ENST00000001146","protein_coding","MRNA"')
+        parser.add_argument('tTest', metavar='tTest', type=int,
+                             help='Whether to perform a Welch t test on the means (1) or a fishers exact test (0)')
         parser.add_argument('outputFile', metavar='outputFile', type=str,
                              help='Output file path/')
            
@@ -426,8 +465,12 @@ if __name__ == "__main__":
         Timer.get_instance().step( "Read transcript types file..")            
         proteinTargetRatio.read_transcript_types( )
 
-        Timer.get_instance().step( "Read interaction file..")            
-        proteinTargetRatio.read_interaction_file( )
+        if args.tTest:
+            Timer.get_instance().step( "Read interaction file, perform t test..")            
+            proteinTargetRatio.read_sorted_interaction_file( )            
+        else:
+            Timer.get_instance().step( "Read interaction file, perform fisher exact test..")            
+            proteinTargetRatio.read_interaction_file( )
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
