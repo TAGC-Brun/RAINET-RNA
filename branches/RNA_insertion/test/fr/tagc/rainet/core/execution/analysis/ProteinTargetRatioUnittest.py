@@ -32,17 +32,88 @@ class ProteinTargetRatioUnittest(unittest.TestCase):
     # #
     def test_read_transcript_types(self):
 
-        print "| test_read_network_file | "
+        print "| test_read_transcript_types | "
 
         self.run.read_transcript_types()
 
-        print self.run.transcriptTypesFile
-        
-        
-#        self.assertTrue( len(listOfNames) ==  61695)
+        self.assertTrue( len( self.run.transcriptType) == 216133)
 
-        
 
+    # #
+    def test_read_interaction_file(self):
+ 
+        print "| test_read_interaction_file | "
+ 
+        self.run.read_transcript_types()
+        self.run.read_interaction_file()
+ 
+        #grep O00624 storedInteractions_test.tsv | cut -f1 | cut -f2 -d" " > O00624_11targets
+        # grep -f O00624_11targets transcript_biotype.csv 
+        # "ENST00000423162","lincRNA","LncRNA"
+        # "ENST00000432473","lincRNA","LncRNA"
+        # "ENST00000433882","lincRNA","LncRNA"
+        # "ENST00000440633","lincRNA","LncRNA"
+        # "ENST00000448344","lincRNA","LncRNA"
+        # "ENST00000513379","lincRNA","LncRNA"
+        # "ENST00000532413","lincRNA","LncRNA"
+        # "ENST00000554252","lincRNA","LncRNA"
+        # "ENST00000554711","lincRNA","LncRNA"
+        # "ENST00000568332","lincRNA","LncRNA"
+        # "ENST00000609581","lincRNA","LncRNA"
+        
+        with open( self.run.outputFile, "r") as inFile:
+            header = inFile.readline()
+            for line in inFile:
+                spl = line.split()
+                self.assertTrue( spl[0] == "O00624")
+                self.assertTrue( spl[1] == "0")
+                self.assertTrue( spl[2] == "11")
+                self.assertTrue( spl[4] == "inf")
+                break
+
+
+    def test_fisher_exact_test(self):
+        
+        print " | test_fisher_exact_test | "
+        
+        matrix = [ [1,10], [1,10]]
+        
+        oddsRatio, pvalue = self.run.fisher_exact_test( matrix)
+
+        self.assertTrue( oddsRatio == 1.0)
+
+        matrix = [ [2,10], [1,10]]
+        
+        oddsRatio, pvalue = self.run.fisher_exact_test( matrix)
+        
+        self.assertTrue( oddsRatio == 2.0)
+
+        matrix = [ [1,10], [2,10]]
+        
+        oddsRatio, pvalue = self.run.fisher_exact_test( matrix)
+        
+        self.assertTrue( oddsRatio == 0.5)
+        self.assertTrue( pvalue == 1)
+        
+        matrix = [ [50,100], [10,100]]
+         
+        oddsRatio, pvalue = self.run.fisher_exact_test( matrix)
+         
+        self.assertTrue( pvalue < 0.05)
+
+
+    def test_correct_pvalues(self):
+
+        print " | test_correct_pvalues | "
+
+        dataStore = [["u1"],["u2"],["u3"],["u4"],["u2"],["u3"],["u4"],["u2"],["u3"],["u4"],["u2"],["u3"],["u4"]]
+        pvalues = [0.1,0.002,0.001,0.004,0.002,0.001,0.004,0.002,0.01,0.04,0.02,0.1,0.04]
+
+        processedData = self.run.correct_pvalues( len( dataStore), pvalues, dataStore)
+
+        self.assertTrue( processedData[0][-1] == "0")
+        self.assertTrue( processedData[1][-1] == "1")
+        self.assertTrue( float( processedData[1][-2]) - 7.4e-03 < 0.01)
      
 #     # #
 #     # Runs after each test
