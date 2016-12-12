@@ -31,7 +31,7 @@ SCRIPT_NAME = "parse_enrichment_results.py"
 #===============================================================================
 # Processing notes:
 # 1) Only writing to file annotations with at least one enrichment
-# 2) 
+# 2) If random has zero significant, ratio is close to infinite
 #===============================================================================
 
 
@@ -103,7 +103,7 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
                 if randomSign != 0: # to avoid division by Zero
                     ratio = float( observedSign) / randomSign
                 else:
-                    ratio = 0
+                    ratio = float( observedSign) / 0.000000000000000000000000000000000000000001
 
                 if ratio < minimum_ratio:
                     ratioBoo = 0
