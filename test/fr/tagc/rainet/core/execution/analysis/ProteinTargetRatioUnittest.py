@@ -71,6 +71,22 @@ class ProteinTargetRatioUnittest(unittest.TestCase):
                 self.assertTrue( spl[4] == "inf")
                 break
 
+    # #
+    def test_read_sorted_interaction_file(self):
+ 
+        print "| test_sorted_read_interaction_file | "
+
+        # input file needs to be sorted and number of items against MRNAs needs to be the same as against LNCRNAs
+        self.interactionsFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/lncRNA_vs_mRNA/mrna_vs_lncrna/test/proteome_vs_lncrna_mrna_interactions.out_sorted_head"
+
+        self.run = ProteinTargetRatio( self.interactionsFile, self.transcriptTypesFile, self.outputFile)
+ 
+        self.run.read_transcript_types()
+ 
+        self.run.read_sorted_interaction_file()
+        
+        
+        
 
     def test_fisher_exact_test(self):
         
@@ -100,6 +116,25 @@ class ProteinTargetRatioUnittest(unittest.TestCase):
         oddsRatio, pvalue = self.run.fisher_exact_test( matrix)
          
         self.assertTrue( pvalue < 0.05)
+
+
+    def test_t_test(self):
+        
+        print " | test_t_test | "
+
+        sample1 = [-23,34,0.45,23,-1,3,185,-45.3,-23,34,0.45,23,-1,3,185,-45.3]
+        sample2 = [67,45,35,10,56,135,185,45.3,67,45,35,10,56,135,185,45.3]
+
+        # In R
+        #             Welch Two Sample t-test
+        # 
+        # data:  sample1 and sample2
+        # t = -2.2807, df = 28.978, p-value = 0.0301
+
+        statistic, pvalue = self.run.t_test(sample1, sample2)
+        
+        self.assertTrue( statistic - -2.28 < 0.01)
+        self.assertTrue( pvalue - 0.0301 < 0.01)
 
 
     def test_correct_pvalues(self):
