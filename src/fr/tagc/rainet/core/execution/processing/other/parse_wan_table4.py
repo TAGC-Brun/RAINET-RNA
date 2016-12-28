@@ -34,6 +34,8 @@ with open( conversionFile) as inFile:
 ### read annotation file
  
 found = set()
+
+duplicates = set()
  
 with open(inputFile) as inFile:
     header = inFile.readline()
@@ -60,12 +62,20 @@ with open(inputFile) as inFile:
             if symbol in conversionDict:
                 found.add( symbol)
                 uniprotACs = conversionDict[ symbol]
+                
+                # for each corresponding uniprotAC.. note that this can produce duplicate mappings
                 for uniprotAC in uniprotACs:
                     outputFile.write( "%s\t%s\n" % (complexID, uniprotAC))
+
+                if len( uniprotACs) > 1:
+                    print "DUPLICATE:", complexID, symbol, uniprotACs
+                    duplicates.add( symbol)
+
              
     for complexID in sorted( setComplexes):
         outputFileList.write( "%s\n" % (complexID))
  
 print "Found mapping for %s IDs" % len( found)
+print "Duplicate ID mapping for %s IDs" % len( duplicates)
 
 print "FINISHED!"
