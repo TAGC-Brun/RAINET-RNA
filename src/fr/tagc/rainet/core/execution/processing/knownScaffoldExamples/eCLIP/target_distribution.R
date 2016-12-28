@@ -31,3 +31,4 @@ plt1 <- ggplot(merged_dataset, aes( x = type, y = count) )  +
   theme_minimal()
 plt1
 
+
