@@ -17,6 +17,8 @@ if( length(args) != 2){
 inputFile = args[1]
 outFolder = args[2]
 
+setwd(outFolder)
+
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/extraStringent/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/scores.tsv"
@@ -42,9 +44,16 @@ outFolder = args[2]
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only_normalisation/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/normalised/scores.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/expression_dataset/lncRNAs/sampled_scores.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/lncRNAs/min100/sampled_scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/lncRNAs/min100/sampled_scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/snoRNA_only/scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/Positive_proteins_transcripts/scores.tsv"
 
-setwd(outFolder)
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ECLIPPredictionValidation/sampled_scores.tsv"
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/scores.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/mRNAs/sampled_scores.tsv"
+
+
+#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/3utr/extraStringent/scores.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -54,6 +63,9 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 # Separate validated from non-validated
 validated = dataset[dataset$in_validated_set == 1,]
 nonValidated = dataset[dataset$in_validated_set == 0]
+
+nrow(validated)
+nrow(nonValidated)
 
 median(validated$catrapid_score)
 median(nonValidated$catrapid_score)
