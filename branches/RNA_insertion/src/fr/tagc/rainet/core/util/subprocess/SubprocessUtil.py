@@ -46,6 +46,11 @@ class SubprocessUtil( object ):
     
             if p.returncode != 0:
                 Logger.get_instance().error( "\nSubprocessUtil.run_command :\n%s# %s%s%s%s" % ( commentLine, "ERROR (return code != 0)", commentLine, str(p.returncode), commentLine) )
+        else:
+            # if there is error code, print even if non-verbose
+            if p.returncode != 0:
+                Logger.get_instance().error( "\nSubprocessUtil.run_command :\n %s%s%s" % ( "ERROR (return code != 0)", str(p.returncode), stderrText) )
+            
 
         if return_stdout:
             return stdoutText
