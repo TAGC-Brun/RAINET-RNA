@@ -2,6 +2,7 @@
 # Script to plot heatmap of RNA vs annotation enrichments
 
 install.packages("scales")
+# it seems I have to install this package anew every time I run this script, since there is another package with the same name which creates conflict
 library(d3heatmap)
 library(scales)
 library(gplots)
@@ -19,18 +20,14 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/test/CorumTest/testingSet/"
 
 # real
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/BioplexClusterR1000Expr1.0"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/WanClusterR1000Expr1.0"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0/splicing"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0/transcription"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/CorumR1000Expr1.0/na_binding"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/snRNAs/0.1RPKM/CorumR1000"
-#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/snRNAs/0.1RPKM/CorumR1000Expr0.1/splicing"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000/"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNA_random_control/Cutoff50/HavugimanaR1000"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/non_redundant/HavugimanaR1000Expr1.0"
 
-inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000/"
-inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNA_random_control/Cutoff50/HavugimanaR1000"
-inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/non_redundant/HavugimanaR1000Expr1.0"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/BioplexClusterR1000Expr1.0"
+
+inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0_depletion"
 
 inputFile = paste( inputFolder, "/enrichment_results_filtered_matrix.tsv", sep="")
 rowAnnotFile = paste( inputFolder, "/matrix_row_annotation.tsv", sep="")
@@ -58,8 +55,8 @@ my_palette <- colorRampPalette(c("#f7f7f7", "#67a9cf"))(n = 2)
 ########################################
 ########################################
 
-#install.packages("scales")
-
+#install.packages("scales") # there is a conflict of two functions with same name, so sometimes we need to install again this scales package
+####interactive plot
 d3heatmap(mat_data,
           density.info="none",  # turns off density plot inside color legend
           trace="none",         # turns off trace lines inside the heat map
