@@ -40,6 +40,8 @@ class LncRNAGroupAnalysis(object):
     DATA_FILE_ID_COLUMN = 0
 
     OUTPUT_FILE = "lncRNA_group_analysis.tsv"
+    
+    ALL_RNA_ANNOTATION = "0-All_lncRNAs"
            
     def __init__(self, annotationFile, dataFile, outputFolder, dataColumns):
 
@@ -144,15 +146,21 @@ class LncRNAGroupAnalysis(object):
         #=======================================================================
         # Output file, a melted file
         #
-        # Gene    Group  Metric Value  Proc    Deg     CytNuc  PolyCyt TrP     Copies  Exon    Annotation      Cluster Host    Complex
+        # Gene    Group  Metric Value
         # ENSG00000005206 Predicted Syn 0.3240500888
         # ENSG00000005206 Predicted Proc -0.0260844809
         # ENSG00000006062 Interacting Syb 0.1118696177
 
         outFile = open( self.outputFolder + "/" + LncRNAGroupAnalysis.OUTPUT_FILE, "w")
 
+        # write header
+        outFile.write("Gene\tGroup\tMetric\tValue\n")
+
+
         #TODO: report on overlap between Mukherjee and our groups
+
         numbersPerGroup = {} # key -> group, value -> count of transcripts
+        numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION] = 0
 
         #=======================================================================
         # read input file and write output
@@ -166,9 +174,7 @@ class LncRNAGroupAnalysis(object):
             wantedColumnNames.append( columnNames[col])
 
         newTable = table[ wantedColumnNames]
-    
-        print "read_data_file: number of lines in input data:", len(newTable)
-    
+        
         for index, gene in newTable.iterrows():
             geneID = gene[LncRNAGroupAnalysis.DATA_FILE_ID_COLUMN]
 
@@ -196,19 +202,18 @@ class LncRNAGroupAnalysis(object):
                         numbersPerGroup[ annotation] = 0
                     numbersPerGroup[ annotation]+= 1
 
-            else:
-                # if gene has no annotation, put it as "All_lncRNAs" group
-                annotation = "All_lncRNAs"
-                for metric in xrange(1, len( wantedColumnNames) -1):
-                    outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, annotation, wantedColumnNames[ metric], gene[ metric]))
-
-                if annotation not in numbersPerGroup:
-                    numbersPerGroup[ annotation] = 0
-                numbersPerGroup[ annotation]+= 1
-
-        print "read_data_file: number of lncRNAs per group", numbersPerGroup
+            # add lncRNA to all lncRNA group regardless of its existence in our annotations
+            numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION]+= 1
+            for metric in xrange(1, len( wantedColumnNames) -1):
+                outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, LncRNAGroupAnalysis.ALL_RNA_ANNOTATION, wantedColumnNames[ metric], gene[ metric]))
 
         outFile.close()
+
+        assert( len( newTable) == numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION])
+
+        print "read_data_file: number of lines in input data:", len(newTable)
+        print "read_data_file: number of lncRNAs per group", numbersPerGroup
+
 
 
 if __name__ == "__main__":
