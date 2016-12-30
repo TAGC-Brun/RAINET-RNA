@@ -35,9 +35,11 @@ plt2
 
 
 ### All vs All statistics
-
-metric = "Deg" # change here the wanted metric
+metric = "Syn" # change here the wanted metric
 dataset1 = datasetContinuous[datasetContinuous$Metric == metric]
 table1 = all_vs_all_tests(dataset1, "Value", "Group", verbose = 1)
 
-
+### Get list of enriched lncRNAs in clusters c1,c2 and c3
+clEnrich = datasetDiscrete[datasetDiscrete$Group == "4-Enriched"]
+clEnrich[clEnrich$Value == "c1" | clEnrich$Value == "c2" | clEnrich$Value == "c3"]$Gene
+#clEnrich[clEnrich$Value == "c1" | clEnrich$Value == "c2" | clEnrich$Value == "c3" | clEnrich$Value == "c4" | clEnrich$Value == "c6"]$Gene
