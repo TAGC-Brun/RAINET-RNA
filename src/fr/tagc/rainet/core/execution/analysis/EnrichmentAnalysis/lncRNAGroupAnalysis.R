@@ -12,13 +12,32 @@ inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRN
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
-datasetSyn = dataset[dataset$Metric == "Syn"]
+datasetDiscrete = dataset[dataset$Metric == "Cluster"]
+datasetContinuous = dataset[dataset$Metric != "Cluster"]
 
-datasetSyn
+nrow(datasetDiscrete)
+nrow(datasetContinuous)
 
+datasetContinuous$Value <- as.numeric(as.character(datasetContinuous$Value))
 
-plt1 <- ggplot(dataset, aes(x = Metric, y = Value, fill = Group) )  +
-  geom_boxplot() +
+## Box plot with all numeric metrics at once
+plt1 <- ggplot(datasetContinuous, aes(x = Metric, y = Value, fill = Group) )  +
+  geom_boxplot(outlier.shape = NA, position = "dodge") +
+  ylim(-2.5,2.5) +
   theme_minimal()
 plt1
+
+## Bar plot with cluster categories
+plt2 <- ggplot(datasetDiscrete, aes(x = Group, fill = Value) )  +
+  geom_bar( position = "fill") +
+  theme_minimal()
+plt2
+
+
+### All vs All statistics
+
+metric = "Deg" # change here the wanted metric
+dataset1 = datasetContinuous[datasetContinuous$Metric == metric]
+table1 = all_vs_all_tests(dataset1, "Value", "Group", verbose = 1)
+
 
