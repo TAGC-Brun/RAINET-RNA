@@ -32,18 +32,24 @@ SCRIPT_NAME = "LncRNAGroupAnalysis.py"
 
 class LncRNAGroupAnalysis(object):
 
+    #=======================================================================
     # Constants
+    #=======================================================================
     
     ANNOTATION_FILE_ID_COLUMN = 0
     ANNOTATION_FILE_ANNOTATION_COLUMN = 1
 
     DATA_FILE_ID_COLUMN = 0
+    DATA_FILE_ANNOTATION_COLUMN = 9
 
     OUTPUT_FILE = "lncRNA_group_analysis.tsv"
     
-    ALL_RNA_ANNOTATION = "0-All_lncRNAs"
+    ALL_MRNA_ANNOTATION = "0-All_mRNAs"
+    ALL_LNCRNA_ANNOTATION = "1-All_lncRNAs"
+
+
            
-    def __init__(self, annotationFile, dataFile, outputFolder, dataColumns):
+    def __init__(self, annotationFile, dataFile, outputFolder, dataColumns, useMRNA):
 
         self.annotationFile = annotationFile
         self.dataFile = dataFile
@@ -55,7 +61,7 @@ class LncRNAGroupAnalysis(object):
                 self.dataColumns.append( int( s))
         except:
             raise RainetException("LncRNAGroupAnalysis.__init__: data column input in wrong format:", dataColumns)
-            
+        self.useMRNA = useMRNA
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -125,6 +131,9 @@ class LncRNAGroupAnalysis(object):
 
         self.transcriptAnnotation = transcriptAnnotation
         self.groupTranscripts = groupTranscripts
+        
+        for group in sorted(groupTranscripts):
+            print group, len( groupTranscripts[ group])
 
 
     # #
@@ -156,11 +165,10 @@ class LncRNAGroupAnalysis(object):
         # write header
         outFile.write("Gene\tGroup\tMetric\tValue\n")
 
-
-        #TODO: report on overlap between Mukherjee and our groups
-
         numbersPerGroup = {} # key -> group, value -> count of transcripts
-        numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION] = 0
+        numbersPerGroup[ LncRNAGroupAnalysis.ALL_LNCRNA_ANNOTATION] = 0
+        if self.useMRNA:
+            numbersPerGroup[ LncRNAGroupAnalysis.ALL_MRNA_ANNOTATION] = 0           
 
         #=======================================================================
         # read input file and write output
@@ -169,11 +177,8 @@ class LncRNAGroupAnalysis(object):
         table = pd.read_table( self.dataFile, header = 0, sep = "\t", skip_blank_lines = True)
         
         columnNames = list(table.columns.values)
-        wantedColumnNames = [] 
-        for col in self.dataColumns:
-            wantedColumnNames.append( columnNames[col])
 
-        newTable = table[ wantedColumnNames]
+        newTable = table[ :]
         
         for index, gene in newTable.iterrows():
             geneID = gene[LncRNAGroupAnalysis.DATA_FILE_ID_COLUMN]
@@ -194,22 +199,31 @@ class LncRNAGroupAnalysis(object):
             if geneID in self.transcriptAnnotation:
                 # for each of its annotations, write a line
                 for annotation in self.transcriptAnnotation[ geneID]:
-                   
-                    for metric in xrange(1, len( wantedColumnNames) -1):
-                        outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, annotation, wantedColumnNames[ metric], gene[ metric]))
+                    
+                    for metric in self.dataColumns:
+                        outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, annotation, columnNames[ metric], gene[ metric]))
 
                     if annotation not in numbersPerGroup:
                         numbersPerGroup[ annotation] = 0
                     numbersPerGroup[ annotation]+= 1
 
-            # add lncRNA to all lncRNA group regardless of its existence in our annotations
-            numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION]+= 1
-            for metric in xrange(1, len( wantedColumnNames) -1):
-                outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, LncRNAGroupAnalysis.ALL_RNA_ANNOTATION, wantedColumnNames[ metric], gene[ metric]))
+            # if mRNA
+            if gene[ LncRNAGroupAnalysis.DATA_FILE_ANNOTATION_COLUMN] == "protein_coding":
+                if self.useMRNA:
+                    # add to mRNA category
+                    numbersPerGroup[ LncRNAGroupAnalysis.ALL_MRNA_ANNOTATION]+= 1
+                    for metric in self.dataColumns:
+                        outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, LncRNAGroupAnalysis.ALL_MRNA_ANNOTATION, columnNames[ metric], gene[ metric]))            
+            elif gene[ LncRNAGroupAnalysis.DATA_FILE_ANNOTATION_COLUMN] == "lncRNA":
+                # add lncRNA to all lncRNA group regardless of its existence in our annotations
+                numbersPerGroup[ LncRNAGroupAnalysis.ALL_LNCRNA_ANNOTATION]+= 1
+                for metric in self.dataColumns:
+                    outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, LncRNAGroupAnalysis.ALL_LNCRNA_ANNOTATION, columnNames[ metric], gene[ metric]))
+            else:
+                # neither lncRNA nor mRNA
+                continue
 
         outFile.close()
-
-        assert( len( newTable) == numbersPerGroup[ LncRNAGroupAnalysis.ALL_RNA_ANNOTATION])
 
         print "read_data_file: number of lines in input data:", len(newTable)
         print "read_data_file: number of lncRNAs per group", numbersPerGroup
@@ -236,17 +250,19 @@ if __name__ == "__main__":
         parser.add_argument('dataFile', metavar='dataFile', type=str,
                              help='File with data per lncRNA from Mukherjee2016. Header is important. Already filtered for lncRNAs.')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
-        parser.add_argument('--dataColumns', metavar='dataColumns', type=str, default = "0,1,2,3,4,5,6,7,10",
+        parser.add_argument('--dataColumns', metavar='dataColumns', type=str, default = "1,2,3,4,5,7,10",
                              help='Which 0-based columns in the input data file we want to process. At least the gene ID column needs to be included and as the first in list. Give attribute as comma-separated.')
+        parser.add_argument('--useMRNA', metavar='useMRNA', type=int, default = 1,
+                             help='Whether to create protein_coding category, if available on file.')
            
         #gets the arguments
         args = parser.parse_args( ) 
     
         # init
-        run = LncRNAGroupAnalysis( args.annotationFile, args.dataFile, args.outputFolder, args.dataColumns)
+        run = LncRNAGroupAnalysis( args.annotationFile, args.dataFile, args.outputFolder, args.dataColumns, args.useMRNA)
        
         # read annotations file
-        Timer.get_instance().step( "Reading annotation file..")    
+        Timer.get_instance().step( "Reading annotation file..") 
         run.read_annotation_file( )      
 
         # read data file and write output
