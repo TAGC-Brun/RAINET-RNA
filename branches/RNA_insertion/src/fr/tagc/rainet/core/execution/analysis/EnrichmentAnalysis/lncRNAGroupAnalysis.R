@@ -43,3 +43,23 @@ table1 = all_vs_all_tests(dataset1, "Value", "Group", verbose = 1)
 clEnrich = datasetDiscrete[datasetDiscrete$Group == "4-Enriched"]
 clEnrich[clEnrich$Value == "c1" | clEnrich$Value == "c2" | clEnrich$Value == "c3"]$Gene
 #clEnrich[clEnrich$Value == "c1" | clEnrich$Value == "c2" | clEnrich$Value == "c3" | clEnrich$Value == "c4" | clEnrich$Value == "c6"]$Gene
+
+
+
+# ##### Network analysis #####
+# 
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/merge/enrichment_network_analysis/topPartners3/lncRNA_group_analysis.tsv"
+# 
+# dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+# 
+# ## Box plot with all numeric metrics at once
+# plt1 <- ggplot(dataset, aes(x = Metric, y = Value, fill = Group) )  +
+#   geom_boxplot(outlier.shape = NA, position = "dodge") +
+#   theme_minimal()
+# plt1
+# 
+# ## All vs All statistics
+# metric = "LCneighbours" # change here the wanted metric
+# dataset1 = dataset[dataset$Metric == metric]
+# table = all_vs_all_tests(dataset1, "Value", "Group", verbose = 1)
+

@@ -40,7 +40,7 @@ class LncRNAGroupAnalysis(object):
     ANNOTATION_FILE_ANNOTATION_COLUMN = 1
 
     DATA_FILE_ID_COLUMN = 0
-    DATA_FILE_ANNOTATION_COLUMN = 9
+#    DATA_FILE_ANNOTATION_COLUMN = 9
 
     OUTPUT_FILE = "lncRNA_group_analysis.tsv"
     
@@ -49,7 +49,7 @@ class LncRNAGroupAnalysis(object):
 
 
            
-    def __init__(self, annotationFile, dataFile, outputFolder, dataColumns, useMRNA):
+    def __init__(self, annotationFile, dataFile, outputFolder, dataColumns, useMRNA, dataAnnotationColumn):
 
         self.annotationFile = annotationFile
         self.dataFile = dataFile
@@ -62,6 +62,7 @@ class LncRNAGroupAnalysis(object):
         except:
             raise RainetException("LncRNAGroupAnalysis.__init__: data column input in wrong format:", dataColumns)
         self.useMRNA = useMRNA
+        self.dataAnnotationColumn = dataAnnotationColumn
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -109,8 +110,8 @@ class LncRNAGroupAnalysis(object):
                 # select column to use as annotation                
                 annotationItem = spl[ LncRNAGroupAnalysis.ANNOTATION_FILE_ANNOTATION_COLUMN]
 
-                if not geneID.startswith( "ENSG"):
-                    raise RainetException("read_annotation_file: entry is not ENSG*:", geneID)
+                if not geneID.startswith( "ENS"):
+                    raise RainetException("read_annotation_file: entry is not ENS*:", geneID)
 
                 if "." in geneID:
                     geneID = geneID.split( ".")[0]
@@ -184,8 +185,8 @@ class LncRNAGroupAnalysis(object):
             geneID = gene[LncRNAGroupAnalysis.DATA_FILE_ID_COLUMN]
 
             ## process geneID
-            if not geneID.startswith( "ENSG"):
-                raise RainetException("read_data_file: entry is not ENSG*:", geneID)
+            if not geneID.startswith( "ENS"):
+                raise RainetException("read_data_file: entry is not ENS*:", geneID)
 
             # Note: some entries contain ENSGR*, this is a small modification due to chromosome Y/X, it can safely be changed to ENSG0*
             if geneID.startswith( "ENSGR"):
@@ -208,13 +209,13 @@ class LncRNAGroupAnalysis(object):
                     numbersPerGroup[ annotation]+= 1
 
             # if mRNA
-            if gene[ LncRNAGroupAnalysis.DATA_FILE_ANNOTATION_COLUMN] == "protein_coding":
+            if gene[ self.dataAnnotationColumn] == "protein_coding":
                 if self.useMRNA:
                     # add to mRNA category
                     numbersPerGroup[ LncRNAGroupAnalysis.ALL_MRNA_ANNOTATION]+= 1
                     for metric in self.dataColumns:
                         outFile.write( "%s\t%s\t%s\t%s\n" % (geneID, LncRNAGroupAnalysis.ALL_MRNA_ANNOTATION, columnNames[ metric], gene[ metric]))            
-            elif gene[ LncRNAGroupAnalysis.DATA_FILE_ANNOTATION_COLUMN] == "lncRNA":
+            elif gene[ self.dataAnnotationColumn] == "lncRNA":
                 # add lncRNA to all lncRNA group regardless of its existence in our annotations
                 numbersPerGroup[ LncRNAGroupAnalysis.ALL_LNCRNA_ANNOTATION]+= 1
                 for metric in self.dataColumns:
@@ -254,12 +255,14 @@ if __name__ == "__main__":
                              help='Which 0-based columns in the input data file we want to process. At least the gene ID column needs to be included and as the first in list. Give attribute as comma-separated.')
         parser.add_argument('--useMRNA', metavar='useMRNA', type=int, default = 1,
                              help='Whether to create protein_coding category, if available on file.')
+        parser.add_argument('--dataAnnotationColumn', metavar='dataAnnotationColumn', type=int, default = 9,
+                             help='Which 0-based column to use as transcript biotype/group annotation.')
            
         #gets the arguments
         args = parser.parse_args( ) 
     
         # init
-        run = LncRNAGroupAnalysis( args.annotationFile, args.dataFile, args.outputFolder, args.dataColumns, args.useMRNA)
+        run = LncRNAGroupAnalysis( args.annotationFile, args.dataFile, args.outputFolder, args.dataColumns, args.useMRNA, args.dataAnnotationColumn)
        
         # read annotations file
         Timer.get_instance().step( "Reading annotation file..") 
