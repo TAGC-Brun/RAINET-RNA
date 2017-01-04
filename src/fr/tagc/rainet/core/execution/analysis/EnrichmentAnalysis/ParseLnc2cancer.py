@@ -38,7 +38,7 @@ SCRIPT_NAME = "ParseLnc2cancer.py"
 
 class ParseLnc2cancer(object):
     
-       
+    OUTPUT_FILE = "/lncRNA_cancer_association_ensemblID.txt"
     
     def __init__(self, rainetDB, lnc2cancerData, outputFolder):
 
@@ -148,7 +148,7 @@ class ParseLnc2cancer(object):
         # Output file
         #===============================================================================
         # Same as input file, but with an extra column (the first column) with the mapped Ensembl transcript ID
-        outFile = open( self.outputFolder + "/lncRNA_cancer_association_ensemblID.txt", "w")
+        outFile = open( self.outputFolder + ParseLnc2cancer.OUTPUT_FILE, "w")
     
        
         with open( self.lnc2cancerData, "r") as inFile:
@@ -263,17 +263,17 @@ if __name__ == "__main__":
         args = parser.parse_args( ) 
     
         # Initialise class
-        prioritizeCandidates = ParseLnc2cancer( args.rainetDB, args.lnc2cancerData, args.outputFolder)
+        parseLnc2cancer = ParseLnc2cancer( args.rainetDB, args.lnc2cancerData, args.outputFolder)
     
         #===============================================================================
         # Run analysis / processing
         #===============================================================================
 
         Timer.get_instance().step( "Read RainetDB table..")
-        prioritizeCandidates.read_rainet_db( )
+        parseLnc2cancer.read_rainet_db( )
 
         Timer.get_instance().step( "Read lnc2cancer file..")            
-        prioritizeCandidates.read_lnc2cancer( )
+        parseLnc2cancer.read_lnc2cancer( )
 
 
         # Stop the chrono      
