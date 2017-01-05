@@ -26,9 +26,12 @@ from fr.tagc.rainet.core.data.CorumCluster import CorumCluster
 from fr.tagc.rainet.core.data.ProteinCorumAnnotation import ProteinCorumAnnotation
 from fr.tagc.rainet.core.data.CustomCluster import CustomCluster
 from fr.tagc.rainet.core.data.ProteinCustomAnnotation import ProteinCustomAnnotation
+from fr.tagc.rainet.core.data.NetworkModule import NetworkModule
+from fr.tagc.rainet.core.data.NetworkModuleAnnotation import NetworkModuleAnnotation
+from fr.tagc.rainet.core.data.ProteinNetworkModule import ProteinNetworkModule
 
 #===============================================================================
-# Started 23-Novembre-2016 
+# Started 23-November-2016 
 # Diogo Ribeiro
 DESC_COMMENT = "Script to prioritize transcript-protein interactions to be validated experimentally. To be run after enrichment analysis and result parsing."
 SCRIPT_NAME = "prioritize_candidates.py"
