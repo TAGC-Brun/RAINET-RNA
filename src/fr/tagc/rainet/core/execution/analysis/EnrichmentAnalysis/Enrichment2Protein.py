@@ -175,7 +175,8 @@ class Enrichment2Protein(object):
         outFile2 = open( self.outputFolder + Enrichment2Protein.OUTPUT_FILE_2, "w")
 
         nLines = 0
-        nPairs = 0
+
+        pairsToWrite = set()
 
         with open( self.enrichmentData, "r") as inFile:
 
@@ -208,14 +209,16 @@ class Enrichment2Protein(object):
                 outFile1.write( newLine + "\n")
 
                 # write list of transcriptID and proteinIDs
-                
+                # add them to a set since there may be duplicates, same rna-protien pair from different enrichments in different datasets
                 for prot in proteinList:
-                    outFile2.write( transcriptID + "\t" + prot + "\n")
-                    nPairs += 1
+                    pairsToWrite.add( transcriptID + "\t" + prot + "\n")
 
+
+        for pair in pairsToWrite:                
+            outFile2.write( pair)
 
         print "read_enrichment_data: read %s lines." % nLines
-        print "read_enrichment_data: wrote %s transcript-protein pairs." % nPairs
+        print "read_enrichment_data: wrote %s transcript-protein pairs." % len( pairsToWrite)
 
 
         outFile1.close()
