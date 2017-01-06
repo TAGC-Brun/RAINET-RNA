@@ -53,10 +53,12 @@ class OMIMProteinDisease(object):
             os.mkdir( self.outputFolder)
 
         self.rscriptOutputFile = self.outputFolder + OMIMProteinDisease.R_SCRIPT_OUTPUT_FILE_NAME
-        # remove R output file in case it exists, so that it does not overwrite
-        if os.path.exists( self.rscriptOutputFile):
-            cmd = "rm %s" % self.rscriptOutputFile
-            SubprocessUtil.run_command( cmd, verbose = 0)
+
+# TODO: uncomment this
+#         # remove R output file in case it exists, so that it does not overwrite
+#         if os.path.exists( self.rscriptOutputFile):
+#             cmd = "rm %s" % self.rscriptOutputFile
+#             SubprocessUtil.run_command( cmd, verbose = 0)
             
             
     # #
@@ -139,6 +141,10 @@ class OMIMProteinDisease(object):
             for line in inFile:
                 spl = line.strip().split( "\t")
 
+                uniprotAC = ""
+                hgncID = ""
+                omimID = ""
+
                 nLines += 1
                 
                 if len( spl) < 3:
@@ -172,13 +178,15 @@ class OMIMProteinDisease(object):
                     if hgncID in hgnc2Uniprot:
                         uniprots = hgnc2Uniprot[ hgncID]
                         for unip in uniprots:
-                            proteinOMIMDict[ uniprotAC].add( omimID)
+                            if unip not in proteinOMIMDict:
+                                proteinOMIMDict[ unip] = set()
+                            proteinOMIMDict[ unip].add( omimID)
                             omimIDs.add( omimID)
                     else:
                         # this should be only proteins that dont have any reviewed uniprot entry (but may have unreviewed)
                         pass
 
-                
+        
         print "read_biomart_data: %s uniprotACs in OMIM" % len( proteinOMIMDict)
         print "read_biomart_data: %s OMIM IDs" % len( omimIDs)
 
@@ -303,8 +311,9 @@ if __name__ == "__main__":
         # Run analysis / processing
         #===============================================================================
 
-        Timer.get_instance().step( "Retrieve biomart data..")
-        instance.run_biomart_rscript( )
+#TODO: uncomment this
+#         Timer.get_instance().step( "Retrieve biomart data..")
+#         instance.run_biomart_rscript( )
 
         Timer.get_instance().step( "Read biomart data..")
         instance.read_biomart_data( )
