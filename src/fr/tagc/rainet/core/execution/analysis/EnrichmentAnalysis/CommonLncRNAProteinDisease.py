@@ -159,8 +159,9 @@ class CommonLncRNAProteinDisease(object):
         outFile2 = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE_WORD_MATCH, "w")        
         outFile2.write( "transcriptID\tproteinID\twordsMatched\ttranscriptDisease\tproteinDisease\n")
 
-        nLines = 0
-        nLinesMatch = 0
+        # line counters after writing header
+        nLines = 1
+        nLinesMatch = 1
         
         with open( self.lncRNAProteinFile, "r") as inFile:
             
@@ -192,11 +193,11 @@ class CommonLncRNAProteinDisease(object):
                             wordBoo = 0
                             matchWord = []
                             for word in wordSoup:
-
                                 if word in protDiseaseLower:
                                     wordBoo = 1
                                     # if several words are matched, they are separated by commas (as we dont look at word order) 
                                     matchWord.append( word )
+
                             if wordBoo:
                                 matchWord = ";".join( matchWord).strip()
                                 outFile2.write( "%s\t%s\t'%s'\t%s\t%s\n" % ( transcriptID, proteinID, matchWord, transcriptDisease, proteinDisease) )
@@ -205,6 +206,7 @@ class CommonLncRNAProteinDisease(object):
                             outFile.write( "%s\t%s\t%s\t%s\n" % ( transcriptID, proteinID, transcriptDisease, proteinDisease) )
                             
                             nLines += 1
+
         outFile.close()
         outFile2.close()
         
@@ -240,6 +242,7 @@ if __name__ == "__main__":
 
         #TODO: optional argument with black-listed words, that alone should not match anything
         # hereditary,cancer,carcinoma,cell,disease,malignant,multiple,syndrome,type
+        # other ideas is to interchange cancer and carcinoma
            
         # gets the arguments
         args = parser.parse_args( ) 
