@@ -26,11 +26,12 @@ SCRIPT_NAME = "CommonLncRNAProteinDisease.py"
 # 1) Read lncRNA disease association file
 # 2) Read protein disease association file
 # 3) Read lncRNA-protein association file (enrichment)
-# 4) Return file with their correspondances
+# 4) Return file with their correspondances, doing a simple word matching
 #===============================================================================
 
 #===============================================================================
 # Processing notes:
+# 1) For the word matching, strings are lowercased and each transcript disease word tries to find a match in the protein disease string using "contains" approach
 #===============================================================================
 
 class CommonLncRNAProteinDisease(object):
@@ -38,14 +39,15 @@ class CommonLncRNAProteinDisease(object):
     # Constants
 
     OUTPUT_FILE = "/lncRNA_protein_disease_descriptions.txt"
+    OUTPUT_FILE_WORD_MATCH = "/lncRNA_protein_disease_descriptions_word_match.txt"
 
-
-    def __init__(self, lncRNADiseaseFile, proteinDiseaseFile, lncRNAProteinFile, outputFolder):
+    def __init__(self, lncRNADiseaseFile, proteinDiseaseFile, lncRNAProteinFile, outputFolder, minWordSize):
 
         self.lncRNADiseaseFile = lncRNADiseaseFile
         self.proteinDiseaseFile = proteinDiseaseFile
         self.lncRNAProteinFile = lncRNAProteinFile
         self.outputFolder = outputFolder
+        self.minWordSize = minWordSize
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -135,9 +137,12 @@ class CommonLncRNAProteinDisease(object):
 
         self.proteinDiseaseDict = proteinDiseaseDict
 
+
     # #
     # Read transcript-protein enrichment correspondence and write output file with disease associations
     def read_lncrna_protein_file(self):
+
+        print "read_lncrna_protein_file: avoiding word match of words below size %s." % self.minWordSize
         
         #===============================================================================
         # Read protein disease file
@@ -145,10 +150,17 @@ class CommonLncRNAProteinDisease(object):
         # Example format
         # ENST00000424191 P04899
         # ENST00000424191 P09471
+        
+        # File with original disease terms
+        outFile = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE, "w")
+        outFile.write("transcriptID\tproteinID\ttranscriptDisease\tproteinDisease\n")
+
+        # File with matched disease terms only
+        outFile2 = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE_WORD_MATCH, "w")        
+        outFile2.write( "transcriptID\tproteinID\twordsMatched\ttranscriptDisease\tproteinDisease\n")
 
         nLines = 0
-        
-        outFile = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE, "w")
+        nLinesMatch = 0
         
         with open( self.lncRNAProteinFile, "r") as inFile:
             
@@ -161,15 +173,43 @@ class CommonLncRNAProteinDisease(object):
                 proteinID = spl[1]
                 
                 for transcriptDisease in self.transcriptDiseaseDict[ transcriptID]:
+
+                    ## Word matching
+                    # put all text in lowercase for word matching
+                    txDiseaseLower = transcriptDisease.lower()
+                    # Split per word
+                    wordSoup = txDiseaseLower.split( " ")
+                    # Filter out small words
+                    wordSoup = [word for word in wordSoup if len( word) > self.minWordSize]
+                                        
                     if proteinID in self.proteinDiseaseDict:
                         for proteinDisease in self.proteinDiseaseDict[ proteinID]:
+
+                            # put text in lowercase to match transcript diseases
+                            protDiseaseLower = proteinDisease.lower()
+
+                            # loop each transcript disease word and try to find a match                            
+                            wordBoo = 0
+                            matchWord = []
+                            for word in wordSoup:
+
+                                if word in protDiseaseLower:
+                                    wordBoo = 1
+                                    # if several words are matched, they are separated by commas (as we dont look at word order) 
+                                    matchWord.append( word )
+                            if wordBoo:
+                                matchWord = ";".join( matchWord).strip()
+                                outFile2.write( "%s\t%s\t'%s'\t%s\t%s\n" % ( transcriptID, proteinID, matchWord, transcriptDisease, proteinDisease) )
+                                nLinesMatch += 1
                             
                             outFile.write( "%s\t%s\t%s\t%s\n" % ( transcriptID, proteinID, transcriptDisease, proteinDisease) )
                             
                             nLines += 1
         outFile.close()
+        outFile2.close()
         
-        print "read_lncrna_protein_file: wrote %s lines." % nLines
+        print "read_lncrna_protein_file: wrote %s association lines." % nLines
+        print "read_lncrna_protein_file: wrote %s association lines with a word match." % nLinesMatch
 
 
 if __name__ == "__main__":
@@ -195,12 +235,17 @@ if __name__ == "__main__":
                              help='TSV file with lncRNA-protein associations, based on lncRNA enrichment to a complex. One line per pair. E.g. ENST00000424191 P63218')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Output folder.')
+        parser.add_argument('--minWordSize', metavar='minWordSize', type=str, default = 2,
+                             help='For matching transcript disease to protein disease, try to match any words above size X.')
+
+        #TODO: optional argument with black-listed words, that alone should not match anything
+        # hereditary,cancer,carcinoma,cell,disease,malignant,multiple,syndrome,type
            
         # gets the arguments
         args = parser.parse_args( ) 
     
         # Initialise class
-        instance = CommonLncRNAProteinDisease( args.lncRNADiseaseFile, args.proteinDiseaseFile, args.lncRNAProteinFile, args.outputFolder)
+        instance = CommonLncRNAProteinDisease( args.lncRNADiseaseFile, args.proteinDiseaseFile, args.lncRNAProteinFile, args.outputFolder, args.minWordSize)
     
         #===============================================================================
         # Run analysis / processing
