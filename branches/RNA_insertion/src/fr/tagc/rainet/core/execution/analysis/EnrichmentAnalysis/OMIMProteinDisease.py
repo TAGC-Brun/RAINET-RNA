@@ -217,6 +217,11 @@ class OMIMProteinDisease(object):
             
             for line in inFile:
 
+                # reset descriptions
+                desc = ""
+                altDesc = ""
+                incDesc = ""
+
                 # skip comment lines
                 if line.startswith("#"):
                     continue
@@ -227,9 +232,6 @@ class OMIMProteinDisease(object):
                 desc = spl[2]
                 if len(spl) > 3:
                     altDesc = spl[3]
-                else:
-                    altDesc = ""
-                    incDesc = ""
                 if len(spl) > 4:
                     incDesc = spl[4]
 
