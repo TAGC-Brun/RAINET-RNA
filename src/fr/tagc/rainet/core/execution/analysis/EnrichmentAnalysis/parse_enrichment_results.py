@@ -45,6 +45,7 @@ REPORT_RNA_ANNOT_RESULTS_MATRIX = "enrichment_results_filtered_matrix.tsv"
 REPORT_MATRIX_ROW_ANNOTATION = "matrix_row_annotation.tsv"
 REPORT_MATRIX_COL_ANNOTATION = "matrix_col_annotation.tsv"
 REPORT_SPECIFICITY_RANK = "enrichment_specificity_rank.tsv"
+REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered_after_specificity.tsv"
 
 SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
 
@@ -177,9 +178,13 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     dictPairs = {} # key -> txID|annotID, val -> value (variable, boolean or pval) # includes annotations without enrichments
     annotValues = {} # key -> annot ID, val -> list of values # includes annotations without enrichments
 
+    filteredEnrichmentResults = [] # lists with enrichment results after filter (same as output file)
+
     with open( enrichment_results_file, "r") as inFile:
         
-        outFile1.write( inFile.readline()) # transport header
+        header = inFile.readline()
+        outFile1.write( header) # transport header
+        filteredEnrichmentResults.append( header)
 
         for line in inFile:
             
@@ -207,6 +212,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
                     value = filter_warning_value
                 else:
                     outFile1.write( line + "\n")
+                    filteredEnrichmentResults.append( line)
 
             pair = txID + "|" + annotID
             if pair not in dictPairs:
@@ -295,7 +301,7 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     
     outFile2.close()
 
-    return dictPairs
+    return dictPairs, filteredEnrichmentResults
 
 # #
 # Writes file with complex-lncRNA pairs ranked by specificity
@@ -353,6 +359,8 @@ def rank_by_specificity( dict_pairs, filter_warning_value):
             outFile.write( "%s\t%s\t%s\t%s\n" % ( txID, annotID, len( lncDict[ txID]), len( annotDict[ annotID])) )
 
     outFile.close()
+
+    return annotDict, lncDict
 
 
 # #
@@ -436,6 +444,47 @@ def read_annotation_file( annotation_file):
     return annotationDict
 
 
+# #
+# Use specificity ranking and list of previously filtered enrichments, filter them further based on annotation specificity levels.
+def filter_by_specificity(filtered_enrichment_results, annot_dict, lnc_dict, annot_specificity_filter, transcript_specificity_filter):
+    
+    
+    # Write output file exactly as the previous file, but filtered
+    outFile = open( REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "w")
+    
+    firstLine = 1    
+    notPassingFilters = 0
+        
+    for enrich in filtered_enrichment_results:
+
+        # write header
+        if firstLine:
+            outFile.write( enrich)
+            firstLine = 0
+            continue
+
+        spl = enrich.split( "\t")
+        
+        annotID = spl[1]
+        transcriptID = spl[0]
+        
+        # keep only enrichments where number of enriched transcripts is lower or equal to annot_specificity_filter, or if filter is OFF
+        if annot_specificity_filter == -1 and transcript_specificity_filter == -1:
+            outFile.write( enrich + "\n")
+        elif annot_specificity_filter == -1 and len( lnc_dict[ transcriptID] ) <= transcript_specificity_filter:
+            outFile.write( enrich + "\n")
+        elif len( annot_dict[annotID] ) <= annot_specificity_filter and transcript_specificity_filter == -1:
+            outFile.write( enrich + "\n")
+        elif len( annot_dict[annotID] ) <= annot_specificity_filter and len( lnc_dict[ transcriptID] ) <= transcript_specificity_filter:
+            outFile.write( enrich + "\n")
+        else:
+            notPassingFilters += 1
+
+    Logger.get_instance().info( "filter_by_specificity : Filtered out %s enrichments" % ( notPassingFilters ) )
+    
+    outFile.close()
+
+            
 if __name__ == "__main__":
 
     try:
@@ -473,6 +522,10 @@ if __name__ == "__main__":
                              help='Text to write for the transcripts that are not in provided annotation files. Default = "Other"')
         parser.add_argument('--noAnnotationFilter', metavar='noAnnotationFilter', type=int, default = 0,
                              help='If on, columns and rows with no annotation will be filtered out from the matrix file (and associated files). Default = 0 (OFF)')
+        parser.add_argument('--annotSpecificityFilter', metavar='annotSpecificityFilter', type=int, default = -1,
+                             help='Filter out enrichments where the annotation has enrichment to more than X transcripts. Default = -1 (OFF)')
+        parser.add_argument('--transcriptSpecificityFilter', metavar='transcriptSpecificityFilter', type=int, default = -1,
+                             help='Filter out enrichments where the transcript has enrichment to more than X annotations. Default = -1 (OFF)')
 
            
         # Gets the arguments
@@ -507,11 +560,14 @@ if __name__ == "__main__":
         listRNASignificantEnrich = read_enrichment_per_rna_file( args.enrichmentPerRNAFile, args.minimumRatio)
 
         Timer.get_instance().step( "Read Enrichment results file..")    
-        dictPairs = read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
+        dictPairs, filteredEnrichmentResults = read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
                                       rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter )
 
         Timer.get_instance().step( "Write specificity ranking..")    
-        rank_by_specificity( dictPairs, args.filterWarningValue)
+        annotDict, lncDict = rank_by_specificity( dictPairs, args.filterWarningValue)
+
+        Timer.get_instance().step( "Write enrichment results file filtered by specificity..")    
+        filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict, args.annotSpecificityFilter, args.transcriptSpecificityFilter)
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
