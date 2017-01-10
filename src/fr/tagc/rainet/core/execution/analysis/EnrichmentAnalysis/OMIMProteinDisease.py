@@ -54,11 +54,10 @@ class OMIMProteinDisease(object):
 
         self.rscriptOutputFile = self.outputFolder + OMIMProteinDisease.R_SCRIPT_OUTPUT_FILE_NAME
 
-# TODO: uncomment this
-#         # remove R output file in case it exists, so that it does not overwrite
-#         if os.path.exists( self.rscriptOutputFile):
-#             cmd = "rm %s" % self.rscriptOutputFile
-#             SubprocessUtil.run_command( cmd, verbose = 0)
+        # remove R output file in case it exists, so that it does not overwrite
+        if os.path.exists( self.rscriptOutputFile):
+            cmd = "rm %s" % self.rscriptOutputFile
+            SubprocessUtil.run_command( cmd, verbose = 0)
             
             
     # #
@@ -313,9 +312,8 @@ if __name__ == "__main__":
         # Run analysis / processing
         #===============================================================================
 
-#TODO: uncomment this
-#         Timer.get_instance().step( "Retrieve biomart data..")
-#         instance.run_biomart_rscript( )
+        Timer.get_instance().step( "Retrieve biomart data..")
+        instance.run_biomart_rscript( )
 
         Timer.get_instance().step( "Read biomart data..")
         instance.read_biomart_data( )
