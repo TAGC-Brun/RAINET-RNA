@@ -41,19 +41,31 @@ class CommonLncRNAProteinDisease(object):
     OUTPUT_FILE = "/lncRNA_protein_disease_descriptions.txt"
     OUTPUT_FILE_WORD_MATCH = "/lncRNA_protein_disease_descriptions_word_match.txt"
 
-    def __init__(self, lncRNADiseaseFile, proteinDiseaseFile, lncRNAProteinFile, outputFolder, minWordSize):
+    def __init__(self, lncRNADiseaseFile, proteinDiseaseFile, lncRNAProteinFile, outputFolder, minWordSize, blackListedWords):
 
         self.lncRNADiseaseFile = lncRNADiseaseFile
         self.proteinDiseaseFile = proteinDiseaseFile
         self.lncRNAProteinFile = lncRNAProteinFile
         self.outputFolder = outputFolder
         self.minWordSize = minWordSize
+        self.blackListedWords = blackListedWords
+
+        # stores words to be black listed when performing word matching
+        self.blackListedWordsSet = set()
 
         # make output folder
         if not os.path.exists( self.outputFolder):
             os.mkdir( self.outputFolder)
+     
             
-            
+    # #
+    # Read list of words to be black listed when performing word matching
+    def read_black_listed_words_file(self):
+        
+        with open( self.blackListedWords, "r") as inFile:
+            for line in inFile:
+                self.blackListedWordsSet.add( line.strip())
+           
     # #
     # Read lncRNA-disease associations
     def read_lncrna_disease_file(self):
@@ -200,8 +212,10 @@ class CommonLncRNAProteinDisease(object):
 
                             if wordBoo:
                                 matchWord = ";".join( matchWord).strip()
-                                outFile2.write( "%s\t%s\t'%s'\t%s\t%s\n" % ( transcriptID, proteinID, matchWord, transcriptDisease, proteinDisease) )
-                                nLinesMatch += 1
+                                
+                                if matchWord not in self.blackListedWordsSet:
+                                    outFile2.write( "%s\t%s\t'%s'\t%s\t%s\n" % ( transcriptID, proteinID, matchWord, transcriptDisease, proteinDisease) )
+                                    nLinesMatch += 1
                             
                             outFile.write( "%s\t%s\t%s\t%s\n" % ( transcriptID, proteinID, transcriptDisease, proteinDisease) )
                             
@@ -239,20 +253,21 @@ if __name__ == "__main__":
                              help='Output folder.')
         parser.add_argument('--minWordSize', metavar='minWordSize', type=str, default = 2,
                              help='For matching transcript disease to protein disease, try to match any words above size X.')
-
-        #TODO: optional argument with black-listed words, that alone should not match anything
-        # hereditary,cancer,carcinoma,cell,disease,malignant,multiple,syndrome,type
-        # other ideas is to interchange cancer and carcinoma
+        parser.add_argument('--blackListedWords', metavar='blackListedWords', type=str, default = "",
+                             help='Optional file with list of words (one per line) that should not be matched by themselves, unless in conjunction with other words.')
            
         # gets the arguments
         args = parser.parse_args( ) 
     
         # Initialise class
-        instance = CommonLncRNAProteinDisease( args.lncRNADiseaseFile, args.proteinDiseaseFile, args.lncRNAProteinFile, args.outputFolder, args.minWordSize)
+        instance = CommonLncRNAProteinDisease( args.lncRNADiseaseFile, args.proteinDiseaseFile, args.lncRNAProteinFile, args.outputFolder, args.minWordSize, args.blackListedWords)
     
         #===============================================================================
         # Run analysis / processing
         #===============================================================================
+
+        if args.blackListedWords != "":
+            instance.read_black_listed_words_file()           
 
         Timer.get_instance().step( "Read lncRNA-disease file..")
         instance.read_lncrna_disease_file( )
