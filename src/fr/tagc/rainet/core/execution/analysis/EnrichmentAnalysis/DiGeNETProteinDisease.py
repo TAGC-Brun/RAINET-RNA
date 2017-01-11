@@ -37,18 +37,24 @@ class DiGeNETProteinDisease(object):
 
     # Constants
         
-    OUTPUT_FILE = "/DiGeNET_protein_disease_description.txt"
+    OUTPUT_FILE = "/DiGeNET_protein_disease_description"
         
-    def __init__(self, digenetIDMappingFile, digenetFile, outputFolder):
+    def __init__(self, digenetIDMappingFile, digenetFile, outputFolder, minDigenetScore, digenetFileCurated):
 
         self.digenetIDMappingFile = digenetIDMappingFile
         self.digenetFile = digenetFile
         self.outputFolder = outputFolder
+        self.minDigenetScore = minDigenetScore
+        self.digenetFileCurated = digenetFileCurated
 
+        if self.digenetFileCurated:
+            self.outFile = DiGeNETProteinDisease.OUTPUT_FILE + "_curated" + ".txt"
+        else:
+            self.outFile = DiGeNETProteinDisease.OUTPUT_FILE + "_all" + ".txt"
+          
 #         # Build a SQL session to DB
 #         SQLManager.get_instance().set_DBpath(self.rainetDB)
 #         self.sql_session = SQLManager.get_instance().get_session()
-
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -155,8 +161,8 @@ class DiGeNETProteinDisease(object):
 
 
     # #
-    # Read curated_gene_disease_associations.txt file from DiGeNET database and map IDs, write output file
-    def read_curated_digenet_file( self):
+    # Read curated_gene_disease_associations.txt file or all_gene_disease_associations.tsv from DiGeNET database and map IDs, write output file
+    def read_digenet_file( self):
 
         #===============================================================================
         # Read DiGeNET curated_gene_disease_associations.txt
@@ -166,19 +172,42 @@ class DiGeNETProteinDisease(object):
         # umls:C0000737   3440    0.12    IFNA2   interferon, alpha 2     Abdominal Pain  CTD_human       1       0
         # umls:C0000744   4547    0.490867606404876       MTTP    microsomal triglyceride transfer protein        Abetalipoproteinemia    CLINVAR,CTD_human,ORPHANET,UNIPROT      33      5
         
+        #===============================================================================
+        # Read DiGeNET all_gene_disease_associations.tsv
+        #===============================================================================    
+        # Example format:    
+        # geneId  geneName        description     diseaseId       diseaseName     score   NofPmids        NofSnps sources
+        # 4210    MEFV    Mediterranean fever     umls:C0000727   Abdomen, Acute  0.00290991572276264     2       0       BeFree,GAD
+        # 4193    MDM2    MDM2 proto-oncogene, E3 ubiquitin protein ligase        umls:C0000735   Abdominal Neoplasms     0.000271441872080303    1       0       BeFree        
+
         # Note: commented lines start with "#"
+        # Note: essentially both 'curated' and 'all' have the same important columns, but in different order
 
-
+        # Pick the right file columns depending on file format
+        if self.digenetFileCurated:
+            diseaseIDCol = 0
+            geneIDCol = 1
+            scoreCol = 2
+            diseaseNameCol = 5
+        else:
+            diseaseIDCol = 3
+            geneIDCol = 0
+            scoreCol = 5
+            diseaseNameCol = 4
+            
         #===============================================================================
         # Output file
         #===============================================================================
         # proteinID\tdisease_ID\tdisease_name
+        outFile = open( self.outputFolder + self.outFile, "w")
 
-        outFile = open( self.outputFolder + DiGeNETProteinDisease.OUTPUT_FILE, "w")
-
+        
         notFound = set()
         found = set()
+        scoreFiltered = 0
         nLines = 0
+        
+        firstLine = 1
 
         with open( self.digenetFile, "r") as inFile:
             for line in inFile:
@@ -189,17 +218,22 @@ class DiGeNETProteinDisease(object):
                 if line.startswith( "#"):
                     continue
 
-                if line.startswith( "diseaseId"):
+                if firstLine:
                     header = line
+                    firstLine = 0
                     continue
 
                 spl = line.strip().split( "\t")
 
                 # retrieve wanted attributes                
-                diseaseID = spl[0]
-                geneID = spl[1]
-                score = spl[2]
-                diseaseName = spl[5]
+                diseaseID = spl[diseaseIDCol]
+                geneID = spl[geneIDCol]
+                score = spl[scoreCol]
+                diseaseName = spl[diseaseNameCol]
+                
+                if float( score) < self.minDigenetScore:
+                    scoreFiltered += 1
+                    continue
                 
                 if geneID in self.entrezUniprotDict:
                     found.add( geneID)
@@ -214,15 +248,10 @@ class DiGeNETProteinDisease(object):
         print "read_curated_digenet_file: read %s lines." % nLines
         print "read_curated_digenet_file: could not map %s DiGeNET protein IDs to uniprotAC." % len( notFound)
         print "read_curated_digenet_file: mapped %s DiGeNET protein IDs to uniprotAC." % len( found)
+        print "read_curated_digenet_file: %s disease-associations filtered out by score." % scoreFiltered
  
         # Note: curated file seems to have a minimum of 0.12 as score, maximum of 0.86.
 
-    # #
-    # Read all_gene_disease_associations.tsv file from DiGeNET database and map IDs, write output file
-    def read_all_gene_disease_digenet_file( self):
-        
-        #TODO: ..
-        pass
 
 
 if __name__ == "__main__":
@@ -248,12 +277,16 @@ if __name__ == "__main__":
                              help='Path to DiGeNET file to be used.')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Output folder.')
+        parser.add_argument('--minDigenetScore', metavar='minDigenetScore', type=float, default = 0.0,
+                             help='Exclude disease associations if score is below X. Default = 0 (OFF)')
+        parser.add_argument('--digenetFileCurated', metavar='digenetFileCurated', type=int, default = 1,
+                             help='Whether provided digenetFile is "curated" or not. Default = 1 (YES)')
            
         # gets the arguments
         args = parser.parse_args( ) 
     
         # Initialise class
-        instance = DiGeNETProteinDisease( args.digenetIDMappingFile, args.digenetFile, args.outputFolder)
+        instance = DiGeNETProteinDisease( args.digenetIDMappingFile, args.digenetFile, args.outputFolder, args.minDigenetScore, args.digenetFileCurated)
     
         #===============================================================================
         # Run analysis / processing
@@ -263,7 +296,7 @@ if __name__ == "__main__":
         instance.read_digenet_id_mapping_file( )
 
         Timer.get_instance().step( "Read DiGeNET file..")            
-        instance.read_curated_digenet_file()
+        instance.read_digenet_file()
         
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
