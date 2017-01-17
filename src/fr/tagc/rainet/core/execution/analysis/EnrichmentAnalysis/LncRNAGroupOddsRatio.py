@@ -269,6 +269,18 @@ class LncRNAGroupOddsRatio(object):
 
 
     # #
+    # Calculate odds ratio between groups of lncRNAs
+    def calculate_odds_ratio(self):
+
+        self.filteredExternalLists
+        self.filteredAnnotationTranscripts
+        self.backgroundTranscripts
+        #TODO: continue here. Do fisher exact test
+        pass
+
+
+
+    # #
     # Map transcript ID to gene ID based on RAINET DB correspondence, if needed.
     def _transcript_to_gene_mapping(self, ID):
         
