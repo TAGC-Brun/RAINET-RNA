@@ -2,6 +2,7 @@ import sys
 import os
 import argparse
 import pandas as pd
+import scipy.stats as stats
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
@@ -47,14 +48,13 @@ class LncRNAGroupOddsRatio(object):
 
     ANNOTATION_FILE_ID_COLUMN = 0
     ANNOTATION_FILE_ANNOTATION_COLUMN = 1
-
            
-    def __init__(self, annotationFile, externalFiles, backgroundList, outputFolder, useGenes, rainetDB):
+    def __init__(self, annotationFile, externalFiles, backgroundList, outputFile, useGenes, rainetDB):
 
         self.annotationFile = annotationFile
         self.externalFiles = externalFiles
         self.backgroundList = backgroundList
-        self.outputFolder = outputFolder
+        self.outputFile = outputFile
         self.useGenes = useGenes
         self.rainetDB = rainetDB
         
@@ -70,8 +70,10 @@ class LncRNAGroupOddsRatio(object):
                 self.read_rainet_db()
                 
         # make output folder
-        if not os.path.exists( self.outputFolder):
-            os.mkdir( self.outputFolder)
+        baseFolder = os.path.basename( self.outputFile)
+        print baseFolder
+        if not os.path.exists( baseFolder):
+            os.system( baseFolder)
 
 
     # #
@@ -153,7 +155,7 @@ class LncRNAGroupOddsRatio(object):
                 if ID not in transcriptAnnotation:
                     transcriptAnnotation[ ID] = set()
                 transcriptAnnotation[ ID].add( annotationItem)
-                 
+                
                 # storing annotation as key
                 if annotationItem not in groupTranscripts:
                     groupTranscripts[ annotationItem] = set()
@@ -203,7 +205,6 @@ class LncRNAGroupOddsRatio(object):
                             continue
 
                         externalLists[ fileName].add( ID)
-
 
 
         Logger.get_instance().info("LncRNAGroupOddsRatio.read_external_files: number of lists read: %s" % len( externalLists) )
@@ -269,15 +270,90 @@ class LncRNAGroupOddsRatio(object):
 
 
     # #
-    # Calculate odds ratio between groups of lncRNAs
+    # Calculate odds ratio between groups of lncRNAs, write output file
     def calculate_odds_ratio(self):
+        
+        #=======================================================================
+        # Output file
+        #=======================================================================
+        # format: melted file 
+        # ExternalList\tTranscriptGroup\tMetric\tValue
+        outFile = open( self.outputFile, "w")
+        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tMetric\tValue\n")
 
-        self.filteredExternalLists
-        self.filteredAnnotationTranscripts
-        self.backgroundTranscripts
-        #TODO: continue here. Do fisher exact test
-        pass
+        #=======================================================================
+        # Produce statistics for each external list
+        #=======================================================================
 
+        for lst in sorted( self.filteredExternalLists):
+            externalList = self.filteredExternalLists[ lst]
+            
+            # Get overlap between external list and annotated transcripts
+            overlapAnnotationExternal = [tx for tx in externalList if tx in self.filteredAnnotationTranscripts]
+
+            #=======================================================================
+            # For each annotation group
+            #=======================================================================
+            for group in sorted( self.groupTranscripts):
+                
+                # get all the filtered annotated transcripts that belong to current group of annotation
+                filteredGroupTranscripts = [tx for tx in self.groupTranscripts[ group] if tx in self.filteredAnnotationTranscripts]
+
+                ## fisher exact test
+                # Our question: does the current annotation genes (e.g. interacting, enriched) significantly overlap with the genes of the current external list (Liu2016, Mukherjee2016)?
+                # Contigency table:
+                #         group    non-group
+                # externalList    groupOverlap    len(externalList)-groupOverlap
+                # non-externalList    len(group)-groupOverlap    len(backgroundTranscripts) - union(3 other cells)
+
+                # get overlap between annotation and external lists, in the current group
+                groupOverlap = {tx for tx in filteredGroupTranscripts if tx in overlapAnnotationExternal}
+                
+                # get other values for the fisher exact test
+                externalNonGroup = set(externalList) - groupOverlap
+                nonExternalGroup = set( filteredGroupTranscripts) - groupOverlap
+                nonExternalNonGroup = set( self.backgroundTranscripts) - (externalNonGroup.union( nonExternalGroup).union( groupOverlap) )
+
+#                 print lst, group
+#                 print len( groupOverlap)
+#                 print len( externalNonGroup)
+#                 print len( nonExternalGroup)
+#                 print len( nonExternalNonGroup)
+                
+                # assert that sum of columns/rows match
+                assert len( externalNonGroup) + len( groupOverlap) == len( externalList)
+                assert len( externalNonGroup) + len( nonExternalNonGroup) == len( self.backgroundTranscripts) - ( len( groupOverlap) + len( nonExternalGroup))
+                assert len( groupOverlap) + len( nonExternalGroup) == len( filteredGroupTranscripts)
+                assert len( groupOverlap) + len( externalNonGroup) + len( nonExternalGroup) + len( nonExternalNonGroup) == len( self.backgroundTranscripts)
+    
+                # run the fisher exact test
+                matrix = [[len( groupOverlap), len( externalNonGroup)], [len( nonExternalGroup), len( nonExternalNonGroup)]]
+
+                oddsRatio, pvalue = self.fisher_exact_test(matrix)
+                
+                # write odds ratio
+                outFile.write("%s\t%s\t%s\todds_ratio\t%.2f\n" % ( lst, group, len( groupOverlap), oddsRatio))
+                # write pvalue
+                outFile.write("%s\t%s\t%s\tpvalue\t%.1e\n" % ( lst, group, len( groupOverlap), pvalue))
+                
+
+        outFile.close() 
+
+
+    # #
+    # Perform fishers exact test using scipy
+    @staticmethod
+    def fisher_exact_test( matrix):
+
+        # equivalent of doing in R:
+        # fisher.test( matrix(c(8, 2, 1, 5), nrow = 2), alternative = "greater")
+        # However: The calculated odds ratio is different from the one R uses.
+        # This scipy implementation returns the (more common) unconditional Maximum Likelihood Estimate
+        # while R uses the conditional Maximum Likelihood Estimate
+    
+        oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = "greater")
+            
+        return oddsRatio, pvalue
 
 
     # #
@@ -340,7 +416,7 @@ if __name__ == "__main__":
                              help='File with list of input files, each with list of transcripts/genes to be used to cross our data. Full paths, no header.')
         parser.add_argument('backgroundList', metavar='backgroundList', type=str,
                              help='File with list of transcripts to use has background (i.e. tested transcripts). Both annotationFile and externalFiles transcripts will be filtered by this list. No header.')
-        parser.add_argument('outputFolder', metavar='outputFolder', type=str, help='Folder where to write output files.')
+        parser.add_argument('outputFile', metavar='outputFile', type=str, help='Folder and file where to write output files. Provide full paths.')
         parser.add_argument('--useGenes', metavar='useGenes', type=str, default = 0,
                              help='If on, files containing ENST* IDs will be mapped to ENSG* IDs. Note: --rainetDB parameter is mandatory.')
         parser.add_argument('--rainetDB', metavar='rainetDB', type=str, default = LncRNAGroupOddsRatio.ARGUMENT_RAINET_DB_DEFAULT,
@@ -350,7 +426,7 @@ if __name__ == "__main__":
         args = parser.parse_args( ) 
     
         # init
-        run = LncRNAGroupOddsRatio( args.annotationFile, args.externalFiles, args.backgroundList, args.outputFolder, args.useGenes, args.rainetDB)
+        run = LncRNAGroupOddsRatio( args.annotationFile, args.externalFiles, args.backgroundList, args.outputFile, args.useGenes, args.rainetDB)
 
         # run functions in order
         run.run()
