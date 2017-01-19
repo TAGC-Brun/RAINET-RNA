@@ -162,7 +162,7 @@ class LncRNAGroupOddsRatio(object):
                 groupTranscripts[ annotationItem].add( ID)
  
             Logger.get_instance().info("LncRNAGroupOddsRatio.read_annotation_file: number of entries read: %s" % lineCounter )
-            Logger.get_instance().info("LncRNAGroupOddsRatio.read_annotation_file: number of transcripts with annotation: %s" % len( transcriptAnnotation) )
+            Logger.get_instance().info("LncRNAGroupOddsRatio.read_annotation_file: number of transcripts/genes with annotation: %s" % len( transcriptAnnotation) )
             Logger.get_instance().info("LncRNAGroupOddsRatio.read_annotation_file: number of annotations: %s" % len( groupTranscripts) )
          
         for group in sorted(groupTranscripts):
@@ -237,7 +237,7 @@ class LncRNAGroupOddsRatio(object):
                 
                 backgroundTranscripts.add( ID)
 
-        Logger.get_instance().info("LncRNAGroupOddsRatio.read_background_list: number of transcripts in background: %s" % len( backgroundTranscripts) )
+        Logger.get_instance().info("LncRNAGroupOddsRatio.read_background_list: number of transcripts/genes in background: %s" % len( backgroundTranscripts) )
 
         #=======================================================================
         # Filter for overlap with background transcripts
@@ -286,6 +286,8 @@ class LncRNAGroupOddsRatio(object):
         # Produce statistics for each external list
         #=======================================================================
 
+        self.dataStore = {} # stores data for unittesting
+
         for lst in sorted( self.filteredExternalLists):
             externalList = self.filteredExternalLists[ lst]
             
@@ -331,6 +333,8 @@ class LncRNAGroupOddsRatio(object):
                 matrix = [[len( groupOverlap), len( externalNonGroup)], [len( nonExternalGroup), len( nonExternalNonGroup)]]
 
                 oddsRatio, pvalue = self.fisher_exact_test(matrix)
+
+                self.dataStore[ lst + "|" + group] = matrix
 
 #                 ### Output file in melted format                
 #                 # write odds ratio

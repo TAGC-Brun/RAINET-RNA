@@ -130,7 +130,8 @@ class LncRNAGroupOddsRatioUnittest(unittest.TestCase):
 
         self.run.calculate_odds_ratio()
 
-        # TODO: test
+        # manually verified on /home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/merge/enrichment_lncrnadb/novel
+        self.assertTrue( self.run.dataStore['lncrnadb_ENSG_genes|4-Enriched'] == [[8, 53], [723, 11449]] )
 
 
     def test_fisher_exact_test(self):
@@ -142,12 +143,11 @@ class LncRNAGroupOddsRatioUnittest(unittest.TestCase):
         self.assertTrue( oddsRatio == 20.0)
         self.assertTrue( abs( pvalue - 0.024) <= 0.01)
 
-
         
 #     def test_run(self):
-# 
+#  
 #         print "| test_run | "        
-# 
+#  
 #         self.run.run()
 
 
