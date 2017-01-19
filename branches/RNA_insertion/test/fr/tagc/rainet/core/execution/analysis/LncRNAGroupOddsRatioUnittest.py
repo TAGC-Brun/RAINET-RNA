@@ -30,7 +30,7 @@ class LncRNAGroupOddsRatioUnittest(unittest.TestCase):
         self.annotationFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/lncRNA_groups/transcript_to_gene/lncRNA_group_annotation.txt"
         self.externalFiles = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/test/externalFiles.txt"
         self.backgroundList = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/list_interacting_lncRNAs.txt"
-        self.outputFolder = "test_output/"
+        self.outputFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/analysis/test_output/outfile.tsv"
         self.useGenes = 1
         self.rainetDB = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-12-28.human_lncRNA_cutoff50/rainet2016-12-28.human_lncRNA_cutoff50.sqlite"        
         
@@ -110,8 +110,6 @@ class LncRNAGroupOddsRatioUnittest(unittest.TestCase):
 
         self.run.read_background_list()
         
-        print len( self.run.backgroundTranscripts)
-        
         # wc -l      12233 list_non_redundant_genes.txt
         self.assertTrue( len( self.run.backgroundTranscripts) == 12233) 
 
@@ -121,6 +119,29 @@ class LncRNAGroupOddsRatioUnittest(unittest.TestCase):
         # Intersection: 1129
         self.assertTrue( len( self.run.filteredExternalLists[ "mukherjee2016_genes"]) == 1129) 
         
+
+    def test_calculate_odds_ratio(self):
+ 
+        print "| test_calculate_odds_ratio | "
+
+        self.run.read_annotation_file()
+        self.run.read_external_files()
+        self.run.read_background_list()
+
+        self.run.calculate_odds_ratio()
+
+        # TODO: test
+
+
+    def test_fisher_exact_test(self):
+
+        print "| test_fisher_exact_test | "
+        
+        oddsRatio, pvalue = self.run.fisher_exact_test( [[8, 2], [1, 5] ])
+
+        self.assertTrue( oddsRatio == 20.0)
+        self.assertTrue( abs( pvalue - 0.024) <= 0.01)
+
 
         
 #     def test_run(self):
