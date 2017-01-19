@@ -279,7 +279,8 @@ class LncRNAGroupOddsRatio(object):
         # format: melted file 
         # ExternalList\tTranscriptGroup\tMetric\tValue
         outFile = open( self.outputFile, "w")
-        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tMetric\tValue\n")
+#        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tMetric\tValue\n")
+        outFile.write( "ExternalList\tTranscriptGroup\tOddsRatio\tPvalue\n")
 
         #=======================================================================
         # Produce statistics for each external list
@@ -330,11 +331,14 @@ class LncRNAGroupOddsRatio(object):
                 matrix = [[len( groupOverlap), len( externalNonGroup)], [len( nonExternalGroup), len( nonExternalNonGroup)]]
 
                 oddsRatio, pvalue = self.fisher_exact_test(matrix)
-                
-                # write odds ratio
-                outFile.write("%s\t%s\t%s\todds_ratio\t%.2f\n" % ( lst, group, len( groupOverlap), oddsRatio))
-                # write pvalue
-                outFile.write("%s\t%s\t%s\tpvalue\t%.1e\n" % ( lst, group, len( groupOverlap), pvalue))
+
+#                 ### Output file in melted format                
+#                 # write odds ratio
+#                 outFile.write("%s\t%s\t%s\todds_ratio\t%.2f\n" % ( lst, group, len( groupOverlap), oddsRatio))
+#                 # write pvalue
+#                 outFile.write("%s\t%s\t%s\tpvalue\t%.1e\n" % ( lst, group, len( groupOverlap), pvalue))
+
+                outFile.write("%s\t%s\t%s\t%.2f\t%.1e\n" % ( lst, group, len( groupOverlap), oddsRatio, pvalue))
                 
 
         outFile.close() 
@@ -389,9 +393,8 @@ class LncRNAGroupOddsRatio(object):
         Timer.get_instance().step( "Reading background file..") 
         run.read_background_list()
 
-#         # read data file and write output
-#         Timer.get_instance().step( "Reading data file..")    
-#         run.read_data_file()
+        Timer.get_instance().step( "Creating output file..") 
+        run.calculate_odds_ratio()
 
 
 
