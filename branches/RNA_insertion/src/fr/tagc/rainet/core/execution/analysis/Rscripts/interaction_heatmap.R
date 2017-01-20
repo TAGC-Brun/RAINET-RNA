@@ -11,6 +11,7 @@ library(data.table)
 
 #inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/Report/interaction_score_matrix.tsv"
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/analysisStrategy/real/Report/interaction_score_matrix.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/mrna_vs_lncrna/cutoff15_cutoff50_lncRNA_enriched_top50_proteins/interaction_score_matrix.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
