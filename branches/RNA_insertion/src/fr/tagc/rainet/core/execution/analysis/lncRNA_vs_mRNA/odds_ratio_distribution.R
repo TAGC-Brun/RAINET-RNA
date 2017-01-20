@@ -16,7 +16,7 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 min(dataset$t_test_statistic)
 max(dataset$t_test_statistic)
-
+# 
 
 plt1 <- ggplot( dataset, aes(x = dataset$t_test_statistic)) + 
   geom_histogram() + 
