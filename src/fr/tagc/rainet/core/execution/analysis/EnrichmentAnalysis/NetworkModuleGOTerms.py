@@ -93,8 +93,8 @@ class NetworkModuleGOTerms(object):
         assert( len( termDescriptions) == len( goTermFrequency))
 
         Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number of Module-GOterm associations in DB: %s" % ( len( query)) )
-        Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number Modules with annotation %s" % ( len( moduleGOTerms)) )
-        Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number GO terms associated to module %s" % ( len( goTermFrequency)) )
+        Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number Modules with annotation: %s" % ( len( moduleGOTerms)) )
+        Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number GO terms associated to module: %s" % ( len( goTermFrequency)) )
      
         self.moduleGOTerms = moduleGOTerms
         self.goTermFrequency = goTermFrequency
@@ -167,6 +167,8 @@ class NetworkModuleGOTerms(object):
         for term, value in sortedByRatio:
             ratio = float(value)/len( self.goTermFrequency[ term])
             outFile.write( "%s\t%s\t%i\t%i\t%.2f\n" % (term, self.termDescriptions[ term], value, len( self.goTermFrequency[ term]), ratio) )
+            # TODO: currently not writing GO terms that do not have any enrichment! 
+            # TODO: think if I need to do a statistical test
 
         outFile.close()
 
@@ -295,7 +297,7 @@ if __name__ == "__main__":
     
         # positional args
         parser.add_argument('enrichmentFile', metavar='enrichmentFile', type=str,
-                             help='Rainet database to be used for ID mapping.')       
+                             help='Enrichment analysis output file. This should be the filtered file, produced after filtering with "parse_enrichment_results.py"')       
         parser.add_argument('rainetDB', metavar='rainetDB', type=str,
                              help='Rainet database to be used for ID mapping.')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
