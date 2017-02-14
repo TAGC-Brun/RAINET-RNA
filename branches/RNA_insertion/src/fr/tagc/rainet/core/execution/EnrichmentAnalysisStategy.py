@@ -638,7 +638,13 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
 
             #===================================================================   
             # Run real test            
-            #===================================================================   
+            #=================================================================== 
+            
+            if self.expressionWarning != OptionConstants.DEFAULT_EXPRESSION_WARNING:            
+                if rnaID not in self.expressionDict:
+                    Logger.get_instance().warning("enrichement_analysis : skipping rna due to lack of expression data: %s" % (rnaID))
+                    continue
+              
             testsCorrected = self.run_rna_vs_annotations(rnaID, self.annotWithInteractionDict, totalRNAInteractions)
 
             assert len(testsCorrected) == len(self.annotWithInteractionDict)
@@ -900,6 +906,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             raise RainetException("EnrichmentAnalysisStrategy.hypergeometric_test: Number of white balls is zero.")
         if k == 0:
             raise RainetException("EnrichmentAnalysisStrategy.hypergeometric_test: Number of draws is zero.")
+        if n < 0:
+            raise RainetException("EnrichmentAnalysisStrategy.hypergeometric_test: Number of black balls is negative. Possible issue with protein background.")
+            
  
         # stats.hypergeome.sf gives the same result as R phyper
         if self.lowerTail:
