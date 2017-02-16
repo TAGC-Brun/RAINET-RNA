@@ -62,18 +62,22 @@ class ComplexDatasetOverlap(object):
                               "CorumCluster" : "ProteinCorumAnnotation",
                               "CustomCluster" : "ProteinCustomAnnotation"}
         
-        
+    
+    # default arguments    
     DEFAULT_DATASET_LIST = "BioplexCluster,WanCluster,CorumCluster,CustomCluster,NetworkModule"
+    DEFAULT_HIGH_OVERLAP = 50
 
+    # output files
     OUTPUT_FILE_INTRA_DATASET = "intra_dataset_results.tsv"
     OUTPUT_FILE_INTER_DATASET = "inter_dataset_results.tsv"
 
     
-    def __init__(self, rainetDB, outputFolder, useInteractingProteins, listDatasets):
+    def __init__(self, rainetDB, outputFolder, useInteractingProteins, listDatasets, highOverlapStat):
 
         self.rainetDB = rainetDB
         self.outputFolder = outputFolder
         self.useInteractingProteins = useInteractingProteins
+        self.highOverlapStat = highOverlapStat
 
         # Build a SQL session to DB
         SQLManager.get_instance().set_DBpath(self.rainetDB)
@@ -134,6 +138,7 @@ class ComplexDatasetOverlap(object):
         Logger.get_instance().info( "read_rainet_db: processed %s datasets." % ( len( datasetDict)) )
     
         self.datasetDict = datasetDict
+    
     
     # #
     # Calculates overlap of annotations within a dataset.
@@ -205,6 +210,9 @@ class ComplexDatasetOverlap(object):
             if dataset not in intraDatasetOverlapResults:
                 intraDatasetOverlapResults[ dataset] = {}
 
+            # for a dataset, store mean of the mean overlap of each complex 
+            meanOfMeans = 0.0
+
             for annot in sorted( intraDatasetOverlap[ dataset]):
                 
                 if annot not in intraDatasetOverlapResults[ dataset]:
@@ -217,19 +225,123 @@ class ComplexDatasetOverlap(object):
                 anyOverlap = len( [x for x in intraDatasetOverlap[ dataset][ annot] if x != 0])
 
                 # calculate in how many complexes there is overlap above 50%
-                highOverlap = len( [x for x in intraDatasetOverlap[ dataset][ annot] if x > 50])
+                highOverlap = len( [x for x in intraDatasetOverlap[ dataset][ annot] if x > self.highOverlapStat])
 
                 outputText = "%s\t%s\t%.2f\t%s\t%s\n" % (dataset, annot, meanOverlap, anyOverlap, highOverlap)
                 
                 intraDatasetOverlapResults[ dataset][ annot] = outputText
 
                 outFile.write( outputText)
+                
+                meanOfMeans += meanOverlap / len( intraDatasetOverlap[ dataset])
+
+            Logger.get_instance().info( "intra_dataset_overlap: dataset: %s. mean of means overlap = %.2f." % ( dataset, meanOfMeans ))
+
 
         outFile.close()
         
         self.intraDatasetOverlap = intraDatasetOverlap
         self.intraDatasetOverlapResults = intraDatasetOverlapResults
 
+
+    # #
+    # Calculates overlap of annotations between datasets.
+    def inter_dataset_overlap(self):
+
+        #===================================================================   
+        # For each pair of datasets, make all pairwise calculations between complexes
+        #=================================================================== 
+        # Note: the values from dataset1 vs dataset2 and dataset2 vs dataset1 comparisons are different
+        # Dataset1 will eventually become dataset2 for the opposite comparison
+
+        interDatasetOverlap = {} # key -> dataset1_vs_dataset2 tag, value -> dict. key -> dataset1 annotationID, value -> list of overlaps
+        
+        if len( self.datasetDict) < 2:
+            Logger.get_instance().info( "inter_dataset_overlap: inter dataset comparisons not possible, there are less than two datasets available." )
+        
+        for dataset1 in self.datasetDict:
+            for dataset2 in self.datasetDict:
+                
+                # skip comparisons between the very same dataset
+                if dataset1 == dataset2:
+                    continue
+                
+                # regulate which tests are already done, so that they are not repeated
+                count = 0  
+
+                # comparison tag, to store results for each dataset pairwise comparison
+                comparisonTag = dataset1 + "|" + dataset2
+            
+                if comparisonTag not in interDatasetOverlap:
+                    interDatasetOverlap[ comparisonTag] = {}
+
+                dataset1Data = self.datasetDict[ dataset1]
+                dataset2Data = self.datasetDict[ dataset2]
+                
+                # for each pair of complexes, each from a different dataset
+                for complex1 in dataset1Data:                   
+                    for complex2 in dataset2Data:
+                    
+                        # for code simplicity, we only care about the overlap considering dataset1 (complex1). 
+                        # complex2 overlap will be evaluated on a following dataset comparison
+                        if complex1 not in interDatasetOverlap[ comparisonTag]:
+                            interDatasetOverlap[ comparisonTag][ complex1] = []
+           
+                        perc1, _ = ComplexDatasetOverlap.group_overlap( dataset1Data[ complex1], dataset2Data[ complex2])
+     
+                        interDatasetOverlap[ comparisonTag][ complex1].append( perc1)
+     
+                        count+=1
+
+                Logger.get_instance().info( "inter_dataset_overlap: dataset comparison: %s. Number of evaluations: %s" % ( comparisonTag, count))
+
+        
+        #===================================================================   
+        # Write output file
+        #=================================================================== 
+         
+        outFile = open( self.outputFolder + ComplexDatasetOverlap.OUTPUT_FILE_INTER_DATASET, "w")
+ 
+        outFile.write( "dataset_comparison\tdataset1_annotation_id\tmean_overlap\tall_annot_overlap\thigh_annot_overlap\n")
+         
+        interDatasetOverlapResults = {}
+         
+        for comparison in interDatasetOverlap:
+            if comparison not in interDatasetOverlapResults:
+                interDatasetOverlapResults[ comparison] = {}
+
+            # for a comparison, store mean of the mean overlap of each complex 
+            meanOfMeans = 0.0
+            
+            for annot in sorted( interDatasetOverlap[ comparison]):
+                 
+                if annot not in interDatasetOverlapResults[ comparison]:
+                    interDatasetOverlapResults[ comparison][ annot] = ""
+                 
+                # calculate the mean percentage of overlap for a complex, compared to all other complexes of the dataset
+                meanOverlap = sum( interDatasetOverlap[ comparison][ annot]) / len( interDatasetOverlap[ comparison][ annot])
+ 
+                # calculate in how many complexes there is any overlap
+                anyOverlap = len( [x for x in interDatasetOverlap[ comparison][ annot] if x != 0])
+ 
+                # calculate in how many complexes there is overlap above 50%
+                highOverlap = len( [x for x in interDatasetOverlap[ comparison][ annot] if x > self.highOverlapStat])
+ 
+                outputText = "%s\t%s\t%.2f\t%s\t%s\n" % (comparison, annot, meanOverlap, anyOverlap, highOverlap)
+                 
+                interDatasetOverlapResults[ comparison][ annot] = outputText
+ 
+                meanOfMeans += meanOverlap / len( interDatasetOverlap[ comparison])
+ 
+                outFile.write( outputText)
+
+            Logger.get_instance().info( "inter_dataset_overlap: dataset comparison: %s. mean of means overlap = %.2f." % ( comparison, meanOfMeans ))
+
+ 
+        outFile.close()
+         
+        self.interDatasetOverlap = interDatasetOverlap
+        self.interDatasetOverlapResults = interDatasetOverlapResults
 
 
     # #
@@ -270,15 +382,16 @@ if __name__ == "__main__":
         # optional args
         parser.add_argument('--useInteractingProteins', metavar='useInteractingProteins', type=int, default = 1,
                              help='Whether to consider, for a complex, only proteins with interactions or all proteins in the complex. (Default = 1).')
-        parser.add_argument('--listDatasets', metavar='listDatasets', type=int, default = "BioplexCluster,WanCluster,CorumCluster,CustomCluster,NetworkModule",
+        parser.add_argument('--listDatasets', metavar='listDatasets', type=int, default = ComplexDatasetOverlap.DEFAULT_DATASET_LIST,
                              help='Which annotation datasets to use for this analysis. (Default = %s ).' % ComplexDatasetOverlap.DEFAULT_DATASET_LIST)
+        parser.add_argument('--highOverlapStat', metavar='highOverlapStat', type=int, default = ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP,
+                             help='What percentage of overlap to use to consider an overlap as an high overlap. (Default = %s ).' % ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP)
         
-
         # gets the arguments
         args = parser.parse_args( ) 
     
         # Initialise class
-        currentRun = ComplexDatasetOverlap( args.rainetDB, args.outputFolder, args.useInteractingProteins, args.listDatasets)
+        currentRun = ComplexDatasetOverlap( args.rainetDB, args.outputFolder, args.useInteractingProteins, args.listDatasets, args.highOverlapStat)
     
         #===============================================================================
         # Run analysis / processing
@@ -289,6 +402,9 @@ if __name__ == "__main__":
         
         Timer.get_instance().step( "Calculate intra dataset overlap..")       
         currentRun.intra_dataset_overlap()
+
+        Timer.get_instance().step( "Calculate inter dataset overlap..")       
+        currentRun.inter_dataset_overlap()
 
         #TODO: filter proteins by presence on interactingProteins table
 

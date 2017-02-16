@@ -31,8 +31,9 @@ class ComplexDatasetOverlapUnittest(unittest.TestCase):
         self.outputFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/analysis/test_output/complex_dataset_overlap/"
         self.useInteractingProteins = 1
         self.listDatasets = ComplexDatasetOverlap.DEFAULT_DATASET_LIST
+        self.highOverlapStat = ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP
         
-        self.run = ComplexDatasetOverlap( self.rainetDB, self.outputFolder, self.useInteractingProteins, self.listDatasets)
+        self.run = ComplexDatasetOverlap( self.rainetDB, self.outputFolder, self.useInteractingProteins, self.listDatasets, self.highOverlapStat)
 
         
     def test_read_rainet_db(self):
@@ -48,44 +49,6 @@ class ComplexDatasetOverlapUnittest(unittest.TestCase):
         self.assertTrue( len( datasetDict["BioplexCluster"]) == 354 )
         
         self.assertTrue( "Q16539" in datasetDict["BioplexCluster"]["254"])
-
-        
-    def test_intra_dataset_overlap(self):
-
-        print "| test_intra_dataset_overlap | "
-
-        self.run.listDatasets = ["BioplexCluster"]
-
-        self.run.read_rainet_db( )
-        
-        self.run.intra_dataset_overlap()
-        
-        self.assertTrue( len( self.run.intraDatasetOverlapResults[ "BioplexCluster"]) == len( self.run.datasetDict["BioplexCluster"]))
-
-
-        # Test: O00303 is found in two complexes, but the other priteins of complex 102a are only found in that complex
-        # "102a","O00303"
-        # "102a","Q8IUZ0"
-        # "102a","Q9H6J7"
-        # "25b","O00303"        
-
-        testingResults = self.run.intraDatasetOverlapResults[ "BioplexCluster"]["102a"] #e.g. BioplexCluster    102a    0.09    1    0
-
-        spl = testingResults.strip().split( "\t")
-                
-        mean = spl[2]
-        anyOverlap = spl[3]
-        highOverlap = spl[4]
-               
-        # test mean overlap
-        expectedVal = "%.2f" % (33.33 / len( self.run.datasetDict["BioplexCluster"]) ) 
-        self.assertTrue( mean == expectedVal)
- 
-        # test any overlap
-        self.assertTrue( anyOverlap == "1")
-        
-        # test high overlap
-        self.assertTrue( str(highOverlap) == "0")
         
 
     def test_group_overlap(self):
@@ -119,8 +82,108 @@ class ComplexDatasetOverlapUnittest(unittest.TestCase):
         perc1, perc2 = ComplexDatasetOverlap.group_overlap( group1, group2)
 
         self.assertTrue( "%.2f" % perc1 == "100.00")
+
+
+    def test_intra_dataset_overlap(self):
+
+        print "| test_intra_dataset_overlap | "
+
+        self.run.listDatasets = ["BioplexCluster"]
+
+        self.run.read_rainet_db( )
+        
+        self.run.intra_dataset_overlap()
+        
+        self.assertTrue( len( self.run.intraDatasetOverlapResults[ "BioplexCluster"]) == len( self.run.datasetDict["BioplexCluster"]))
+
+
+        # Test: O00303 is found in two complexes, but the other proteins of complex 102a are only found in that complex
+        # "102a","O00303"
+        # "102a","Q8IUZ0"
+        # "102a","Q9H6J7"
+        # "25b","O00303"        
+
+        testingResults = self.run.intraDatasetOverlapResults[ "BioplexCluster"]["102a"] #e.g. BioplexCluster    102a    0.09    1    0
+
+        spl = testingResults.strip().split( "\t")
+                
+        mean = spl[2]
+        anyOverlap = spl[3]
+        highOverlap = spl[4]
+               
+        # test mean overlap
+        expectedVal = "%.2f" % (33.33 / len( self.run.datasetDict["BioplexCluster"]) ) 
+        self.assertTrue( mean == expectedVal)
+ 
+        # test any overlap
+        self.assertTrue( anyOverlap == "1")
+        
+        # test high overlap
+        self.assertTrue( str(highOverlap) == "0")
         
 
+        ### testing the highOverlapStat parameter, decreasing it should find other overlaps as high
+        self.run.highOverlapStat = 30
+
+        self.run.intra_dataset_overlap()
+        
+        testingResults = self.run.intraDatasetOverlapResults[ "BioplexCluster"]["102a"] #e.g. BioplexCluster    102a    0.09    1    0
+              
+        highOverlap = testingResults.strip().split( "\t")[4]
+        
+        # test high overlap
+        self.assertTrue( str(highOverlap) == "1")
+
+        
+    def test_inter_dataset_overlap(self):
+
+        print "| test_inter_dataset_overlap | "
+
+        self.run.listDatasets = ["BioplexCluster", "NetworkModule"]
+
+        self.run.read_rainet_db( )
+        
+        self.run.inter_dataset_overlap()
+        
+        self.assertTrue( len( self.run.interDatasetOverlapResults[ "BioplexCluster|NetworkModule"]) == len( self.run.datasetDict["BioplexCluster"]) )       
+        self.assertTrue( len( self.run.interDatasetOverlapResults[ "NetworkModule|BioplexCluster"]) == len( self.run.datasetDict["NetworkModule"]) )       
+
+        # Testing example  # BioplexCluster|NetworkModule    97b     0.29    4       1
+        # 
+        # Bioplex search:
+        # "97b","P28347"
+        # "97b","Q14135"
+        # 
+        # Network module search:
+        # "10","P28347"
+        # "824","P28347"
+        # 
+        # "77","Q14135"
+        # "444","Q14135"
+        # "824","Q14135"
+        # 
+        # # there are 4 network modules with overlap, one of them 100%, others with 50% 
+        
+        testingResults = self.run.interDatasetOverlapResults[ "BioplexCluster|NetworkModule"]["97b"] 
+        
+        spl = testingResults.strip().split( "\t")
+                
+        mean = spl[2]
+        anyOverlap = spl[3]
+        highOverlap = spl[4]
+               
+        # test mean overlap
+        expectedVal = "%.2f" % ( ( 50 + 50 + 50 + 100.0) / len( self.run.datasetDict["NetworkModule"]) ) 
+        self.assertTrue( mean == expectedVal)
+ 
+        # test any overlap
+        self.assertTrue( anyOverlap == "4")
+        
+        # test high overlap
+        self.assertTrue( str(highOverlap) == "1")
+        
+        
+        
         
 #     def test_run(self):
 #  
