@@ -12,6 +12,7 @@ library(RColorBrewer)
 #### intra dataset overlap analysis ####
 
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/intra_dataset_results.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/interacting_proteins_filter/intra_dataset_results.tsv"
 
 data <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -23,12 +24,12 @@ for (i in unique(data$dataset) ){
   
   ## percentage of complexes with at least one high overlap # Bar plot with mean overlap
   highPerc = round( nrow( filtData[filtData$high_annot_overlap > 0]) * 100 / nrow( filtData), digits = 2 )
+  ## mean of mean overlap
+  meanOver = round(mean( filtData$mean_overlap), digits = 2)
 
   modI = gsub("\\|", "_vs_", i)
-  
   counter = counter + 1
-  
-  datalist[[counter]] <- c(modI,highPerc)
+  datalist[[counter]] <- c(modI, highPerc, meanOver)
   
   plt1 <- ggplot(filtData, aes(x = mean_overlap) )  +
   geom_histogram( binwidth = 0.05) +
@@ -38,17 +39,17 @@ for (i in unique(data$dataset) ){
 }
 
 results = do.call(rbind, datalist)
-colnames(results) <- c("Dataset comparison", "Perc with high overlap")
+colnames(results) <- c("Dataset", "Perc high overlap", "Mean overlap")
 
 # print results as a table
 grid.newpage()
 grid.table( results)
 
 
-
 #### inter dataset overlap analysis ####
 
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/inter_dataset_results.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/interacting_proteins_filter/inter_dataset_results.tsv"
 
 data <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -59,11 +60,11 @@ for (i in unique(data$dataset_comparison) ){
   filtData = data[ data$dataset_comparison == i]
   ## percentage of complexes with at least one high overlap # Bar plot with mean overlap
   highPerc = round( nrow( filtData[filtData$high_annot_overlap > 0]) * 100 / nrow( filtData), digits = 2 )
-  # print(paste(i,  highPerc), sep = "\t" )
-  modI = gsub("\\|", "_vs_", i)
+  ## mean of mean overlap
+  meanOver = round(mean( filtData$mean_overlap), digits = 2)
 
+  modI = gsub("\\|", "_vs_", i)
   counter = counter + 1
-  
   datalist[[counter]] <- c(modI,highPerc)
   
   #   plt1 <- ggplot( filtData, aes(x = mean_overlap) )  +
@@ -74,7 +75,7 @@ for (i in unique(data$dataset_comparison) ){
 }
 
 results = do.call(rbind, datalist)
-colnames(results) <- c("Dataset comparison", "Perc with high overlap")
+colnames(results) <- c("Dataset comparison", "Perc high overlap", "Mean overlap")
 
 # print results as a table
 grid.newpage()
