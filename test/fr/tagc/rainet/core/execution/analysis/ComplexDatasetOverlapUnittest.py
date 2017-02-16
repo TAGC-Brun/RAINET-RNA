@@ -29,7 +29,7 @@ class ComplexDatasetOverlapUnittest(unittest.TestCase):
 
         self.rainetDB = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-12-28.human_lncRNA_cutoff50/rainet2016-12-28.human_lncRNA_cutoff50.sqlite"        
         self.outputFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/analysis/test_output/complex_dataset_overlap/"
-        self.useInteractingProteins = 1
+        self.useInteractingProteins = 0
         self.listDatasets = ComplexDatasetOverlap.DEFAULT_DATASET_LIST
         self.highOverlapStat = ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP
         
@@ -50,6 +50,23 @@ class ComplexDatasetOverlapUnittest(unittest.TestCase):
         
         self.assertTrue( "Q16539" in datasetDict["BioplexCluster"]["254"])
         
+
+    def test_read_rainet_db_two(self):
+
+        print "| test_read_rainet_db_two | "
+        
+        self.run.useInteractingProteins = 1
+ 
+        self.run.read_rainet_db( )
+        
+        datasetDict = self.run.datasetDict
+
+        # complex 97b contains only two proteins that are not interacting
+
+        self.assertTrue( "97b" not in datasetDict["BioplexCluster"])
+
+        self.assertTrue( len( datasetDict["BioplexCluster"]) == 349 )
+
 
     def test_group_overlap(self):
 

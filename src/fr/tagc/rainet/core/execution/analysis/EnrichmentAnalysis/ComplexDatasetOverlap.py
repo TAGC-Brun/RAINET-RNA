@@ -102,7 +102,23 @@ class ComplexDatasetOverlap(object):
     def read_rainet_db(self):
         
         datasetDict = {} # key -> dataset name, value -> dict. key -> annotationID, value -> list of proteins in annotation
-        
+                
+        #===================================================================   
+        # Retrieve list of interacting proteins (if applicable)
+        #=================================================================== 
+        self.interactingProteins = set()
+        if self.useInteractingProteins:
+            query = eval("self.sql_session.query( InteractingProtein.uniprotAC).all()")
+            
+            for prot in query:
+                self.interactingProteins.add( str(prot[0]))
+
+            Logger.get_instance().info( "read_rainet_db: %s interacting proteins." % ( len( self.interactingProteins) ))
+            
+        #===================================================================   
+        # Retrieve annotations
+        #=================================================================== 
+                      
         for dataset in self.listDatasets:
 
             tableNameAnnotation = ComplexDatasetOverlap.ANNOTATION_TABLES_DICT[ dataset]
@@ -120,17 +136,29 @@ class ComplexDatasetOverlap(object):
             #=================================================================== 
               
             complexAnnotDict = {}  # key -> complex id, value -> list of proteins IDs
+            
+            proteinPool = set()
       
             for annot in proteinAnnotations:
                 complexID = str(eval("annot." + primaryKeys[ 0]))
                 protID = str(eval("annot." + primaryKeys[ 1]))
      
-                if complexID not in complexAnnotDict:
-                    complexAnnotDict[ complexID] = set()
+                # if interacting protein filter is active, add protein only in case this is considered an interacting protein
+                if self.useInteractingProteins:
+                    if protID in self.interactingProteins:
+                        # only initialise if there is a protein in the complex
+                        if complexID not in complexAnnotDict:
+                            complexAnnotDict[ complexID] = set()
+                        
+                        complexAnnotDict[ complexID].add( protID)
+                        proteinPool.add( protID)
+                else:
+                    if complexID not in complexAnnotDict:
+                        complexAnnotDict[ complexID] = set()
+                    complexAnnotDict[ complexID].add( protID)
+                    proteinPool.add( protID)
      
-                complexAnnotDict[ complexID].add( protID)
-     
-            Logger.get_instance().info( "read_rainet_db: dataset: %s. read %s annotations" % ( dataset, len( complexAnnotDict ) ))
+            Logger.get_instance().info( "read_rainet_db: dataset: %s. read %s annotations, %s proteins." % ( dataset, len( complexAnnotDict ), len( proteinPool) ))
      
             datasetDict[ dataset] = complexAnnotDict
 
