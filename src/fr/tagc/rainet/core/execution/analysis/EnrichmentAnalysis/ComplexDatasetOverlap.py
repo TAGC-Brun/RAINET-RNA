@@ -200,7 +200,7 @@ class ComplexDatasetOverlap(object):
         # Write output file
         #=================================================================== 
         
-        outFile = open( self.outputFolder + ComplexDatasetOverlap.OUTPUT_FILE_INTRA_DATASET, "w")
+        outFile = open( self.outputFolder + "/" + ComplexDatasetOverlap.OUTPUT_FILE_INTRA_DATASET, "w")
 
         outFile.write( "dataset\tannotation_id\tmean_overlap\tall_annot_overlap\thigh_annot_overlap\n")
         
@@ -259,8 +259,8 @@ class ComplexDatasetOverlap(object):
         if len( self.datasetDict) < 2:
             Logger.get_instance().info( "inter_dataset_overlap: inter dataset comparisons not possible, there are less than two datasets available." )
         
-        for dataset1 in self.datasetDict:
-            for dataset2 in self.datasetDict:
+        for dataset1 in sorted( self.datasetDict):
+            for dataset2 in sorted( self.datasetDict):
                 
                 # skip comparisons between the very same dataset
                 if dataset1 == dataset2:
@@ -293,6 +293,7 @@ class ComplexDatasetOverlap(object):
      
                         count+=1
 
+                assert( count == len( dataset1Data) * len( dataset2Data) )
                 Logger.get_instance().info( "inter_dataset_overlap: dataset comparison: %s. Number of evaluations: %s" % ( comparisonTag, count))
 
         
@@ -300,13 +301,13 @@ class ComplexDatasetOverlap(object):
         # Write output file
         #=================================================================== 
          
-        outFile = open( self.outputFolder + ComplexDatasetOverlap.OUTPUT_FILE_INTER_DATASET, "w")
+        outFile = open( self.outputFolder + "/" + ComplexDatasetOverlap.OUTPUT_FILE_INTER_DATASET, "w")
  
         outFile.write( "dataset_comparison\tdataset1_annotation_id\tmean_overlap\tall_annot_overlap\thigh_annot_overlap\n")
          
         interDatasetOverlapResults = {}
          
-        for comparison in interDatasetOverlap:
+        for comparison in sorted( interDatasetOverlap) :
             if comparison not in interDatasetOverlapResults:
                 interDatasetOverlapResults[ comparison] = {}
 
@@ -380,9 +381,9 @@ if __name__ == "__main__":
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Folder where output will be written.')
         # optional args
-        parser.add_argument('--useInteractingProteins', metavar='useInteractingProteins', type=int, default = 1,
-                             help='Whether to consider, for a complex, only proteins with interactions or all proteins in the complex. (Default = 1).')
-        parser.add_argument('--listDatasets', metavar='listDatasets', type=int, default = ComplexDatasetOverlap.DEFAULT_DATASET_LIST,
+        parser.add_argument('--useInteractingProteins', metavar='useInteractingProteins', type=int, default = 0,
+                             help='Whether to consider, for a complex, only proteins with interactions or all proteins in the complex. (Default = 0).')
+        parser.add_argument('--listDatasets', metavar='listDatasets', type=str, default = ComplexDatasetOverlap.DEFAULT_DATASET_LIST,
                              help='Which annotation datasets to use for this analysis. (Default = %s ).' % ComplexDatasetOverlap.DEFAULT_DATASET_LIST)
         parser.add_argument('--highOverlapStat', metavar='highOverlapStat', type=int, default = ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP,
                              help='What percentage of overlap to use to consider an overlap as an high overlap. (Default = %s ).' % ComplexDatasetOverlap.DEFAULT_HIGH_OVERLAP)
