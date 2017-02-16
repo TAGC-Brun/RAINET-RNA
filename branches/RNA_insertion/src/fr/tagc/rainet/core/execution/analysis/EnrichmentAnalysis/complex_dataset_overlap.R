@@ -9,30 +9,75 @@ require(gridExtra)
 library(RColorBrewer)
 #source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
-inputFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/execution/analysis/test_output/complex_dataset_overlap/intra_dataset_results.tsv"
+#### intra dataset overlap analysis ####
+
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/intra_dataset_results.tsv"
 
 data <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
-datasetTag = "BioplexCluster" #WanCluster
+### data for each dataset
+datalist = list()
+counter = 0
+for (i in unique(data$dataset) ){
+  filtData = data[ data$dataset == i]
+  
+  ## percentage of complexes with at least one high overlap # Bar plot with mean overlap
+  highPerc = round( nrow( filtData[filtData$high_annot_overlap > 0]) * 100 / nrow( filtData), digits = 2 )
 
-# Bar plot with mean overlap
-plt1 <- ggplot(data[ data$dataset == datasetTag], aes(x = mean_overlap) )  +
+  modI = gsub("\\|", "_vs_", i)
+  
+  counter = counter + 1
+  
+  datalist[[counter]] <- c(modI,highPerc)
+  
+  plt1 <- ggplot(filtData, aes(x = mean_overlap) )  +
   geom_histogram( binwidth = 0.05) +
-  ggtitle(datasetTag) +
+  ggtitle(i) +
   theme_minimal()
-plt1
+  print(plt1)
+}
 
-# Bar plot with any overlap
-plt2 <- ggplot(data[ data$dataset == datasetTag], aes(x = all_annot_overlap) )  +
-  geom_histogram( binwidth = 1) +
-  ggtitle(datasetTag) +
-  theme_minimal()
-plt2
+results = do.call(rbind, datalist)
+colnames(results) <- c("Dataset comparison", "Perc with high overlap")
 
-# Bar plot with high overlap
-plt3 <- ggplot(data[ data$dataset == datasetTag], aes(x = high_annot_overlap) )  +
-  geom_histogram( binwidth = 1) +
-  ggtitle(datasetTag) +
-  theme_minimal()
-plt3
+# print results as a table
+grid.newpage()
+grid.table( results)
+
+
+
+#### inter dataset overlap analysis ####
+
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/complex_dataset_overlap/inter_dataset_results.tsv"
+
+data <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+### data for each dataset
+datalist = list()
+counter = 0
+for (i in unique(data$dataset_comparison) ){
+  filtData = data[ data$dataset_comparison == i]
+  ## percentage of complexes with at least one high overlap # Bar plot with mean overlap
+  highPerc = round( nrow( filtData[filtData$high_annot_overlap > 0]) * 100 / nrow( filtData), digits = 2 )
+  # print(paste(i,  highPerc), sep = "\t" )
+  modI = gsub("\\|", "_vs_", i)
+
+  counter = counter + 1
+  
+  datalist[[counter]] <- c(modI,highPerc)
+  
+  #   plt1 <- ggplot( filtData, aes(x = mean_overlap) )  +
+  #   geom_histogram( binwidth = 0.05) +
+  #   ggtitle(i) +
+  #   theme_minimal()
+  #   print(plt1)
+}
+
+results = do.call(rbind, datalist)
+colnames(results) <- c("Dataset comparison", "Perc with high overlap")
+
+# print results as a table
+grid.newpage()
+grid.table( results)
+
 
