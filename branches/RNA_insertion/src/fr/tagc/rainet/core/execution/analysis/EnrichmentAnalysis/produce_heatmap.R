@@ -1,7 +1,7 @@
 
 # Script to plot heatmap of RNA vs annotation enrichments
 
-install.packages("scales")
+#install.packages("scales")
 # it seems I have to install this package anew every time I run this script, since there is another package with the same name which creates conflict
 library(d3heatmap)
 library(scales)
@@ -27,7 +27,14 @@ source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/
 #inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0"
 #inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/BioplexClusterR1000Expr1.0"
 
-inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0_depletion"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0_depletion"
+
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/NetworkModuleR1000Expr1.0"
+
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/ExperimentalInteractions/WanClusterR1000"
+#inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/ExperimentalInteractions/HavugimanaR1000"
+
+inputFolder = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50_rbps/HavugimanaR1000Expr1.0"
 
 inputFile = paste( inputFolder, "/enrichment_results_filtered_matrix.tsv", sep="")
 rowAnnotFile = paste( inputFolder, "/matrix_row_annotation.tsv", sep="")
@@ -72,8 +79,8 @@ d3heatmap(mat_data,
           key.xlab = "corrected p-value",
           key.ylab = NULL,
           col=my_palette,       # use on color palette defined earlier 
-          k_row = 10,
-          k_col = 10
+          k_row = 5,
+          k_col = 5
 )
 
 ### flat plot without annotation
