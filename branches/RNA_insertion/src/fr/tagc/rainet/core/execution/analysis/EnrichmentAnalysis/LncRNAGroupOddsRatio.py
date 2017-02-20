@@ -280,7 +280,7 @@ class LncRNAGroupOddsRatio(object):
         # ExternalList\tTranscriptGroup\tMetric\tValue
         outFile = open( self.outputFile, "w")
 #        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tMetric\tValue\n")
-        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tOddsRatio\tPvalue\n")
+        outFile.write( "ExternalList\tSize\tTranscriptGroup\tSize\tOverlap\tOddsRatio\tPvalue\n")
 
         #=======================================================================
         # Produce statistics for each external list
@@ -342,7 +342,7 @@ class LncRNAGroupOddsRatio(object):
 #                 # write pvalue
 #                 outFile.write("%s\t%s\t%s\tpvalue\t%.1e\n" % ( lst, group, len( groupOverlap), pvalue))
 
-                outFile.write("%s\t%s\t%s\t%.2f\t%.1e\n" % ( lst, group, len( groupOverlap), oddsRatio, pvalue))
+                outFile.write("%s\t%s\t%s\t%s\t%s\t%.2f\t%.1e\n" % ( lst, len( externalList), group, len( filteredGroupTranscripts), len( groupOverlap), oddsRatio, pvalue))
                 
 
         outFile.close() 
