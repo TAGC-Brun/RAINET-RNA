@@ -65,7 +65,7 @@ for (i in unique(data$dataset_comparison) ){
 
   modI = gsub("\\|", "_vs_", i)
   counter = counter + 1
-  datalist[[counter]] <- c(modI,highPerc)
+  datalist[[counter]] <- c(modI, highPerc, meanOver)
   
   #   plt1 <- ggplot( filtData, aes(x = mean_overlap) )  +
   #   geom_histogram( binwidth = 0.05) +
