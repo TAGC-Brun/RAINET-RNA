@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//rbp-motif/src/core/util/log/Logger.py=utf-8
 encoding//src/fr/tagc/rainet/core/util/exception/FileFormatException.py=utf-8
 encoding//src/fr/tagc/rainet/core/util/file/FileUtils.py=utf-8
 encoding//src/fr/tagc/rainet/core/util/log/Logger.py=utf-8
