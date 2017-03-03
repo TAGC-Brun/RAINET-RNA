@@ -1,3 +1,3 @@
-Data	Gene	RNA	MRNA	OtherRNA	LncRNA	3prime_overlapping_ncrna	antisense	bidirectional_promoter_lncrna	known_ncrna	lincRNA	macro_lncRNA	non_coding	processed_transcript	sense_intronic	sense_overlapping	TEC
-Before_RNA_filter	198	200	82	75	43	0	9	0	0	9	0	0	23	1	0	1
-After_RNA_filter	198	200	82	75	43	0	9	0	0	9	0	0	23	1	0	1
+Data	Total_Genes	Total_RNAs	MRNA	OtherRNA	LncRNA	protein_coding	3prime_overlapping_ncrna	antisense	bidirectional_promoter_lncrna	known_ncrna	lincRNA	macro_lncRNA	non_coding	processed_transcript	sense_intronic	sense_overlapping	TEC
+Before_RNA_filter	198	200	82	75	43	82	0	9	0	0	9	0	0	23	1	0	1
+After_RNA_filter	123	125	82	0	43	82	0	9	0	0	9	0	0	23	1	0	1
