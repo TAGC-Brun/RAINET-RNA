@@ -1,3 +1,3 @@
-Data	Total_interactions	Interacting_Proteins	Interacting_RNAs	Interacting_LncRNAs	3prime_overlapping_ncrna	antisense	bidirectional_promoter_lncrna	known_ncrna	lincRNA	macro_lncRNA	non_coding	processed_transcript	sense_intronic	sense_overlapping	TEC
-Before_interactions_filter	54	8	6	3	0	0	0	0	3	0	0	0	0	0	0
-After_interactions_filter	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+Data	Total_interactions	Total_proteins	Total_RNAs	protein_coding	retained_intron	nonsense_mediated_decay	processed_transcript	processed_pseudogene	antisense	unprocessed_pseudogene	lincRNA	unitary_pseudogene	transcribed_unprocessed_pseudogene	transcribed_processed_pseudogene	miRNA	transcribed_unitary_pseudogene	sense_overlapping	pseudogene	sense_intronic	TR_V_gene	3prime_overlapping_ncrna	IG_V_gene	polymorphic_pseudogene	misc_RNA	non_stop_decay	snRNA	IG_V_pseudogene	snoRNA	rRNA	ribozyme	Mt_tRNA	Mt_rRNA	IG_C_gene	IG_J_gene	TR_J_gene	TR_V_pseudogene	TR_C_gene	TR_J_pseudogene	IG_C_pseudogene	IG_D_gene	TR_D_gene	IG_J_pseudogene	TEC	scaRNA	translated_unprocessed_pseudogene	vaultRNA	sRNA	macro_lncRNA
+Before_interactions_filter	30	4	14	0	0	0	0	0	1	0	4	0	0	0	1	0	0	0	0	0	0	0	0	7	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+After_interactions_filter	30	4	14	0	0	0	0	0	1	0	4	0	0	0	1	0	0	0	0	0	0	0	0	7	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
