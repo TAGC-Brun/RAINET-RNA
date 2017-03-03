@@ -1,0 +1,8 @@
+Argument	Value
+Database path:	/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet_testing_DB.sqlite
+Gencode basic filtering:	0
+Minimum expression value:	0
+Minimum interaction score:	OFF
+Output folder:	/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_results/
+RNA biotypes filtering:	['protein_coding', '3prime_overlapping_ncrna', 'antisense', 'bidirectional_promoter_lncrna', 'known_ncrna', 'lincRNA', 'macro_lncRNA', 'non_coding', 'processed_transcript', 'sense_intronic', 'sense_overlapping', 'TEC']
+Species:	human
