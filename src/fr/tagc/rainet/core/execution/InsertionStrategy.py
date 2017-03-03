@@ -185,6 +185,7 @@ class InsertionStrategy( ExecutionStrategy ):
                                        DataConstants.WAN_ANNOTATION_CLASS, DataConstants.WAN_ANNOTATION_PARAMS,
                                         None, DataConstants.WAN_ANNOTATION_COMMENT_CHAR )
 
+
             #===================================================================
             # CORUM CLUSTERS
             #===================================================================   
@@ -302,9 +303,7 @@ class InsertionStrategy( ExecutionStrategy ):
             self.launch_insertion_TSV( input_file, True, DataConstants.INTERACTING_PROTEIN_DEFINITION_HEADERS,
                                        DataConstants.INTERACTING_PROTEIN_DEFINITION_CLASS, DataConstants.INTERACTING_PROTEIN_DEFINITION_PARAMS,
                                         None, DataConstants.INTERACTING_PROTEIN_DEFINITION_COMMENT_CHAR )
-  
-            self.forceOverride = 0
-  
+    
             # Initialize data items to store missing interactions
             if DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW not in DataManager.get_instance().data:
                 DataManager.get_instance().store_data(DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_MISSING_RNA_KW,[])
@@ -317,6 +316,7 @@ class InsertionStrategy( ExecutionStrategy ):
                                        DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_CLASS, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_PARAMS,
                                         None, DataConstants.PROTEIN_RNA_INTERACTION_CATRAPID_COMMENT_CHAR )
    
+            self.forceOverride = 0
   
               
             # Remove data that will no longer be used to reduce memory usage 
