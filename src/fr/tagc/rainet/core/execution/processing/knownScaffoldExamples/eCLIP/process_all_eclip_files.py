@@ -170,7 +170,7 @@ def read_metadata_file( metadataFile):
 
 # #
 # After bed filtering, use bedtools intersect to combine data from two replicates
-def combine_replicates( filesToProcess, pairsOfReplicates, outputFolder):
+def combine_replicates( filesToProcess, pairsOfReplicates, outputFolder, replicateMerge):
     
     # create correspondence between File Accession and file path
     fileAccession = {} # key -> File Accession number, val -> file path
@@ -193,9 +193,14 @@ def combine_replicates( filesToProcess, pairsOfReplicates, outputFolder):
 
         outFile = "%s/%s%s" % (outputFolder, prot, COMBINE_SUFFIX)
 
-        # run bedtools interserct with default parameters
-        cmd = "bedtools intersect -a %s -b %s > %s" % ( fileAPath, fileBPath, outFile)
-        SubprocessUtil.run_command( cmd, verbose = 0)
+        # Whether to merge replicates or get their intersection
+        if replicateMerge:
+            cmd = "cat %s %s > %s" % ( fileAPath, fileBPath, outFile)
+            SubprocessUtil.run_command( cmd, verbose = 0)
+        else:
+            # run bedtools interserct with default parameters
+            cmd = "bedtools intersect -a %s -b %s > %s" % ( fileAPath, fileBPath, outFile)
+            
 
         # append processed file name to list
         newFilesToProcess.append( outFile)
@@ -346,6 +351,8 @@ if __name__ == "__main__":
                              help='Peaks below given value will be excluded. Note that provided fold-change enrichment is positive log2, the higher the value, the higher is the fold change. (Default = -1, i.e. "OFF").')
         parser.add_argument('--idMapping', metavar='idMapping', type=str, default = "",
                              help='If Uniprot ID mapping file provided, final output file with display interactions of protein name in column 0 using the ID in column 2 (0-based).')
+        parser.add_argument('--replicateMerge', metavar='replicateMerge', type=int, default = 0,
+                             help='If on, merge peaks from biological replicates, if off, do a bedtools intersect. Default = OFF')
            
         #gets the arguments
         args = parser.parse_args( ) 
@@ -364,7 +371,7 @@ if __name__ == "__main__":
         proteinDict, pairsOfReplicates = read_metadata_file( args.metadataFile)
 
         Timer.get_instance().step( "Combine biological replicates..") 
-        combinedFilesToProcess = combine_replicates( filteredFilesToProcess, pairsOfReplicates, args.outputFolder)
+        combinedFilesToProcess = combine_replicates( filteredFilesToProcess, pairsOfReplicates, args.outputFolder, args.replicateMerge)
 
         Timer.get_instance().step( "Map peak to transcript..") 
         mappedFilesToProcess = map_to_transcript( combinedFilesToProcess, args.bedModels, args.outputFolder)
