@@ -62,8 +62,8 @@ plt2 <- ggplot( results, aes(x = score_cutoff, y = proportion_above, color = gro
   geom_line( ) +
   xlab("fitCons threshold (S)") +
   ylab("Coverage of annotation type") +
-  scale_x_continuous(breaks = c(0.06,0.07)) +
-  theme_minimal()
+  scale_x_continuous(breaks = c(0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80)) +
+  theme_minimal() + 
+  theme(legend.position="top")
 plt2
-
 
