@@ -1,5 +1,5 @@
 
-## Diogo Ribeiro
+## 20-Apr-2016 Diogo Ribeiro
 ## Script to create a ROC curve and provide statistics on comparing catRAPID predictions against experimentally determined interactions
 ## Used generally for all types of experimental datasets, NPInter, StarBase, eCLIP etc.
 
@@ -12,49 +12,11 @@ library(Epi)
 library(ROCR)
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/extraStringent/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/stringent/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/extraStringent/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/test/positives_non_overlap"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/min100/scores_sample.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/ensembl68_rnas/min100/scores_sample.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/new_dataset/ensembl68_rnas_prots/min100/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_rnas/scores_sample.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_rnas_prots/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_prots/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/expression_dataset/min100/scores_sample.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_lncrnas/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/old_remake/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_lib_rnas_prots/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/otherRNAs_only/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/snoRNAs_only_normalisation/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/ensembl68_old/lncRNAs_only_normalisation/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/normalised/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/expression_dataset/lncRNAs/sampled_scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/expression_dataset/lncRNAs/min100/sampled_scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/snoRNA_only/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/new_dataset/Positive_proteins_transcripts/scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ECLIPPredictionValidation/sampled_scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/mRNAs/sampled_scores.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/mRNAs/3utr/extraStringent/scores.tsv"
-# 
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/eclip_more_10_peaks/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs_replicate_merge/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs_replicate_merge_no_filtering/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/112_rbps_3926_eCLIP_background/scores.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/112_rbps_3926_eCLIP_background/split/scores_ab"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eCLIP_background_plus_functional_lncRNAs/RPISeq/scores_RF.tsv"
 
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/split/scores_split_27_P52298"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/split/scores_split_41_Q13148"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eCLIP_background_plus_functional_lncRNAs/scores_P52298_final.tsv"
-# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eCLIP_background_plus_functional_lncRNAs/RPISeq/scores.tsv"
-
+###################################### 
+# Input parsing 
+###################################### 
 
 shortVersion = 0
 
@@ -69,6 +31,9 @@ shortVersion = args[3]
 
 setwd(outFolder)
 
+###################################### 
+# Read input data
+###################################### 
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -79,12 +44,6 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 validated = dataset[dataset$in_validated_set == 1,]
 nonValidated = dataset[dataset$in_validated_set == 0]
 
-### Basic statistics
-paste("Number of experimental interactions:", nrow(validated))
-paste("Number of non-experimental interactions:",nrow(nonValidated))
-paste("Median score of experimental interactions:",median(validated$catrapid_score))
-paste("Median score of non-experimental interactions:",median(nonValidated$catrapid_score))
-paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$catrapid_score, nonValidated$catrapid_score, alternative = c("two.sided"))$p.value)
 
 ###################################### 
 ###################################### 
@@ -92,6 +51,12 @@ paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$catrapid_score, nonValidat
 ###################################### 
 ###################################### 
 
+### Basic statistics
+paste("Number of experimental interactions:", nrow(validated))
+paste("Number of non-experimental interactions:",nrow(nonValidated))
+paste("Median score of experimental interactions:",median(validated$catrapid_score))
+paste("Median score of non-experimental interactions:",median(nonValidated$catrapid_score))
+paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$catrapid_score, nonValidated$catrapid_score, alternative = c("two.sided"))$p.value)
 
 ###################################### 
 # ROC curve 
