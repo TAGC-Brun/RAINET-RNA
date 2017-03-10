@@ -274,13 +274,16 @@ class LncRNAGroupOddsRatio(object):
     def calculate_odds_ratio(self):
         
         #=======================================================================
-        # Output file
+        # Initialise output files
         #=======================================================================
-        # format: melted file 
-        # ExternalList\tTranscriptGroup\tMetric\tValue
+        
+        # output file, format for creating one-side odds ratio table
         outFile = open( self.outputFile, "w")
-#        outFile.write( "ExternalList\tTranscriptGroup\tOverlap\tMetric\tValue\n")
         outFile.write( "ExternalList\tSize\tTranscriptGroup\tSize\tOverlap\tOddsRatio\tPvalue\n")
+        
+        # output file, format for creating two-side odds ratio table (yes, no), meaning external list in group, or not.
+        outFileTwo = open( self.outputFile + "_two_sided.tsv", "w")
+        outFileTwo.write( "ExternalList\tTranscriptGroup\tInGroup\tOverlap\tOddsRatio\tPvalue\n")
 
         #=======================================================================
         # Produce statistics for each external list
@@ -329,7 +332,7 @@ class LncRNAGroupOddsRatio(object):
                 assert len( groupOverlap) + len( nonExternalGroup) == len( filteredGroupTranscripts)
                 assert len( groupOverlap) + len( externalNonGroup) + len( nonExternalGroup) + len( nonExternalNonGroup) == len( self.backgroundTranscripts)
     
-                # run the fisher exact test
+                ## run the fisher exact test
                 matrix = [[len( groupOverlap), len( externalNonGroup)], [len( nonExternalGroup), len( nonExternalNonGroup)]]
 
                 oddsRatio, pvalue = self.fisher_exact_test(matrix)
@@ -343,15 +346,28 @@ class LncRNAGroupOddsRatio(object):
 #                 outFile.write("%s\t%s\t%s\tpvalue\t%.1e\n" % ( lst, group, len( groupOverlap), pvalue))
 
                 outFile.write("%s\t%s\t%s\t%s\t%s\t%.2f\t%.1e\n" % ( lst, len( externalList), group, len( filteredGroupTranscripts), len( groupOverlap), oddsRatio, pvalue))
+
+                ## output file for two-sided odds ratio table
+
+                # do the opposite test
+                matrixInverse = [[len( nonExternalGroup), len( nonExternalNonGroup)], [len( groupOverlap), len( externalNonGroup)] ]
+                oddsRatioInverse, pvalueInverse = self.fisher_exact_test(matrixInverse)
+                                                
+                # write line for odds ratio one way, external list in transcript group
+                outFileTwo.write("%s\t%s\tYes\t%s\t%.2f\t%.1e\n" % ( lst, group, len( groupOverlap), oddsRatio, pvalue))
+                
+                # write line for odds ratio in the other sense, external list not in transcript group
+                outFileTwo.write("%s\t%s\tNo\t%s\t%.2f\t%.1e\n" % ( lst, group, len( externalNonGroup), oddsRatioInverse, pvalueInverse))
                 
 
         outFile.close() 
+        outFileTwo.close()
 
 
     # #
     # Perform fishers exact test using scipy
     @staticmethod
-    def fisher_exact_test( matrix):
+    def fisher_exact_test( matrix, alt = "greater"):
 
         # equivalent of doing in R:
         # fisher.test( matrix(c(8, 2, 1, 5), nrow = 2), alternative = "greater")
@@ -359,7 +375,7 @@ class LncRNAGroupOddsRatio(object):
         # This scipy implementation returns the (more common) unconditional Maximum Likelihood Estimate
         # while R uses the conditional Maximum Likelihood Estimate
     
-        oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = "greater")
+        oddsRatio, pvalue = stats.fisher_exact( matrix, alternative = alt)
             
         return oddsRatio, pvalue
 
