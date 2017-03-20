@@ -46,6 +46,7 @@ REPORT_MATRIX_ROW_ANNOTATION = "matrix_row_annotation.tsv"
 REPORT_MATRIX_COL_ANNOTATION = "matrix_col_annotation.tsv"
 REPORT_SPECIFICITY_RANK = "enrichment_specificity_rank.tsv"
 REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS = "enrichment_results_filtered_after_specificity.tsv"
+REPORT_ENRICHMENT_SUMMARY = "enrichment_summary.tsv"
 
 SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
 
@@ -75,7 +76,7 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
 
     countAboveRandom = 0
     countRatioPassed = 0
-
+    
     with open( enrichment_per_rna_file, "r") as inFile:
         
         inFile.readline() # skip header
@@ -126,12 +127,19 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
             diffValues.append( diffValue)
 
     # Print basic stats
+
+    countRealEnrichments = sum(observedValues)
+    countRandomEnrichments = sum(randomValues)
+    
     Logger.get_instance().info( "read_enrichment_per_rna_file : Total number of RNAs: %s " % len( poolRNA) )
 
     Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs with enrichment significantly above random: %s " % countAboveRandom )
     if minimum_ratio != "OFF":
         Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing real/random ratio: %s " % countRatioPassed )
     Logger.get_instance().info( "read_enrichment_per_rna_file : Number of RNAs passing all filters: %s " % len( listRNASignificantEnrich) )
+
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Observed enrichments: %i" % ( countRealEnrichments ) )
+    Logger.get_instance().info( "read_enrichment_per_rna_file : Random enrichments: %.1f" % ( countRandomEnrichments) )
     
     Logger.get_instance().info( "read_enrichment_per_rna_file : Significant enrichment tests:" )
     Logger.get_instance().info( "read_enrichment_per_rna_file : (before filtering) Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
@@ -144,13 +152,13 @@ def read_enrichment_per_rna_file( enrichment_per_rna_file, minimum_ratio):
         for rna in listRNASignificantEnrich:
             outFile.write( rna + "\n")       
 
-    return listRNASignificantEnrich
+    return listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments
 
     
 # #
 # Read RNA-annotation enrichment file (results), filter out results for RNAs that are not significantly enriched over random control, produce output files.
 def read_enrichment_results_file(enrichment_results_file, list_rna_significant_enrich, matrix_value_column, filter_warning_column, filter_warning_value,
-                                 row_annotation, col_annotation, mask_multiple, no_annotation_tag, no_annotation_filter):
+                                 row_annotation, col_annotation, mask_multiple, no_annotation_tag, no_annotation_filter, count_real_enrichments, count_random_enrichments):
     
     # Example format:
     # transcriptID    annotID number_observed_interactions    number_possible_interactions    total_interacting_proteins      warning pval    corrected_pval  sign_corrected
@@ -166,6 +174,9 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     # File with enrichment_results file data in matrix format.
     # only for RNAs that pass enrichment_per_rna filter
     outFile2 = open( REPORT_RNA_ANNOT_RESULTS_MATRIX, "w")
+
+    # File with summary of enrichment results
+    outFile3 = open( REPORT_ENRICHMENT_SUMMARY, "w")
 
     #===============================================================================
     # Read file, apply filter, write output
@@ -234,7 +245,12 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
         if annotValues[ annotID].count( filter_warning_value) == len( annotValues[ annotID]):
             nonEnrichedAnnotations.add( annotID)
 
+
+    # the number of retained enrichments after filtering is equal to the length of filteredEnrichmentsResults minus the header
+    countFilteredEnrichments = len(filteredEnrichmentResults) -1
+
     Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of enrichment_rna filter: %s" % ( excludedByRNA) )
+    Logger.get_instance().info( "read_enrichment_results_file : Total number of enrichments retained after filtering: %s" % ( countFilteredEnrichments) )
 
     assert len( dictPairs) ==  len( setRNAs) * len( setAnnots), "number of pairs should equal number of RNAs times number of annotations"
 
@@ -301,7 +317,18 @@ def read_enrichment_results_file(enrichment_results_file, list_rna_significant_e
     
     outFile2.close()
 
+    #===============================================================================    
+    # Write summary of enrichment results
+    #===============================================================================
+    
+    outFile3.write("Total enrichments\tRandom enrichments\tFiltered enrichements\tFiltered enriched complexes\tFiltered enriched lncRNAs\n")
+
+    outFile3.write("%s\t%s\t%s\t%s\t%s\n" % ( count_real_enrichments, count_random_enrichments, countFilteredEnrichments, len( sortedSetAnnots), len( sortedSetRNAs)) )
+
+    outFile3.close()
+
     return dictPairs, filteredEnrichmentResults
+
 
 # #
 # Writes file with complex-lncRNA pairs ranked by specificity
@@ -557,11 +584,11 @@ if __name__ == "__main__":
             colAnnotation = {}
         
         Timer.get_instance().step( "Read Enrichment per RNA file..")    
-        listRNASignificantEnrich = read_enrichment_per_rna_file( args.enrichmentPerRNAFile, args.minimumRatio)
+        listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments = read_enrichment_per_rna_file( args.enrichmentPerRNAFile, args.minimumRatio)
 
         Timer.get_instance().step( "Read Enrichment results file..")    
         dictPairs, filteredEnrichmentResults = read_enrichment_results_file( args.enrichmentResultsFile, listRNASignificantEnrich, args.matrixValueColumn, args.filterWarningColumn, args.filterWarningValue,
-                                      rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter )
+                                      rowAnnotation, colAnnotation, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter, countRealEnrichments, countRandomEnrichments )
 
         Timer.get_instance().step( "Write specificity ranking..")    
         annotDict, lncDict = rank_by_specificity( dictPairs, args.filterWarningValue)
