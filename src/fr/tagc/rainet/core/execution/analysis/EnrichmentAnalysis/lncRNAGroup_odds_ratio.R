@@ -7,10 +7,10 @@ library(RColorBrewer)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/experimental_interactions/outFile.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv"
-#inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile_complex_dataset.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/experimental_interactions/outFile.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile_complex_dataset.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_complex_dataset.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile_gencodebasic_background.tsv"
@@ -54,14 +54,14 @@ dataset[dataset$OddsRatio == "Inf"]$OddsRatio = "NA"
 
 plt1 = ggplot( dataset, aes(x = ExternalList, y = InGroup)) +
   geom_tile( aes( fill = OddsRatio), colour = "black", size = 1) + 
-  scale_fill_continuous( low = "#fee0d2", high = "#de2d26", name = "Fisher's Exact Test \nOdds ratio", na.value = "#de2d26") +  
+  scale_fill_continuous( low = "white", high = "#de2d26", name = "Fisher's Exact Test \nOdds ratio", na.value = "#de2d26") +  
   xlab("Orthogonal lncRNA gene dataset") +
   ylab("Scaffolding candidate") +
-  geom_text( label = dataset$Overlap) +
+  geom_text( label = dataset$Overlap, size = 8) +
   theme_minimal() + 
   theme(text = element_text(size=20)) +
-  theme(axis.title.x=element_text(vjust=-0.8))
+  theme(axis.title.x=element_text(vjust=-0.6))
 plt1
 
-## print it as 1500 x 400
+## print it as 1500 x 350
 
