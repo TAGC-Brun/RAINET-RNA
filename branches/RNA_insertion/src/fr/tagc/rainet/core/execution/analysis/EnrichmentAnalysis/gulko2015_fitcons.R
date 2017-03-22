@@ -10,14 +10,17 @@ library(RColorBrewer)
 #source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
 rnaLists = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/Gulko2015/transcript_annotation/transcript_groups.txt"
-gulkoOutput = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/Gulko2015/read_gulko.out"
+# gulkoOutput = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/Gulko2015/read_gulko.out"
+gulkoOutput = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/Gulko2015/read_gulko_large_range.out"
 
 rnaAnnotation <- fread(rnaLists, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 gulkoData <- fread(gulkoOutput, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 mergeDataset <- merge( gulkoData, rnaAnnotation, by=c("transcript"))
 
-nrow(rnaAnnotation[rnaAnnotation$group == "CDS"]) == nrow(mergeDataset[mergeDataset$group == "CDS"])/14
+# nrow(rnaAnnotation[rnaAnnotation$group == "CDS"]) == nrow(mergeDataset[mergeDataset$group == "CDS"])/14
+nrow(rnaAnnotation[rnaAnnotation$group == "CDS"]) == nrow(mergeDataset[mergeDataset$group == "CDS"])/76
+# 76 is the number of different thresholds used
 
 ## If wanting to add a "other" category 
 #mergeDataset <- merge( gulkoData, rnaAnnotation, by=c("transcript"), all = TRUE)
@@ -58,12 +61,12 @@ results$proportion_above = as.numeric(levels(results$proportion_above)[results$p
 
 ## Scatter plot with proportion per threshold
 plt2 <- ggplot( results, aes(x = score_cutoff, y = proportion_above, color = group) )  +
-  geom_point( size = 4) +
+  geom_point( size = 3) +
   geom_line( size = 2) +
   xlab("fitCons score threshold") +
   ylab("Sequence covered") +
 #  scale_x_continuous(breaks = c(0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80)) +
-  scale_x_continuous(breaks = c(0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 0.8, by = 0.05))  +
   scale_colour_brewer(palette = "Set1", labels = c("3'UTR","5'UTR","CDS","Scaffolding lincRNAs","Other lincRNAs")) +
   labs(color = "") +
   #  scale_color_manual(values = simple_color_palette) +
@@ -71,4 +74,6 @@ plt2 <- ggplot( results, aes(x = score_cutoff, y = proportion_above, color = gro
   theme(legend.position="right", legend.direction= "vertical", legend.key = NULL) + 
   theme(text = element_text(size=25))
 plt2
+
+#print as 25.91 vs 5.98 inches
 
