@@ -66,4 +66,7 @@ draw.pairwise.venn( length(proteomeApproachSet), length(rbpApproachSet), length(
 #  in RBP    |     572     |      216
 # not in RBP |     281     |   15230-1069
 
-fisher.test( matrix(c( length(setIntersect), length(setRBPMinusProteome), length(setProteomeMinusRBP), background - length( union)), nrow = 2))
+ft = fisher.test( matrix(c( length(setIntersect), length(setRBPMinusProteome), length(setProteomeMinusRBP), background - length( union)), nrow = 2))
+
+grid.text(paste("Intersection\nFisher's exact test:\np-val: ", ft$p.value, "\nOdds ratio: ", round(ft$estimate,2)), x = unit(0.5, "npc"), y = unit(0.7, "npc"))
+
