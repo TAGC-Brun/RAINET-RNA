@@ -38,8 +38,9 @@ mean(dataset$count)
 
 plt1 <- ggplot( dataset, aes(x = count)) + 
   geom_histogram( binwidth = 50) + 
-  ylab("RNA frequency") +
-  xlab("# Protein targets") +
+  ylab("# lncRNAs") +
+  xlab("# Protein (targets)") +
+  ggtitle("Distribution of interactions per lncRNA") +
   theme_minimal()
 plt1
 
@@ -74,10 +75,12 @@ dataset2$countPerc = (dataset2$count) * 100 / 22960 #/ nrow(dataset)
 
 plt3 <- ggplot( dataset2, aes(x = count)) + 
   geom_histogram( binwidth = 25) + 
-  ylab("Protein frequency") +
-  xlab("# RNAs bound") +
+  ylab("# Proteins") +
+  xlab("# lncRNA (targets)") +
+  ggtitle("Distribution of interactions per protein") +
   theme_minimal()
 plt3
+
 
 ## Plot cumulative sum
 
