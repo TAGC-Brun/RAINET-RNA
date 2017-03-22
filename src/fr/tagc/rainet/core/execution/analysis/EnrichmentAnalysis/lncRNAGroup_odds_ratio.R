@@ -65,3 +65,25 @@ plt1
 
 ## print it as 1500 x 350
 
+##############################
+# Colored table for complex datasets
+##############################
+
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_complex_dataset.tsv"
+
+dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+plt2 = ggplot( dataset, aes(x = TranscriptGroup, y = ExternalList)) +
+  geom_tile( aes( fill = OddsRatio), colour = "black", size = 1) +
+  scale_fill_continuous( low = "white", high = "#de2d26", name = "Fisher's Exact Test \nOdds ratio", na.value = "#de2d26", limits = c(1.,2.)) +
+  scale_x_discrete( labels = c("Corum","Wan 2015","BioPlex","Network modules","All candidates")) +
+  xlab("Protein dataset") +
+  ylab("Functional/Conserved lncRNAs") +
+  geom_text( label = dataset$Overlap, size = 8) +
+  theme_minimal() + 
+  theme(text = element_text(size=20)) +
+  theme(axis.title.x=element_text(vjust=-0.6), axis.text.y=element_blank())
+plt2
+
+# print as 20.91 x 4.50 inches
+
