@@ -526,6 +526,84 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
         SQLManager.get_instance().close_session()
 
 
+    def test_randomise_interactions(self):
+         
+        print "| test_randomise_interactions | "
+ 
+        optionManager = OptionManager.get_instance()
+        optionManager.set_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS, 3)
+        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
+
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
+
+        self.run.execute()
+
+        self.run.get_interaction_data()
+        self.run.annotation_report()
+
+        interactions = DataManager.get_instance().get_data(EnrichmentAnalysisStrategy.PRI_KW)
+        
+        randomInteractions = self.run.randomize_interactions( interactions)
+
+        
+        ## Verify that number of interactions for each protein, and each RNA, where kept in randomization
+
+        # Get real values
+        realProteinInteractions = {} # key -> proteinID, value -> set of interacting RNAs
+        realRnaInteractions = {} # key -> proteinID, value -> set of interacting RNAs
+         
+        for inter in interactions:            
+            rna = str(inter.transcriptID)
+            prot = str(inter.proteinID)
+            
+            if prot in self.run.protAnnotDict: 
+            
+                if prot not in realProteinInteractions:
+                    realProteinInteractions[ prot] = set()
+                realProteinInteractions[ prot].add( rna)
+     
+                if rna not in realRnaInteractions:
+                    realRnaInteractions[ rna] = set()
+                realRnaInteractions[ rna].add( prot)
+
+        # Get random values 
+        for rand in randomInteractions:
+            proteinInteractions = {} # key -> proteinID, value -> set of interacting RNAs
+            rnaInteractions = {} # key -> proteinID, value -> set of interacting RNAs
+
+            for rna in randomInteractions[ rand]:
+                
+                for annot in randomInteractions[ rand][ rna]:
+                    
+                    for prot in randomInteractions[ rand][ rna][ annot]:
+                        if prot not in proteinInteractions:
+                            proteinInteractions[ prot] = set()
+                        proteinInteractions[ prot].add( rna)
+
+                        if rna not in rnaInteractions:
+                            rnaInteractions[ rna] = set()
+                        rnaInteractions[ rna].add( prot)
+
+            self.assertTrue( len( proteinInteractions) == len( realProteinInteractions) )
+            self.assertTrue( len( rnaInteractions) == len( realRnaInteractions) )
+
+            for rna in rnaInteractions:
+                self.assertTrue( len( rnaInteractions[ rna]) == len( realRnaInteractions[ rna]), "assert that the same RNA interacts with same number of proteins after randomization" )
+
+            for prot in proteinInteractions:
+                self.assertTrue( len( proteinInteractions[ prot]) == len( realProteinInteractions[ prot]), "assert that the same protein interacts with same number of RNAs after randomization")
+
+
+#     def test_execute(self):
+#         
+#         print "| test_execute | "
+# 
+#         optionManager = OptionManager.get_instance()
+# 
+#         self.run.execute()
+
+
     # #
     # Runs after each test
     def tearDown(self):
