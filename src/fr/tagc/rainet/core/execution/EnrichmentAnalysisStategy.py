@@ -226,7 +226,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         SQLManager.get_instance().set_DBpath(self.DBPath)
         self.sql_session = SQLManager.get_instance().get_session()
         self.db_engine = SQLManager.get_instance().get_engine()
-                        
+         
+        ##TODO: UNCOMMENT THIS!!               
         self.analysis()
         
     # #
@@ -665,7 +666,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             listRandomSignificants = numpy.empty(self.numberRandomizations, object)
             listRandomSignificantsNoWarning = numpy.empty(self.numberRandomizations, object)
             for i in xrange(0, self.numberRandomizations):               
-                randomTestsCorrected = self.run_rna_vs_annotations(rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
+                randomTestsCorrected = self.run_rna_vs_annotations(rnaID, randomAnnotDicts[ i], totalRNAInteractions)           
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests(randomTestsCorrected)
 
             # using just Significant no warning
@@ -697,6 +698,84 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
    
         outHandler.close()
         outHandlerStats.close()
+
+
+    # #
+    # Randomize protein-RNA interactions. 
+    # Number of interactions per protein is kept, and number of interactions per lncRNa is kept, only the pairwise combinations are randomised.
+    # Not controlling that all interactions are different from real (some may be same as real), so that it works for saturation conditions.
+    def randomize_interactions(self, interactions):
+
+        # first filter out interactions with proteins that have no annotation
+        filtInteractions = []
+        for inter in interactions:
+            protID = str(inter.proteinID)
+            # only store info of proteins that have annotation information
+            if protID not in self.protAnnotDict:
+                continue            
+            filtInteractions.append( inter)
+                                
+        # real list of RNA interactions (with duplicates) to maintain same number of interactions per RNA
+        listRNAInteractions = [ str(inter.transcriptID) for inter in filtInteractions] 
+
+        #=================================================================== 
+        # Randomise protein-RNA interactions
+        #=================================================================== 
+
+        # For each RNA, store all proteins it interacts with and their annotations
+        randomInteractions = {}  # Key -> randomisation ID, value -> dict; key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs (after filtering)
+
+        for i in xrange(0, self.numberRandomizations):
+
+            # initialise randomisation
+            if i not in randomInteractions:
+                randomInteractions[ i] = {}
+                
+            randomPairs = set() # stores already used interactions
+
+            # shuffle order of appearance of RNAs in each interaction
+            randListRNAInteractions = random.sample( listRNAInteractions, len( listRNAInteractions))
+
+            for j in xrange(0, len(filtInteractions)):
+                inter = filtInteractions[ j]
+                                
+                protID = str(inter.proteinID)
+
+                # pick randomised RNA
+                txID = randListRNAInteractions[ j]
+
+                ## force all interactions to be different (cannot have duplicated interactions)
+                # search other RNA interactor, until one that is not yet used for this protein
+                tag = txID+"|"+protID                 
+                k = 0 
+                while tag in randomPairs:
+ 
+                    k += 1
+ 
+                    try: # it can happen that a final unique interaction is not found, but in large datasets its probability is rare
+                        txID = randListRNAInteractions[ j + k]
+                    except IndexError:
+                        Logger.get_instance().warning("EnrichmentAnalysisStrategy.randomize_interactions : randomized protein-RNA interaction is repeated. %s" % (tag))           
+                        break # keep last txID (duplicated interaction)
+                    tag = txID+"|"+protID
+ 
+                # replace random list, if possible
+                try:
+                    randListRNAInteractions[ j + k] = randListRNAInteractions[ j]
+                except IndexError:
+                    pass
+ 
+                randomPairs.add( tag)
+                
+                if txID not in randomInteractions[ i]:
+                    randomInteractions[ i][ txID] = {}
+
+                for annot in self.protAnnotDict[ protID]:
+                    if annot not in randomInteractions[ i][ txID]:
+                        randomInteractions[ i][ txID][ annot] = []
+                    randomInteractions[ i][ txID][ annot].append(protID)
+            
+        return randomInteractions
         
 
     # #
