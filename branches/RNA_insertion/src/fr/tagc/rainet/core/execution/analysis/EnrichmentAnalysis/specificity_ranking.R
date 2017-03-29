@@ -11,7 +11,7 @@ library(data.table)
 source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/non_redundant/HavugimanaR1000Expr1.0/enrichment_specificity_rank.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR1000Expr1.0/enrichment_specificity_rank.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR10000Expr1.0/enrichment_specificity_rank.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t", na.strings="NA")
 
@@ -57,7 +57,7 @@ annotDataset = unique( data.frame(dataset$annotID, dataset$annot_enrichments))
 
 plt3 <- ggplot( annotDataset, aes(x = dataset.annot_enrichments)) + 
   geom_histogram( binwidth = 5) +
-  ggtitle( "Distribution of number of enrichments per lncRNA") +
+  ggtitle( "Distribution of number of enrichments per complex") +
   xlab( "Number of enrichments") +
   ylab( "Frequency") + 
   scale_x_continuous( breaks = round(seq(0, max(annotDataset$dataset.annot_enrichments), by = 25))) +
