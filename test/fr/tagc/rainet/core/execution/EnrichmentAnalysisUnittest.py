@@ -595,13 +595,20 @@ class EnrichmentAnalysisStrategyUnittest(unittest.TestCase):
                 self.assertTrue( len( proteinInteractions[ prot]) == len( realProteinInteractions[ prot]), "assert that the same protein interacts with same number of RNAs after randomization")
 
 
-#     def test_execute(self):
-#         
-#         print "| test_execute | "
-# 
-#         optionManager = OptionManager.get_instance()
-# 
-#         self.run.execute()
+    def test_execute(self):
+         
+        print "| test_execute | "
+  
+        optionManager = OptionManager.get_instance()
+        optionManager.set_option(OptionConstants.OPTION_NUMBER_RANDOMIZATIONS, 2)
+        optionManager.set_option(OptionConstants.OPTION_DB_NAME, "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_testing/rainet2016-06-17.human_expression_wPRI.sqlite")
+
+        # important to create new SQLManager session if changing database
+        SQLManager.get_instance().close_session()
+
+        self.run.execute()
+
+        #TODO
 
 
     # #
