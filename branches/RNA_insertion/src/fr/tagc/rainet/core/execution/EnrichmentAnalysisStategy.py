@@ -226,8 +226,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         SQLManager.get_instance().set_DBpath(self.DBPath)
         self.sql_session = SQLManager.get_instance().get_session()
         self.db_engine = SQLManager.get_instance().get_engine()
-         
-        ##TODO: UNCOMMENT THIS!!               
+                        
         self.analysis()
         
     # #
@@ -255,6 +254,7 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         Timer.get_instance().step("Producing annotation report..")        
      
         self.annotation_report()
+           
 
         #===================================================================
         # Load expression data (if needed)
@@ -578,9 +578,9 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         # whereas here it is retrieved straight from the interaction table, depending on the interaction filtering applied,
         # not all proteins in interactingProteins table will contain at least an interacting in the interaction table.
 
-#         # delete object to save memory
-#         self.protAnnotDictLen = len(self.protAnnotDict)
-#         del self.protAnnotDict
+        # delete object to save memory
+        self.protAnnotDictLen = len(self.protAnnotDict)
+        del self.protAnnotDict
 
         #===================================================================    
         #
@@ -619,13 +619,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
        
         # shuffle annotation tags of proteins
         randomAnnotDicts = [ self.randomize_proteins(self.annotWithInteractionDict, listOfProteins) for i in xrange(0, self.numberRandomizations)]
-
-        #===================================================================   
-        # Protein-RNA interaction randomization
-        #===================================================================          
-        
-        randomPRIDicts = self.randomize_interactions( interactions)
-        listRandomPRITestsCorrected = {} # key -> randomisation ID, value -> dict; key -> rnaID, value -> enrichments against all complexes
 
         #===================================================================   
         #===================================================================   
@@ -672,16 +665,8 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             listRandomSignificants = numpy.empty(self.numberRandomizations, object)
             listRandomSignificantsNoWarning = numpy.empty(self.numberRandomizations, object)
             for i in xrange(0, self.numberRandomizations):               
-                randomTestsCorrected = self.run_rna_vs_annotations(rnaID, randomAnnotDicts[ i], totalRNAInteractions)           
+                randomTestsCorrected = self.run_rna_vs_annotations(rnaID, randomAnnotDicts[ i], totalRNAInteractions)             
                 listRandomSignificants[ i], listRandomSignificantsNoWarning[ i] = self.count_sign_tests(randomTestsCorrected)
-
-                # PRI randomisation, store only 'tests corrected' for now, not the count significant results which will be calculated per complex, not per RNA
-                randomPRIRNAInteractions = { prot for annotID in randomPRIDicts[ i][ rnaID] for prot in randomPRIDicts[ i][ rnaID][ annotID]}
-                if i not in listRandomPRITestsCorrected:
-                    listRandomPRITestsCorrected[ i] = {}
-                if rnaID not in listRandomPRITestsCorrected[ i]:
-                    listRandomPRITestsCorrected[ i][ rnaID] = []
-                listRandomPRITestsCorrected[ i][ rnaID] = self.run_rna_vs_annotations(rnaID, self.annotWithInteractionDict, randomPRIRNAInteractions)
 
             # using just Significant no warning
             avgSignRandomNoWarning = numpy.mean(listRandomSignificantsNoWarning)
@@ -707,55 +692,12 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
             outHandlerStats.write("%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberAbove, empiricalPvalue, sign))
 
 
-#         #===================================================================          
-#         #===================================================================   
-#         # File with stats per Complex after PRI randomization
-#         #===================================================================          
-#         #===================================================================          
-# 
-# 
-#         # Create structure with tests per randomisation per Complex, instead of tests per RNA
-#         testsPerComplex = {} # key -> randomisation ID, value -> dict; key -> complexID, value -> results of enrichment tests for that complex
-#         for i in xrange( 0, len( listRandomPRITestsCorrected)):
-#             
-#             if i not in testsPerComplex:
-#                 testsPerComplex[ i] = {}
-# 
-#             for rnaID in listRandomPRITestsCorrected[ i]:
-#                 for test in listRandomPRITestsCorrected[ i][ rnaID]:
-#                     complexID = test[1]
-#                     if complexID not in testsPerComplex[ i]:
-#                         testsPerComplex[ i][ complexID] = []
-#                     testsPerComplex[ i][ complexID].append( test)
-# 
-#         # Create structure with number of significant tests per randomisation per complex
-#         listRandomPRISignificants = {}
-# 
-#         for i in xrange( 0, len( testsPerComplex)):
-#             for complexID in testsPerComplex[ i]:
-#                 print complexID, len( testsPerComplex[ i][ complexID])
-#                 print self.count_sign_tests( testsPerComplex[ i][ complexID])
-# 
-#                 # TODO: continue here.
-#         for complexID in ... real case
-
-#                 # find position of observed value in respect to random control
-#                 empiricalPvalue, numberAbove = self.empirical_pvalue(listRandomSignificantsNoWarning, countSignificantNoWarning)
-#                 
-#                 # if empirical value is significant  
-#                 sign = "0"
-#                 if float(empiricalPvalue) < EnrichmentAnalysisStrategy.SIGN_VALUE_AGAINST_RANDOM_CONTROL:
-#                     sign = "1"
-#                     
-#                 outHandlerStats.write("%s\t%i\t%.2f\t%i\t%.1e\t%s\n" % (rnaID, countSignificantNoWarning, avgSignRandomNoWarning, numberAbove, empiricalPvalue, sign))
-
-
         # Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests performed: %s " % str( performedTests ) )
         # Logger.get_instance().info( "EnrichmentAnalysisStrategy.enrichement_analysis: Tests skipped: %s " % str( skippedTests ) )
    
         outHandler.close()
         outHandlerStats.close()
-
+        
 
     # #
     # Function to run hypergeometric test of RNA against list of annotations
@@ -1175,84 +1117,6 @@ class EnrichmentAnalysisStrategy(ExecutionStrategy):
         assert len(randomAnnotDict) == len(annotDict)
 
         return randomAnnotDict
-
-
-    # #
-    # Randomize protein-RNA interactions. 
-    # Number of interactions per protein is kept, and number of interactions per lncRNa is kept, only the pairwise combinations are randomised.
-    # Not controlling that all interactions are different from real (some may be same as real), so that it works for saturation conditions.
-    def randomize_interactions(self, interactions):
-
-        # first filter out interactions with proteins that have no annotation
-        filtInteractions = []
-        for inter in interactions:
-            protID = str(inter.proteinID)
-            # only store info of proteins that have annotation information
-            if protID not in self.protAnnotDict:
-                continue            
-            filtInteractions.append( inter)
-                                
-        # real list of RNA interactions (with duplicates) to maintain same number of interactions per RNA
-        listRNAInteractions = [ str(inter.transcriptID) for inter in filtInteractions] 
-
-        #=================================================================== 
-        # Randomise protein-RNA interactions
-        #=================================================================== 
-
-        # For each RNA, store all proteins it interacts with and their annotations
-        randomInteractions = {}  # Key -> randomisation ID, value -> dict; key -> transcript ID, value -> dict; key -> pathway ID, value -> list of prot IDs (after filtering)
-
-        for i in xrange(0, self.numberRandomizations):
-
-            # initialise randomisation
-            if i not in randomInteractions:
-                randomInteractions[ i] = {}
-                
-            randomPairs = set() # stores already used interactions
-
-            # shuffle order of appearance of RNAs in each interaction
-            randListRNAInteractions = random.sample( listRNAInteractions, len( listRNAInteractions))
-
-            for j in xrange(0, len(filtInteractions)):
-                inter = filtInteractions[ j]
-                                
-                protID = str(inter.proteinID)
-
-                # pick randomised RNA
-                txID = randListRNAInteractions[ j]
-
-                ## force all interactions to be different (cannot have duplicated interactions)
-                # search other RNA interactor, until one that is not yet used for this protein
-                tag = txID+"|"+protID                 
-                k = 0 
-                while tag in randomPairs:
- 
-                    k += 1
- 
-                    try: # it can happen that a final unique interaction is not found, but in large datasets its probability is rare
-                        txID = randListRNAInteractions[ j + k]
-                    except IndexError:
-                        Logger.get_instance().warning("EnrichmentAnalysisStrategy.randomize_interactions : randomized protein-RNA interaction is repeated. %s" % (tag))           
-                        break # keep last txID (duplicated interaction)
-                    tag = txID+"|"+protID
- 
-                # replace random list, if possible
-                try:
-                    randListRNAInteractions[ j + k] = randListRNAInteractions[ j]
-                except IndexError:
-                    pass
- 
-                randomPairs.add( tag)
-                
-                if txID not in randomInteractions[ i]:
-                    randomInteractions[ i][ txID] = {}
-
-                for annot in self.protAnnotDict[ protID]:
-                    if annot not in randomInteractions[ i][ txID]:
-                        randomInteractions[ i][ txID][ annot] = []
-                    randomInteractions[ i][ txID][ annot].append(protID)
-            
-        return randomInteractions
 
 
     # #
