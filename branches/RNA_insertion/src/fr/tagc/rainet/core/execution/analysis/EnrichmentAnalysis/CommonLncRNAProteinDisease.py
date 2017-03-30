@@ -185,6 +185,10 @@ class CommonLncRNAProteinDisease(object):
                 transcriptID = spl[0]
                 proteinID = spl[1]
                 
+                if transcriptID not in self.transcriptDiseaseDict:
+                    # if transcript has no associated disease, skip transcript
+                    continue
+                
                 for transcriptDisease in self.transcriptDiseaseDict[ transcriptID]:
 
                     ## Word matching
@@ -251,7 +255,7 @@ if __name__ == "__main__":
                              help='TSV file with lncRNA-protein associations, based on lncRNA enrichment to a complex. One line per pair. E.g. ENST00000424191 P63218')
         parser.add_argument('outputFolder', metavar='outputFolder', type=str,
                              help='Output folder.')
-        parser.add_argument('--minWordSize', metavar='minWordSize', type=str, default = 2,
+        parser.add_argument('--minWordSize', metavar='minWordSize', type=int, default = 2,
                              help='For matching transcript disease to protein disease, try to match any words above size X.')
         parser.add_argument('--blackListedWords', metavar='blackListedWords', type=str, default = "",
                              help='Optional file with list of words (one per line) that should not be matched by themselves, unless in conjunction with other words.')
