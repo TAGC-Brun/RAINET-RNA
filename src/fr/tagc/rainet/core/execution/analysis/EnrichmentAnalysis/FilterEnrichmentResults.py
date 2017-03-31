@@ -612,7 +612,8 @@ if __name__ == "__main__":
                              help='Filter out enrichments where the annotation has enrichment to more than X transcripts. Default = -1 (OFF)')
         parser.add_argument('--transcriptSpecificityFilter', metavar='transcriptSpecificityFilter', type=int, default = -1,
                              help='Filter out enrichments where the transcript has enrichment to more than X annotations. Default = -1 (OFF)')
-
+        parser.add_argument('--minimumProteinInteraction', metavar='minimumProteinInteraction', type=int, default = -1,
+                             help='Minimum number of proteins in a given annotation with positive interactions for enrichment to be considered. Default = -1 (OFF)')
            
         # Gets the arguments
         args = parser.parse_args( ) 
