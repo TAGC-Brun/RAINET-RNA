@@ -60,7 +60,7 @@ class FilterEnrichmentResults(object):
     def __init__(self, enrichmentPerRNAFile, enrichmentResultsFile, outputFolder, matrixValueColumn, filterWarningColumn, \
                       filterWarningValue, minimumRatio, rowAnnotationFile, colAnnotationFile, \
                       maskMultiple, noAnnotationTag, noAnnotationFilter, annotSpecificityFilter, \
-                      transcriptSpecificityFilter):
+                      transcriptSpecificityFilter, minimumProteinInteraction):
 
         self.enrichmentPerRNAFile = enrichmentPerRNAFile
         self.enrichmentResultsFile = enrichmentResultsFile
@@ -76,6 +76,7 @@ class FilterEnrichmentResults(object):
         self.noAnnotationFilter = noAnnotationFilter
         self.annotSpecificityFilter = annotSpecificityFilter
         self.transcriptSpecificityFilter = transcriptSpecificityFilter
+        self.minimumProteinInteraction = minimumProteinInteraction
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -215,6 +216,7 @@ class FilterEnrichmentResults(object):
     
         # initialise some variables
         excludedByRNA = 0
+        excludedByMinimumInteractions = 0
         setRNAs = set()
         setAnnots = set()
         dictPairs = {} # key -> txID|annotID, val -> value (variable, boolean or pval) # includes annotations without enrichments
@@ -242,15 +244,21 @@ class FilterEnrichmentResults(object):
                 spl = line.split( "\t")
                 
                 annotID = spl[1]
+                nObservedInteractions = int( spl[2])
                 warningFlag = int( spl[5])
                 signFlag = int( spl[8])
                 
                 value = spl[ self.matrixValueColumn] # can be p-value, corrected p-value or significant boolean
     
+    
                 # if filtering is on
                 if self.filterWarningColumn:
                     # If value is determined not significant OR is tagged with a warning (for several reasons), fill it with constant value. 
                     if warningFlag or signFlag == 0:
+                        value = self.filterWarningValue
+                    # apply filter for minimum number of interactions in enrichment
+                    elif self.minimumProteinInteraction != -1 and nObservedInteractions < self.minimumProteinInteraction:
+                        excludedByMinimumInteractions += 1
                         value = self.filterWarningValue
                     else:
                         outFile1.write( line + "\n")
@@ -265,7 +273,7 @@ class FilterEnrichmentResults(object):
                 if annotID not in annotValues:
                     annotValues[ annotID] = []
                 annotValues[ annotID].append( value)
-    
+                       
                 setRNAs.add( txID)
                 setAnnots.add( annotID)
     
@@ -278,9 +286,10 @@ class FilterEnrichmentResults(object):
     
     
         # the number of retained enrichments after filtering is equal to the length of filteredEnrichmentsResults minus the header
-        countFilteredEnrichments = len(filteredEnrichmentResults) -1
+        countFilteredEnrichments = len(filteredEnrichmentResults) - 1
     
         Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of enrichment_rna filter: %s" % ( excludedByRNA) )
+        Logger.get_instance().info( "read_enrichment_results_file : Number of lines filtered out because of minimum observed proteins interacting filter (after previous filter): %s" % ( excludedByMinimumInteractions) )
         Logger.get_instance().info( "read_enrichment_results_file : Total number of enrichments retained after filtering: %s" % ( countFilteredEnrichments) )
     
         assert len( dictPairs) ==  len( setRNAs) * len( setAnnots), "number of pairs should equal number of RNAs times number of annotations"
@@ -549,7 +558,6 @@ class FilterEnrichmentResults(object):
             Timer.get_instance().step( "Read row annotation file..")    
             self.rowAnnotation = self.read_annotation_file( self.rowAnnotationFile)
 
-    
         # Read col annotation file, if present
         if self.colAnnotationFile != "":
             Timer.get_instance().step( "Read column annotation file..")    
@@ -629,10 +637,10 @@ if __name__ == "__main__":
         # Run analysis / processing
         #===============================================================================
 
-        filterEnrichmentResults = FilterEnrichmentResults(args.enrichmentPerRNAFile, args.enrichmentResultsFile, args.outputFolder, args.matrixValueColumn, args.filterWarningColumn, \
-                                                          args.filterWarningValue, args.minimumRatio, args.rowAnnotationFile, args.colAnnotationFile, \
-                                                          args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter, args.annotSpecificityFilter, \
-                                                          args.transcriptSpecificityFilter)
+        filterEnrichmentResults = FilterEnrichmentResults(args.enrichmentPerRNAFile, args.enrichmentResultsFile, args.outputFolder, args.matrixValueColumn, \
+                                                          args.filterWarningColumn, args.filterWarningValue, args.minimumRatio, args.rowAnnotationFile, \
+                                                          args.colAnnotationFile, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter, \
+                                                          args.annotSpecificityFilter, args.transcriptSpecificityFilter, args.minimumProteinInteraction)
         
         filterEnrichmentResults.run()
 

@@ -42,11 +42,12 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
         self.noAnnotationFilter = 0
         self.annotSpecificityFilter = -1
         self.transcriptSpecificityFilter = -1
+        self.minimumProteinInteraction = -1
         
         self.run = FilterEnrichmentResults( self.enrichmentPerRNAFile, self.enrichmentResultsFile, self.outputFolder, self.matrixValueColumn, self.filterWarningColumn, \
                                                           self.filterWarningValue, self.minimumRatio, self.rowAnnotationFile, self.colAnnotationFile, \
                                                           self.maskMultiple, self.noAnnotationTag, self.noAnnotationFilter, self.annotSpecificityFilter, \
-                                                          self.transcriptSpecificityFilter)
+                                                          self.transcriptSpecificityFilter, self.minimumProteinInteraction)
 
         
         self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/enrichmentAnalysis/FilterEnrichmentResults"
@@ -84,8 +85,6 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
  
         dictPairs, filteredEnrichmentResults = self.run.read_enrichment_results_file( listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments)
  
-        print len( dictPairs)
-
         testCount = 0       
         for line in filteredEnrichmentResults[1:]:
             
@@ -109,6 +108,30 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
             if spl[0] == "ENST00000609548":
                 testCount += 1
         self.assertTrue( testCount == 0)
+
+
+
+    def test_read_enrichment_results_file_two(self):
+ 
+        print "| test_read_enrichment_results_file_two | "
+ 
+        # test minimum protein interaction optional parameter
+        self.run.minimumProteinInteraction = 3
+        
+        listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments = self.run.read_enrichment_per_rna_file()
+ 
+        dictPairs, filteredEnrichmentResults = self.run.read_enrichment_results_file( listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments)
+ 
+        testCount = 0       
+        for line in filteredEnrichmentResults[1:]:
+            
+            spl = line.split("\t")
+            if spl[0] == "ENST00000609548":
+                testCount += 1
+            
+            self.assertTrue( spl[8] == "1")
+
+        self.assertTrue( testCount == 36)
 
         
     def test_run(self):
