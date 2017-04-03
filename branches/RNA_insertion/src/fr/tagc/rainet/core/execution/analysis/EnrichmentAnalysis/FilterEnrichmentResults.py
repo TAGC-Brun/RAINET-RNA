@@ -646,8 +646,10 @@ class FilterEnrichmentResults(object):
         Timer.get_instance().step( "Write specificity ranking..")    
         annotDict, lncDict = self.rank_by_specificity( dictPairs, self.filterWarningValue)
 
-        Timer.get_instance().step( "Write enrichment results file filtered by specificity..")    
-        self.filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict)
+        # Filter by specificity, if wanted
+        if self.annotSpecificityFilter != -1 or self.transcriptSpecificityFilter != -1:
+            Timer.get_instance().step( "Write enrichment results file filtered by specificity..")    
+            self.filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict)
         
         # Filter by top enrichments (observed interactions), if wanted
         if self.topEnrichmentsPerComplex != -1:
