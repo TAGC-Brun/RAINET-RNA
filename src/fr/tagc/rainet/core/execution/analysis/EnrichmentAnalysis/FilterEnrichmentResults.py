@@ -34,6 +34,7 @@ SCRIPT_NAME = "FilterEnrichmentResults.py"
 # 1) Only writing to file annotations with at least one enrichment
 # 2) If random has zero significant, ratio is close to infinite
 # 3) When using topEnrichmentsPerComplex option, get all enrichments with same number of observed interactions in case of draw
+# 4) Output matrix file is written after the enrichment_per_rna random filtering and minimumProteinInteraction filtering, but before other optional filters
 #===============================================================================
 
 
@@ -49,8 +50,6 @@ class FilterEnrichmentResults(object):
     REPORT_MATRIX_ROW_ANNOTATION = "/matrix_row_annotation.tsv"
     REPORT_MATRIX_COL_ANNOTATION = "/matrix_col_annotation.tsv"
     REPORT_SPECIFICITY_RANK = "/enrichment_specificity_rank.tsv"
-    REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS = "/enrichment_results_filtered_after_specificity.tsv"
-    REPORT_OBSERVED_FILTERED_RNA_ANNOT_RESULTS = "/enrichment_results_filtered_observed_interactions.tsv"
     REPORT_ENRICHMENT_SUMMARY = "/enrichment_summary.tsv"
     
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
@@ -179,16 +178,9 @@ class FilterEnrichmentResults(object):
         Logger.get_instance().info( "read_enrichment_per_rna_file : Significant enrichment tests:" )
         Logger.get_instance().info( "read_enrichment_per_rna_file : (before filtering) Observed mean: %.1f Random mean: %.1f Mean difference: %.1f" % ( np.mean( observedValues), np.mean( randomValues), np.mean( diffValues)) )
         Logger.get_instance().info( "read_enrichment_per_rna_file : (after filtering) Observed mean: %.1f Random mean: %.1f" % ( np.mean( observedValuesAfter), np.mean( randomValuesAfter)) )
-    
-        # average number of tests per RNA, versus control
-    
-        # Write list of enriched RNAs to file
-        with open( self.outputFolder + FilterEnrichmentResults.REPORT_LIST_RNA_SIGN_ENRICH, "w") as outFile:
-            for rna in listRNASignificantEnrich:
-                outFile.write( rna + "\n")       
-    
+        
         return listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments
-    
+
         
     # #
     # Read RNA-annotation enrichment file (results), filter out results for RNAs that are not significantly enriched over random control, produce output files.
@@ -202,16 +194,10 @@ class FilterEnrichmentResults(object):
         #===============================================================================
         # Output files
         #===============================================================================
-            
-        # File with same file as enrichment_results file but filtered based on enrichment_per_rna
-        outFile1 = open( self.outputFolder + FilterEnrichmentResults.REPORT_FILTERED_RNA_ANNOT_RESULTS, "w")
     
         # File with enrichment_results file data in matrix format.
         # only for RNAs that pass enrichment_per_rna filter
         outFile2 = open( self.outputFolder + FilterEnrichmentResults.REPORT_RNA_ANNOT_RESULTS_MATRIX, "w")
-    
-        # File with summary of enrichment results
-        outFile3 = open( self.outputFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "w")
     
         #===============================================================================
         # Read file, apply filter, write output
@@ -230,7 +216,7 @@ class FilterEnrichmentResults(object):
         with open( self.enrichmentResultsFile, "r") as inFile:
             
             header = inFile.readline()
-            outFile1.write( header) # transport header
+#             outFile1.write( header) # transport header
             filteredEnrichmentResults.append( header)
     
             for line in inFile:
@@ -263,7 +249,6 @@ class FilterEnrichmentResults(object):
                         excludedByMinimumInteractions += 1
                         value = self.filterWarningValue
                     else:
-                        outFile1.write( line + "\n")
                         filteredEnrichmentResults.append( line)
     
                 pair = txID + "|" + annotID
@@ -295,9 +280,7 @@ class FilterEnrichmentResults(object):
         Logger.get_instance().info( "read_enrichment_results_file : Total number of enrichments retained after filtering: %s" % ( countFilteredEnrichments) )
     
         assert len( dictPairs) ==  len( setRNAs) * len( setAnnots), "number of pairs should equal number of RNAs times number of annotations"
-    
-        outFile1.close()
-    
+        
     
         #===============================================================================
         # Writing matrix file and associated files
@@ -358,17 +341,7 @@ class FilterEnrichmentResults(object):
         Logger.get_instance().info( "read_enrichment_results_file : Number of Annotations in matrix file (columns): %i" % ( len( sortedSetAnnots) ) )
         
         outFile2.close()
-    
-        #===============================================================================    
-        # Write summary of enrichment results
-        #===============================================================================
         
-        outFile3.write("Total enrichments\tRandom enrichments\tFiltered enrichements\tFiltered enriched complexes\tFiltered enriched lncRNAs\n")
-    
-        outFile3.write("%s\t%s\t%s\t%s\t%s\n" % ( count_real_enrichments, count_random_enrichments, countFilteredEnrichments, len( sortedSetAnnots), len( sortedSetRNAs)) )
-    
-        outFile3.close()
-    
         return dictPairs, filteredEnrichmentResults
     
     
@@ -516,42 +489,39 @@ class FilterEnrichmentResults(object):
     # #
     # Use specificity ranking and list of previously filtered enrichments, filter them further based on annotation specificity levels.
     def filter_by_specificity(self, filtered_enrichment_results, annot_dict, lnc_dict):
-        
-        
-        # Write output file exactly as the previous file, but filtered
-        outFile = open( self.outputFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "w")
-        
-        firstLine = 1    
+         
         notPassingFilters = 0
-            
-        for enrich in filtered_enrichment_results:
-    
-            # write header
-            if firstLine:
-                outFile.write( enrich)
-                firstLine = 0
-                continue
-    
+
+        filteredEnrichmentResults = []
+        
+        # write header
+        filteredEnrichmentResults.append( filtered_enrichment_results[0])
+        
+        for enrich in filtered_enrichment_results[1:]:
+          
             spl = enrich.split( "\t")
-            
+             
             annotID = spl[1]
             transcriptID = spl[0]
-            
+             
             # keep only enrichments where number of enriched transcripts is lower or equal to self.annotSpecificityFilter, or if filter is OFF
             if self.annotSpecificityFilter == -1 and self.transcriptSpecificityFilter == -1:
-                outFile.write( enrich + "\n")
+                filteredEnrichmentResults.append( enrich )
             elif self.annotSpecificityFilter == -1 and len( lnc_dict[ transcriptID] ) <= self.transcriptSpecificityFilter:
-                outFile.write( enrich + "\n")
+                filteredEnrichmentResults.append( enrich )
+                
             elif len( annot_dict[annotID] ) <= self.annotSpecificityFilter and self.transcriptSpecificityFilter == -1:
-                outFile.write( enrich + "\n")
+                filteredEnrichmentResults.append( enrich )
+
             elif len( annot_dict[annotID] ) <= self.annotSpecificityFilter and len( lnc_dict[ transcriptID] ) <= self.transcriptSpecificityFilter:
-                outFile.write( enrich + "\n")
+                filteredEnrichmentResults.append( enrich )
             else:
                 notPassingFilters += 1
-    
+     
         Logger.get_instance().info( "filter_by_specificity : Filtered out %s enrichments" % ( notPassingFilters ) )
-        
-        outFile.close()
+         
+
+        return filteredEnrichmentResults
 
 
     # #
@@ -578,8 +548,15 @@ class FilterEnrichmentResults(object):
             complexEnrichments[ annotID][ observedInteractions].append( enrichment)
 
 
+        #===============================================================================       
+        # Apply filter
+        #===============================================================================
+
         # Filter enrichments based on higher observed interactions 
         observedFilteredResults = [] # store enrichments that pass this filter
+        # write header
+        observedFilteredResults.append( filtered_enrichment_results[ 0])
+        
         for annotID in complexEnrichments:
             
             # calculate number of enrichments amounting to wanted proportion in this complex
@@ -609,23 +586,67 @@ class FilterEnrichmentResults(object):
             assert len( wantedComplexEnrichments) >= nWantedEnrichments
 
         Logger.get_instance().info( "filter_by_observed_interactions : Filtered out %s enrichments" % ( len( filtered_enrichment_results) - len( observedFilteredResults)) )
-
-        #===============================================================================              
-        # File with same format as enrichment_results file but filtered based on observed interactions
-        #===============================================================================       
-        outFile = open( self.outputFolder + FilterEnrichmentResults.REPORT_OBSERVED_FILTERED_RNA_ANNOT_RESULTS, "w")
-        # write header
-        outFile.write( filtered_enrichment_results[0] )
-
-        for enrich in observedFilteredResults:
-            outFile.write( enrich + "\n")
-
-        outFile.close()
             
         return complexEnrichments, observedFilteredResults
 
 
+    # #
+    # Function to write enrichment results and associated files after all the required filters
+    def write_enrichment_results(self, filtered_enrichment_results, dict_pairs, count_real_enrichments, count_random_enrichments):
+
+        #===============================================================================
+        # Parse and write filtered enrichment results
+        #===============================================================================
+
+        # File with same file as enrichment_results file but filtered based on enrichment_per_rna and other filters
+        outFile1 = open( self.outputFolder + FilterEnrichmentResults.REPORT_FILTERED_RNA_ANNOT_RESULTS, "w")
+
+        setRNAs = set()
+        setAnnots = set()
+
+        # write header
+        outFile1.write( filtered_enrichment_results[0])
+
+        for enrichment in filtered_enrichment_results[1:]:
+
+            # First check if all the results with this RNA should be filtered out or not
+            spl = enrichment.split("\t")
+
+            # RNA was not filtered out:    
+            txID = spl[0]
+            annotID = spl[1]
+
+            setRNAs.add( txID)
+            setAnnots.add( annotID)
+    
+            outFile1.write( enrichment + "\n")
+            
+        outFile1.close()
+
+        #===============================================================================
+        # Write list of enriched RNAs (scaffolding candidates)
+        #===============================================================================
+        with open( self.outputFolder + FilterEnrichmentResults.REPORT_LIST_RNA_SIGN_ENRICH, "w") as outFile2:
+            for rna in setRNAs:
+                outFile2.write( rna + "\n")       
+           
+        #===============================================================================    
+        # Write summary of enrichment results
+        #===============================================================================
+
+        # File with summary of enrichment results
+        outFile3 = open( self.outputFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "w")
+        
+        outFile3.write("Total enrichments\tRandom enrichments\tFiltered enrichements\tFiltered enriched complexes\tFiltered enriched lncRNAs\n")
+    
+        outFile3.write("%s\t%s\t%s\t%s\t%s\n" % ( count_real_enrichments, count_random_enrichments, len( filtered_enrichment_results[1:]), len( setAnnots), len( setRNAs)) )
+    
+        outFile3.close()
+    
+
     def run(self):
+
+        # Approach: filters are applied through the filteredEnrichmentResults variable, which changes depending on the filtering applied
 
         # Read row annotation file, if present
         if self.rowAnnotationFile != "":
@@ -649,12 +670,15 @@ class FilterEnrichmentResults(object):
         # Filter by specificity, if wanted
         if self.annotSpecificityFilter != -1 or self.transcriptSpecificityFilter != -1:
             Timer.get_instance().step( "Write enrichment results file filtered by specificity..")    
-            self.filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict)
+            filteredEnrichmentResults = self.filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict)
         
         # Filter by top enrichments (observed interactions), if wanted
         if self.topEnrichmentsPerComplex != -1:
-            Timer.get_instance().step( "Write enrichment results file filtered by top enrichments per complex.")    
-            self.filter_by_observed_interactions ( filteredEnrichmentResults)
+            Timer.get_instance().step( "Write enrichment results file filtered by top enrichments per complex..")    
+            _, filteredEnrichmentResults = self.filter_by_observed_interactions ( filteredEnrichmentResults)
+
+        Timer.get_instance().step( "Write filtered enrichment results file..")    
+        self.write_enrichment_results( filteredEnrichmentResults, dictPairs, countRealEnrichments, countRandomEnrichments)
 
             
 if __name__ == "__main__":

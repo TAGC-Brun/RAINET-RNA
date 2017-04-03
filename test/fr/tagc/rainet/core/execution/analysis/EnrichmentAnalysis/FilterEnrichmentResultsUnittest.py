@@ -224,12 +224,54 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
             with open(self.expectedFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_RANK, "r") as exp:
                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
-        # check if output files are correct
-        with open(self.outputFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "r") as out:                
-            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "r") as exp:
-                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+#         # check if output files are correct
+#         with open(self.outputFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "r") as out:                
+#             with open(self.expectedFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS, "r") as exp:
+#                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
 
         # check if output files are correct
+        with open(self.outputFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "r") as out:                
+            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+
+    def test_write_enrichment_results(self):
+  
+        print "| test_write_enrichment_results | "        
+  
+        ## ADD SPECIFICITY AND TOP SCAFFOLD FILTERS AND SEE IF OUTPUT CHANGES
+        # Note: the filters themselves are not being tested here, just that output file formats look correct 
+  
+        self.run.minimumRatio = 2.0 
+        self.run.matrixValueColumn = 8 
+        self.run.filterWarningValue = 0
+
+        self.run.annotSpecificityFilter = 10
+        self.run.transcriptSpecificityFilter = 10
+        self.run.minimumProteinInteraction = 10
+        self.run.topEnrichmentsPerComplex = 10
+  
+        self.run.run()
+
+        ## expected files
+
+        # check if output files are correct
+        with open(self.outputFolder + FilterEnrichmentResults.REPORT_LIST_RNA_SIGN_ENRICH, "r") as out:                
+            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_LIST_RNA_SIGN_ENRICH, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+         
+        with open(self.outputFolder + FilterEnrichmentResults.REPORT_FILTERED_RNA_ANNOT_RESULTS, "r") as out:                
+            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_FILTERED_RNA_ANNOT_RESULTS, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+        with open(self.outputFolder + FilterEnrichmentResults.REPORT_RNA_ANNOT_RESULTS_MATRIX, "r") as out:                
+            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_RNA_ANNOT_RESULTS_MATRIX, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
+        with open(self.outputFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_RANK, "r") as out:                
+            with open(self.expectedFolder + FilterEnrichmentResults.REPORT_SPECIFICITY_RANK, "r") as exp:
+                self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
+
         with open(self.outputFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "r") as out:                
             with open(self.expectedFolder + FilterEnrichmentResults.REPORT_ENRICHMENT_SUMMARY, "r") as exp:
                 self.assertTrue(out.read() == exp.read(), "assert if report file is correct, by expected content comparison" )
@@ -247,11 +289,11 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
 #     # #
 #     # Runs after each test
 #     def tearDown(self):
-#                                 
+#                                  
 #         # Wipe output folder
 #         cmd = "rm %s/*" % self.outputFolder
 #         os.system(cmd)
-            
+             
        
 
 
