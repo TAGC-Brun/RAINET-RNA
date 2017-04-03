@@ -43,11 +43,12 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
         self.annotSpecificityFilter = -1
         self.transcriptSpecificityFilter = -1
         self.minimumProteinInteraction = -1
+        self.topEnrichmentsPerComplex = -1
         
         self.run = FilterEnrichmentResults( self.enrichmentPerRNAFile, self.enrichmentResultsFile, self.outputFolder, self.matrixValueColumn, self.filterWarningColumn, \
                                                           self.filterWarningValue, self.minimumRatio, self.rowAnnotationFile, self.colAnnotationFile, \
                                                           self.maskMultiple, self.noAnnotationTag, self.noAnnotationFilter, self.annotSpecificityFilter, \
-                                                          self.transcriptSpecificityFilter, self.minimumProteinInteraction)
+                                                          self.transcriptSpecificityFilter, self.minimumProteinInteraction, self.topEnrichmentsPerComplex)
 
         
         self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/enrichmentAnalysis/FilterEnrichmentResults"
@@ -110,7 +111,6 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
         self.assertTrue( testCount == 0)
 
 
-
     def test_read_enrichment_results_file_two(self):
  
         print "| test_read_enrichment_results_file_two | "
@@ -133,6 +133,63 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
 
         self.assertTrue( testCount == 36)
 
+
+    def test_filter_by_observed_interactions(self):
+ 
+        print "| test_filter_by_observed_interactions | "
+        
+        self.run.topEnrichmentsPerComplex = 5
+        
+        listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments = self.run.read_enrichment_per_rna_file()
+ 
+        dictPairs, filteredEnrichmentResults = self.run.read_enrichment_results_file( listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments)
+
+        complexEnrichments, observedFilteredResults = self.run.filter_by_observed_interactions( filteredEnrichmentResults)
+
+        # TEST1
+        # Complex 26c only has enrichments with observed interactions = 2, therefore all enrichments should be picked
+        # e.g. awk '$2=="26c"' enrichment_results.tsv | awk '$9=="1"'| awk '$3=="2"' | grep -f passing_rnas.txt | wc -l33
+        self.assertTrue( len( complexEnrichments["26c"]) == 1)       
+        self.assertTrue( len( complexEnrichments["26c"][2]) == 33, "number of enrichments from this complex from RNAs that pass enrichment_per_rna, no observed interations filter applied in this case")
+
+        # TEST2
+        # Complex 4a has 30 enrichments (after enrichment_per_rna filter) and 15 different values for observed interactions, therefore some enrichments should be filtered out
+        # e.g. awk '$2=="4a"' enrichment_results.tsv | awk '$9=="1"' | awk '$6=="0"' | grep -f passing_rnas.txt | wc -l 30
+        self.assertTrue( len( complexEnrichments["4a"]) == 15)
+        # picking 5% top, we should have at least 6 enrichments picked. From 26, 25 and 24 observed interactions. Since 24 bin has 5 enrichments, all will be picked
+        self.assertTrue( len( complexEnrichments["4a"][26]) == 2)
+        self.assertTrue( len( complexEnrichments["4a"][25]) == 2)
+        self.assertTrue( len( complexEnrichments["4a"][24]) == 5)
+
+        countEnrich = 0
+        enrichText = ""
+        for enrich in observedFilteredResults:
+            spl = enrich.split("\t")
+            annotID = spl[1]
+            if annotID == "4a":
+                countEnrich += 1
+                self.assertTrue( int( spl[2]) >= 24, "asserting that all observed interaction values are >= 24")
+                enrichText += enrich
+
+        self.assertTrue( "ENST00000594590" in enrichText)
+        self.assertTrue( countEnrich == 9, "asserting correct number of enrichments after filtering")
+        
+        # TEST3
+        # test combination of minimumProteinInteraction and topEnrichmentsPerComplex
+
+        self.run.topEnrichmentsPerComplex = 5
+        self.run.minimumProteinInteraction = 10
+        
+        listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments = self.run.read_enrichment_per_rna_file()
+        dictPairs, filteredEnrichmentResults = self.run.read_enrichment_results_file( listRNASignificantEnrich, countRealEnrichments, countRandomEnrichments)
+        complexEnrichments, observedFilteredResults = self.run.filter_by_observed_interactions( filteredEnrichmentResults)
+
+        # all enrichments of complex 26c should be filtered out since they all have <5 observed interactions
+        self.assertTrue( "26c" not in complexEnrichments)
+
+        # complex 4c
+        self.assertTrue( len( complexEnrichments["4a"]) == 15 - 2, "assert that some observed interactions bins have been lost" )
+        
         
     def test_run(self):
   
