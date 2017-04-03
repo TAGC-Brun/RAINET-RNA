@@ -241,6 +241,9 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
   
         ## ADD SPECIFICITY AND TOP SCAFFOLD FILTERS AND SEE IF OUTPUT CHANGES
         # Note: the filters themselves are not being tested here, just that output file formats look correct 
+
+        self.expectedFolder = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_expected/enrichmentAnalysis/FilterEnrichmentResults/with_parameters"
+
   
         self.run.minimumRatio = 2.0 
         self.run.matrixValueColumn = 8 
