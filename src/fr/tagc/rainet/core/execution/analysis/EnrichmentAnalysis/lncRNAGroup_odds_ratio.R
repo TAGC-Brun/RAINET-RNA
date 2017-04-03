@@ -4,7 +4,11 @@ require(ggplot2)
 require(grid)
 require(gridExtra)
 library(RColorBrewer)
-source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
+
+
+##############################
+# Basic one-way all vs all table
+##############################
 
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/experimental_interactions/outFile.tsv"
@@ -33,16 +37,20 @@ grid.table( dataset)
 
 
 ##############################
-# Colored table (as in Mukherjee2016)
+# Two-sided colored table (as in Mukherjee2016)
 ##############################
-
 ### change format of dataset: one line per external dataset and 'yes' or 'no', value is odds ratio
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv_two_sided.tsv"
+
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv_two_sided.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv_two_sided.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
-## filter dataset to have only scaffolding candidates
-dataset = dataset[dataset$TranscriptGroup == "2-scaffolding_candidates"]
+### filter dataset to have only scaffolding candidates
+# Proteome-wide
+# dataset = dataset[dataset$TranscriptGroup == "2-scaffolding_candidates"]
+# RBP-only
+dataset = dataset[dataset$TranscriptGroup == "2-RBP-enriched_lncRNAs"]
 
 # # excluding Mukherjee2016 because it has infinite odds ratio
 # dataset = dataset[dataset$ExternalList != "Mukherjee2016"]
