@@ -13,8 +13,8 @@ library(VennDiagram)
 ##########################################
 # Parameters
 ##########################################
-proteomeApproachFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/merge/list_proteome_enriched_rnas_havugimana2012_bioplex_wan2015_networkModules.txt"
-rbpApproachFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50_rbps/merge/list_rbp_enriched_rnas_havugimana2012_bioplex_wan2015_networkModules.txt"
+proteomeApproachFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/merge_10000/list_proteome_enriched_rnas_havugimana2012_bioplex_wan2015_networkModules.txt"
+rbpApproachFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50_rbps/merge_10000/list_rbp_enriched_rnas_havugimana2012_bioplex_wan2015_networkModules.txt"
 background = 15230 # Background is for example the 15230 tested transcripts
 
 proteomeApproachList = fread(proteomeApproachFile, stringsAsFactors = FALSE, header = FALSE)
@@ -56,7 +56,6 @@ draw.pairwise.venn( length(proteomeApproachSet), length(rbpApproachSet), length(
      # cat.dist = rep(0.025, 2)
   )
 
-
 ##########################################
 # Statistical significance of intersection.
 ##########################################
@@ -69,4 +68,6 @@ draw.pairwise.venn( length(proteomeApproachSet), length(rbpApproachSet), length(
 ft = fisher.test( matrix(c( length(setIntersect), length(setRBPMinusProteome), length(setProteomeMinusRBP), background - length( union)), nrow = 2))
 
 grid.text(paste("Intersection\nFisher's exact test:\np-val: ", ft$p.value, "\nOdds ratio: ", round(ft$estimate,2)), x = unit(0.5, "npc"), y = unit(0.7, "npc"))
+
+# print as 5.91 x 5.98 inches
 
