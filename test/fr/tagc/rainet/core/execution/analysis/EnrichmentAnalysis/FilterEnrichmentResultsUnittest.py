@@ -172,7 +172,7 @@ class FilterEnrichmentResultsUnittest(unittest.TestCase):
                 enrichText += enrich
 
         self.assertTrue( "ENST00000594590" in enrichText)
-        self.assertTrue( countEnrich == 9, "asserting correct number of enrichments after filtering")
+        self.assertTrue( countEnrich == 2, "asserting correct number of enrichments after filtering")
         
         # TEST3
         # test combination of minimumProteinInteraction and topEnrichmentsPerComplex

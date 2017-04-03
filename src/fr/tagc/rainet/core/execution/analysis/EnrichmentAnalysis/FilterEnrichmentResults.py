@@ -561,7 +561,7 @@ class FilterEnrichmentResults(object):
             
             # calculate number of enrichments amounting to wanted proportion in this complex
             enrichmentsInComplex = sum([len(complexEnrichments[ annotID][observed]) for observed in complexEnrichments[ annotID]])
-            nWantedEnrichments = enrichmentsInComplex / float( self.topEnrichmentsPerComplex)
+            nWantedEnrichments = enrichmentsInComplex * ( self.topEnrichmentsPerComplex / 100.0)
             
             # sort complex enrichments per higher observed interactions
             sortedEnrichments = sorted( complexEnrichments[ annotID], reverse = 1)
