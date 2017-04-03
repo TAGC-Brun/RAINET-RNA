@@ -26,20 +26,22 @@ SCRIPT_NAME = "FilterEnrichmentResults.py"
 # General plan:
 # 1) Read enrichment_per_rna file, get list of RNAs to filter out based on input criteria.
 # 2) Rewrite enrichment_results file based on these filters, output also enrichment matrix file.
+# 3) Options to apply other types of filtering
 #===============================================================================
 
 #===============================================================================
 # Processing notes:
 # 1) Only writing to file annotations with at least one enrichment
 # 2) If random has zero significant, ratio is close to infinite
+# 3) When using topEnrichmentsPerComplex option, get all enrichments with same number of observed interactions in case of draw
 #===============================================================================
 
-
-#===============================================================================
-# File constants
-#===============================================================================
 
 class FilterEnrichmentResults(object):
+
+    #===============================================================================
+    # Class constants
+    #===============================================================================
     
     REPORT_LIST_RNA_SIGN_ENRICH = "/list_RNA_above_random.txt"
     REPORT_FILTERED_RNA_ANNOT_RESULTS = "/enrichment_results_filtered.tsv"
@@ -48,19 +50,18 @@ class FilterEnrichmentResults(object):
     REPORT_MATRIX_COL_ANNOTATION = "/matrix_col_annotation.tsv"
     REPORT_SPECIFICITY_RANK = "/enrichment_specificity_rank.tsv"
     REPORT_SPECIFICITY_FILTERED_RNA_ANNOT_RESULTS = "/enrichment_results_filtered_after_specificity.tsv"
+    REPORT_OBSERVED_FILTERED_RNA_ANNOT_RESULTS = "/enrichment_results_filtered_observed_interactions.tsv"
     REPORT_ENRICHMENT_SUMMARY = "/enrichment_summary.tsv"
     
     SEVERAL_ANNOTATION_TAG = "Overlapping_annotations"
     
     COLORS_SET3 = ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
     COLORS_SET2 = ["#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3"]
-    
-    # TODO: change all file writing to output folder
-    
+        
     def __init__(self, enrichmentPerRNAFile, enrichmentResultsFile, outputFolder, matrixValueColumn, filterWarningColumn, \
                       filterWarningValue, minimumRatio, rowAnnotationFile, colAnnotationFile, \
                       maskMultiple, noAnnotationTag, noAnnotationFilter, annotSpecificityFilter, \
-                      transcriptSpecificityFilter, minimumProteinInteraction):
+                      transcriptSpecificityFilter, minimumProteinInteraction, topEnrichmentsPerComplex):
 
         self.enrichmentPerRNAFile = enrichmentPerRNAFile
         self.enrichmentResultsFile = enrichmentResultsFile
@@ -77,6 +78,7 @@ class FilterEnrichmentResults(object):
         self.annotSpecificityFilter = annotSpecificityFilter
         self.transcriptSpecificityFilter = transcriptSpecificityFilter
         self.minimumProteinInteraction = minimumProteinInteraction
+        self.topEnrichmentsPerComplex = topEnrichmentsPerComplex
 
         # make output folder
         if not os.path.exists( self.outputFolder):
@@ -190,6 +192,7 @@ class FilterEnrichmentResults(object):
         
     # #
     # Read RNA-annotation enrichment file (results), filter out results for RNAs that are not significantly enriched over random control, produce output files.
+    # Optional, further filtering of enrichments with warning flag on, and minimum of protein interactions
     def read_enrichment_results_file(self, list_rna_significant_enrich, count_real_enrichments, count_random_enrichments):
         
         # Example format:
@@ -249,7 +252,6 @@ class FilterEnrichmentResults(object):
                 signFlag = int( spl[8])
                 
                 value = spl[ self.matrixValueColumn] # can be p-value, corrected p-value or significant boolean
-    
     
                 # if filtering is on
                 if self.filterWarningColumn:
@@ -490,7 +492,7 @@ class FilterEnrichmentResults(object):
         return withAnnotation
     
     # #
-    # Reads annotation file and returns dictionary of 
+    # Reads annotation file, for adding information on columns or rows of enrichment matrix 
     def read_annotation_file(self, annotation_file):
         
         annotationDict = {} # key -> RNA/Protein group identifier, value -> set of annotations
@@ -551,6 +553,78 @@ class FilterEnrichmentResults(object):
         
         outFile.close()
 
+
+    # #
+    # Apply a "best" RNA enrichment filter. For each complex, retain only the X% best enrichments, based on number of observed interactions.
+    def filter_by_observed_interactions(self, filtered_enrichment_results):
+        
+        #===============================================================================       
+        # Build dictionary with enrichments per complex
+        #===============================================================================
+        
+        complexEnrichments = {} # key -> complexID, value -> dict; key -> observed interactions, value -> enrichment data
+        
+        for enrichment in filtered_enrichment_results[1:]:
+            spl = enrichment.split("\t")
+            annotID = spl[1]
+            observedInteractions = int( spl[2])
+
+            if annotID not in complexEnrichments:
+                complexEnrichments[ annotID] = {}
+            
+            if observedInteractions not in complexEnrichments[ annotID]:
+                complexEnrichments[ annotID][ observedInteractions] = []
+                
+            complexEnrichments[ annotID][ observedInteractions].append( enrichment)
+
+
+        # Filter enrichments based on higher observed interactions 
+        observedFilteredResults = [] # store enrichments that pass this filter
+        for annotID in complexEnrichments:
+            
+            # calculate number of enrichments amounting to wanted proportion in this complex
+            enrichmentsInComplex = sum([len(complexEnrichments[ annotID][observed]) for observed in complexEnrichments[ annotID]])
+            nWantedEnrichments = enrichmentsInComplex / float( self.topEnrichmentsPerComplex)
+            
+            # sort complex enrichments per higher observed interactions
+            sortedEnrichments = sorted( complexEnrichments[ annotID], reverse = 1)
+            i = 0 # observed interactions looper
+            wantedComplexEnrichments = []  # store enrichments         
+            
+            # Approach: pick enrichments until wanted complexes, in case of draw (enrichments with same observed interactions) pick all of them
+            while len( wantedComplexEnrichments) < nWantedEnrichments:
+                 
+                currentEnrichments = complexEnrichments[ annotID][ sortedEnrichments[ i]]
+
+                for enrich in currentEnrichments:
+                    wantedComplexEnrichments.append( enrich)
+
+                i+=1
+
+            observedFilteredResults.extend( wantedComplexEnrichments)
+
+#             print annotID, enrichmentsInComplex, nWantedEnrichments, len( wantedComplexEnrichments), currentEnrichments
+
+            # we should have = or > enrichments than the wanted number/proportion or enrichments            
+            assert len( wantedComplexEnrichments) >= nWantedEnrichments
+
+        Logger.get_instance().info( "filter_by_observed_interactions : Filtered out %s enrichments" % ( len( filtered_enrichment_results) - len( observedFilteredResults)) )
+
+        #===============================================================================              
+        # File with same format as enrichment_results file but filtered based on observed interactions
+        #===============================================================================       
+        outFile = open( self.outputFolder + FilterEnrichmentResults.REPORT_OBSERVED_FILTERED_RNA_ANNOT_RESULTS, "w")
+        # write header
+        outFile.write( filtered_enrichment_results[0] )
+
+        for enrich in observedFilteredResults:
+            outFile.write( enrich + "\n")
+
+        outFile.close()
+            
+        return complexEnrichments, observedFilteredResults
+
+
     def run(self):
 
         # Read row annotation file, if present
@@ -575,6 +649,10 @@ class FilterEnrichmentResults(object):
         Timer.get_instance().step( "Write enrichment results file filtered by specificity..")    
         self.filter_by_specificity( filteredEnrichmentResults, annotDict, lncDict)
         
+        # Filter by top enrichments (observed interactions), if wanted
+        if self.topEnrichmentsPerComplex != -1:
+            Timer.get_instance().step( "Write enrichment results file filtered by top enrichments per complex.")    
+            self.filter_by_observed_interactions ( filteredEnrichmentResults)
 
             
 if __name__ == "__main__":
@@ -622,6 +700,8 @@ if __name__ == "__main__":
                              help='Filter out enrichments where the transcript has enrichment to more than X annotations. Default = -1 (OFF)')
         parser.add_argument('--minimumProteinInteraction', metavar='minimumProteinInteraction', type=int, default = -1,
                              help='Minimum number of proteins in a given annotation with positive interactions for enrichment to be considered. Default = -1 (OFF)')
+        parser.add_argument('--topEnrichmentsPerComplex', metavar='topEnrichmentsPerComplex', type=int, default = -1,
+                             help='Percentage (0-100) of best enrichments to keep for each complex. Best enrichments defined as more number of observed interactions. In case of draw, keep all drawing enrichments. Default = -1 (OFF)')
            
         # Gets the arguments
         args = parser.parse_args( ) 
@@ -640,7 +720,8 @@ if __name__ == "__main__":
         filterEnrichmentResults = FilterEnrichmentResults(args.enrichmentPerRNAFile, args.enrichmentResultsFile, args.outputFolder, args.matrixValueColumn, \
                                                           args.filterWarningColumn, args.filterWarningValue, args.minimumRatio, args.rowAnnotationFile, \
                                                           args.colAnnotationFile, args.maskMultiple, args.noAnnotationTag, args.noAnnotationFilter, \
-                                                          args.annotSpecificityFilter, args.transcriptSpecificityFilter, args.minimumProteinInteraction)
+                                                          args.annotSpecificityFilter, args.transcriptSpecificityFilter, args.minimumProteinInteraction, \
+                                                          args.topEnrichmentsPerComplex)
         
         filterEnrichmentResults.run()
 
