@@ -1,10 +1,6 @@
-import sys
 import os
 import argparse
 import numpy as np
-from scipy import stats
-import cPickle as pickle
-import random
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
@@ -229,21 +225,19 @@ class ReadCatrapid(object):
                     continue
 
                 # if sample interaction filtering is on
-                if self.sampleInteractions != -1:
+                if self.sampleInteractions:
 
                     # initialise sample counter
                     if protID not in itemCount: itemCount[ protID] = 0
                     if rnaID not in itemCount: itemCount[ rnaID] = 0
 
                     # only add new sample interactions any of the items still need more samples
-                    # this certifies that each item has at least self.sampleInteractions interactions, unless they are excluded after filter
-                    if itemCount[ protID] < self.sampleInteractions or itemCount[ rnaID] < self.sampleInteractions:
+                    # this certifies that each item has at least one interaction, unless they are excluded after filter
+                    if itemCount[ protID] < 1 or itemCount[ rnaID] < 1:
                         if line not in interactionSample:
-                            # add this interaction with a certain probability (note that this approach is not completely random if we are reading a sorted file)
-                            if random.random() < 0.25:
-                                interactionSample.add( line)
-                                itemCount[ protID] += 1
-                                itemCount[ rnaID] += 1
+                            interactionSample.add( line)
+                            itemCount[ protID] += 1
+                            itemCount[ rnaID] += 1
 
                 #### Store interaction #### 
                 #interactionText += "%s\t%s\n" % (pair, score)
@@ -352,7 +346,7 @@ class ReadCatrapid(object):
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
 
 
-        if self.sampleInteractions != -1:
+        if self.sampleInteractions:
             with open( self.outputFolder + ReadCatrapid.SAMPLE_INTERACTIONS_FILENAME, "w") as outFile:
                 for interaction in interactionSample:
                     outFile.write( interaction)
@@ -632,7 +626,7 @@ if __name__ == "__main__":
         parser.add_argument('--booleanInteraction', metavar='booleanInteraction', type=int,
                              default = 0, help='Whether to write interaction matrix file with 1 or 0 instead of score values. --writeInteractions and --writeInteractionMatrix argument must also be 1.')   
         parser.add_argument('--sampleInteractions', metavar='sampleInteractions', type=int,
-                             default = -1, help='Write out approximately X semi-random interactions for each RNA and each protein. Output file can have more than X interactions for a protein/RNA since they are co-dependent. Applied after all other filters. Default = -1 (OFF). Advised input: from 1 to 10.')   
+                             default = 0, help='Whether to write file with at least one interactions for each RNA and each protein. Output file can have more than X interactions for a protein/RNA since they are co-dependent. Applied after all other filters. Default = 0 (OFF).')   
     
         #gets the arguments
         args = parser.parse_args( ) 

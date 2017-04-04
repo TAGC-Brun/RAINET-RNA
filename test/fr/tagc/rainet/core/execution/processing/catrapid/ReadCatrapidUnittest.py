@@ -285,7 +285,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         print "| test_params_three | "
 
-        self.run.sampleInteractions = 10 # only works for values up to 10
+        self.run.sampleInteractions = 1 
 
         proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), set(), set())
         
