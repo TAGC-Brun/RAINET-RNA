@@ -19,7 +19,6 @@ class ReadCatrapidUnittest(unittest.TestCase):
     def setUp(self):
 
         # Set the options
-
         self.catRAPIDFile = "test_input/catRAPID_interactions_test.txt"
         self.outputFolder = "test_output/"
         self.interactionCutoff = "OFF"
@@ -32,13 +31,14 @@ class ReadCatrapidUnittest(unittest.TestCase):
         self.writeNormalisedInteractions = 0
         self.writeInteractionMatrix = 0
         self.booleanInteraction = 0
+        self.sampleInteractions = -1
 
         # folder containing expected output files
         self.expectedFolder = "test_expected/"
         
         self.run = ReadCatrapid(self.catRAPIDFile, self.outputFolder, self.interactionCutoff, self.interactionFilterFile, 
                                 self.rnaFilterFile, self.proteinFilterFile, self.writeInteractions, self.batchSize,
-                                self.writeNormalisedInteractions, self.writeInteractionMatrix, self.booleanInteraction )
+                                self.writeNormalisedInteractions, self.writeInteractionMatrix, self.booleanInteraction, self.sampleInteractions )
             
 
     # #
@@ -149,7 +149,7 @@ class ReadCatrapidUnittest(unittest.TestCase):
 
         # Protein filter
         wantedProteins = self.run.read_protein_filter_file()
-        
+                
         proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), set(), wantedProteins)
 
         # grep Q7Z5L7 catRAPID_interactions_test.txt | wc -l
@@ -279,11 +279,36 @@ class ReadCatrapidUnittest(unittest.TestCase):
                     self.assertTrue( float( spl[2].strip()) == 0, "asserting that score is correct")        
                 count+=1
 
+
+    # #
+    def test_params_three(self):
+
+        print "| test_params_three | "
+
+        self.run.sampleInteractions = 10 # only works for values up to 10
+
+        proteinInteractionsMean, proteinInteractionsCounter = self.run.read_catrapid_file( set(), set(), set())
+        
+        # if no other filters were applied, we should have 5 interactions for each item.
+        itemCount = self.run.itemCount
+
+        self.assertTrue( len( itemCount) == 2051)
+
+        # ensure that at items have at least one interaction
+        self.assertTrue( 0 not in itemCount.values())
+
+        interactionSample = self.run.interactionSample
+
+        # ensure that number of interactions taken is close to number of wanted number of interactions per item
+        self.assertTrue( abs(2051 * self.run.sampleInteractions - len( interactionSample)) < 200 * self.run.sampleInteractions )
+
+        # optionally I could use a random seed..
+
      
     # #
     # Runs after each test
     def tearDown(self):
-                                
+                                 
         # Wipe output folder
         cmd = "rm %s/*" % self.outputFolder
         os.system(cmd)

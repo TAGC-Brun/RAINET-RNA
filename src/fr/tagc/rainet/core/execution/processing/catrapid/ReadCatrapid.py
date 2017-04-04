@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 from scipy import stats
 import cPickle as pickle
+import random
 
 from fr.tagc.rainet.core.util.exception.RainetException import RainetException
 from fr.tagc.rainet.core.util.log.Logger import Logger
@@ -36,6 +37,7 @@ class ReadCatrapid(object):
     
     TEMP_STORED_INTERACTIONS_FILENAME = "/temp_storedInteractions_"
     STORED_INTERACTIONS_FILENAME = "/storedInteractions.tsv"
+    SAMPLE_INTERACTIONS_FILENAME = "/sampleInteractions.tsv"
     PROTEIN_INTERACTIONS_FILENAME = "/proteinInteractions.tsv"
     RNA_INTERACTIONS_FILENAME = "/rnaInteractions.tsv"
     ALL_INTERACTIONS_FILTERED_TAG = "NA" # value to give when an RNA or protein has all their interactions filtered with cutoff
@@ -44,7 +46,7 @@ class ReadCatrapid(object):
     MAXIMUM_NUMBER_VIABLE_INTERACTIONS = 170000000 # maximum number of interactions writable for interaction matrix output #170M interactions = 23Gb
     
     def __init__(self, catrapid_file, output_folder, interaction_cutoff, interaction_filter_file, rna_filter_file, protein_filter_file,
-                 write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix, boolean_interaction):
+                 write_interactions, batch_size, write_normalised_interactions, write_interaction_matrix, boolean_interaction, sample_interactions):
 
         self.catRAPIDFile = catrapid_file
         self.outputFolder = output_folder
@@ -57,6 +59,7 @@ class ReadCatrapid(object):
         self.writeNormalisedInteractions = write_normalised_interactions
         self.writeInteractionMatrix = write_interaction_matrix
         self.booleanInteraction = boolean_interaction
+        self.sampleInteractions = sample_interactions
 
         if (write_normalised_interactions and write_interactions == 0) or (write_interaction_matrix and write_interactions == 0):
             raise RainetException( "ReadCatrapid.__init__ : --writeInteractions option must be on for --writeNormalisedInteractions to run.")
@@ -163,6 +166,10 @@ class ReadCatrapid(object):
 
         lineCount = 0
         outFileCount = 1
+        
+        # variable used for sampling interactions
+        itemCount = {} # key -> protein or RNA ID, value -> frequency
+        interactionSample = set()
 
         # variable which will store text to be written into files        
         interactionText = ""
@@ -203,7 +210,7 @@ class ReadCatrapid(object):
                            
                 allRNASet.add( rnaID)
                 allProtSet.add( protID)
-               
+                               
                 #### Apply filterings ####     
                 # filter by score
                 if score < self.interactionCutoff: 
@@ -220,6 +227,23 @@ class ReadCatrapid(object):
                 # if filtering by wanted pairs and it is not present
                 if interactionFilterBool and pair not in wanted_pairs:
                     continue
+
+                # if sample interaction filtering is on
+                if self.sampleInteractions != -1:
+
+                    # initialise sample counter
+                    if protID not in itemCount: itemCount[ protID] = 0
+                    if rnaID not in itemCount: itemCount[ rnaID] = 0
+
+                    # only add new sample interactions any of the items still need more samples
+                    # this certifies that each item has at least self.sampleInteractions interactions, unless they are excluded after filter
+                    if itemCount[ protID] < self.sampleInteractions or itemCount[ rnaID] < self.sampleInteractions:
+                        if line not in interactionSample:
+                            # add this interaction with a certain probability (note that this approach is not completely random if we are reading a sorted file)
+                            if random.random() < 0.25:
+                                interactionSample.add( line)
+                                itemCount[ protID] += 1
+                                itemCount[ rnaID] += 1
 
                 #### Store interaction #### 
                 #interactionText += "%s\t%s\n" % (pair, score)
@@ -326,6 +350,15 @@ class ReadCatrapid(object):
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG,
                                                               ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG, ReadCatrapid.ALL_INTERACTIONS_FILTERED_TAG ) )
+
+
+        if self.sampleInteractions != -1:
+            with open( self.outputFolder + ReadCatrapid.SAMPLE_INTERACTIONS_FILENAME, "w") as outFile:
+                for interaction in interactionSample:
+                    outFile.write( interaction)
+
+        self.itemCount = itemCount
+        self.interactionSample = interactionSample
 
         return proteinInteractionsMean, proteinInteractionsCounter
 
@@ -598,6 +631,8 @@ if __name__ == "__main__":
                              default = 0, help='Whether to write interaction matrix file after the filters. --writeInteractions argument must also be 1.')   
         parser.add_argument('--booleanInteraction', metavar='booleanInteraction', type=int,
                              default = 0, help='Whether to write interaction matrix file with 1 or 0 instead of score values. --writeInteractions and --writeInteractionMatrix argument must also be 1.')   
+        parser.add_argument('--sampleInteractions', metavar='sampleInteractions', type=int,
+                             default = -1, help='Write out approximately X semi-random interactions for each RNA and each protein. Output file can have more than X interactions for a protein/RNA since they are co-dependent. Applied after all other filters. Default = -1 (OFF). Advised input: from 1 to 10.')   
     
         #gets the arguments
         args = parser.parse_args( ) 
@@ -605,7 +640,7 @@ if __name__ == "__main__":
         # init
         readCatrapid = ReadCatrapid( args.catRAPIDFile, args.outputFolder, args.interactionCutoff, args.interactionFilterFile, 
                                      args.rnaFilterFile, args.proteinFilterFile, args.writeInteractions, args.batchSize, 
-                                     args.writeNormalisedInteractions, args.writeInteractionMatrix, args.booleanInteraction)
+                                     args.writeNormalisedInteractions, args.writeInteractionMatrix, args.booleanInteraction, args.sampleInteractions)
     
         readCatrapid.run()
     
