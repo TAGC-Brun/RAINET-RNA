@@ -177,6 +177,7 @@ class Enrichment2Protein(object):
         nLines = 0
 
         pairsToWrite = set()
+        enrichmentsDict = {} # Key -> enrichment tag, val -> enrichment text
 
         with open( self.enrichmentData, "r") as inFile:
 
@@ -195,6 +196,8 @@ class Enrichment2Protein(object):
                 annotID = spl[1]
                 dataset = spl[-1]
                 clusterSize = int( spl[3])
+                
+                tag = "|".join( [transcriptID, annotID, dataset])
                                 
                 # retrieve list of proteins on that dataset and complex
                 proteinList = self.complexData[ dataset][ annotID]
@@ -206,6 +209,7 @@ class Enrichment2Protein(object):
                 spl.extend( [proteinText])                
                 newLine = "\t".join( spl)
                 
+                enrichmentsDict[ tag] = newLine                
                 outFile1.write( newLine + "\n")
 
                 # write list of transcriptID and proteinIDs
@@ -220,10 +224,26 @@ class Enrichment2Protein(object):
         print "read_enrichment_data: read %s lines." % nLines
         print "read_enrichment_data: wrote %s transcript-protein pairs." % len( pairsToWrite)
 
-
         outFile1.close()
         outFile2.close()
-                
+
+        return pairsToWrite, enrichmentsDict
+
+
+    def run(self):
+        
+        #===============================================================================
+        # Run analysis / processing
+        #===============================================================================
+
+        Timer.get_instance().step( "Read RainetDB table..")
+        self.read_rainet_db( )
+
+        Timer.get_instance().step( "Read enrichment file..")            
+        pairsToWrite, enrichmentsDict = self.read_enrichment_data()
+
+        return pairsToWrite, enrichmentsDict
+
 
 if __name__ == "__main__":
 
@@ -255,16 +275,7 @@ if __name__ == "__main__":
         # Initialise class
         instance = Enrichment2Protein( args.rainetDB, args.enrichmentData, args.outputFolder, args.complexDatasets)
     
-        #===============================================================================
-        # Run analysis / processing
-        #===============================================================================
-
-        Timer.get_instance().step( "Read RainetDB table..")
-        instance.read_rainet_db( )
-
-        Timer.get_instance().step( "Read enrichment file..")            
-        instance.read_enrichment_data()
-
+        instance.run()
 
         # Stop the chrono      
         Timer.get_instance().stop_chrono( "FINISHED " + SCRIPT_NAME )
