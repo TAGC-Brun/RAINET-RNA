@@ -314,9 +314,7 @@ class CommonLncRNAProteinDisease(object):
         
         print "read_lncrna_protein_file: wrote %s association lines." % nLines
         print "read_lncrna_protein_file: wrote %s association lines with a word match." % nLinesMatch
-        
-        # TODO: unittest matchInfo
-        
+                
         # TODO: file2 for disease network (see notebook)
         
         return matchInfo
@@ -330,7 +328,7 @@ class CommonLncRNAProteinDisease(object):
         # Run analysis / processing
         #===============================================================================
 
-        if args.blackListedWords != "":
+        if self.blackListedWords != "":
             self.read_black_listed_words_file()           
 
         Timer.get_instance().step( "Read lncRNA-disease file..")
