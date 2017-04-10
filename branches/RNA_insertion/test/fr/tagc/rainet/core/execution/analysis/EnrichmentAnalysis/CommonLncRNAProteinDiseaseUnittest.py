@@ -18,8 +18,6 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
     # name of this function needs forcely to be 'setUp'
     def setUp(self):
 
-        print os.getcwd()
-
         # Set the options
         self.rainetDB = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/db_backup/RNA/rainet2016-12-28.human_lncRNA_cutoff50/rainet2016-12-28.human_lncRNA_cutoff50.sqlite"
         self.lncRNADiseaseFile = "/home/diogo/workspace/tagc-rainet-RNA/test/fr/tagc/rainet/core/test_input/EnrichmentAnalysis/CommonLncRNAProteinDisease/enriched_lncRNA_disease_data_lncrnadisease_lnc2cancer.txt"
@@ -60,6 +58,7 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
         self.assertTrue( int( res[2]) == 27)
 
 
+
     def test_process_lncrna_protein_map(self):
         
         print "| test_process_lncrna_protein_map | "
@@ -74,9 +73,26 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
 
         self.run.enrichment_to_protein()
 
-        self.run.process_lncrna_protein_map()
+        matchInfo = self.run.process_lncrna_protein_map()
+        
+        # picking tx ENST00000415082 as example, transcript with only 1 disease annotation
+        
+        cx = [284, 297, 178, 101, 73, 261] # complexes enriched for this transcript
+        
+        for match in matchInfo:
+            spl = match.split( "\t")
+            
+            
+            if spl[ 0] == "ENST00000415082":
+                comp = int( spl[6].split("|")[0])
+                                
+                self.assertTrue( comp in cx)
 
-        # before I found 127 word match lines, now I find 165. 
+                self.assertTrue( spl[4] == "Hereditary Haemorrhagic Telangiectasia")
+                
+                self.assertTrue( "telangiectasia" in spl[5].lower())
+
+        # before adding the complex information I had 127 word match lines, now I find 165. 
         # Probably because now I also have complex level, even if tx-protein pair is the same, but from different complex, they will now be in a different line
 
         ################### TODO: test this ######################
@@ -98,7 +114,34 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
 
         self.assertTrue( self.run.geneTranscriptDict["ENST00000582727"] == "ENSG00000232956")
 
+
+    def test_read_lncrna_disease_file(self):
+        
+        print "| test_read_lncrna_disease_file | "
+        
+        self.run.read_lncrna_disease_file( )
+
+        self.assertTrue( len( self.run.transcriptDiseaseDict) == 35)
+        
+        self.assertTrue( len( self.run.transcriptDiseaseDict[ "ENST00000582727"]) == 3)
+
      
+    def test_read_protein_disease_file(self):
+        
+        print "| test_read_protein_disease_file | "
+
+        self.run.read_protein_disease_file( )
+        
+        self.assertTrue( self.run.proteinDiseaseDict[ "P49959"].pop() == "ATAXIA-TELANGIECTASIA-LIKE DISORDER 1; ATLD1 | ATLD |" )
+
+
+    def test_run(self):
+
+        print "| test_run | "
+        
+        self.run.run()
+        
+
 #     # #
 #     # Runs after each test
 #     def tearDown(self):
