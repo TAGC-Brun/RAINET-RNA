@@ -83,7 +83,8 @@ class CommonLncRNAProteinDisease(object):
             
             item = '"' + transcript + '"'
 
-            queryText = "query( RNA.geneID ).filter( RNA.transcriptID == %s).all()" % item
+#             queryText = "query( RNA.geneID ).filter( RNA.transcriptID == %s).all()" % item
+            queryText = "query( RNA.externalGeneName ).filter( RNA.transcriptID == %s).all()" % item
             
             res = eval('self.sql_session.' + queryText)
 
@@ -229,7 +230,6 @@ class CommonLncRNAProteinDisease(object):
 
         print "read_lncrna_protein_file: avoiding word match of words below size %s." % self.minWordSize
         
-
         matchInfo = [] # all information about the matched disease and its components
 
         # line counters after writing header
@@ -300,22 +300,20 @@ class CommonLncRNAProteinDisease(object):
 
 
         #===============================================================================
-        # Output files
+        # Output file, word matching
         #===============================================================================
 
         # File with matched disease terms only
-        outFile2 = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE_WORD_MATCH, "w")        
-        outFile2.write( "transcriptID\tGeneID\tproteinID\twordsMatched\ttranscriptDisease\tproteinDisease\tcomplexID\tcomplexProteins\tcomplexInteractions\n")
+        outFile = open( self.outputFolder + CommonLncRNAProteinDisease.OUTPUT_FILE_WORD_MATCH, "w")        
+        outFile.write( "transcriptID\tGeneID\tproteinID\twordsMatched\ttranscriptDisease\tproteinDisease\tcomplexID\tcomplexProteins\tcomplexInteractions\n")
         
         for match in matchInfo:
-            outFile2.write( match )
+            outFile.write( match )
 
-        outFile2.close()
+        outFile.close()
         
         print "read_lncrna_protein_file: wrote %s association lines." % nLines
         print "read_lncrna_protein_file: wrote %s association lines with a word match." % nLinesMatch
-                
-        # TODO: file2 for disease network (see notebook)
         
         return matchInfo
         

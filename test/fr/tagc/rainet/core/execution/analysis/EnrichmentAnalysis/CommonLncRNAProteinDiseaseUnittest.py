@@ -74,7 +74,7 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
         self.run.enrichment_to_protein()
 
         matchInfo = self.run.process_lncrna_protein_map()
-        
+                
         # picking tx ENST00000415082 as example, transcript with only 1 disease annotation
         
         cx = [284, 297, 178, 101, 73, 261] # complexes enriched for this transcript
@@ -95,8 +95,6 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
         # before adding the complex information I had 127 word match lines, now I find 165. 
         # Probably because now I also have complex level, even if tx-protein pair is the same, but from different complex, they will now be in a different line
 
-        ################### TODO: test this ######################
-
 
     def test_read_rainet_db(self):
         
@@ -112,7 +110,7 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
         
         self.assertTrue( len( self.run.geneTranscriptDict) == 35)
 
-        self.assertTrue( self.run.geneTranscriptDict["ENST00000582727"] == "ENSG00000232956")
+        self.assertTrue( self.run.geneTranscriptDict["ENST00000582727"] == "SNHG15") #"ENSG00000232956")
 
 
     def test_read_lncrna_disease_file(self):
@@ -142,13 +140,13 @@ class CommonLncRNAProteinDiseaseUnittest(unittest.TestCase):
         self.run.run()
         
 
-#     # #
-#     # Runs after each test
-#     def tearDown(self):
-#                                  
-#         # Wipe output folder
-#         cmd = "rm %s/*" % self.outputFolder
-#         os.system(cmd)
+    # #
+    # Runs after each test
+    def tearDown(self):
+                                  
+        # Wipe output folder
+        cmd = "rm %s/*" % self.outputFolder
+        os.system(cmd)
             
        
 
