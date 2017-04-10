@@ -374,7 +374,7 @@ if __name__ == "__main__":
                              help='For matching transcript disease to protein disease, try to match any words above size X.')
         parser.add_argument('--blackListedWords', metavar='blackListedWords', type=str, default = "",
                              help='Optional file with list of words (one per line) that should not be matched by themselves, unless in conjunction with other words.')
-        parser.add_argument('--complexDatasets', metavar='complexDatasets', type=str, default = "WanCluster,BioplexCluster,CustomCluster",
+        parser.add_argument('--complexDatasets', metavar='complexDatasets', type=str, default = "WanCluster,BioplexCluster,CustomCluster,NetworkModule",
                              help='List of datasets to withdrawn data from RAINET DB. Comma-separated.')
            
         # gets the arguments
