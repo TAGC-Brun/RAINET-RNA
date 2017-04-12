@@ -163,7 +163,7 @@ class PrepareDiseaseNetwork(object):
             
             for pair in complexShare:
                 comp1, comp2 = pair.split( "_")
-                outFile.write( "%s\t%s\t%i\tprotein share\tNA\n" % ( comp1, comp2, complexShare[ pair] ) )
+                outFile.write( "%s\t%s\t%i\tprotein share\t'\n" % ( comp1, comp2, complexShare[ pair] ) )
                     
         outFile.close()
         
@@ -177,7 +177,8 @@ class PrepareDiseaseNetwork(object):
  
         # Write info of RNA nodes
         for rna in rnaNodes:
-            outFile2.write( "%s\tLncRNA\tNA\tNA\n" % ( rna) )
+            # 50 is default size for an RNA node
+            outFile2.write( "%s\tLncRNA\t50\t%s\n" % ( rna, rna) )
  
         # Write info for complex nodes
         for comp in proteinsPerComplex:
@@ -187,6 +188,7 @@ class PrepareDiseaseNetwork(object):
 
         self.networkInfo = networkInfo
         self.complexShare = complexShare
+
 
     # #
     # Calculate number of proteins shared between all combinations of two complexes (one-way, non-self)
@@ -222,7 +224,6 @@ class PrepareDiseaseNetwork(object):
         
         print "calculate_protein_share : number of complex combinations sharing proteins: %s, out of %s possible combinations" % ( len( complexShare), possibleCombinations )
         
-
         return complexShare
 
 
