@@ -5,7 +5,6 @@ require(grid)
 require(gridExtra)
 library(RColorBrewer)
 
-
 ##############################
 # Basic one-way all vs all table
 ##############################
@@ -14,10 +13,11 @@ library(RColorBrewer)
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/experimental_interactions/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile_complex_dataset.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_complex_dataset.tsv"
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile_gencodebasic_background.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/minProt_topEnrich/outFile_minProt_topEnrich.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -35,14 +35,14 @@ grid.newpage()
 grid.table( dataset)
 
 
-
 ##############################
 # Two-sided colored table (as in Mukherjee2016)
 ##############################
 ### change format of dataset: one line per external dataset and 'yes' or 'no', value is odds ratio
 
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv_two_sided.tsv"
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv_two_sided.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv_two_sided.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/minProt_topEnrich/outFile_minProt_topEnrich.tsv_two_sided.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -50,12 +50,16 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 # Proteome-wide
 # dataset = dataset[dataset$TranscriptGroup == "2-scaffolding_candidates"]
 # RBP-only
-dataset = dataset[dataset$TranscriptGroup == "2-RBP-enriched_lncRNAs"]
+# dataset = dataset[dataset$TranscriptGroup == "2-RBP-enriched_lncRNAs"]
+# MinProt topEnrich parameter
+dataset = dataset[dataset$TranscriptGroup == "minProt5_topEnrich5"]
+
 
 # # excluding Mukherjee2016 because it has infinite odds ratio
 # dataset = dataset[dataset$ExternalList != "Mukherjee2016"]
 # excluding Necsulea2014 because there is not significance
 #dataset = dataset[dataset$ExternalList != "Necsulea2014"]
+
 
 ## make Inf odds ratio appear as NA, so that we can put a good enrichment color on it
 dataset[dataset$OddsRatio == "Inf"]$OddsRatio = "NA"
