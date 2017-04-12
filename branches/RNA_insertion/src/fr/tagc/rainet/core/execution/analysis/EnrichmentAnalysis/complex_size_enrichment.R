@@ -7,10 +7,17 @@ require(gridExtra)
 library(RColorBrewer)
 #source("/home/diogo/workspace/tagc-rainet-RNA/src/fr/tagc/rainet/core/execution/analysis/RBPDomain/Rscripts/r_functions.R")
 
-inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR10000Expr1.0/enrichment_results_filtered.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR10000Expr1.0/enrichment_results_filtered.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR10000Expr1.0/minProt5/enrichment_results_filtered.tsv"
+inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/HavugimanaR10000Expr1.0/minProt5_topEnrich5/enrichment_results_filtered.tsv"
+
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/enrichmentAnalysisStrategy/real/lncRNAs/Cutoff50/NetworkModuleR10000Expr1.0/enrichment_results_filtered.tsv"
 
 data <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
+
+###############################
+# Data processing
+###############################
 
 # calculate maximum number_observed_interactions for each complex
 interm = aggregate(data$number_observed_interactions, by = list(data$annotID), max)
@@ -42,20 +49,25 @@ interm7$perc_max_enrich = round( interm7$rnas_with_max * 100.0 / interm7$number_
 
 results = interm7
 
-### Plotting
+###############################
+# Plotting
+###############################
 
-## Scatter plot of number of maximum protein interactions (in all enrichments of complex) per complex size, with linear regression
+###############################
+# Scatter plot of number of maximum protein interactions (in all enrichments of complex) per complex size, with linear regression
+###############################
 fit = lm(max_interacting_proteins ~ number_possible_interactions, data = results)
 
 ### ATTENTION TO XLIM AND YLIM
 # Note that position jitter puts dots out of place (can be above limit number of proteins - ab line)
 plt1 <- ggplot( results, aes(x = number_possible_interactions, y = max_interacting_proteins) )  +
-  scale_color_gradientn(colours = colorRampPalette(c("blue", "darkblue", "red"), bias = 1)(5)) +
+  scale_color_gradientn(colours = colorRampPalette(c("lightblue", "darkblue", "red"), bias = 1)(5)) +
   scale_size_continuous(range = c(1.5, 7)) + 
-  geom_point( aes(color = perc_max_enrich, size = rnas_with_max), position="jitter") +  #log10(rnas_with_max))
-  geom_smooth(method=lm, formula = y ~ x, se=FALSE) + 
+  geom_point( aes(color = perc_max_enrich, size = number_enrichments), position="jitter") +  #log10(rnas_with_max))
+  geom_text( aes(label = annotID)) +
   geom_abline(intercept = 0, slope = 1) + 
-  xlim( c(0,20)) +
+  geom_abline(intercept = signif(fit$coef[[1]],3 ), slope = signif(fit$coef[[2]], 3), color = "brown") + 
+  xlim( c(0,50)) +
   ylim( c(0,30)) +
   labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 3),
                      "Intercept =",signif(fit$coef[[1]],3 ),
@@ -65,27 +77,37 @@ plt1 <- ggplot( results, aes(x = number_possible_interactions, y = max_interacti
 plt1
 
 
-## Scatter plot of number of observed protein interactions (in all enrichments of complex) per complex size, with linear regression
-fit = lm(number_observed_interactions ~ number_possible_interactions, data = data)
-nrow(data)
-
-plt2 <- ggplot( data, aes(x = number_possible_interactions, y = number_observed_interactions) )  +
-  geom_point( size = 1.5) + 
-  geom_smooth(method=lm, formula = y ~ x, se=FALSE) + 
-  geom_abline(intercept = 0, slope = 1) + 
-  xlim( c(0,50)) +
-  labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 3),
-                     "Intercept =",signif(fit$coef[[1]],3 ),
-                     " Slope =",signif(fit$coef[[2]], 3),
-                     " P =",signif(summary(fit)$coef[2,4], 3)))
-plt2
-
-
+# To see if Network modules 'harboring' complexes have similar of different
+# results$ratio = results$max_interacting_proteins / results$number_possible_interactions
+# 
+# results$inside = results$annotID %in% c(4,8,14,33,49,52,56,69,74,87,107,116,178,224)
+# 
+# ggplot( results, aes(x = ratio, fill = inside)) +
+#   geom_histogram( binwidth = 0.01)
+# 
+# ggplot( results[results$inside == "TRUE"], aes(x = ratio, fill = inside)) +
+#   geom_histogram( binwidth = 0.01)
+# ggplot( results[results$inside == "FALSE"], aes(x = ratio, fill = inside)) +
+#   geom_histogram( binwidth = 0.01)
+# 
+# ks.test( results[results$inside == "TRUE"]$ratio, results[results$inside == "FALSE"]$ratio)
 
 
-# plt3 <- ggplot( data, aes(x = number_possible_interactions, y = number_observed_interactions)) + 
-#   stat_bin2d( bin = 50)
-# plt3
+# ## Scatter plot of number of observed protein interactions (in all enrichments of complex) per complex size, with linear regression
+# fit = lm(number_observed_interactions ~ number_possible_interactions, data = data)
+# nrow(data)
+# 
+# plt2 <- ggplot( data, aes(x = number_possible_interactions, y = number_observed_interactions) )  +
+#   geom_point( size = 1.5) + 
+#   geom_smooth(method=lm, formula = y ~ x, se=FALSE) + 
+#   geom_abline(intercept = 0, slope = 1) + 
+#   xlim( c(0,50)) +
+#   labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 3),
+#                      "Intercept =",signif(fit$coef[[1]],3 ),
+#                      " Slope =",signif(fit$coef[[2]], 3),
+#                      " P =",signif(summary(fit)$coef[2,4], 3)))
+# plt2
+# 
 
 
 # ### wanted dataframe: AnnotID\tAnnot size\tEnrichments
