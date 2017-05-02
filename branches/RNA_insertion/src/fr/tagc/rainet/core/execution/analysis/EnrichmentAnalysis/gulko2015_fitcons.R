@@ -58,11 +58,10 @@ results$proportion_above = as.numeric(levels(results$proportion_above)[results$p
 #   theme_minimal()
 # plt1
 
-
 ## Scatter plot with proportion per threshold
 plt2 <- ggplot( results, aes(x = score_cutoff, y = proportion_above, color = group) )  +
   geom_point( size = 3) +
-  geom_line( size = 2) +
+  geom_line( size = 1.5) +
   xlab("fitCons score threshold") +
   ylab("Sequence covered") +
 #  scale_x_continuous(breaks = c(0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80)) +
@@ -76,4 +75,69 @@ plt2 <- ggplot( results, aes(x = score_cutoff, y = proportion_above, color = gro
 plt2
 
 #print as 25.91 vs 5.98 inches
+
+
+#########################
+# Randomisations
+#########################
+# Subsampling groups
+
+nsample = 50
+nrandom = 3
+
+for (i in 1:nrandom){
+
+  sampleRnaAnnotation = data.frame()
+  
+  #results = results[results$group != "CDS",]
+  
+  # For each group of transcripts, pick the sample amount of transcripts
+  for (grp in unique(rnaAnnotation$group) ){
+    rnaAnnotationGroup = rnaAnnotation[ rnaAnnotation$group == grp , ]
+    sampleData = rnaAnnotationGroup[sample( nrow( rnaAnnotationGroup), nsample),]
+    sampleRnaAnnotation = rbind( sampleRnaAnnotation, sampleData)
+  }
+  
+  # confirm if sampling worked
+  nrow(sampleRnaAnnotation) == length(unique(rnaAnnotation$group)) * nsample
+  
+  mergeDataset <- merge( gulkoData, sampleRnaAnnotation, by=c("transcript"))
+  
+  # for each group of transcripts and for each score threshold, calculate proportion of nucleotides above cutoff
+  counter = 0
+  datalist = list()
+  for (grp in unique(mergeDataset$group) ){
+    dtGroup = mergeDataset[ mergeDataset$group == grp]
+    for (scr in unique(mergeDataset$score_cutoff)){
+      counter = counter + 1
+      dtGroupScore = dtGroup[dtGroup$score_cutoff == scr]
+      propAbove = round(sum( dtGroupScore$ncAbove) / sum( dtGroupScore$txSize), 2)
+      datalist[[counter]] <- c(grp,scr,propAbove)
+    }
+  }
+  
+  results = do.call(rbind.data.frame, datalist)
+  colnames(results) <- c("group", "score_cutoff", "proportion_above")
+  
+  # need to convert to numeric otherwise they are factor
+  results$score_cutoff = as.numeric(levels(results$score_cutoff)[results$score_cutoff]) 
+  results$proportion_above = as.numeric(levels(results$proportion_above)[results$proportion_above])
+  
+  print (paste("RAND", i))
+  print (results)
+  
+  # add a new line to plot
+  plt2 = plt2 + geom_line( data = results, linetype = 2, size = 0.5, aes(x = score_cutoff, y = proportion_above, color = group))
+  
+}
+
+plt2
+
+
+# I could also calculate the standard deviation and then standard error of the mean, plot it instead of extra lines
+# E.g.
+# results$sd = results$proportion_above / 100.0 # to be replaced with actual calculation
+# 
+# plt2 = plt2 + geom_errorbar(data = results, aes(ymin=results$proportion_above - sd, ymax=results$proportion_above + sd), colour="black", width=.1)
+# plt2
 
