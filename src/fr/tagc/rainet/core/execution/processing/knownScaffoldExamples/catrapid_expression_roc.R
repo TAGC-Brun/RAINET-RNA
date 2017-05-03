@@ -17,10 +17,13 @@ library(ROCR)
 
 # catRAPID file has scores and also whether interaction is experimental or not
 # catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/score_reformatted.tsv"
+catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores_reformatted3.tsv"
 # catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_HepG2_positives_negatives.out"
-catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_K562_positives_negatives.out"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_K562_positives_negatives.out"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores_reformatted3.tsv"
 # expression file only has expression data per interaction
 expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/eCLIP_interactions/storedInteractions_reformatted.tsv"
+# expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/NPInter_interactions_ensembl68/storedInteractions_reformatted.tsv"
 
 catRAPIDData = fread(catRAPIDfile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 expressionData = fread(expressionFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
@@ -35,10 +38,12 @@ expressionData = fread(expressionFile, stringsAsFactors = FALSE, header = TRUE, 
 
 # merge catrapid and expression data, keeping only intersection
 mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
+# write.table(mergedData, file='/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores_plus_expression.tsv', quote=FALSE, sep='\t', col.names = T, row.names = F)
+
 
 # need to remove zero expression before doing log10
 mergedData = mergedData[ mergedData$expression_score > 0]
-mergedData$expression_score = log(mergedData$expression_score)
+mergedData$expression_score = log10(mergedData$expression_score)
 
 
 # plt1 = ggplot(positives, aes( x = catrapid_score, y = expression_score)) +
@@ -69,14 +74,14 @@ paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$expression_score, nonValid
 ###################################### 
 
 betaMin = 0
-betaMax = 300
-betaStep = 20
+betaMax = 100
+betaStep = 5
 
 for (beta in seq(betaMin, betaMax, by = betaStep)){
 
   # Define the metric to be used for ROC curve
   mergedData$metric = mergedData$catrapid_score + mergedData$expression_score * beta
-  
+
   # Use ROCR
   pred = prediction(mergedData$metric, mergedData$in_validated_set, label.ordering = NULL)
   perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -89,10 +94,8 @@ for (beta in seq(betaMin, betaMax, by = betaStep)){
 }
 
 # composite model
-beta = 100
+beta = 80
 mergedData$metric = mergedData$catrapid_score + mergedData$expression_score * beta
-
-mergedData$metric
 
 # Use ROCR
 pred = prediction(mergedData$metric, mergedData$in_validated_set, label.ordering = NULL)
