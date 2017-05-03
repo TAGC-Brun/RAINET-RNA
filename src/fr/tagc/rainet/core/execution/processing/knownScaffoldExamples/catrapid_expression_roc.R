@@ -15,27 +15,37 @@ library(ROCR)
 # Read input data
 ###################################### 
 
-catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/score_reformatted.tsv"
+# catRAPID file has scores and also whether interaction is experimental or not
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/score_reformatted.tsv"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_HepG2_positives_negatives.out"
+catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_K562_positives_negatives.out"
+# expression file only has expression data per interaction
 expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/eCLIP_interactions/storedInteractions_reformatted.tsv"
 
 catRAPIDData = fread(catRAPIDfile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 expressionData = fread(expressionFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
-# merge, keeping only intersection
+# # catrapid scores only
+# mergedData = catRAPIDData
+# mergedData$metric = mergedData$catrapid_score 
+
+# # expression data only
+# mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
+# mergedData$metric = mergedData$expression_score
+
+# merge catrapid and expression data, keeping only intersection
 mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
 
-# mergedData$catrapid_score = 0
-
-# # # need to remove zero expression before doing log10
+# need to remove zero expression before doing log10
 mergedData = mergedData[ mergedData$expression_score > 0]
-mergedData$expression_score = log10(mergedData$expression_score)
+mergedData$expression_score = log(mergedData$expression_score)
+
 
 # plt1 = ggplot(positives, aes( x = catrapid_score, y = expression_score)) +
 #   geom_point( size = 1.5) +
 #   geom_smooth()
 # plt1
-
-cor(mergedData$catrapid_score, mergedData$expression_score)
+# cor(mergedData$catrapid_score, mergedData$expression_score)
 
 # Separate validated from non-validated
 validated = mergedData[mergedData$in_validated_set == 1,]
@@ -54,15 +64,13 @@ paste("Median score of non-experimental interactions:",median(nonValidated$expre
 paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$expression_score, nonValidated$expression_score, alternative = c("two.sided"))$p.value)
 
 
-
-
 ###################################### 
 # ROC curve 
 ###################################### 
 
 betaMin = 0
-betaMax = 20
-betaStep = 5
+betaMax = 300
+betaStep = 20
 
 for (beta in seq(betaMin, betaMax, by = betaStep)){
 
@@ -80,9 +88,11 @@ for (beta in seq(betaMin, betaMax, by = betaStep)){
   
 }
 
-
-beta = 20
+# composite model
+beta = 100
 mergedData$metric = mergedData$catrapid_score + mergedData$expression_score * beta
+
+mergedData$metric
 
 # Use ROCR
 pred = prediction(mergedData$metric, mergedData$in_validated_set, label.ordering = NULL)
@@ -115,3 +125,4 @@ for (cost in seq(1,3)){
   points(x = 1-spec, y = sens, col = colours[cost], pch = 16)
 }
 legend("bottomright", paste("cost =", 1:3), col = colours[1:3], pch = 16, cex = 0.8, title = "Sensitivity")
+
