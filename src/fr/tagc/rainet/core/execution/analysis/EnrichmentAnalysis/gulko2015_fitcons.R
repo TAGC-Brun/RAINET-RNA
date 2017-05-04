@@ -98,7 +98,7 @@ for (i in 1:nrandom){
   # For each group of transcripts, pick the sample amount of transcripts
   for (grp in unique(rnaAnnotation$group) ){
     rnaAnnotationGroup = rnaAnnotation[ rnaAnnotation$group == grp , ]
-    sampleData = rnaAnnotationGroup[sample( nrow( rnaAnnotationGroup), nsample),]
+    sampleData = rnaAnnotationGroup[sample( nrow( rnaAnnotationGroup), replace = TRUE, nsample),]
     sampleRnaAnnotation = rbind( sampleRnaAnnotation, sampleData)
   }
   
@@ -145,7 +145,7 @@ resultsPlusDev$lower = resultsPlusDev$proportion_above - resultsPlusDev$sd
 resultsPlusDev$upper = resultsPlusDev$proportion_above + resultsPlusDev$sd 
 
 # Add the error bars to the plot 
-plt2 = plt2 + geom_errorbar(data = resultsPlusDev, aes(x = score_cutoff, ymin= lower, ymax= upper), colour="black", width=.01, size = 0.1)
+plt2 = plt2 + geom_errorbar(data = resultsPlusDev, aes(x = score_cutoff, ymin= lower, ymax= upper), width=.01, size = 0.15)
 plt2
 
 #print as 25.91 vs 5.98 inches
