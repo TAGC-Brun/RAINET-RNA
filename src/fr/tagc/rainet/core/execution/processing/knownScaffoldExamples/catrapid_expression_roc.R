@@ -30,21 +30,32 @@ expressionData = fread(expressionFile, stringsAsFactors = FALSE, header = TRUE, 
 
 # # catrapid scores only
 # mergedData = catRAPIDData
-# mergedData$metric = mergedData$catrapid_score 
+# mergedData$metric = mergedData$catrapid_score # this should be rerun after any expression data transformation
 
 # # expression data only
 # mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
 # mergedData$metric = mergedData$expression_score
 
 # merge catrapid and expression data, keeping only intersection
-mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
+# mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"))
 # write.table(mergedData, file='/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores_plus_expression.tsv', quote=FALSE, sep='\t', col.names = T, row.names = F)
 
+# # Doing a left merge
+mergedData = merge(x = catRAPIDData, y = expressionData, by = c("transcript","protein"), all.x = TRUE)
+mergedData[is.na(mergedData)] = 0
 
-# need to remove zero expression before doing log10
-mergedData = mergedData[ mergedData$expression_score > 0]
-mergedData$expression_score = log10(mergedData$expression_score)
+# Apply [0,1] normalisation
+mergedData$catrapid_score = (mergedData$catrapid_score-min(mergedData$catrapid_score))/(max(mergedData$catrapid_score)-min(mergedData$catrapid_score))
+mergedData$expression_score = (mergedData$expression_score-min(mergedData$expression_score))/(max(mergedData$expression_score)-min(mergedData$expression_score))
 
+# # Apply log transformation
+# mergedData$expression_score = mergedData$expression_score + 1
+# mergedData$expression_score = log10(mergedData$expression_score)
+
+# summary(mergedData$expression_score)
+# plt1 = ggplot(mergedData, aes( x = expression_score)) +
+#   geom_histogram()
+# plt1
 
 # plt1 = ggplot(positives, aes( x = catrapid_score, y = expression_score)) +
 #   geom_point( size = 1.5) +
@@ -55,6 +66,10 @@ mergedData$expression_score = log10(mergedData$expression_score)
 # Separate validated from non-validated
 validated = mergedData[mergedData$in_validated_set == 1,]
 nonValidated = mergedData[mergedData$in_validated_set == 0]
+
+### Subsample the negatives
+nonValidated = nonValidated[sample(nrow(nonValidated), nrow(validated))]
+mergedData = rbind(validated, nonValidated)
 
 ### Basic statistics
 paste("Number of experimental interactions:", nrow(validated))
@@ -74,8 +89,8 @@ paste("Kolmogorov-Smirnov pvalue:", ks.test(validated$expression_score, nonValid
 ###################################### 
 
 betaMin = 0
-betaMax = 100
-betaStep = 5
+betaMax = 1000
+betaStep = 100
 
 for (beta in seq(betaMin, betaMax, by = betaStep)){
 
@@ -88,10 +103,10 @@ for (beta in seq(betaMin, betaMax, by = betaStep)){
   
   auc = performance(pred, measure = "auc")
   
-  print(paste("Beta:", beta))
-  print(paste("AUC:", round(auc@y.values[[1]],2)))
-  
+  print(paste("Beta:", beta, "AUC:", round(auc@y.values[[1]],2)))
+
 }
+
 
 # composite model
 beta = 80
