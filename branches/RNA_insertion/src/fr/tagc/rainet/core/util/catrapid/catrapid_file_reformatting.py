@@ -17,8 +17,9 @@ with open( inputFile, "r") as inFile:
         
         txID,protID = spl[0].split("|")
         score = spl[1]
+        otherColums = spl[1:]
         
-        outputFile.write("sp|%s|sp %s\t%s\n" % (protID, txID, score) )
+        outputFile.write("sp|%s|sp %s\t%s\n" % (protID, txID, "\t".join(otherColums) ) )
         
 outputFile.close()
 print "FINISHED!"
