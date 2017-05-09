@@ -16,14 +16,8 @@ library(ROCR)
 ###################################### 
 
 # catRAPID file has scores and also whether interaction is experimental or not
-# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/score_reformatted.tsv"
-# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores_reformatted3.tsv"
-# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_HepG2_positives_negatives.out"
-# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_K562_positives_negatives.out"
 catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/NPInterPredictionValidation/allInteractions/scores_reformatted3.tsv"
-# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores_reformatted3.tsv"
 # expression file only has expression data per interaction
-# expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/eCLIP_interactions/storedInteractions_reformatted.tsv"
 expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/NPInter_interactions_ensembl68/storedInteractions_reformatted.tsv"
 
 catRAPIDData = fread(catRAPIDfile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
@@ -154,4 +148,13 @@ text(0.15,0.90, paste("# Positives:",nrow(validated) ) )
 text(0.16,0.85, paste("# Negatives:",nrow(nonValidated) ) )
 
 legend(0.4, 0.2, legend = c("catRAPID + expression","catRAPID only"), col = c("dark green","brown"), lty=1:2, cex=0.9)
+
+### other tested files
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps/score_reformatted.tsv"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/only_112_rbps_15230_gencode_basic_lncRNAs/scores_reformatted3.tsv"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_HepG2_positives_negatives.out"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/eCLIPPredictionValidation/ROC/eclip_read_count/eclip_K562_positives_negatives.out"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl68/interactions_with_npinter_positives/scores_reformatted3.tsv"
+# catRAPIDfile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/StarBasePredictionValidation/lncRNAs/scores_reformatted3.tsv"
+# expressionFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/ReadCatrapid/Ensembl82/lncrna/expression_data/eCLIP_interactions/storedInteractions_reformatted.tsv"
 
