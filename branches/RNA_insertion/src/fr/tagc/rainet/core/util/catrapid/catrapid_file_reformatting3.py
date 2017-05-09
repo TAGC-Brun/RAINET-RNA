@@ -18,10 +18,11 @@ with open( inputFile, "r") as inFile:
         ids = spl[0]
         prot, txID = ids.split(" ")
         score = spl[1]
+        otherColums = spl[1:]
 
         protID = prot.split("|")[1]
         
-        outputFile.write("%s\t%s\t%s\n" % (txID, protID, score) )
+        outputFile.write("%s\t%s\t%s\n" % (txID, protID, "\t".join(otherColums)) )
         
 outputFile.close()
 print "FINISHED!"
