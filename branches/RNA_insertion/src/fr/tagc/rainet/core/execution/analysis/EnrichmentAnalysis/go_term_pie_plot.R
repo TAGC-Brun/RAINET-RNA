@@ -31,13 +31,14 @@ blank_theme <- theme_minimal()+
 )
 
 
-plt1 <- ggplot( data, aes(x = "", y = PROPORTION, fill = factor(GO_NAME)) )  +
-  geom_bar(stat = "identity", width = 1, color = "black", size = 0.7, alpha = 0.9) +
+plt1 <- ggplot( data, aes(x = "", y = PROPORTION, fill = GO_NAME) )  +
+  geom_bar( width = 1, color = "black", size = 0.7, alpha = 0.9) + #stat = "identity"
   coord_polar(theta="y") +
   # geom_text(aes(y = PERC, label = factor(PERC)), position=position_stack()) +
   scale_fill_manual(name = "GO term", values=cbPalette) +
   blank_theme +
-  theme(axis.text.x=element_blank(), legend.position="top", legend.text=element_text(size=13)) +
+  theme(axis.text.x=element_blank(), legend.position="top", legend.text=element_text(size=7)) +
   guides(fill=guide_legend(nrow=4,byrow=TRUE))
 plt1
 
+#print as 7.00 x 5.91 inches
