@@ -1,4 +1,7 @@
 
+# 2017 Diogo Ribeiro
+# Script to plot/table results from fisher exact test and its odds ratio on groups of lncRNAs
+
 library(data.table)
 require(ggplot2)
 require(grid)
@@ -18,6 +21,7 @@ library(RColorBrewer)
 #inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/structure_comparison/outFile_gencodebasic_background.tsv"
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/minProt_topEnrich/outFile_minProt_topEnrich.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/RBP_analysis/GroupOddsRatio/cutoff50_background_rbp/rbp.tsv"
 
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
@@ -43,7 +47,6 @@ grid.table( dataset)
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv_two_sided.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv_two_sided.tsv"
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/minProt_topEnrich/outFile_minProt_topEnrich.tsv_two_sided.tsv"
-
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ### filter dataset to have only scaffolding candidates
