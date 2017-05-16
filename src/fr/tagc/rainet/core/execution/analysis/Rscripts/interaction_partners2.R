@@ -39,8 +39,13 @@ mean(dataset$count)
 plt1 <- ggplot( dataset, aes(x = count)) + 
   geom_histogram( binwidth = 50) + 
   ylab("# lncRNAs") +
+  # scale_y_log10() +
+#   ylim(c(0,110)) +
   xlab("# Protein (targets)") +
   ggtitle("Distribution of interactions per lncRNA") +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=4, label = paste("     Median:",median( dataset$count)) ) +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=6, label = paste("Mean:",round( mean( dataset$count), 2 ))) +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=8, label = paste("       Std:",round( sd( dataset$count), 2) )) +
   theme_minimal()
 plt1
 
@@ -78,6 +83,9 @@ plt3 <- ggplot( dataset2, aes(x = count)) +
   ylab("# Proteins") +
   xlab("# lncRNA (targets)") +
   ggtitle("Distribution of interactions per protein") +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=4, label = paste("     Median:",median( dataset2$count)) ) +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=6, label = paste("Mean:",round( mean( dataset2$count), 2 ))) +
+  annotate("text", x = Inf, y = Inf,hjust=2,vjust=8, label = paste("       Std:",round( sd( dataset2$count), 2) )) +
   theme_minimal()
 plt3
 
