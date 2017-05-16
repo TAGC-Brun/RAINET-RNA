@@ -66,3 +66,4 @@ plt3 <- ggplot( annotDataset, aes(x = dataset.annot_enrichments)) +
   annotate("text", x = Inf, y = Inf,hjust=2,vjust=8, label = paste("       Std:",round( sd( annotDataset$dataset.annot_enrichments), 2) ))
 plt3
 
+# 
