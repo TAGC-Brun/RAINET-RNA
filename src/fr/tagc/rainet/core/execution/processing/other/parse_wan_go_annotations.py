@@ -36,7 +36,7 @@ SCRIPT_NAME = "parse_wan_go_annotations.py"
 theParents = set() # global variable storing parents of a term
 
 # Constants
-UNANNOTATED_CATEGORY = "Unannotated"
+UNANNOTATED_CATEGORY = "'unannotated'"
 PROPORTION_WAN_ANNOTATIONS = "proportion_wan_go_term_annotations"
 
 # #
