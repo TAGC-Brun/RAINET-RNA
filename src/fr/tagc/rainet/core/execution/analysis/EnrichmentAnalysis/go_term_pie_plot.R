@@ -37,7 +37,7 @@ plt1 <- ggplot( data, aes(x = "", y = PROPORTION, fill = GO_NAME) )  +
   # geom_text(aes(y = PERC, label = factor(PERC)), position=position_stack()) +
   scale_fill_manual(name = "GO term", values=cbPalette) +
   blank_theme +
-  theme(axis.text.x=element_blank(), legend.position="top", legend.text=element_text(size=7)) +
+  theme(axis.text.x=element_blank(), legend.position="top", legend.text=element_text(size=10), legend.key.size = unit(1,"line")) +
   guides(fill=guide_legend(nrow=4,byrow=TRUE))
 plt1
 
