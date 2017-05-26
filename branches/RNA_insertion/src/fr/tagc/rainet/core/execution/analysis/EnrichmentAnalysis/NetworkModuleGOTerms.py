@@ -96,6 +96,19 @@ class NetworkModuleGOTerms(object):
         Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number Modules with annotation: %s" % ( len( moduleGOTerms)) )
         Logger.get_instance().info( "NetworkModuleGOTerms.read_rainet_db : Number GO terms associated to module: %s" % ( len( goTermFrequency)) )
      
+     
+    
+        networkTermsOut = open( "all_terms.txt", "w")
+        for module in sorted(moduleGOTerms):
+            terms = []
+            for term in moduleGOTerms[ module]:
+                if len( term) > 0:
+                    terms.append( "(" + term + ")" )
+            
+            if len( terms) > 0:
+                networkTermsOut.write( "%s\t%s\n" % ( module, ",".join(terms) ) )
+        networkTermsOut.close()
+     
         self.moduleGOTerms = moduleGOTerms
         self.goTermFrequency = goTermFrequency
         self.termDescriptions = termDescriptions
