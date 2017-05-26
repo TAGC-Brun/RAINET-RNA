@@ -47,6 +47,8 @@ grid.table( dataset)
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_simple.tsv_two_sided.tsv"
 # inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/rbp_enrichments/outFile.tsv_two_sided.tsv"
 inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/minProt_topEnrich/outFile_minProt_topEnrich.tsv_two_sided.tsv"
+# inputFile = "/home/diogo/Documents/RAINET_data/TAGC/rainetDatabase/results/LncRNAGroupAnalysis/LncRNAGroupOddsRatio/real/outFile_complex_dataset.tsv_two_sided.tsv"
+
 dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 
 ### filter dataset to have only scaffolding candidates
@@ -54,8 +56,8 @@ dataset <- fread(inputFile, stringsAsFactors = FALSE, header = TRUE, sep="\t")
 # dataset = dataset[dataset$TranscriptGroup == "2-scaffolding_candidates"]
 # RBP-only
 # dataset = dataset[dataset$TranscriptGroup == "2-RBP-enriched_lncRNAs"]
-# MinProt topEnrich parameter
-dataset = dataset[dataset$TranscriptGroup == "minProt5_topEnrich5"]
+# # MinProt topEnrich parameter
+# dataset = dataset[dataset$TranscriptGroup == "minProt5_topEnrich5"]
 
 
 # # excluding Mukherjee2016 because it has infinite odds ratio
@@ -79,6 +81,22 @@ plt1 = ggplot( dataset, aes(x = ExternalList, y = InGroup)) +
 plt1
 
 # print as 20.91 x 4.50 inches
+
+
+# # Plot for functional RNAs vs protein dataset
+# plt1 = ggplot( dataset, aes(x = TranscriptGroup, y = InGroup)) +
+#   geom_tile( aes( fill = OddsRatio), colour = "black", size = 1) + 
+#   scale_fill_continuous( low = "white", high = "#de2d26", name = "Fisher's Exact Test \nOdds ratio", na.value = "#de2d26") +  
+#   xlab("Protein dataset") +
+#   ylab("Functional RNA") +
+#   geom_text( label = dataset$Overlap, size = 8) +
+#   theme_minimal() + 
+#   theme(text = element_text(size=20)) +
+#   theme(axis.title.x=element_text(vjust=-0.6))
+# plt1
+# 
+# # print as 13.91 x 4.50 inches
+
 
 ##############################
 # Colored table for complex datasets
