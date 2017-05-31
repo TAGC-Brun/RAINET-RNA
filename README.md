@@ -4,7 +4,7 @@ RAINET: Towards the understanding of **R**N**A**-protein **I**nteraction **NET**
 
 This project aims at identifying human long non-coding RNAs likely to scaffold protein complexes. 
 
-This github page contains the source code associated to the Ribeiro _et al._ publication. All resulting data and plots will be published elsewhere.
+This github page contains the source code associated to the Ribeiro _et al._ publication "Protein complex scaffolding as a prevalent function of human long non-coding RNAs". All resulting data and plots will be published elsewhere.
 
 
 ## Authors:
