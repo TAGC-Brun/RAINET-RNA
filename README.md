@@ -1,4 +1,4 @@
-# RAINET project wiki
+# RAINET project
 
 RAINET: Towards the understanding of **R**N**A**-protein **I**nteraction **NET**works.
 
@@ -61,7 +61,6 @@ The main scripts for this project were coded in an object-oriented environment, 
   * LncRNAGroupOddsRatio.py (for evaluating overlap of groups of lncRNAs against functional lncRNAs)
   * ReadGulko.java and gulko2015_fitcons.R (for evaluating fitCons scores)
   * ComplexDatasetOverlap.py (for evaluating overlap between complex datasets)
-
 
 ## Supported OS and required software:
 
