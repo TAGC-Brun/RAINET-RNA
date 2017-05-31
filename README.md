@@ -28,7 +28,7 @@ Diogo M. Ribeiro 1, Andreas Zanzoni 1, Lionel Spinelli 1, Riccardo Delli Ponti 2
 The main scripts for this project were coded in an object-oriented environment, creating and using a SQLite database to contain and associate information. Analysis leading to publication involved many separate analysis scripts, the main ones will be described here.
 
 ### Folder description:
-* The 'src' directory contains our Python and R scripts. (main analysis scripts are on: /tagc-rainet-RNA/src/fr/tagc/rainet/core/execution)
+* The 'src' directory contains our Python and R scripts. (main analysis scripts are on: /src/fr/tagc/rainet/core/execution)
 * The 'test' directory contains Python unittests of main scripts.
 * The 'resources' directory contains paths to input files used for main scripts.
 * The 'documentation' directory contains the doxygen script documentation and the RAINET database schema.
