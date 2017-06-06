@@ -9,7 +9,7 @@ This github page contains the source code associated to the Ribeiro _et al._ pub
 
 ## Authors:
 
-Diogo M. Ribeiro 1, Andreas Zanzoni 1, Lionel Spinelli 1, Riccardo Delli Ponti 2,3, Gian Gaetano Tartaglia 2,3,4, Christine Brun 1,5
+Diogo M. Ribeiro <sup>1</sup>, Andreas Zanzoni <sup>1</sup>, Lionel Spinelli <sup>1</sup>, Riccardo Delli Ponti <sup>2,3</sup>, Gian Gaetano Tartaglia <sup>2,3,4</sup>, Christine Brun <sup>1,5</sup>
 
 ## Affiliations:
 1 - Aix-Marseille Université, Inserm, TAGC UMR_S1090, Marseille, France
