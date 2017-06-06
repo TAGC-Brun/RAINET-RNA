@@ -1,0 +1,103 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil}\index{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util@{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util}}
+}
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a3926c6b34baad7d386aa260b3b69eda3}{find\-\_\-groups\-\_\-in\-\_\-string}
+\begin{DoxyCompactList}\small\item\em Match the provided input string with the given compiled pattern to return the group defined in the pattern. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a55c373b2791c3f4c400a9ff6067ff9f8}{find\-\_\-single\-\_\-group\-\_\-in\-\_\-string}
+\begin{DoxyCompactList}\small\item\em Retrieve the group in the query string provided a pattern with group definition. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a235fb083ef75a2f97f62b790d9b3fe7b}{find\-\_\-groups\-\_\-in\-\_\-list}
+\begin{DoxyCompactList}\small\item\em Match the strings of the provided input list with the given compiled pattern to return the groups defined in the pattern. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a235fb083ef75a2f97f62b790d9b3fe7b}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}!find\-\_\-groups\-\_\-in\-\_\-list@{find\-\_\-groups\-\_\-in\-\_\-list}}
+\index{find\-\_\-groups\-\_\-in\-\_\-list@{find\-\_\-groups\-\_\-in\-\_\-list}!src::fr::tagc::rainet::core::util::pattern::PatternUtil::PatternUtil@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}}
+\subsubsection[{find\-\_\-groups\-\_\-in\-\_\-list}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util.\-find\-\_\-groups\-\_\-in\-\_\-list (
+\begin{DoxyParamCaption}
+\item[{}]{compiled\-\_\-pattern, }
+\item[{}]{input\-\_\-list}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a235fb083ef75a2f97f62b790d9b3fe7b}
+
+
+Match the strings of the provided input list with the given compiled pattern to return the groups defined in the pattern. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em compiled\-\_\-pattern} & \-: Pattern -\/ A pattern compiled with the re.\-compile method. The regular expression used to compile must contain a single group (without name) \\
+\hline
+{\em input\-\_\-list} & \-: list$<$string$>$ -\/ The list of strings to be matched with the Pattern\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the list of groups found. May be empty. 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Rainet\-Exception} & If no group is found and an exception was raised during the search \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a3926c6b34baad7d386aa260b3b69eda3}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}!find\-\_\-groups\-\_\-in\-\_\-string@{find\-\_\-groups\-\_\-in\-\_\-string}}
+\index{find\-\_\-groups\-\_\-in\-\_\-string@{find\-\_\-groups\-\_\-in\-\_\-string}!src::fr::tagc::rainet::core::util::pattern::PatternUtil::PatternUtil@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}}
+\subsubsection[{find\-\_\-groups\-\_\-in\-\_\-string}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util.\-find\-\_\-groups\-\_\-in\-\_\-string (
+\begin{DoxyParamCaption}
+\item[{}]{compiled\-\_\-pattern, }
+\item[{}]{input\-\_\-string}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a3926c6b34baad7d386aa260b3b69eda3}
+
+
+Match the provided input string with the given compiled pattern to return the group defined in the pattern. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em compiled\-\_\-pattern} & \-: Pattern -\/ A pattern compiled with the re.\-compile method. The regular expression used to compile must contain a single group (without name) \\
+\hline
+{\em input\-\_\-string} & \-: string -\/ The string to match with the Pattern\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the matched group if any, None if no match is found 
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Rainet\-Exception} & If more than one group is found in the matching \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a55c373b2791c3f4c400a9ff6067ff9f8}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}!find\-\_\-single\-\_\-group\-\_\-in\-\_\-string@{find\-\_\-single\-\_\-group\-\_\-in\-\_\-string}}
+\index{find\-\_\-single\-\_\-group\-\_\-in\-\_\-string@{find\-\_\-single\-\_\-group\-\_\-in\-\_\-string}!src::fr::tagc::rainet::core::util::pattern::PatternUtil::PatternUtil@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::pattern\-::\-Pattern\-Util\-::\-Pattern\-Util}}
+\subsubsection[{find\-\_\-single\-\_\-group\-\_\-in\-\_\-string}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-pattern.\-Pattern\-Util.\-Pattern\-Util.\-find\-\_\-single\-\_\-group\-\_\-in\-\_\-string (
+\begin{DoxyParamCaption}
+\item[{}]{pattern, }
+\item[{}]{query\-\_\-string, }
+\item[{}]{strict = {\ttfamily True}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1pattern_1_1PatternUtil_1_1PatternUtil_a55c373b2791c3f4c400a9ff6067ff9f8}
+
+
+Retrieve the group in the query string provided a pattern with group definition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pattern} & \-: string -\/ The pattern to test. It must contain a group definition \\
+\hline
+{\em query\-\_\-string} & \-: string -\/ The string to match on the pattern\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string -\/ The group string if found or if not, either None if strict mode is true or the query\-\_\-string if strict mode is false 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/util/pattern/Pattern\-Util.\-py\end{DoxyCompactItemize}

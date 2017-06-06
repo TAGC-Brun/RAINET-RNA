@@ -1,0 +1,90 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser}\index{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser@{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser}}
+}
+
+
+This class is a parser of a graph module (class) annotation file produced by the Brun team tools Each retrieved module get its annotations added The parser have to received as input\-: -\/file\-\_\-path \-: string -\/ The fpath to the file to parse -\/class\-\_\-tag \-: string -\/ The tag indicating the beginning of a class (module) definition -\/class\-\_\-regex \-: string -\/ The regex that provides the location of the class (module) I\-D as a group -\/protein\-\_\-tag \-: string -\/ The tag indicating the list of class (module) proteins -\/annotation\-\_\-tag \-: string -\/ The tag indicating the list of class (module) annotations -\/comment\-\_\-char \-: string -\/ The character used to declare comment lines -\/clean\-\_\-table \-: boolean -\/ The information indicating if the related db table must be cleaned before insertion or not.  
+
+
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.911263cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_a0f615babb23b0308ccbe7ee86ee1d3a0}{def {\bfseries parse\-\_\-file}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_a0f615babb23b0308ccbe7ee86ee1d3a0}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_aca6c2c2d14d6ca166152de814c3d70fc}{def {\bfseries process\-\_\-modules}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_aca6c2c2d14d6ca166152de814c3d70fc}
+
+\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_ae635f6f43b72b7649c779786dd32779b}{check\-\_\-proteins}
+\begin{DoxyCompactList}\small\item\em Check if the list of proteins provided in the list correspond to the network module proteins listed in the D\-B. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_a5239cf8f1385df4b488a50c6b468aff2}{associate\-\_\-annotations}
+\begin{DoxyCompactList}\small\item\em Parse the provided line to find annotations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is a parser of a graph module (class) annotation file produced by the Brun team tools Each retrieved module get its annotations added The parser have to received as input\-: -\/file\-\_\-path \-: string -\/ The fpath to the file to parse -\/class\-\_\-tag \-: string -\/ The tag indicating the beginning of a class (module) definition -\/class\-\_\-regex \-: string -\/ The regex that provides the location of the class (module) I\-D as a group -\/protein\-\_\-tag \-: string -\/ The tag indicating the list of class (module) proteins -\/annotation\-\_\-tag \-: string -\/ The tag indicating the list of class (module) annotations -\/comment\-\_\-char \-: string -\/ The character used to declare comment lines -\/clean\-\_\-table \-: boolean -\/ The information indicating if the related db table must be cleaned before insertion or not. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_a5239cf8f1385df4b488a50c6b468aff2}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser}!associate\-\_\-annotations@{associate\-\_\-annotations}}
+\index{associate\-\_\-annotations@{associate\-\_\-annotations}!src::fr::tagc::rainet::core::util::parser::NetworkModuleAnnotationParser::NetworkModuleAnnotationParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser}}
+\subsubsection[{associate\-\_\-annotations}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser.\-associate\-\_\-annotations (
+\begin{DoxyParamCaption}
+\item[{}]{network\-\_\-module, }
+\item[{}]{line, }
+\item[{}]{sql\-\_\-session}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_a5239cf8f1385df4b488a50c6b468aff2}
+
+
+Parse the provided line to find annotations. 
+
+Create corresponding Network\-Module\-Annotation objects and attach them to the provided network\-\_\-module
+
+
+\begin{DoxyParams}{Parameters}
+{\em network\-\_\-module} & \-: Network\-Module -\/ The annotated network module \\
+\hline
+{\em line} & \-: string -\/ the line of the file containing the list of annotations \\
+\hline
+{\em sql\-\_\-session} & the current S\-Q\-L\-Alchemy session\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None  Rainet\-Exception if an error occurred during parsing 
+\end{DoxyReturn}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_ae635f6f43b72b7649c779786dd32779b}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser}!check\-\_\-proteins@{check\-\_\-proteins}}
+\index{check\-\_\-proteins@{check\-\_\-proteins}!src::fr::tagc::rainet::core::util::parser::NetworkModuleAnnotationParser::NetworkModuleAnnotationParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Annotation\-Parser\-::\-Network\-Module\-Annotation\-Parser}}
+\subsubsection[{check\-\_\-proteins}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Annotation\-Parser.\-Network\-Module\-Annotation\-Parser.\-check\-\_\-proteins (
+\begin{DoxyParamCaption}
+\item[{}]{network\-\_\-module, }
+\item[{}]{line, }
+\item[{}]{sql\-\_\-session}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleAnnotationParser_1_1NetworkModuleAnnotationParser_ae635f6f43b72b7649c779786dd32779b}
+
+
+Check if the list of proteins provided in the list correspond to the network module proteins listed in the D\-B. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em network\-\_\-module} & \-: Network\-Module -\/ The network module the proteins should be part of \\
+\hline
+{\em line} & \-: string -\/ the line of the file containing the list of proteins \\
+\hline
+{\em sql\-\_\-session} & the current S\-Q\-L\-Alchemy session\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None  Rainet\-Exception if an error occurred during parsing 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/util/parser/Network\-Module\-Annotation\-Parser.\-py\end{DoxyCompactItemize}

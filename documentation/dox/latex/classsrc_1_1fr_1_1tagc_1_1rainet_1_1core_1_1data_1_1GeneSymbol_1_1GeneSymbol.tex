@@ -1,0 +1,40 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Gene\-Symbol.\-Gene\-Symbol Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol}\index{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Gene\-Symbol.\-Gene\-Symbol@{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Gene\-Symbol.\-Gene\-Symbol}}
+}
+
+
+This class describe a gene symbol associated to a protein this class has a many-\/to-\/one relationship with the class Protein.  
+
+
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Gene\-Symbol.\-Gene\-Symbol\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_a65846cbf33fbd102348042e83077ad85}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_a65846cbf33fbd102348042e83077ad85}{add\-\_\-synonym}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_a65846cbf33fbd102348042e83077ad85}
+
+\begin{DoxyCompactList}\small\item\em Add a Synonym\-Gene\-Symbol to the list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_ad9748883488bebb33beb35ab9471f795}{tuple {\bfseries protein\-\_\-id} = Column( String, Foreign\-Key('Protein.\-uniprot\-A\-C'))}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_ad9748883488bebb33beb35ab9471f795}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_aa77854e15fce296866c9b787b1c8c0bd}{tuple {\bfseries uniprot\-Gene\-Symbol} = Column( String)}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_aa77854e15fce296866c9b787b1c8c0bd}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_a7d824769d94ed91633de9c4631f93fe0}{tuple {\bfseries uniprot\-Synonym\-Gene\-Symbols} = relationship( 'Synonym\-Gene\-Symbol', backref = 'gene\-Symbol' )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1GeneSymbol_1_1GeneSymbol_a7d824769d94ed91633de9c4631f93fe0}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describe a gene symbol associated to a protein this class has a many-\/to-\/one relationship with the class Protein. 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Gene\-Symbol.\-py\end{DoxyCompactItemize}

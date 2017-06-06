@@ -1,0 +1,41 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Bioplex\-Cluster.\-Bioplex\-Cluster Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster}\index{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Bioplex\-Cluster.\-Bioplex\-Cluster@{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Bioplex\-Cluster.\-Bioplex\-Cluster}}
+}
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Bioplex\-Cluster.\-Bioplex\-Cluster\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a8174745122e8e54cedb0a0e5673426ad}{def {\bfseries \-\_\-\-\_\-init\-\_\-\-\_\-}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a8174745122e8e54cedb0a0e5673426ad}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_aea5b415552809c0d6577ac4e80c0f533}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_aea5b415552809c0d6577ac4e80c0f533}{add\-\_\-to\-\_\-session}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_aea5b415552809c0d6577ac4e80c0f533}
+
+\begin{DoxyCompactList}\small\item\em Add the object to S\-Q\-L\-Alchemy session if it is linked to a protein. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_ac5b31e28e2336efb9a0c86a8c07b8cde}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_ac5b31e28e2336efb9a0c86a8c07b8cde}{add\-\_\-annotated\-\_\-protein}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_ac5b31e28e2336efb9a0c86a8c07b8cde}
+
+\begin{DoxyCompactList}\small\item\em Add an annotated protein to the list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a9689dcaa3737024caa83f83a5f542948}{{\bfseries bioplex\-I\-D}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a9689dcaa3737024caa83f83a5f542948}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a95ffebe7d3accdcd290ea925625c2efd}{tuple {\bfseries bioplex\-I\-D} = Column( String, primary\-\_\-key = True )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_a95ffebe7d3accdcd290ea925625c2efd}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_ad9caecab8849f2f56b097a91499fbac1}{tuple {\bfseries annotated\-Proteins} = relationship('Protein', secondary=Protein\-Bioplex\-Annotation.\-\_\-\-\_\-table\-\_\-\-\_\-, backref=\char`\"{}bioplex\-Annotations\char`\"{})}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1BioplexCluster_1_1BioplexCluster_ad9caecab8849f2f56b097a91499fbac1}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Bioplex\-Cluster.\-py\end{DoxyCompactItemize}

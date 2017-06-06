@@ -1,0 +1,108 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser}\index{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser@{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser}}
+}
+
+
+This class is a parser of the Gene Ontology definition file.  
+
+
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_afb086409368d83624cf8cf8e373649f1}{parse\-\_\-file}
+\begin{DoxyCompactList}\small\item\em Parse the obo file and build the Gene\-Ontology objects. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_abe87625326bc86eaadeb42ba20508b25}{process\-G\-O\-Term}
+\begin{DoxyCompactList}\small\item\em In an object representing a G\-O term, replace single-\/element lists with their only member. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_a7a8b017be1f9d2c735de4be149efc712}{process\-G\-O\-O\-B\-O}
+\begin{DoxyCompactList}\small\item\em Parses a Gene Ontology dump in O\-B\-O v1.\-2 format. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is a parser of the Gene Ontology definition file. 
+
+Each retrieved G\-O Term produces a Gene\-Ontology object The parser have to received as input\-:
+\begin{DoxyItemize}
+\item file\-\_\-path \-: string -\/ The fpath to the file to parse
+\item go\-\_\-id\-\_\-tag \-: string -\/ The tag declaring the G\-O term I\-D
+\item co\-\_\-name\-\_\-tag \-: string -\/ The tag declaring the G\-O term name
+\item go\-\_\-namespace\-\_\-tag \-: string -\/ The tag declaring the G\-O term namespace
+\item clean\-\_\-table \-: boolean -\/ The information indicating if the related db table must be cleaned before insertion or not 
+\end{DoxyItemize}
+
+\subsection{Member Function Documentation}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_afb086409368d83624cf8cf8e373649f1}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}!parse\-\_\-file@{parse\-\_\-file}}
+\index{parse\-\_\-file@{parse\-\_\-file}!src::fr::tagc::rainet::core::util::parser::OboParser::OboParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}}
+\subsubsection[{parse\-\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser.\-parse\-\_\-file (
+\begin{DoxyParamCaption}
+\item[{}]{file\-\_\-path, }
+\item[{}]{go\-\_\-id\-\_\-tag, }
+\item[{}]{go\-\_\-name\-\_\-tag, }
+\item[{}]{go\-\_\-namespace\-\_\-tag, }
+\item[{}]{clean\-\_\-table = {\ttfamily True}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_afb086409368d83624cf8cf8e373649f1}
+
+
+Parse the obo file and build the Gene\-Ontology objects. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\-\_\-path} & \-: string -\/ The path of the file to parse \\
+\hline
+{\em go\-\_\-id\-\_\-tag} & \-: string -\/ The tag declaring the G\-O term I\-D \\
+\hline
+{\em co\-\_\-name\-\_\-tag} & \-: string -\/ The tag declaring the G\-O term name \\
+\hline
+{\em go\-\_\-namespace\-\_\-tag} & \-: string -\/ The tag declaring the G\-O term namespace \\
+\hline
+{\em clean\-\_\-table} & \-: boolean -\/ The information indicating if the related db table must be cleaned before insertion or not \\
+\hline
+\end{DoxyParams}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_a7a8b017be1f9d2c735de4be149efc712}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}!process\-G\-O\-O\-B\-O@{process\-G\-O\-O\-B\-O}}
+\index{process\-G\-O\-O\-B\-O@{process\-G\-O\-O\-B\-O}!src::fr::tagc::rainet::core::util::parser::OboParser::OboParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}}
+\subsubsection[{process\-G\-O\-O\-B\-O}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser.\-process\-G\-O\-O\-B\-O (
+\begin{DoxyParamCaption}
+\item[{}]{input\-\_\-file}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_a7a8b017be1f9d2c735de4be149efc712}
+
+
+Parses a Gene Ontology dump in O\-B\-O v1.\-2 format. 
+
+Yields each
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\-\_\-file} & string -\/ The filename to read \\
+\hline
+\end{DoxyParams}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_abe87625326bc86eaadeb42ba20508b25}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}!process\-G\-O\-Term@{process\-G\-O\-Term}}
+\index{process\-G\-O\-Term@{process\-G\-O\-Term}!src::fr::tagc::rainet::core::util::parser::OboParser::OboParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Obo\-Parser\-::\-Obo\-Parser}}
+\subsubsection[{process\-G\-O\-Term}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Obo\-Parser.\-Obo\-Parser.\-process\-G\-O\-Term (
+\begin{DoxyParamCaption}
+\item[{}]{go\-Term}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1OboParser_1_1OboParser_abe87625326bc86eaadeb42ba20508b25}
+
+
+In an object representing a G\-O term, replace single-\/element lists with their only member. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em go\-Term} & \-: string -\/ The G\-O Term \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The modified object as a dictionary 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/util/parser/Obo\-Parser.\-py\end{DoxyCompactItemize}

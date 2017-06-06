@@ -1,0 +1,47 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Reactome\-Pathway.\-Reactome\-Pathway Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway}\index{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Reactome\-Pathway.\-Reactome\-Pathway@{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Reactome\-Pathway.\-Reactome\-Pathway}}
+}
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Reactome\-Pathway.\-Reactome\-Pathway\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_ab1443eba79a8b3a0f7e847095b3d0efa}{def {\bfseries \-\_\-\-\_\-init\-\_\-\-\_\-}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_ab1443eba79a8b3a0f7e847095b3d0efa}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a27cc45d5998e3c89d4d0c33460a1053f}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a27cc45d5998e3c89d4d0c33460a1053f}{add\-\_\-to\-\_\-session}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a27cc45d5998e3c89d4d0c33460a1053f}
+
+\begin{DoxyCompactList}\small\item\em Add the object to S\-Q\-L\-Alchemy session if it is linked to a protein. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a058331ca6a9d475abce8cd1316f3b7d4}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a058331ca6a9d475abce8cd1316f3b7d4}{add\-\_\-annotated\-\_\-protein}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a058331ca6a9d475abce8cd1316f3b7d4}
+
+\begin{DoxyCompactList}\small\item\em Add an annotated protein to the list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a131f7278bbbab83f78570e92842370a5}{{\bfseries reactome\-I\-D}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a131f7278bbbab83f78570e92842370a5}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a7c750adf5f1b03344c5bdb0d1aaf3d79}{{\bfseries reactome\-Name}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a7c750adf5f1b03344c5bdb0d1aaf3d79}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_aa1f884d9e04f46943c55ac63c002c1fd}{tuple {\bfseries reactome\-I\-D} = Column( String, primary\-\_\-key = True )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_aa1f884d9e04f46943c55ac63c002c1fd}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a083bd306eb66a0493726b4ea5be2ce73}{tuple {\bfseries reactome\-Name} = Column( String )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a083bd306eb66a0493726b4ea5be2ce73}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a6216af4aa04b006bcebf2e2003558352}{tuple {\bfseries annotated\-Proteins} = relationship('Protein', secondary=Protein\-Reactome\-Annotation.\-\_\-\-\_\-table\-\_\-\-\_\-, backref=\char`\"{}reactome\-Annotations\char`\"{})}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1ReactomePathway_1_1ReactomePathway_a6216af4aa04b006bcebf2e2003558352}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Reactome\-Pathway.\-py\end{DoxyCompactItemize}

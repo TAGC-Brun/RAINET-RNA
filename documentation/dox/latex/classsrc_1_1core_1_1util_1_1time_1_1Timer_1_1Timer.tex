@@ -1,0 +1,114 @@
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer}{\section{src.\-core.\-util.\-time.\-Timer.\-Timer Class Reference}
+\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer}\index{src.\-core.\-util.\-time.\-Timer.\-Timer@{src.\-core.\-util.\-time.\-Timer.\-Timer}}
+}
+
+
+This class permits to easy mark the various durations of workflow step.  
+
+
+Inheritance diagram for src.\-core.\-util.\-time.\-Timer.\-Timer\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_ae35590f78d4e96d11516946bab60e93e}{def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_ae35590f78d4e96d11516946bab60e93e}{\-\_\-\-\_\-init\-\_\-\-\_\-}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_ae35590f78d4e96d11516946bab60e93e}
+
+\begin{DoxyCompactList}\small\item\em The constructor. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a76388d0aedb0f14c3f00e83e25b60113}{start\-\_\-chrono}
+\begin{DoxyCompactList}\small\item\em This method permits to initialize the chrono, displaying th provided message. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a2f7caa405d211209d56328384676739d}{def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a2f7caa405d211209d56328384676739d}{time\-\_\-point}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a2f7caa405d211209d56328384676739d}
+
+\begin{DoxyCompactList}\small\item\em This method permits to get the current duration from the last chrono start without reinitializing the chrono. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_aa90849538b0dbe6a2a4763912bc7b532}{stop\-\_\-chrono}
+\begin{DoxyCompactList}\small\item\em This method permits to get the stop the chrono, reinitializing it and displaying the provided message. \end{DoxyCompactList}\item 
+def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a0d55b8d5ed3f6f72f3d26e91b715caa5}{step}
+\begin{DoxyCompactList}\small\item\em This methods permit to indicate the duration from the last chrono start and to start a new chrono at the same time with the provided message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a24e0933ea73cd3f0a90cec33f8e3ca22}{def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a24e0933ea73cd3f0a90cec33f8e3ca22}{get\-\_\-instance}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a24e0933ea73cd3f0a90cec33f8e3ca22}
+
+\begin{DoxyCompactList}\small\item\em The singleton provider. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a5a36e0a9aa09c15dcb5c9f774289ec76}{def \hyperlink{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a5a36e0a9aa09c15dcb5c9f774289ec76}{format\-\_\-duration}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a5a36e0a9aa09c15dcb5c9f774289ec76}
+
+\begin{DoxyCompactList}\small\item\em This method provide a human readable version of the duration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a9a7f81a94ee60e8a690e91b980cc3b08}{{\bfseries start\-Time}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a9a7f81a94ee60e8a690e91b980cc3b08}
+
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a2359a12c7e04b1b5fb870ebf85a86128}{{\bfseries last\-Time}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a2359a12c7e04b1b5fb870ebf85a86128}
+
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a752ecbfb08ab0c6b3ec6757e88d3eb2e}{{\bfseries current\-Step}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a752ecbfb08ab0c6b3ec6757e88d3eb2e}
+
+\item 
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_ac59a1b0e8ced20e2e847364932b84b26}{{\bfseries start\-\_\-time}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_ac59a1b0e8ced20e2e847364932b84b26}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class permits to easy mark the various durations of workflow step. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a76388d0aedb0f14c3f00e83e25b60113}{\index{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}!start\-\_\-chrono@{start\-\_\-chrono}}
+\index{start\-\_\-chrono@{start\-\_\-chrono}!src::core::util::time::Timer::Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}}
+\subsubsection[{start\-\_\-chrono}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-core.\-util.\-time.\-Timer.\-Timer.\-start\-\_\-chrono (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a76388d0aedb0f14c3f00e83e25b60113}
+
+
+This method permits to initialize the chrono, displaying th provided message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \-: string -\/ The message to display \\
+\hline
+\end{DoxyParams}
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a0d55b8d5ed3f6f72f3d26e91b715caa5}{\index{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}!step@{step}}
+\index{step@{step}!src::core::util::time::Timer::Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}}
+\subsubsection[{step}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-core.\-util.\-time.\-Timer.\-Timer.\-step (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{message}
+\end{DoxyParamCaption}
+)}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_a0d55b8d5ed3f6f72f3d26e91b715caa5}
+
+
+This methods permit to indicate the duration from the last chrono start and to start a new chrono at the same time with the provided message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \-: string -\/ The message to display \\
+\hline
+\end{DoxyParams}
+\hypertarget{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_aa90849538b0dbe6a2a4763912bc7b532}{\index{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}!stop\-\_\-chrono@{stop\-\_\-chrono}}
+\index{stop\-\_\-chrono@{stop\-\_\-chrono}!src::core::util::time::Timer::Timer@{src\-::core\-::util\-::time\-::\-Timer\-::\-Timer}}
+\subsubsection[{stop\-\_\-chrono}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-core.\-util.\-time.\-Timer.\-Timer.\-stop\-\_\-chrono (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{message}
+\end{DoxyParamCaption}
+)}}\label{classsrc_1_1core_1_1util_1_1time_1_1Timer_1_1Timer_aa90849538b0dbe6a2a4763912bc7b532}
+
+
+This method permits to get the stop the chrono, reinitializing it and displaying the provided message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & \-: string -\/ The message to display \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+rbp-\/motif/src/core/util/time/Timer.\-py\end{DoxyCompactItemize}

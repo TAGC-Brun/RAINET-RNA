@@ -1,0 +1,41 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Custom\-Cluster.\-Custom\-Cluster Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster}\index{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Custom\-Cluster.\-Custom\-Cluster@{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Custom\-Cluster.\-Custom\-Cluster}}
+}
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Custom\-Cluster.\-Custom\-Cluster\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_adaa4bd6ef404a16b8deb4074bd214329}{def {\bfseries \-\_\-\-\_\-init\-\_\-\-\_\-}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_adaa4bd6ef404a16b8deb4074bd214329}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a8b984de9fd4ea435c23a3016a6a34e48}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a8b984de9fd4ea435c23a3016a6a34e48}{add\-\_\-to\-\_\-session}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a8b984de9fd4ea435c23a3016a6a34e48}
+
+\begin{DoxyCompactList}\small\item\em Add the object to S\-Q\-L\-Alchemy session if it is linked to a protein. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a81acb2f53b6edb6c78b3641f7f1b9fbf}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a81acb2f53b6edb6c78b3641f7f1b9fbf}{add\-\_\-annotated\-\_\-protein}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a81acb2f53b6edb6c78b3641f7f1b9fbf}
+
+\begin{DoxyCompactList}\small\item\em Add an annotated protein to the list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a327be486227822b7d1a6ec95bfb98757}{{\bfseries cluster\-I\-D}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_a327be486227822b7d1a6ec95bfb98757}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_ab59a52793c1e4b8080db2a0d2e094dd0}{tuple {\bfseries cluster\-I\-D} = Column( String, primary\-\_\-key = True )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_ab59a52793c1e4b8080db2a0d2e094dd0}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_add6b3e26c61496de9cadfa292346ce86}{tuple {\bfseries annotated\-Proteins} = relationship('Protein', secondary=Protein\-Custom\-Annotation.\-\_\-\-\_\-table\-\_\-\-\_\-, backref=\char`\"{}Custom\-Annotations\char`\"{})}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1CustomCluster_1_1CustomCluster_add6b3e26c61496de9cadfa292346ce86}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Custom\-Cluster.\-py\end{DoxyCompactItemize}

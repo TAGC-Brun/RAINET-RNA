@@ -1,0 +1,68 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Parser.\-Network\-Module\-Parser Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser}\index{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Parser.\-Network\-Module\-Parser@{src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Parser.\-Network\-Module\-Parser}}
+}
+
+
+This class is a parser of a graph module (class) file produced by the Brun team tools Each retrieved module produces a Network\-Module and geta ssociated to the Protein that are part of it The parser have to received as input\-:  
+
+
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Parser.\-Network\-Module\-Parser\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser}
+\end{center}
+\end{figure}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a5621046e5c53b4a62832a5b9d9882ae8}{def {\bfseries parse\-\_\-file}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a5621046e5c53b4a62832a5b9d9882ae8}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a1fa9241a137a38fe50ed095e6a6ddcf7}{def {\bfseries process\-\_\-modules}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a1fa9241a137a38fe50ed095e6a6ddcf7}
+
+\item 
+def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a3e0f2f9aa4e9b800e02676eb720765e2}{associate\-\_\-proteins}
+\begin{DoxyCompactList}\small\item\em Parse the provided line to find protein names. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is a parser of a graph module (class) file produced by the Brun team tools Each retrieved module produces a Network\-Module and geta ssociated to the Protein that are part of it The parser have to received as input\-: 
+
+
+\begin{DoxyItemize}
+\item file\-\_\-path \-: string -\/ The fpath to the file to parse
+\item class\-\_\-tag \-: string -\/ The tag indicating the beginning of a class (module) definition
+\item comment\-\_\-char \-: string -\/ The character used to declare comment lines
+\item clean\-\_\-table \-: boolean -\/ The information indicating if the related db table must be cleaned before insertion or not 
+\end{DoxyItemize}
+
+\subsection{Member Function Documentation}
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a3e0f2f9aa4e9b800e02676eb720765e2}{\index{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Parser\-::\-Network\-Module\-Parser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Parser\-::\-Network\-Module\-Parser}!associate\-\_\-proteins@{associate\-\_\-proteins}}
+\index{associate\-\_\-proteins@{associate\-\_\-proteins}!src::fr::tagc::rainet::core::util::parser::NetworkModuleParser::NetworkModuleParser@{src\-::fr\-::tagc\-::rainet\-::core\-::util\-::parser\-::\-Network\-Module\-Parser\-::\-Network\-Module\-Parser}}
+\subsubsection[{associate\-\_\-proteins}]{\setlength{\rightskip}{0pt plus 5cm}def src.\-fr.\-tagc.\-rainet.\-core.\-util.\-parser.\-Network\-Module\-Parser.\-Network\-Module\-Parser.\-associate\-\_\-proteins (
+\begin{DoxyParamCaption}
+\item[{}]{module, }
+\item[{}]{line}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1util_1_1parser_1_1NetworkModuleParser_1_1NetworkModuleParser_a3e0f2f9aa4e9b800e02676eb720765e2}
+
+
+Parse the provided line to find protein names. 
+
+Create corresponding association between the proteins and the module
+
+
+\begin{DoxyParams}{Parameters}
+{\em module} & \-: Network\-Module -\/ The network module the proteins must be associated to \\
+\hline
+{\em line} & \-: string -\/ the line of the file containing the list of protein names\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None  Rainet\-Exception if an error occurred during parsing 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/util/parser/Network\-Module\-Parser.\-py\end{DoxyCompactItemize}

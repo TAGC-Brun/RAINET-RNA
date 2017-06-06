@@ -1,0 +1,55 @@
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule}{\section{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Network\-Module.\-Network\-Module Class Reference}
+\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule}\index{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Network\-Module.\-Network\-Module@{src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Network\-Module.\-Network\-Module}}
+}
+
+
+This class describes a Network Module (a group of interacting proteins) as produced by a network partition analysis like O\-C\-G.  
+
+
+Inheritance diagram for src.\-fr.\-tagc.\-rainet.\-core.\-data.\-Network\-Module.\-Network\-Module\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_aaba2991b15d8ccd23c7a927eba14eac8}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_aaba2991b15d8ccd23c7a927eba14eac8}{\-\_\-\-\_\-init\-\_\-\-\_\-}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_aaba2991b15d8ccd23c7a927eba14eac8}
+
+\begin{DoxyCompactList}\small\item\em The constructor. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a4761e5200abaf04c59d4c8af761acb86}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a4761e5200abaf04c59d4c8af761acb86}{add\-\_\-associated\-\_\-protein}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a4761e5200abaf04c59d4c8af761acb86}
+
+\begin{DoxyCompactList}\small\item\em Add an associated protein to the list. \end{DoxyCompactList}\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a2b38ec7fc64cec9a13edb72955cfd34f}{def \hyperlink{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a2b38ec7fc64cec9a13edb72955cfd34f}{add\-\_\-associated\-\_\-annotation}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a2b38ec7fc64cec9a13edb72955cfd34f}
+
+\begin{DoxyCompactList}\small\item\em Add an associated annotation to the list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a0de546c5e35e1ddfc4a05c317de97b48}{{\bfseries module\-I\-D}}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a0de546c5e35e1ddfc4a05c317de97b48}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_ab06d07b3543741afb05826e3ec611206}{tuple {\bfseries module\-I\-D} = Column( String, primary\-\_\-key = True )}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_ab06d07b3543741afb05826e3ec611206}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_af105d7d1e7b91a3b779c2bb5ffa8feb6}{tuple {\bfseries partition\-Analysis\-\_\-id} = Column( String, Foreign\-Key('Partition\-Analysis.\-analysis\-Name'))}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_af105d7d1e7b91a3b779c2bb5ffa8feb6}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a6a0c59be82d0603a9b7106be205af7ec}{tuple {\bfseries associated\-Proteins} = relationship('Protein', secondary=Protein\-Network\-Module.\-\_\-\-\_\-table\-\_\-\-\_\-, backref=\char`\"{}network\-Modules\char`\"{})}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a6a0c59be82d0603a9b7106be205af7ec}
+
+\item 
+\hypertarget{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a956f518c1f903e5625727fb0ac41ace8}{tuple {\bfseries associated\-Annotations} = relationship( 'Network\-Module\-Annotation', backref= \char`\"{}network\-Module\char`\"{})}\label{classsrc_1_1fr_1_1tagc_1_1rainet_1_1core_1_1data_1_1NetworkModule_1_1NetworkModule_a956f518c1f903e5625727fb0ac41ace8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describes a Network Module (a group of interacting proteins) as produced by a network partition analysis like O\-C\-G. 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/fr/tagc/rainet/core/data/Network\-Module.\-py\end{DoxyCompactItemize}
