@@ -36,31 +36,16 @@ The main scripts for this project were coded in an object-oriented environment, 
 ### Pipeline description:
 
 * RAINET DB preparation:
-  * build_data_freeze.sh (get protein-related data)
-  * rna_biomart.R (get rna-related data)
-  * ProcessGTExData.py (process expression data)
-  * Macromolecular complexes (process protein complex data):
-    * parse_bioplex_table.py 
-    * parse_corum_table.py
-    * parse_wan_table.py
   * ReadCatrapid.py (process catRAPID software data (licenced))
   * InsertionStrategy.py (for creating a RAINET database)
   * AnalysisStrategy.py (for filtering / stats of RAINET database)
 * Enrichment analysis
-  * Main scripts:
     * EnrichmentAnalysisStategy.py (produces main RNA-complex enrichment results)
     * FilterEnrichmentResults.py (for filtering / stats Enrichment analysis results)
-  * Enrichment-Disease analysis:
-    * ParseLnc2cancer.py (for processing data from lnc2cancer database)
-    * ParseLncrnadisease.py (for processing data from lncRNADisease database)
-    * OMIM_biomart.R (for retrieving OMIM-related data)
-    * OMIMProteinDisease.py (for creating protein-disease correspondence)
     * CommonLncRNAProteinDisease.py (for matching lncRNA and protein disease)
 * Other post-analysis:
   * PrioritizeCandidates.py (for selecting enrichments with known interactions)
   * LncRNAGroupOddsRatio.py (for evaluating overlap of groups of lncRNAs against functional lncRNAs)
-  * ReadGulko.java and gulko2015_fitcons.R (for evaluating fitCons scores)
-  * ComplexDatasetOverlap.py (for evaluating overlap between complex datasets)
 
 ## Supported OS and required software:
 
