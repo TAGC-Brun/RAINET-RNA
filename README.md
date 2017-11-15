@@ -11,10 +11,15 @@ Diogo M. Ribeiro <sup>1</sup>, Andreas Zanzoni <sup>1</sup>, Andrea Cipriano <su
 
 ## Affiliations:
 1 - Aix-Marseille Université, Inserm, TAGC UMR_S1090, Marseille, France
+
 2 - Dept. of Biology and Biotechnology Charles Darwin, Sapienza University, Rome, Italy
+
 3 - Centre for Genomic Regulation (CRG), The Barcelona Institute of Science and Technology, Dr Aiguader 88, 08003 Barcelona, Spain
+
 4 - Universitat Pompeu Fabra (UPF), 08 003 Barcelona, Spain
+
 5 - Institucio Catalana de Recerca i Estudis Avançats (ICREA), 23 Passeig Lluıs Companys, 08010 Barcelona, Spain
+
 6 - CNRS, Marseille, France
 
 ## Description:
