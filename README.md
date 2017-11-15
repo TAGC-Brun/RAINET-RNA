@@ -4,24 +4,18 @@ RAINET: Towards the understanding of **R**N**A**-protein **I**nteraction **NET**
 
 This project aims at identifying human long non-coding RNAs likely to scaffold protein complexes. 
 
-This github page contains the source code associated to the Ribeiro _et al._ publication "Protein complex scaffolding as a prevalent function of human long non-coding RNAs". All resulting data and plots will be published elsewhere.
-
+This github page contains the source code associated to the Ribeiro et al. 2017 Nucleic Acids Research publication entitled "Protein complex scaffolding predicted as a prevalent function of long non-coding RNAs".
 
 ## Authors:
-
-Diogo M. Ribeiro <sup>1</sup>, Andreas Zanzoni <sup>1</sup>, Lionel Spinelli <sup>1</sup>, Riccardo Delli Ponti <sup>2,3</sup>, Gian Gaetano Tartaglia <sup>2,3,4</sup>, Christine Brun <sup>1,5</sup>
+Diogo M. Ribeiro <sup>1</sup>, Andreas Zanzoni <sup>1</sup>, Andrea Cipriano <sup>2</sup>, Riccardo Delli Ponti <sup>3,4</sup>, Lionel Spinelli <sup>1</sup>, Monica Ballarino <sup>2</sup>, Irene Bozzoni <sup>2</sup>, Gian Gaetano Tartaglia<sup>3,4,5*</sup>, Christine Brun<sup>1,6*</sup>
 
 ## Affiliations:
 1 - Aix-Marseille Université, Inserm, TAGC UMR_S1090, Marseille, France
-
-2 - Centre for Genomic Regulation (CRG), The Barcelona Institute of Science and Technology, Dr Aiguader 88, 08003 Barcelona, Spain
-
-3 - Universitat Pompeu Fabra (UPF), 08003 Barcelona, Spain
-
-4 - Institucio Catalana de Recerca i Estudis Avançats (ICREA), 23 Passeig Lluıs Companys, 08010 Barcelona, Spain
-
-5 - CNRS, Marseille, France
-
+2 - Dept. of Biology and Biotechnology Charles Darwin, Sapienza University, Rome, Italy
+3 - Centre for Genomic Regulation (CRG), The Barcelona Institute of Science and Technology, Dr Aiguader 88, 08003 Barcelona, Spain
+4 - Universitat Pompeu Fabra (UPF), 08 003 Barcelona, Spain
+5 - Institucio Catalana de Recerca i Estudis Avançats (ICREA), 23 Passeig Lluıs Companys, 08010 Barcelona, Spain
+6 - CNRS, Marseille, France
 
 ## Description:
 
@@ -59,10 +53,9 @@ The main scripts for this project were coded in an object-oriented environment, 
 
 ## Contacts:
 christine-g.brun@inserm.fr
-
 gian.tartaglia@crg.eu
 
 
 Diogo Ribeiro,
 
-31 May, 2017
+15 November, 2017
